@@ -1,0 +1,132 @@
+paths:
+  /prescription/product/:
+    post:
+      description: Create product
+      operationId: product
+      parameters:
+      - description: 'name: Name'
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+        x-go-name: Name
+      - description: 'name: Sku'
+        in: body
+        name: sku
+        required: true
+        schema:
+          type: string
+        x-go-name: Sku
+      - description: 'name: Uom'
+        in: body
+        name: uom
+        required: true
+        schema:
+          type: string
+        x-go-name: Uom
+      - description: 'name: Weight'
+        in: body
+        name: weight
+        required: true
+        schema:
+          format: int32
+          type: integer
+        x-go-name: Weight
+      responses:
+        "200":
+          $ref: '#/responses/SuccessResponse'
+        "401":
+          $ref: '#/responses/ErrorResponse'
+      security:
+      - apiKey:
+        - '[]'
+      tags:
+      - prescription
+  /prescription/product/{id}:
+    get:
+      description: Get product
+      operationId: getProduct
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
+      responses:
+        "200":
+          $ref: '#/responses/SuccessResponse'
+        "401":
+          $ref: '#/responses/ErrorResponse'
+      security:
+      - apiKey:
+        - '[]'
+      tags:
+      - prescription
+    put:
+      description: Get product
+      operationId: update_product
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
+      - description: |-
+          Name of the Product
+          in: string
+          name: Name
+        in: formData
+        name: name
+        required: true
+        type: string
+        x-go-name: Name
+      - description: 'name: Sku'
+        in: body
+        name: sku
+        required: true
+        schema:
+          type: string
+        x-go-name: Sku
+      - description: 'name: Uom'
+        in: body
+        name: uom
+        required: true
+        schema:
+          type: string
+        x-go-name: Uom
+      - description: 'name: Weight'
+        in: body
+        name: weight
+        required: true
+        schema:
+          format: int32
+          type: integer
+        x-go-name: Weight
+      responses:
+        "200":
+          $ref: '#/responses/SuccessResponse'
+        "401":
+          $ref: '#/responses/ErrorResponse'
+      security:
+      - apiKey:
+        - '[]'
+      tags:
+      - prescription
+  /prescription/products/:
+    get:
+      description: Get product lists
+      operationId: productList
+      responses:
+        "200":
+          $ref: '#/responses/SuccessResponse'
+        "401":
+          $ref: '#/responses/ErrorResponse'
+      security:
+      - apiKey:
+        - '[]'
+      tags:
+      - prescription
+swagger: "2.0"

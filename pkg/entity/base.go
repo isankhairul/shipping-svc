@@ -8,7 +8,11 @@ import (
 )
 
 type BaseIDModel struct {
-	ID        uint64 `gorm:"primary_key:auto_increment" json:"-"`
+	// Id of the product
+	// in: int64
+	ID uint64 `gorm:"primary_key:auto_increment" json:"-"`
+	// UID of the product
+	// in: int64
 	UID       string `gorm:"uniqueIndex" json:"uid"`
 	IsDeleted bool   `json:"is_deleted"`
 	CreatedAt string `json:"-"`
