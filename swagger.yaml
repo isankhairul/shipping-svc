@@ -1,3 +1,104 @@
+definitions:
+  BaseIDModel:
+    properties:
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      uid:
+        description: |-
+          UID of the product
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: gokit_example/pkg/entity
+  ErrorResponse:
+    properties:
+      code:
+        description: |-
+          Code of the business code
+          in: int64
+        format: int64
+        type: integer
+        x-go-name: Code
+      data:
+        description: |-
+          Message of the respons
+          in: string
+        type: object
+        x-go-name: Data
+      message:
+        description: |-
+          Message of the respons
+          in: int64
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-name: ErrorResponseHttp
+    x-go-package: gokit_example/pkg/entity
+  SuccessResponse:
+    properties:
+      code:
+        description: |-
+          Code of the business code
+          in: int64
+        format: int64
+        type: integer
+        x-go-name: Code
+      data:
+        description: |-
+          Message of the respons
+          in: string
+        type: object
+        x-go-name: Data
+      message:
+        description: |-
+          Message of the respons
+          in: int64
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-name: ResponseHttp
+    x-go-package: gokit_example/pkg/entity
+  product:
+    properties:
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      name:
+        description: |-
+          Name of the product
+          in: string
+        type: string
+        x-go-name: Name
+      sku:
+        description: |-
+          Sku of the product
+          in: string
+        type: string
+        x-go-name: Sku
+      uid:
+        description: |-
+          UID of the product
+          in: int64
+        type: string
+        x-go-name: UID
+      uom:
+        description: |-
+          Uom of the product
+          in: string
+        type: string
+        x-go-name: Uom
+      weight:
+        description: |-
+          Weight of the product
+          in: int32
+        format: int32
+        type: integer
+        x-go-name: Weight
+    type: object
+    x-go-name: Product
+    x-go-package: gokit_example/pkg/entity
 paths:
   /prescription/product/:
     post:
@@ -35,9 +136,13 @@ paths:
         x-go-name: Weight
       responses:
         "200":
-          $ref: '#/responses/SuccessResponse'
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
         "401":
-          $ref: '#/responses/ErrorResponse'
+          description: ErrorResponse
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       security:
       - apiKey:
         - '[]'
@@ -56,9 +161,13 @@ paths:
         x-go-name: Id
       responses:
         "200":
-          $ref: '#/responses/SuccessResponse'
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
         "401":
-          $ref: '#/responses/ErrorResponse'
+          description: ErrorResponse
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       security:
       - apiKey:
         - '[]'
@@ -107,9 +216,13 @@ paths:
         x-go-name: Weight
       responses:
         "200":
-          $ref: '#/responses/SuccessResponse'
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
         "401":
-          $ref: '#/responses/ErrorResponse'
+          description: ErrorResponse
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       security:
       - apiKey:
         - '[]'
@@ -121,9 +234,13 @@ paths:
       operationId: productList
       responses:
         "200":
-          $ref: '#/responses/SuccessResponse'
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
         "401":
-          $ref: '#/responses/ErrorResponse'
+          description: ErrorResponse
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       security:
       - apiKey:
         - '[]'

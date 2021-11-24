@@ -1,6 +1,6 @@
 package entity
 
-// swagger:model Company
+// swagger:model product
 type Product struct {
 	BaseIDModel
 	// Name of the product
