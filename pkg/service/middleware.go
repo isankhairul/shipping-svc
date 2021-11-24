@@ -32,3 +32,24 @@ func (mw loggingMiddleware) Create(ctx context.Context, p entity.JSONRequestProd
 	}(time.Now())
 	return mw.next.Create(ctx, p)
 }
+
+func (mw loggingMiddleware) Show(ctx context.Context) (res entity.ResponseHttp, err error) {
+	defer func(begin time.Time) {
+		mw.logger.Log("method", "Show Products", "took", time.Since(begin), "err", res.Message)
+	}(time.Now())
+	return mw.next.Show(ctx)
+}
+
+func (mw loggingMiddleware) GetProduct(ctx context.Context, uid string) (res entity.ResponseHttp, err error) {
+	defer func(begin time.Time) {
+		mw.logger.Log("method", "Get Product", "took", time.Since(begin), "err", res.Message)
+	}(time.Now())
+	return mw.next.GetProduct(ctx, uid)
+}
+
+func (mw loggingMiddleware) UpdateProduct(ctx context.Context, p entity.JSONRequestUpdateProduct) (res entity.ResponseHttp, err error) {
+	defer func(begin time.Time) {
+		mw.logger.Log("method", "Update Product", "took", time.Since(begin), "err", res.Message)
+	}(time.Now())
+	return mw.next.UpdateProduct(ctx, p)
+}

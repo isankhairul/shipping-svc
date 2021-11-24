@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/go-kit/kit/endpoint"
@@ -28,32 +27,25 @@ import (
 )
 
 func main() {
-	//1. Flag parse
-	var (
-		httpAddr          = flag.Int("http.addr", 8080, "HTTP Port listen address")
-		profile           = flag.String("profile", "dev", "Profile app environment")
-		logOutput         = flag.String("log.output", "console", "Output log")
-		logOutputFilePath = flag.String("log.output.file.path", ".", "Output log file path")
-		configPath        = flag.String("config.path", ".", "Config file path")
-		serviceName       = flag.String("service.name", "prescription", "Name of instance")
-		host              = flag.String("host", "127.0.0.1:8080", "Host this service")
-	)
-	flag.Parse()
 
 	//2. Load configuration
 	viper.SetConfigType("yaml")
+	var profile string = "dev"
+	if os.Getenv("env") != "" {
+		profile = "prd"
+	}
 	var configFileName []string
 	configFileName = append(configFileName, "config-")
-	configFileName = append(configFileName, *profile)
+	configFileName = append(configFileName, profile)
 	viper.SetConfigName(strings.Join(configFileName, ""))
-	viper.AddConfigPath(*configPath)
+	viper.AddConfigPath(".")
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
 		panic(err)
 	}
 
 	//3. Logging init
-	logfile, err := os.OpenFile(*logOutputFilePath+"/prescription.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	logfile, err := os.OpenFile(viper.GetString("server.output-file-path"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
 	}
@@ -61,7 +53,7 @@ func main() {
 	defer logfile.Close()
 	var logger log.Logger
 	{
-		if *logOutput == "file" {
+		if viper.GetString("server.log-output") == "file" {
 			w := log.NewSyncWriter(logfile)
 			logger = log.NewLogfmtLogger(w)
 		} else {
@@ -91,13 +83,14 @@ func main() {
 	})
 
 	// 7. Register cd Specify the information of an instance.
+	host, _ := os.Hostname()
 	asr := api.AgentServiceRegistration{
 		// Every service instance must have an unique ID.
-		ID:   fmt.Sprintf("%v", *host),
-		Name: *serviceName,
+		ID:   fmt.Sprintf("%v", host),
+		Name: viper.GetString("server.service-name"),
 		// These two values are the location of an instance.
-		Address: *host,
-		Port:    *httpAddr,
+		Address: host,
+		Port:    viper.GetInt("server.port"),
 	}
 	consulConfig := api.DefaultConfig()
 	consulClient, err := api.NewClient(consulConfig)
@@ -145,8 +138,8 @@ func main() {
 	}()
 
 	go func() {
-		logger.Log("transport", "HTTP", "addr", *httpAddr)
-		errs <- http.ListenAndServe(fmt.Sprintf(":%d", *httpAddr), h)
+		logger.Log("transport", "HTTP", "addr", viper.GetInt("server.port"))
+		errs <- http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("server.port")), h)
 	}()
 
 	logger.Log("exit", <-errs)

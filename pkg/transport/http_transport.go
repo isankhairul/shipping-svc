@@ -3,6 +3,7 @@ package transport
 import (
 	"context"
 	"encoding/json"
+	"github.com/go-openapi/runtime/middleware"
 	"net/http"
 
 	"gokit_example/pkg/endpoint"
@@ -22,12 +23,37 @@ func MakeHTTPHandler(s service.Service, logger log.Logger) http.Handler {
 		httptransport.ServerErrorEncoder(encodeError),
 	}
 
+	pr.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
+	opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.SwaggerUI(opts, nil)
+	pr.Handle("/docs", sh)
+
 	r := pr.PathPrefix("/prescription").Subrouter()
 
-	// device-check
 	r.Methods("POST").Path("/product").Handler(httptransport.NewServer(
-		e.Check,
-		decodeCheck,
+		e.Save,
+		decodeSave,
+		encodeResponseHTTP,
+		options...,
+	))
+
+	r.Methods("GET").Path("/products").Handler(httptransport.NewServer(
+		e.Show,
+		decodeShow,
+		encodeResponseHTTP,
+		options...,
+	))
+
+	r.Methods("GET").Path("/product/{id}").Handler(httptransport.NewServer(
+		e.GetProduct,
+		decodeGetProduct,
+		encodeResponseHTTP,
+		options...,
+	))
+
+	r.Methods("PUT").Path("/product/{id}").Handler(httptransport.NewServer(
+		e.UpdateProduct,
+		decodeUpdateProduct,
 		encodeResponseHTTP,
 		options...,
 	))
@@ -35,12 +61,29 @@ func MakeHTTPHandler(s service.Service, logger log.Logger) http.Handler {
 	return pr
 }
 
-//Stock In Item Detaill
-func decodeCheck(_ context.Context, r *http.Request) (request interface{}, err error) {
+func decodeSave(_ context.Context, r *http.Request) (request interface{}, err error) {
 	var req entity.JSONRequestProduct
 	if e := json.NewDecoder(r.Body).Decode(&req); e != nil {
 		return nil, e
 	}
+	return req, nil
+}
+
+func decodeShow(_ context.Context, r *http.Request) (request interface{}, err error) {
+	return nil, nil
+}
+
+func decodeGetProduct(_ context.Context, r *http.Request) (request interface{}, err error) {
+	params := mux.Vars(r)["id"]
+	return params, nil
+}
+
+func decodeUpdateProduct(_ context.Context, r *http.Request) (request interface{}, err error) {
+	var req entity.JSONRequestUpdateProduct
+	if e := json.NewDecoder(r.Body).Decode(&req); e != nil {
+		return nil, e
+	}
+	req.Id = mux.Vars(r)["id"]
 	return req, nil
 }
 
