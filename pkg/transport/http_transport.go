@@ -28,6 +28,11 @@ func MakeHTTPHandler(s service.Service, logger log.Logger) http.Handler {
 	sh := middleware.SwaggerUI(opts, nil)
 	pr.Handle("/docs", sh)
 
+	// documentation for share
+	opts1 := middleware.RedocOpts{SpecURL: "/swagger.yaml", Path: "doc"}
+	sh1 := middleware.Redoc(opts1, nil)
+	pr.Handle("/doc", sh1)
+
 	r := pr.PathPrefix("/prescription").Subrouter()
 
 	r.Methods("POST").Path("/product").Handler(httptransport.NewServer(
