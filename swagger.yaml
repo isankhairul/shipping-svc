@@ -100,7 +100,7 @@ definitions:
     x-go-name: Product
     x-go-package: gokit_example/pkg/entity
 paths:
-  /prescription/product/:
+  /product/:
     post:
       description: Create product
       operationId: product
@@ -148,7 +148,7 @@ paths:
         - '[]'
       tags:
       - prescription
-  /prescription/product/{id}:
+  /product/{id}:
     get:
       description: Get product
       operationId: getProduct
@@ -228,7 +228,7 @@ paths:
         - '[]'
       tags:
       - prescription
-  /prescription/products/:
+  /products/:
     get:
       description: Get product lists
       operationId: productList

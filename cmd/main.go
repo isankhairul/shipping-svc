@@ -2,24 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/afex/hystrix-go/hystrix"
-	"github.com/go-kit/kit/endpoint"
-	"gokit_example/pkg/common"
-	"gokit_example/pkg/repository"
-	"net"
+	"gokit_example/app/api/transport"
+	"gokit_example/app/registry"
+	"gokit_example/helper/database"
 	"net/http"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
 
-	"gokit_example/pkg/service"
-	"gokit_example/pkg/transport"
-
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/go-kit/kit/sd/consul"
-	"github.com/go-redis/redis"
 	"github.com/hashicorp/consul/api"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
@@ -65,8 +59,8 @@ func main() {
 		logger = log.With(logger, "ts", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
 	}
 
-	//4. Init postgresql db
-	db, err := common.NewConnectionDB(viper.GetString("database.driver"), viper.GetString("database.database"), viper.GetString("database.host"), viper.GetString("database.username"), viper.GetString("database.password"), viper.GetInt("database.port"))
+	//4. Init DB Connection
+	db, err := database.NewConnectionDB(viper.GetString("database.driver"), viper.GetString("database.database"), viper.GetString("database.host"), viper.GetString("database.username"), viper.GetString("database.password"), viper.GetInt("database.port"))
 	if err != nil {
 		logger.Log("Err Db connection :", err.Error())
 		panic(err.Error())
@@ -76,11 +70,11 @@ func main() {
 
 	//6. Init Redis
 	// var resulRedis redis.Client
-	rds := common.NewConnectionRedis(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", viper.GetString("cache.redis.hostname"), viper.GetInt("cache.redis.port")),
-		Password: viper.GetString("cache.redis.password"), // no password set
-		DB:       viper.GetInt("cache.redis.db"),          // use default DB
-	})
+	// rds := common.NewConnectionRedis(&redis.Options{
+	// 	Addr:     fmt.Sprintf("%s:%d", viper.GetString("cache.redis.hostname"), viper.GetInt("cache.redis.port")),
+	// 	Password: viper.GetString("cache.redis.password"), // no password set
+	// 	DB:       viper.GetInt("cache.redis.db"),          // use default DB
+	// })
 
 	// 7. Register cd Specify the information of an instance.
 	host, _ := os.Hostname()
@@ -105,42 +99,55 @@ func main() {
 	// it's important to call registar.Deregister() before the program exits.
 	defer registar.Deregister()
 
-	// init repository
-	repo := repository.NewProductRepository(db, logger)
+	// service registry
+	prodSvc := registry.NewProductService(db, logger)
 
-	var s service.Service
-	{
-		s = service.NewServiceImplV1(logger, repo, rds)
-		s = service.LoggingMiddleware(logger)(s)
-	}
+	// transport init
+	swagHttp := transport.SwaggerHttpHandler(log.With(logger, "SwaggerTransportLayer", "HTTP"))
+	prodHttp := transport.ProductHttpHandler(prodSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
 
-	var h http.Handler
-	{
-		h = transport.MakeHTTPHandler(s, log.With(logger, "component", "HTTP"))
-	}
+	//Path
+	mux := http.NewServeMux()
+
+	mux.Handle("/swagger/v1/", swagHttp)
+	mux.Handle("/boilerplate/v1/", prodHttp)
+	http.Handle("/", accessControl(mux))
 
 	errs := make(chan error)
 
-	// configure hystrix
-	var prescriptionEndpoint endpoint.Endpoint
-	hystrix.ConfigureCommand("prescription Request", hystrix.CommandConfig{Timeout: 1000})
-	prescriptionEndpoint = Hystrix("Prescription Request", "Service currently unavailable", logger)(prescriptionEndpoint)
-	hystrixStreamHandler := hystrix.NewStreamHandler()
-	hystrixStreamHandler.Start()
-	go func() {
-		errs <- http.ListenAndServe(net.JoinHostPort("", "9000"), hystrixStreamHandler)
-	}()
-
-	go func() {
-		c := make(chan os.Signal)
-		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-		errs <- fmt.Errorf("%s", <-c)
-	}()
+	// // configure hystrix
+	// var prescriptionEndpoint endpoint.Endpoint
+	// hystrix.ConfigureCommand("prescription Request", hystrix.CommandConfig{Timeout: 1000})
+	// prescriptionEndpoint = Hystrix("Prescription Request", "Service currently unavailable", logger)(prescriptionEndpoint)
+	// hystrixStreamHandler := hystrix.NewStreamHandler()
+	// hystrixStreamHandler.Start()
+	// go func() {
+	// 	errs <- http.ListenAndServe(net.JoinHostPort("", "9000"), hystrixStreamHandler)
+	// }()
 
 	go func() {
 		logger.Log("transport", "HTTP", "addr", viper.GetInt("server.port"))
-		errs <- http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("server.port")), h)
+		errs <- http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("server.port")), nil)
+	}()
+	go func() {
+		c := make(chan os.Signal)
+		signal.Notify(c, syscall.SIGINT)
+		errs <- fmt.Errorf("%s", <-c)
 	}()
 
 	logger.Log("exit", <-errs)
+}
+
+func accessControl(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type")
+
+		if r.Method == "OPTIONS" {
+			return
+		}
+
+		h.ServeHTTP(w, r)
+	})
 }
