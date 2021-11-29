@@ -43,7 +43,6 @@ func NewproductServiceImpl(
 //  201: Created
 func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) interface{} {
 	logger := log.With(s.logger, "ProductService", "CreateProduct")
-
 	s.baseRepo.BeginTx()
 	//Set request to entity
 	product := entity.Product{
@@ -75,7 +74,7 @@ func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) int
 func (s *productServiceImpl) GetProduct(uid string) interface{} {
 	logger := log.With(s.logger, "ProductService", "GetProduct")
 
-	result, err := s.productRepo.FindByUid(uid)
+	result, err := s.productRepo.FindByUid(&uid)
 	if err != nil {
 		level.Error(logger).Log(err)
 		return response.SetResponse(message.CODE_ERR_DB, message.MSG_ERR_DB, "", nil, nil)
@@ -138,7 +137,7 @@ func (s *productServiceImpl) GetList(input request.ProductListRequest) interface
 func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProductRequest) interface{} {
 	logger := log.With(s.logger, "ProductService", "UpdateProduct")
 
-	_, err := s.productRepo.FindByUid(uid)
+	_, err := s.productRepo.FindByUid(&uid)
 	if err != nil {
 		level.Error(logger).Log(err)
 		return response.SetResponse(message.CODE_ERR_DB, message.MSG_INVALID_REQUEST, "", nil, nil)
@@ -171,7 +170,7 @@ func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProduct
 func (s *productServiceImpl) DeleteProduct(uid string) interface{} {
 	logger := log.With(s.logger, "ProductService", "DeleteProduct")
 
-	_, err := s.productRepo.FindByUid(uid)
+	_, err := s.productRepo.FindByUid(&uid)
 	if err != nil {
 		level.Error(logger).Log(err)
 		return response.SetResponse(message.CODE_ERR_DB, message.MSG_INVALID_REQUEST, "", nil, nil)

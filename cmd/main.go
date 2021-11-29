@@ -21,8 +21,7 @@ import (
 )
 
 func main() {
-
-	//2. Load configuration
+	//Load configuration
 	viper.SetConfigType("yaml")
 	var profile string = "dev"
 	if os.Getenv("env") != "" {
@@ -38,7 +37,7 @@ func main() {
 		panic(err)
 	}
 
-	//3. Logging init
+	// Logging init
 	logfile, err := os.OpenFile(viper.GetString("server.output-file-path"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
@@ -59,7 +58,7 @@ func main() {
 		logger = log.With(logger, "ts", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
 	}
 
-	//4. Init DB Connection
+	// Init DB Connection
 	db, err := database.NewConnectionDB(viper.GetString("database.driver"), viper.GetString("database.database"), viper.GetString("database.host"), viper.GetString("database.username"), viper.GetString("database.password"), viper.GetInt("database.port"))
 	if err != nil {
 		logger.Log("Err Db connection :", err.Error())
@@ -76,7 +75,7 @@ func main() {
 	// 	DB:       viper.GetInt("cache.redis.db"),          // use default DB
 	// })
 
-	// 7. Register cd Specify the information of an instance.
+	// Register cd Specify the information of an instance.
 	host, _ := os.Hostname()
 	asr := api.AgentServiceRegistration{
 		// Every service instance must have an unique ID.

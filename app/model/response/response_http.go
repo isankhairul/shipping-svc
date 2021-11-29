@@ -1,9 +1,14 @@
 package response
 
+// swagger:model SuccessResponse
 type responseHttp struct {
-	Meta       metaResponse        `json:"meta"`
+	// in: int64
+	Meta metaResponse `json:"meta"`
+	// Pagination of the paginate respons
+	// in: string
 	Pagination *PaginationResponse `json:"pagination,omitempty"`
-	Data       interface{}         `json:"data"`
+	// in: string
+	Data interface{} `json:"data"`
 }
 
 type metaResponse struct {

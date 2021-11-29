@@ -14,7 +14,7 @@ type productRepo struct {
 }
 
 type ProductRepository interface {
-	FindByUid(uid string) (*entity.Product, error)
+	FindByUid(uid *string) (*entity.Product, error)
 	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *response.PaginationResponse, error)
 	Create(product *entity.Product) (*entity.Product, error)
 	Update(uid string, input map[string]interface{}) error
@@ -25,9 +25,9 @@ func NewProductRepository(br BaseRepository) ProductRepository {
 	return &productRepo{br}
 }
 
-func (r *productRepo) FindByUid(uid string) (*entity.Product, error) {
+func (r *productRepo) FindByUid(uid *string) (*entity.Product, error) {
 	var product entity.Product
-	result, err := r.base.FindByUid(uid, product)
+	result, err := r.base.FindByUid(*uid, product)
 	return result.(*entity.Product), err
 }
 

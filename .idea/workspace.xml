@@ -5,25 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c22e23bd-4eac-4f24-8991-7d8037713fad" name="Changes" comment="go kit boilerplate example">
-      <change afterPath="$PROJECT_DIR$/pkg/common/utils/jwt.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/common/utils/jwt_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/swagger.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repository/base_repository_mock.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repository/product_repository_mock.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/service/product_service_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/model/response/response_http.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/model/response/response_http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repository/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/repository/product_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/service/product_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/service/product_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config-dev.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/endpoint/endpoint.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/endpoint/endpoint.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/entity/base.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/entity/base.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/entity/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/entity/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/entity/entities.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/entity/entities.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/entity/product.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/entity/product.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/repository/product_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/repository/product_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/service/middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/service/middleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/service/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/service/service_impl_v1.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/service/service_impl_v1.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/transport/http_transport.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/transport/http_transport.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,13 +54,49 @@
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
-  <component name="RunManager" selected="Go Test.TestJwt in gokit_example/pkg/common/utils">
-    <configuration name="go build gokit_example" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Test.TestCreateProduct in gokit_example/app/service">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="go-kit-boilerplate" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="gokit_example" />
+      <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestCreateProduct in gokit_example/app/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-kit-boilerplate" />
+      <working_directory value="$PROJECT_DIR$/app/service" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="gokit_example/app/service" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestCreateProduct\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestDeleteProduct in gokit_example/app/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-kit-boilerplate" />
+      <working_directory value="$PROJECT_DIR$/app/service" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="gokit_example/app/service" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestDeleteProduct\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestGetProduct in gokit_example/app/service" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-kit-boilerplate" />
+      <working_directory value="$PROJECT_DIR$/app/service" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="gokit_example/app/service" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestGetProduct\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestJwt in gokit_example/pkg/common/utils" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -97,6 +123,15 @@
       <pattern value="^\QTestUserDetail\E$" />
       <method v="2" />
     </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="go-kit-boilerplate" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="SwaggerCodegen">
       <option name="activeConfigurationType" value="FILE" />
       <option name="configurationPath" value="" />
@@ -115,9 +150,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestCreateProduct in gokit_example/app/service" />
+        <item itemvalue="Go Test.TestDeleteProduct in gokit_example/app/service" />
+        <item itemvalue="Go Test.TestGetProduct in gokit_example/app/service" />
         <item itemvalue="Go Test.TestJwt in gokit_example/pkg/common/utils" />
         <item itemvalue="Go Test.TestUserDetail in gokit_example/pkg/common/utils" />
-        <item itemvalue="Go Build.go build gokit_example" />
       </list>
     </recent_temporary>
   </component>
