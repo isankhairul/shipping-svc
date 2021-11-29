@@ -15,7 +15,7 @@ type ProductService interface {
 	CreateProduct(input request.SaveProductRequest) interface{}
 	GetList(input request.ProductListRequest) interface{}
 	GetProduct(uid string) interface{}
-	UpdateProduct(uid string, input request.SaveProductRequest) interface{}
+	UpdateProduct(uid *string, input *request.SaveProductRequest) interface{}
 	DeleteProduct(uid string) interface{}
 }
 
@@ -134,10 +134,10 @@ func (s *productServiceImpl) GetList(input request.ProductListRequest) interface
 // responses:
 //  401: ErrorResponse
 //  200: SuccessResponse
-func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProductRequest) interface{} {
+func (s *productServiceImpl) UpdateProduct(uid *string, input *request.SaveProductRequest) interface{} {
 	logger := log.With(s.logger, "ProductService", "UpdateProduct")
 
-	_, err := s.productRepo.FindByUid(&uid)
+	_, err := s.productRepo.FindByUid(uid)
 	if err != nil {
 		level.Error(logger).Log(err)
 		return response.SetResponse(message.CODE_ERR_DB, message.MSG_INVALID_REQUEST, "", nil, nil)

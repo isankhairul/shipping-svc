@@ -11,7 +11,11 @@ type ProductRepositoryMock struct {
 }
 
 func (repository *ProductRepositoryMock) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *response.PaginationResponse, error) {
-	return nil, nil, nil
+	arguments := repository.Mock.Called(limit, page, sort, filter)
+	paginate := arguments.Get(1).(response.PaginationResponse)
+	product := arguments.Get(0).([]entity.Product)
+
+	return product, &paginate, nil
 }
 
 func (repository *ProductRepositoryMock) FindByUid(uid *string) (*entity.Product, error) {
@@ -32,6 +36,6 @@ func (repository *ProductRepositoryMock) Delete(uid string) error {
 	return nil
 }
 
-func (repository *ProductRepositoryMock) Update(uid string, input map[string]interface{}) error {
+func (repository *ProductRepositoryMock) Update(uid *string, input map[string]interface{}) error {
 	return nil
 }

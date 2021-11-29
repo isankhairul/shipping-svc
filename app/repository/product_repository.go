@@ -17,7 +17,7 @@ type ProductRepository interface {
 	FindByUid(uid *string) (*entity.Product, error)
 	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *response.PaginationResponse, error)
 	Create(product *entity.Product) (*entity.Product, error)
-	Update(uid string, input map[string]interface{}) error
+	Update(uid *string, input map[string]interface{}) error
 	Delete(uid string) error
 }
 
@@ -74,8 +74,8 @@ func (r *productRepo) Create(product *entity.Product) (*entity.Product, error) {
 	return result.(*entity.Product), err
 }
 
-func (r *productRepo) Update(uid string, input map[string]interface{}) error {
-	return r.base.UpdateByUid(uid, input, &entity.Product{})
+func (r *productRepo) Update(uid *string, input map[string]interface{}) error {
+	return r.base.UpdateByUid(*uid, input, &entity.Product{})
 }
 
 func (r *productRepo) Delete(uid string) error {
