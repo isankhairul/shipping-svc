@@ -1,5 +1,4 @@
 
-
 # go-klikdokter-boilerplate
 
 This is boilerplate for klikdokter microservice, it's use go-kit as our base library
@@ -62,6 +61,7 @@ In this directory, we have separate directories, each of which represents the la
   - `/entity` This is where your database table models reside.
   - `/request` This is where your request models reside, you can also add a validation.
   - `/response` Sometimes we need to present data that has custom fields or not the same as the database table, this is where your view models reside. For our HTTP response please use function `SetResponse`
+- `/registry` This is where you registering your service, so we can use it.
 - `/repository` This layer where you put your query or interaction with the database.
 - `/service` This is where you put your business rules in action, It encapsulates and implements all of the use cases of the system,one `service` file can use many repositories.
 
