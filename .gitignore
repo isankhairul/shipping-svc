@@ -18,6 +18,7 @@
 *.csv
 *.xls  
 *.xlsx
+*.log
 
 # Test binary, build with `go test -c`
 *.test
