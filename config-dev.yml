@@ -1,6 +1,6 @@
 #logging settings
 log:
-  filename: ../../example-api.log
+  filename: ../../kd-microservice.log.log
   level: DEBUG
 
 #database settings
@@ -12,13 +12,12 @@ database:
   password: app_userPWD2019
 
 server:
-  port: 8080
+  port: 9001
   env: dev
   log-output: console
-  output-file-path: ./prescription.log
+  output-file-path: ./kd-microservice.log
   config-path: .
-  service-name: prescription
-
+  service-name: kd-microservice
 
 security:
   jwt:
@@ -32,11 +31,3 @@ cache:
     user: 
     password: 
     port: 6379
-
-client:
-  setting:
-    timeout: 10
-  clientA:
-    protocol: http
-    hostname: localhost
-    port: 8181

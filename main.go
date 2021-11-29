@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"gokit_example/app/api/transport"
-	"gokit_example/app/registry"
-	"gokit_example/helper/database"
+	"go-klikdokter/app/api/transport"
+	"go-klikdokter/app/registry"
+	"go-klikdokter/helper/consul"
+	"go-klikdokter/helper/database"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,8 +14,6 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/go-kit/kit/sd/consul"
-	"github.com/hashicorp/consul/api"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 	_ "github.com/spf13/viper/remote"
@@ -24,9 +23,10 @@ func main() {
 	//Load configuration
 	viper.SetConfigType("yaml")
 	var profile string = "dev"
-	if os.Getenv("env") != "" {
+	if os.Getenv("KD_ENV") != "" {
 		profile = "prd"
 	}
+
 	var configFileName []string
 	configFileName = append(configFileName, "config-")
 	configFileName = append(configFileName, profile)
@@ -67,47 +67,21 @@ func main() {
 
 	logger.Log("message", "Connection Db Success")
 
-	//6. Init Redis
-	// var resulRedis redis.Client
-	// rds := common.NewConnectionRedis(&redis.Options{
-	// 	Addr:     fmt.Sprintf("%s:%d", viper.GetString("cache.redis.hostname"), viper.GetInt("cache.redis.port")),
-	// 	Password: viper.GetString("cache.redis.password"), // no password set
-	// 	DB:       viper.GetInt("cache.redis.db"),          // use default DB
-	// })
-
-	// Register cd Specify the information of an instance.
-	host, _ := os.Hostname()
-	asr := api.AgentServiceRegistration{
-		// Every service instance must have an unique ID.
-		ID:   fmt.Sprintf("%v", host),
-		Name: viper.GetString("server.service-name"),
-		// These two values are the location of an instance.
-		Address: host,
-		Port:    viper.GetInt("server.port"),
-	}
-	consulConfig := api.DefaultConfig()
-	consulClient, err := api.NewClient(consulConfig)
-	if err != nil {
-		logger.Log("err", err)
-		os.Exit(1)
-	}
-	sdClient := consul.NewClient(consulClient)
-	registar := consul.NewRegistrar(sdClient, &asr, logger)
+	// Consul initialization
+	registar := consul.ConsulRegisterService(viper.GetString("server.service-name"), viper.GetInt("server.port"), logger)
 	registar.Register()
-	// According to the official doc of Go kit,
-	// it's important to call registar.Deregister() before the program exits.
+
 	defer registar.Deregister()
 
 	// service registry
-	prodSvc := registry.NewProductService(db, logger)
+	prodSvc := registry.RegisterProductService(db, logger)
 
 	// transport init
 	swagHttp := transport.SwaggerHttpHandler(log.With(logger, "SwaggerTransportLayer", "HTTP"))
 	prodHttp := transport.ProductHttpHandler(prodSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
 
-	//Path
+	//Routing path
 	mux := http.NewServeMux()
-
 	mux.Handle("/swagger/v1/", swagHttp)
 	mux.Handle("/boilerplate/v1/", prodHttp)
 	http.Handle("/", accessControl(mux))

@@ -3,10 +3,10 @@ package transport
 import (
 	"context"
 	"encoding/json"
-	"gokit_example/app/api/endpoint"
-	"gokit_example/app/model/request"
-	"gokit_example/app/service"
-	"gokit_example/helper/encoder"
+	"go-klikdokter/app/api/endpoint"
+	"go-klikdokter/app/model/request"
+	"go-klikdokter/app/service"
+	"go-klikdokter/helper/encoder"
 	"net/http"
 
 	"github.com/go-kit/kit/log"

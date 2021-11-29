@@ -2,8 +2,8 @@ package repository
 
 import (
 	"errors"
-	"gokit_example/app/model/entity"
-	"gokit_example/app/model/response"
+	"go-klikdokter/app/model/base"
+	"go-klikdokter/app/model/entity"
 	"strings"
 
 	"gorm.io/gorm"
@@ -15,7 +15,7 @@ type productRepo struct {
 
 type ProductRepository interface {
 	FindByUid(uid *string) (*entity.Product, error)
-	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *response.PaginationResponse, error)
+	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *base.Pagination, error)
 	Create(product *entity.Product) (*entity.Product, error)
 	Update(uid string, input map[string]interface{}) error
 	Delete(uid string) error
@@ -31,9 +31,9 @@ func (r *productRepo) FindByUid(uid *string) (*entity.Product, error) {
 	return result.(*entity.Product), err
 }
 
-func (r *productRepo) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *response.PaginationResponse, error) {
+func (r *productRepo) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *base.Pagination, error) {
 	var products []entity.Product
-	var pagination response.PaginationResponse
+	var pagination base.Pagination
 
 	query := r.base.GetDB()
 

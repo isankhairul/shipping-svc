@@ -1,7 +1,7 @@
 package request
 
 import (
-	"gokit_example/helper/message"
+	"go-klikdokter/helper/message"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
 )
@@ -27,10 +27,6 @@ type ProductListRequest struct {
 	// Sku of the product
 	// in: string
 	Sku string `json:"sku" binding:"omitempty"`
-
-	// Uom of the product
-	// in: string
-	Uom string `json:"uom" binding:"omitempty"`
 }
 
 // swagger:model SaveProductRequest

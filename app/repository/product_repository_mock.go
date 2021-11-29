@@ -1,16 +1,17 @@
 package repository
 
 import (
+	"go-klikdokter/app/model/base"
+	"go-klikdokter/app/model/entity"
+
 	"github.com/stretchr/testify/mock"
-	"gokit_example/app/model/entity"
-	"gokit_example/app/model/response"
 )
 
 type ProductRepositoryMock struct {
 	Mock mock.Mock
 }
 
-func (repository *ProductRepositoryMock) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *response.PaginationResponse, error) {
+func (repository *ProductRepositoryMock) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *base.Pagination, error) {
 	return nil, nil, nil
 }
 

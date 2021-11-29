@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"gokit_example/app/model/base"
+	"go-klikdokter/app/model/base"
 )
 
 // swagger:model product

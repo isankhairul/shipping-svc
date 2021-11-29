@@ -29,7 +29,6 @@ go-klikdokter-boilerplate
 |   +-- registry
 |   +-- repository
 |   +-- service
-+-- cmd  
 +-- docker
 +-- helper 
 +-- pkg
@@ -64,19 +63,14 @@ In this directory, we have separate directories, each of which represents the la
 - `/registry` This is where you registering your service, so we can use it.
 - `/repository` This layer where you put your query or interaction with the database.
 - `/service` This is where you put your business rules in action, It encapsulates and implements all of the use cases of the system,one `service` file can use many repositories.
-
-### `/cmd`
-
-This is where your main file is reside.
-
-
+  
 ### `/docker`
 
 This is where your docker files & script that use on docker reside.
 
 ### `/helper`
 
-If you need to create some function that can be used on the entire project, you can put your code here. 
+If you need to create some function that can be used on the entire project, you can put your code here.
 This helper function is bonded to your application.
 
 ### `/pkg`

@@ -1,6 +1,6 @@
 #logging settings
 log:
-  filename: /Users/sw/go/log/gitlab.smartfren.com/example-api/example-api.log
+  filename: /Users/sw/go/log/kd-microservice.log.log
   level: DEBUG
 
 #database settings

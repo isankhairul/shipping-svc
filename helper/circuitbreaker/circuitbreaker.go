@@ -1,7 +1,8 @@
-package main
+package circuitbreaker
 
 import (
 	"context"
+
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/log"

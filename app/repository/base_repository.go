@@ -3,7 +3,7 @@ package repository
 import (
 	"math"
 
-	"gokit_example/app/model/response"
+	"go-klikdokter/app/model/base"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ type BaseRepository interface {
 	BeginTx()
 	CommitTx()
 	RollbackTx()
-	Paginate(value interface{}, pagination *response.PaginationResponse, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
+	Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
 	FindByUid(uid string, model interface{}) (interface{}, error)
 	FindById(id string, entity interface{}) (interface{}, error)
 	Create(input interface{}) (interface{}, error)
@@ -47,7 +47,7 @@ func (br *baseRepository) RollbackTx() {
 	br.GetDB().Rollback()
 }
 
-func (br *baseRepository) Paginate(value interface{}, pagination *response.PaginationResponse, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB {
+func (br *baseRepository) Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB {
 	var totalRecords int64
 	db.Model(value).Count(&totalRecords)
 

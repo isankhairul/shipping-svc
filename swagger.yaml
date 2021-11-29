@@ -11,7 +11,7 @@ definitions:
         type: string
         x-go-name: UID
     type: object
-    x-go-package: gokit_example/pkg/entity
+    x-go-package: go-klikdokter/pkg/entity
   ErrorResponse:
     properties:
       code:
@@ -35,7 +35,7 @@ definitions:
         x-go-name: Message
     type: object
     x-go-name: ErrorResponseHttp
-    x-go-package: gokit_example/pkg/entity
+    x-go-package: go-klikdokter/pkg/entity
   SuccessResponse:
     properties:
       code:
@@ -59,7 +59,7 @@ definitions:
         x-go-name: Message
     type: object
     x-go-name: ResponseHttp
-    x-go-package: gokit_example/pkg/entity
+    x-go-package: go-klikdokter/pkg/entity
   product:
     properties:
       is_deleted:
@@ -98,136 +98,136 @@ definitions:
         x-go-name: Weight
     type: object
     x-go-name: Product
-    x-go-package: gokit_example/pkg/entity
+    x-go-package: go-klikdokter/pkg/entity
 paths:
   /product/:
     post:
       description: Create product
       operationId: product
       parameters:
-      - description: 'name: Name'
-        in: body
-        name: name
-        required: true
-        schema:
-          type: string
-        x-go-name: Name
-      - description: 'name: Sku'
-        in: body
-        name: sku
-        required: true
-        schema:
-          type: string
-        x-go-name: Sku
-      - description: 'name: Uom'
-        in: body
-        name: uom
-        required: true
-        schema:
-          type: string
-        x-go-name: Uom
-      - description: 'name: Weight'
-        in: body
-        name: weight
-        required: true
-        schema:
-          format: int32
-          type: integer
-        x-go-name: Weight
+        - description: "name: Name"
+          in: body
+          name: name
+          required: true
+          schema:
+            type: string
+          x-go-name: Name
+        - description: "name: Sku"
+          in: body
+          name: sku
+          required: true
+          schema:
+            type: string
+          x-go-name: Sku
+        - description: "name: Uom"
+          in: body
+          name: uom
+          required: true
+          schema:
+            type: string
+          x-go-name: Uom
+        - description: "name: Weight"
+          in: body
+          name: weight
+          required: true
+          schema:
+            format: int32
+            type: integer
+          x-go-name: Weight
       responses:
         "200":
           description: SuccessResponse
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: "#/definitions/SuccessResponse"
         "401":
           description: ErrorResponse
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       security:
-      - apiKey:
-        - '[]'
+        - apiKey:
+            - "[]"
       tags:
-      - prescription
+        - prescription
   /product/{id}:
     get:
       description: Get product
       operationId: getProduct
       parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
+        - description: "name: id"
+          in: path
+          name: id
+          required: true
+          type: string
+          x-go-name: Id
       responses:
         "200":
           description: SuccessResponse
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: "#/definitions/SuccessResponse"
         "401":
           description: ErrorResponse
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       security:
-      - apiKey:
-        - '[]'
+        - apiKey:
+            - "[]"
       tags:
-      - prescription
+        - prescription
     put:
       description: Get product
       operationId: update_product
       parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
-      - description: |-
-          Name of the Product
-          in: string
-          name: Name
-        in: formData
-        name: name
-        required: true
-        type: string
-        x-go-name: Name
-      - description: 'name: Sku'
-        in: body
-        name: sku
-        required: true
-        schema:
+        - description: "name: id"
+          in: path
+          name: id
+          required: true
           type: string
-        x-go-name: Sku
-      - description: 'name: Uom'
-        in: body
-        name: uom
-        required: true
-        schema:
+          x-go-name: Id
+        - description: |-
+            Name of the Product
+            in: string
+            name: Name
+          in: formData
+          name: name
+          required: true
           type: string
-        x-go-name: Uom
-      - description: 'name: Weight'
-        in: body
-        name: weight
-        required: true
-        schema:
-          format: int32
-          type: integer
-        x-go-name: Weight
+          x-go-name: Name
+        - description: "name: Sku"
+          in: body
+          name: sku
+          required: true
+          schema:
+            type: string
+          x-go-name: Sku
+        - description: "name: Uom"
+          in: body
+          name: uom
+          required: true
+          schema:
+            type: string
+          x-go-name: Uom
+        - description: "name: Weight"
+          in: body
+          name: weight
+          required: true
+          schema:
+            format: int32
+            type: integer
+          x-go-name: Weight
       responses:
         "200":
           description: SuccessResponse
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: "#/definitions/SuccessResponse"
         "401":
           description: ErrorResponse
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       security:
-      - apiKey:
-        - '[]'
+        - apiKey:
+            - "[]"
       tags:
-      - prescription
+        - prescription
   /products/:
     get:
       description: Get product lists
@@ -236,14 +236,14 @@ paths:
         "200":
           description: SuccessResponse
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: "#/definitions/SuccessResponse"
         "401":
           description: ErrorResponse
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       security:
-      - apiKey:
-        - '[]'
+        - apiKey:
+            - "[]"
       tags:
-      - prescription
+        - prescription
 swagger: "2.0"
