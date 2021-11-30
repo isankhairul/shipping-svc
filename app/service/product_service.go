@@ -33,6 +33,14 @@ func NewProductService(
 	return &productServiceImpl{lg, br, pr}
 }
 
+// swagger:route POST /product/  product
+// Create product
+
+// security:
+// - apiKey: []
+// responses:
+//  401: ErrorResponse
+//  201: Created
 func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) (*entity.Product, int, string) {
 	logger := log.With(s.logger, "ProductService", "CreateProduct")
 	s.baseRepo.BeginTx()
