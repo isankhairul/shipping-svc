@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go-klikdokter/app/api/transport"
+	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/registry"
 	"go-klikdokter/helper/consul"
 	"go-klikdokter/helper/database"
@@ -59,11 +60,12 @@ func main() {
 	}
 
 	// Init DB Connection
-	db, err := database.NewConnectionDB(viper.GetString("database.driver"), viper.GetString("database.database"), viper.GetString("database.host"), viper.GetString("database.username"), viper.GetString("database.password"), viper.GetInt("database.port"))
+	db, err := database.NewConnectionDB(viper.GetString("database.driver"), viper.GetString("database.dbname"), viper.GetString("database.host"), viper.GetString("database.username"), viper.GetString("database.password"), viper.GetInt("database.port"))
 	if err != nil {
 		logger.Log("Err Db connection :", err.Error())
 		panic(err.Error())
 	}
+	db.AutoMigrate(&entity.Product{})
 
 	logger.Log("message", "Connection Db Success")
 
@@ -82,8 +84,8 @@ func main() {
 	//Routing path
 	mux := http.NewServeMux()
 	mux.Handle("/swagger/", swagHttp)
-	mux.Handle("/product/", prodHttp)
-	http.Handle("/", accessControl(mux))
+	mux.Handle("/kd/v1/", prodHttp)
+	//http.Handle("/", accessControl(mux))
 
 	errs := make(chan error, 2)
 
@@ -99,7 +101,7 @@ func main() {
 
 	go func() {
 		logger.Log("transport", "HTTP", "addr", viper.GetInt("server.port"))
-		errs <- http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("server.port")), nil)
+		errs <- http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("server.port")), mux)
 	}()
 	go func() {
 		c := make(chan os.Signal)

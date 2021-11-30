@@ -26,7 +26,7 @@ var productRepository = &repository.ProductRepositoryMock{Mock: mock.Mock{}}
 var service = NewProductService(logger, baseRepository, productRepository)
 
 func init() {
-	db, err = database.NewConnectionDB("sqlite", "", "", "", "", 5432)
+	db, err = database.NewConnectionDB("sqlite", "test.db", "", "", "", 5432)
 	if err != nil {
 		fmt.Println(err)
 	}

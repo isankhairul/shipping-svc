@@ -27,8 +27,14 @@ func NewProductRepository(br BaseRepository) ProductRepository {
 
 func (r *productRepo) FindByUid(uid *string) (*entity.Product, error) {
 	var product entity.Product
-	result, err := r.base.FindByUid(*uid, product)
-	return result.(*entity.Product), err
+	err := r.base.GetDB().
+		Where("uid=?", uid).
+		First(&product).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &product, nil
 }
 
 func (r *productRepo) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *base.Pagination, error) {
@@ -70,15 +76,34 @@ func (r *productRepo) FindByParams(limit int, page int, sort string, filter map[
 }
 
 func (r *productRepo) Create(product *entity.Product) (*entity.Product, error) {
-	result, err := r.base.Create(&product)
-	return result.(*entity.Product), err
+	err := r.base.GetDB().
+		Create(product).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return product, nil
 }
 
 func (r *productRepo) Update(uid string, input map[string]interface{}) error {
-	return r.base.UpdateByUid(uid, input, &entity.Product{})
+	err := r.base.GetDB().Model(&entity.Product{}).
+		Where("uid=?", uid).
+		Updates(input).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *productRepo) Delete(uid string) error {
 	var product entity.Product
-	return r.base.DeleteByUid(uid, product)
+	err := r.base.GetDB().
+		Where("uid = ?", uid).
+		Delete(&product).
+		Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
