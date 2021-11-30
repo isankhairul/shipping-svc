@@ -24,7 +24,7 @@ type BaseIDModel struct {
 func (base *BaseIDModel) BeforeCreate(tx *gorm.DB) error {
 	uid, _ := gonanoid.New()
 	tx.Statement.SetColumn("UID", uid)
-	tx.Statement.SetColumn("IsDeleted", true)
+	tx.Statement.SetColumn("IsDeleted", false)
 	tx.Statement.SetColumn("CreatedAt", time.Now().UTC().Format("2006-01-02 15:04:05"))
 	tx.Statement.SetColumn("UpdatedAt", time.Now().UTC().Format("2006-01-02 15:04:05"))
 	return nil
