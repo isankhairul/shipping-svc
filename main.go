@@ -85,7 +85,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/swagger/", swagHttp)
 	mux.Handle("/kd/v1/", prodHttp)
-	//http.Handle("/", accessControl(mux))
+	http.Handle("/", accessControl(mux))
 
 	errs := make(chan error, 2)
 
@@ -101,7 +101,7 @@ func main() {
 
 	go func() {
 		logger.Log("transport", "HTTP", "addr", viper.GetInt("server.port"))
-		errs <- http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("server.port")), mux)
+		errs <- http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("server.port")), nil)
 	}()
 	go func() {
 		c := make(chan os.Signal)
