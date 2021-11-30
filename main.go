@@ -70,7 +70,6 @@ func main() {
 	// Consul initialization
 	registar := consul.ConsulRegisterService(viper.GetString("server.service-name"), viper.GetInt("server.port"), logger)
 	registar.Register()
-
 	defer registar.Deregister()
 
 	// service registry
@@ -82,11 +81,11 @@ func main() {
 
 	//Routing path
 	mux := http.NewServeMux()
-	mux.Handle("/swagger/v1/", swagHttp)
-	mux.Handle("/boilerplate/v1/", prodHttp)
+	mux.Handle("/swagger/", swagHttp)
+	mux.Handle("/product/", prodHttp)
 	http.Handle("/", accessControl(mux))
 
-	errs := make(chan error)
+	errs := make(chan error, 2)
 
 	// // configure hystrix
 	// var prescriptionEndpoint endpoint.Endpoint

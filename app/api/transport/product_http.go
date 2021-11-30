@@ -30,7 +30,7 @@ func ProductHttpHandler(s service.ProductService, logger log.Logger) http.Handle
 		options...,
 	))
 
-	pr.Methods("GET").Path("/products").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path("/product/list").Handler(httptransport.NewServer(
 		ep.List,
 		decodeListProduct,
 		encoder.EncodeResponseHTTP,

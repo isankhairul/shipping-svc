@@ -12,7 +12,7 @@ database:
   password: app_userPWD2019
 
 server:
-  port: 9001
+  port: 5600
   env: dev
   log-output: console
   output-file-path: ./kd-microservice.log
