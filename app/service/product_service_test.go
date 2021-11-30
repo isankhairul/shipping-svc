@@ -1,11 +1,9 @@
 package service
 
 import (
-	"fmt"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/repository"
-	"go-klikdokter/helper/database"
 	"go-klikdokter/helper/message"
 	"os"
 	"testing"
@@ -14,11 +12,11 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"gorm.io/gorm"
 )
 
 var logger log.Logger
-var db *gorm.DB
+
+//var db *gorm.DB
 var err error
 
 var baseRepository = &repository.BaseRepositoryMock{Mock: mock.Mock{}}
@@ -26,17 +24,13 @@ var productRepository = &repository.ProductRepositoryMock{Mock: mock.Mock{}}
 var service = NewProductService(logger, baseRepository, productRepository)
 
 func init() {
-	db, err = database.NewConnectionDB("sqlite", "test.db", "", "", "", 5432)
-	if err != nil {
-		fmt.Println(err)
-	}
 	{
 		logger = log.NewLogfmtLogger(os.Stderr)
 		logger = level.NewFilter(logger, level.AllowAll())
 		logger = level.NewInjector(logger, level.InfoValue())
 		logger = log.With(logger, "ts", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
 	}
-	db.AutoMigrate(&entity.Product{})
+	//db.AutoMigrate(&entity.Product{})
 }
 
 func TestCreateProduct(t *testing.T) {

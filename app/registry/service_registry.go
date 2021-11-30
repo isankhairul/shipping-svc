@@ -15,3 +15,11 @@ func RegisterProductService(db *gorm.DB, logger log.Logger) service.ProductServi
 		rp.NewProductRepository(rp.NewBaseRepository(db)),
 	)
 }
+
+func RegisterDoctorService(db *gorm.DB, logger log.Logger) service.DoctorService {
+	return service.NewDoctorService(
+		logger,
+		rp.NewBaseRepository(db),
+		rp.NewDoctorRepository(rp.NewBaseRepository(db)),
+	)
+}

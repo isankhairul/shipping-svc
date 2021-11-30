@@ -66,6 +66,7 @@ func main() {
 		panic(err.Error())
 	}
 	db.AutoMigrate(&entity.Product{})
+	db.AutoMigrate(&entity.Doctor{})
 
 	logger.Log("message", "Connection Db Success")
 
@@ -76,15 +77,18 @@ func main() {
 
 	// service registry
 	prodSvc := registry.RegisterProductService(db, logger)
+	doctorSvc := registry.RegisterDoctorService(db, logger)
 
 	// transport init
 	swagHttp := transport.SwaggerHttpHandler(log.With(logger, "SwaggerTransportLayer", "HTTP"))
 	prodHttp := transport.ProductHttpHandler(prodSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
+	doctorHttp := transport.DoctorHttpHandler(doctorSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
 
 	//Routing path
 	mux := http.NewServeMux()
 	mux.Handle("/swagger/", swagHttp)
 	mux.Handle("/kd/v1/", prodHttp)
+	mux.Handle("/kd/v2/", doctorHttp)
 	http.Handle("/", accessControl(mux))
 
 	errs := make(chan error, 2)
