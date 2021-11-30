@@ -109,6 +109,7 @@ func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity
 	filter := map[string]interface{}{
 		"name": input.Name,
 		"sku":  input.Sku,
+		"uom":  input.UOM,
 	}
 
 	result, pagination, err := s.productRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)

@@ -26,7 +26,11 @@ type ProductListRequest struct {
 
 	// Sku of the product
 	// in: string
+
 	Sku string `json:"sku" binding:"omitempty"`
+	// Sku of the product
+	// in: string
+	UOM string `json:"uom" binding:"omitempty"`
 }
 
 // swagger:model SaveProductRequest
