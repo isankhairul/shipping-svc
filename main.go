@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"go-klikdokter/app/api/transport"
-	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/registry"
 	"go-klikdokter/helper/consul"
 	"go-klikdokter/helper/database"
@@ -65,8 +64,6 @@ func main() {
 		logger.Log("Err Db connection :", err.Error())
 		panic(err.Error())
 	}
-	db.AutoMigrate(&entity.Product{})
-	db.AutoMigrate(&entity.Doctor{})
 
 	logger.Log("message", "Connection Db Success")
 
@@ -86,10 +83,16 @@ func main() {
 
 	//Routing path
 	mux := http.NewServeMux()
-	mux.Handle("/swagger/", swagHttp)
+	mux.Handle("/", swagHttp)
+	//mux.Handle("/", handleSw())
 	mux.Handle("/kd/v1/", prodHttp)
 	mux.Handle("/kd/v2/", doctorHttp)
 	http.Handle("/", accessControl(mux))
+
+	//mux.Handle("/test.txt", http.FileServer(http.Dir("./")))
+	//opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml"}
+	//sh := middleware.SwaggerUI(opts, nil)
+	//mux.Handle("/docs", sh)
 
 	errs := make(chan error, 2)
 
@@ -115,6 +118,16 @@ func main() {
 
 	logger.Log("exit", <-errs)
 }
+
+//func handleSw() http.Handler {
+//	pr := mux.NewRouter()
+//	pr.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
+//	//opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml"}
+//	//sh := middleware.SwaggerUI(opts, nil)
+//	//pr.Handle("/docs", sh)
+//
+//	return pr
+//}
 
 func accessControl(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

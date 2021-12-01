@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"go-klikdokter/app/model/entity"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -45,6 +46,9 @@ func NewConnectionDB(driverDB string, database string, host string, user string,
 	if err != nil {
 		return nil, err
 	}
+
+	db.AutoMigrate(&entity.Product{})
+	db.AutoMigrate(&entity.Doctor{})
 
 	sqlDB, err := db.DB()
 	if err != nil {
