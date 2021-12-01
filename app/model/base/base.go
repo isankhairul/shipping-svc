@@ -8,7 +8,7 @@ import (
 )
 
 type BaseIDModel struct {
-	// Id of the product
+	// Id of as primary key
 	// in: int64
 	ID uint64 `gorm:"primary_key:auto_increment" json:"-"`
 
@@ -17,7 +17,9 @@ type BaseIDModel struct {
 	UID string `gorm:"uniqueIndex" json:"uid"`
 
 	IsDeleted bool   `json:"is_deleted"`
+	CreatedBy string `json:"-"`
 	CreatedAt string `json:"-"`
+	UpdatedBy string `json:"-"`
 	UpdatedAt string `json:"-"`
 }
 

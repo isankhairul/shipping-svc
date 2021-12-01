@@ -9,11 +9,16 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 func NewConnectionDB(driverDB string, database string, host string, user string, password string, port int) (*gorm.DB, error) {
 	var dialect gorm.Dialector
-	gormConfig := &gorm.Config{}
+	gormConfig := &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+	}
 
 	if driverDB == "postgres" {
 		dsn := fmt.Sprintf(

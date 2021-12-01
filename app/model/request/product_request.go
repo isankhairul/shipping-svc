@@ -10,27 +10,27 @@ import (
 type ProductListRequest struct {
 	// Maximun records per page
 	// in: int32
-	Limit int `json:"limit" binding:"omitempty,numeric,min=1,max=100"`
+	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100"`
 
 	// Page No
 	// in: int32
-	Page int `json:"page" binding:"omitempty,numeric,min=1"`
+	Page int `schema:"page" binding:"omitempty,numeric,min=1"`
 
 	// Sort fields, example: name asc, uom desc
 	// in: string
-	Sort string `json:"sort" binding:"omitempty"`
+	Sort string `schema:"sort" binding:"omitempty"`
 
 	// Name keyword of the product
 	// in: string
-	Name string `json:"name" binding:"omitempty"`
+	Name string `schema:"name" binding:"omitempty"`
 
 	// Sku of the product
 	// in: string
 
-	Sku string `json:"sku" binding:"omitempty"`
+	Sku string `schema:"sku" binding:"omitempty"`
 	// Sku of the product
 	// in: string
-	UOM string `json:"uom" binding:"omitempty"`
+	UOM string `schema:"uom" binding:"omitempty"`
 }
 
 // swagger:model SaveProductRequest

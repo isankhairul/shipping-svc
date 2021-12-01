@@ -19,6 +19,7 @@ go-klikdokter-boilerplate
 +-- app 
 |   +-- api 
 |   |   +-- endpoint
+|   |   +-- initialization
 |   |   +-- transport
 |   +-- model
 |   |   +-- base
@@ -49,6 +50,7 @@ In this directory, we must have 2 required directory as of go-kit architecture
 
 - `/endpoint` An endpoint is like an action/handler on a controller; it’s where safety and antifragile logic lives. If you implement two transports (HTTP and gRPC), you might have two methods of sending requests to the same endpoint.
 - `/transport` The transport layer is bound to concrete transports like HTTP or gRPC. If you want to have HTTP and gRPC protocol for the same endpoint, you don't need to create new endpoint, but you only have create a new transport protocol.
+- `/initialization` Use this file for your initialization for transport, service, routing and database. Please don't make changes on main.go file
 
 ### `/app`
 

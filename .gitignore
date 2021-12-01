@@ -19,6 +19,9 @@
 *.xls  
 *.xlsx
 *.log
+*.db
+local.db
+test.db
 
 # Test binary, build with `go test -c`
 *.test

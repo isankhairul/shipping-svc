@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"go-klikdokter/app/api/endpoint"
+	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
-	"go-klikdokter/helper/encoder"
 	"net/http"
 
 	"github.com/go-kit/kit/log"
@@ -20,17 +20,17 @@ func DoctorHttpHandler(s service.DoctorService, logger log.Logger) http.Handler 
 	ep := endpoint.MakeDoctorEndpoints(s)
 	options := []httptransport.ServerOption{
 		httptransport.ServerErrorLogger(logger),
-		httptransport.ServerErrorEncoder(encoder.EncodeError),
+		//httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("POST").Path("/kd/v2/doctor").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path("/doctor").Handler(httptransport.NewServer(
 		ep.SaveDoctor,
 		decodeSaveDoctor,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/kd/v2/doctor/{id}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path("/doctor/{id}").Handler(httptransport.NewServer(
 		ep.Show,
 		decodeShowProduct,
 		encoder.EncodeResponseHTTP,

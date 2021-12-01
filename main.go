@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"go-klikdokter/app/api/transport"
-	"go-klikdokter/app/registry"
+	"go-klikdokter/app/api/initialization"
 	"go-klikdokter/helper/consul"
-	"go-klikdokter/helper/database"
 	"net/http"
 	"os"
 	"os/signal"
@@ -59,12 +57,11 @@ func main() {
 	}
 
 	// Init DB Connection
-	db, err := database.NewConnectionDB(viper.GetString("database.driver"), viper.GetString("database.dbname"), viper.GetString("database.host"), viper.GetString("database.username"), viper.GetString("database.password"), viper.GetInt("database.port"))
+	db, err := initialization.DbInit()
 	if err != nil {
 		logger.Log("Err Db connection :", err.Error())
 		panic(err.Error())
 	}
-
 	logger.Log("message", "Connection Db Success")
 
 	// Consul initialization
@@ -72,27 +69,9 @@ func main() {
 	registar.Register()
 	defer registar.Deregister()
 
-	// service registry
-	prodSvc := registry.RegisterProductService(db, logger)
-	doctorSvc := registry.RegisterDoctorService(db, logger)
-
-	// transport init
-	swagHttp := transport.SwaggerHttpHandler(log.With(logger, "SwaggerTransportLayer", "HTTP"))
-	prodHttp := transport.ProductHttpHandler(prodSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
-	doctorHttp := transport.DoctorHttpHandler(doctorSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
-
-	//Routing path
-	mux := http.NewServeMux()
-	mux.Handle("/", swagHttp)
-	//mux.Handle("/", handleSw())
-	mux.Handle("/kd/v1/", prodHttp)
-	mux.Handle("/kd/v2/", doctorHttp)
+	// Routing initialization
+	mux := initialization.InitRouting(db, logger)
 	http.Handle("/", accessControl(mux))
-
-	//mux.Handle("/test.txt", http.FileServer(http.Dir("./")))
-	//opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml"}
-	//sh := middleware.SwaggerUI(opts, nil)
-	//mux.Handle("/docs", sh)
 
 	errs := make(chan error, 2)
 

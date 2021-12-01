@@ -1,0 +1,113 @@
+{
+	"info": {
+		"_postman_id": "75d35770-b2c0-42b8-ad70-27aee9d6eaf3",
+		"name": "Boilerplate",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Chitato\",\r\n    \"sku\": \"CH002\",\r\n    \"uom\": \"PCS\",\r\n    \"weight\": 70\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5600/product/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5600",
+					"path": [
+						"product",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Chiki Balls\",\r\n    \"sku\": \"CH001\",\r\n    \"uom\": \"PCS\",\r\n    \"weight\": 70\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5600/product/Y_7EhKhaM5Upn-GADUQNY",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5600",
+					"path": [
+						"product",
+						"Y_7EhKhaM5Upn-GADUQNY"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get List",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Chiki Balls\",\r\n    \"sku\": \"CH001\",\r\n    \"uom\": \"PCS\",\r\n    \"weight\": 70\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5600/product/list?limit=10&page=1&sort=name asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5600",
+					"path": [
+						"product",
+						"list"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "sort",
+							"value": "name asc"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
