@@ -33,6 +33,6 @@ func (repository *ProductRepositoryMock) Delete(uid string) error {
 	return nil
 }
 
-func (repository *ProductRepositoryMock) Update(uid *string, input map[string]interface{}) error {
+func (repository *ProductRepositoryMock) Update(uid string, input map[string]interface{}) error {
 	return nil
 }

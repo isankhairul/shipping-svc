@@ -17,7 +17,7 @@ type ProductRepository interface {
 	FindByUid(uid *string) (*entity.Product, error)
 	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Product, *base.Pagination, error)
 	Create(product *entity.Product) (*entity.Product, error)
-	Update(uid *string, input map[string]interface{}) error
+	Update(uid string, input map[string]interface{}) error
 	Delete(uid string) error
 }
 
