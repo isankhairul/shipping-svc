@@ -42,16 +42,10 @@
 			},
 			"request": {
 				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Chiki Balls\",\r\n    \"sku\": \"CH001\",\r\n    \"uom\": \"PCS\",\r\n    \"weight\": 70\r\n}"
+					"raw": ""
 				},
 				"url": {
 					"raw": "http://localhost:5600/product/Y_7EhKhaM5Upn-GADUQNY",
