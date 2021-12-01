@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/repository"
@@ -89,4 +90,90 @@ func TestDeleteProduct(t *testing.T) {
 
 	assert.Equal(t, message.CODE_SUCCESS, code, "Code must be 1000")
 	assert.Equal(t, message.MSG_SUCCESS, msg, "Message must be Success")
+}
+
+func TestUpdateProduct(t *testing.T) {
+	req := request.SaveProductRequest{
+		Uom:    "Pcs",
+		Sku:    "SKU_x",
+		Name:   "Prenagen",
+		Weight: 110,
+	}
+
+	product := entity.Product{
+		Uom:    "Pcs",
+		Sku:    "SKU_x",
+		Name:   "Prenagen",
+		Weight: 110,
+	}
+
+	uid := "123"
+	productRepository.Mock.On("FindByUid", &uid).Return(product)
+	result := service.UpdateProduct(&uid, &req)
+
+	type responseHttp struct {
+		Meta struct {
+			Code      int    `json:"code"`
+			Message   string `json:"message"`
+			RequestId string `json:"request_id"`
+		} `json:"meta"`
+		Pagination *interface{}   `json:"pagination,omitempty"`
+		Data       entity.Product `json:"data"`
+	}
+
+	var data responseHttp
+	jsonData, _ := json.Marshal(result)
+	_ = json.Unmarshal(jsonData, &data)
+	assert.Equal(t, 1000, data.Meta.Code, "Code must be 1000")
+	assert.Equal(t, "Success", data.Meta.Message, "Message must be Success")
+}
+
+func TestGetListProduct(t *testing.T) {
+	req := request.ProductListRequest{}
+
+	var productList = []entity.Product{
+		{
+			Uom:    "Pcs",
+			Sku:    "SKU_x",
+			Name:   "Prenagen",
+			Weight: 110,
+		},
+		{
+			Uom:    "Box",
+			Sku:    "SKU_AZX",
+			Name:   "HydroCoco",
+			Weight: 210,
+		},
+	}
+
+	resPaginate := response.PaginationResponse{
+		Limit:        1,
+		Page:         1,
+		TotalPage:    10,
+		TotalRecords: 100,
+	}
+
+	filter := map[string]interface{}{
+		"name": "",
+		"sku":  "",
+		"uom":  "",
+	}
+	productRepository.Mock.On("FindByParams", 10, 1, "", filter).Return(productList, resPaginate, nil)
+	result := service.GetList(req)
+
+	type responseHttp struct {
+		Meta struct {
+			Code      int    `json:"code"`
+			Message   string `json:"message"`
+			RequestId string `json:"request_id"`
+		} `json:"meta"`
+		Pagination *interface{}     `json:"pagination,omitempty"`
+		Data       []entity.Product `json:"data"`
+	}
+
+	var data responseHttp
+	jsonData, _ := json.Marshal(result)
+	_ = json.Unmarshal(jsonData, &data)
+	assert.Equal(t, 1000, data.Meta.Code, "Code must be 1000")
+	assert.Equal(t, "Success", data.Meta.Message, "Message must be Success")
 }

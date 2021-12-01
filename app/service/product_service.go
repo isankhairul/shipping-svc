@@ -137,7 +137,7 @@ func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity
 func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProductRequest) (int, string) {
 	logger := log.With(s.logger, "ProductService", "UpdateProduct")
 
-	_, err := s.productRepo.FindByUid(&uid)
+	_, err := s.productRepo.FindByUid(uid)
 	if err != nil {
 		level.Error(logger).Log(err)
 		return message.CODE_ERR_DB, message.MSG_INVALID_REQUEST
