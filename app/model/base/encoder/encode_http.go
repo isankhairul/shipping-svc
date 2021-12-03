@@ -33,6 +33,7 @@ func EncodeResponseHTTP(ctx context.Context, w http.ResponseWriter, resp interfa
 		EncodeError(ctx, err.error(), w)
 		return nil
 	}
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	result := base.GetHttpResponse(resp)
 	code := result.Meta.Code
@@ -49,7 +50,6 @@ func EncodeResponseHTTP(ctx context.Context, w http.ResponseWriter, resp interfa
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	return json.NewEncoder(w).Encode(resp)
 }
 
