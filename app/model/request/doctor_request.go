@@ -1,12 +1,17 @@
 package request
 
-// swagger:model SaveProductRequest
+// swagger:parameters SaveDoctorRequest
+type ReqDoctorBody struct {
+	//  in: body
+	Body SaveDoctorRequest `json:"body"`
+}
+
 type SaveDoctorRequest struct {
-	// Name of the product
+	// Name of the doctor
 	// in: string
 	Name string `json:"name"`
 
-	// Sku of the product
+	// Gender of the doctor
 	// in: string
 	Gender string `json:"gender"`
 

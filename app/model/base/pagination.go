@@ -1,5 +1,6 @@
 package base
 
+// swagger:model PaginationResponse
 type Pagination struct {
 	Records      int64 `json:"records"`
 	TotalRecords int64 `json:"total_records"`

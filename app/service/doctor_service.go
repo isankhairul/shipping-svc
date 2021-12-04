@@ -28,6 +28,14 @@ func NewDoctorService(
 	return &doctorServiceImpl{lg, br, pr}
 }
 
+// swagger:route POST /doctor/ Doctor SaveDoctorRequest
+// Create Doctor
+
+// security:
+// - apiKey: []
+// responses:
+//  401: SuccessResponse
+//  201: SuccessResponse
 func (s *doctorServiceImpl) CreateDoctor(input request.SaveDoctorRequest) (*entity.Doctor, int, string) {
 	logger := log.With(s.logger, "ProductService", "CreateProduct")
 	s.baseRepo.BeginTx()
@@ -48,6 +56,14 @@ func (s *doctorServiceImpl) CreateDoctor(input request.SaveDoctorRequest) (*enti
 	return result, message.CODE_SUCCESS, ""
 }
 
+// swagger:route GET /doctor/{id} Doctor doctor
+// Get Doctor
+
+// security:
+// - apiKey: []
+// responses:
+//  401: SuccessResponse
+//  201: SuccessResponse
 func (s *doctorServiceImpl) GetDoctor(uid string) (*entity.Doctor, int, string) {
 	logger := log.With(s.logger, "ProductService", "GetProduct")
 

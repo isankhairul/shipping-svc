@@ -33,14 +33,14 @@ func NewProductService(
 	return &productServiceImpl{lg, br, pr}
 }
 
-// swagger:route POST /product/  product
+// swagger:route POST /product/ product SaveProductRequest
 // Create product
 
 // security:
 // - apiKey: []
 // responses:
-//  401: ErrorResponse
-//  201: Created
+//  401: SuccessResponse
+//  201: SuccessResponse
 func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) (*entity.Product, int, string) {
 	logger := log.With(s.logger, "ProductService", "CreateProduct")
 	s.baseRepo.BeginTx()
@@ -63,13 +63,13 @@ func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) (*e
 	return result, message.CODE_SUCCESS, ""
 }
 
-// swagger:route GET /product/  get one product
+// swagger:route GET /product/ product get_product
 // Get product
 //
 // security:
 // - apiKey: []
 // responses:
-//  401: ErrorResponse
+//  401: SuccessResponse
 //  200: SuccessResponse
 func (s *productServiceImpl) GetProduct(uid string) (*entity.Product, int, string) {
 	logger := log.With(s.logger, "ProductService", "GetProduct")
@@ -87,13 +87,13 @@ func (s *productServiceImpl) GetProduct(uid string) (*entity.Product, int, strin
 	return result, message.CODE_SUCCESS, ""
 }
 
-// swagger:route GET /product/list  productList
+// swagger:route GET /product/list product productList
 // Get products
 //
 // security:
 // - apiKey: []
 // responses:
-//  401: ErrorResponse
+//  401: SuccessResponse
 //  200: SuccessResponse
 func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity.Product, *base.Pagination, int, string) {
 	logger := log.With(s.logger, "ProductService", "GetList")
@@ -126,13 +126,13 @@ func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity
 	return result, pagination, message.CODE_SUCCESS, ""
 }
 
-// swagger:route PUT /prescription/product/{id} prescription update_product
-// Get product
+// swagger:route PUT /product/{id} product SaveProductRequest
+// Update product
 //
 // security:
 // - apiKey: []
 // responses:
-//  401: ErrorResponse
+//  401: SuccessResponse
 //  200: SuccessResponse
 func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProductRequest) (int, string) {
 	logger := log.With(s.logger, "ProductService", "UpdateProduct")
@@ -159,13 +159,13 @@ func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProduct
 	return message.CODE_SUCCESS, ""
 }
 
-// swagger:route DELETE /product/
+// swagger:route DELETE /product/{id} product delete_product
 // Delete product
 //
 // security:
 // - apiKey: []
 // responses:
-//  401: ErrorResponse
+//  401: SuccessResponse
 //  200: SuccessResponse
 func (s *productServiceImpl) DeleteProduct(uid string) (int, string) {
 	logger := log.With(s.logger, "ProductService", "DeleteProduct")

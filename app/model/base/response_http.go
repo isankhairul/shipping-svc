@@ -5,16 +5,17 @@ import "reflect"
 // swagger:model SuccessResponse
 type responseHttp struct {
 	// Meta is the API response information
-	// in: struct{}
+	// in: MetaResponse
 	Meta metaResponse `json:"meta"`
 	// Pagination of the paginate respons
-	// in: struct{}
+	// in: PaginationResponse
 	Pagination *Pagination `json:"pagination,omitempty"`
 	// Data is our data
-	// in: struct{}
+	// in: DataResponse
 	Data data `json:"data"`
 }
 
+// swagger:model MetaResponse
 type metaResponse struct {
 	// Code is the response code
 	//in: int
@@ -24,6 +25,7 @@ type metaResponse struct {
 	Message string `json:"message"`
 }
 
+// swagger:model DataResponse
 type data struct {
 	Records interface{} `json:"records,omitempty"`
 	Record  interface{} `json:"record,omitempty"`

@@ -33,7 +33,12 @@ type ProductListRequest struct {
 	UOM string `schema:"uom" binding:"omitempty"`
 }
 
-// swagger:model SaveProductRequest
+// swagger:parameters SaveProductRequest
+type ReqProductBody struct {
+	//  in: body
+	Body SaveProductRequest `json:"body"`
+}
+
 type SaveProductRequest struct {
 	// Name of the product
 	// in: string

@@ -1,3 +1,13 @@
+//  KD Boilerplate Go kit:
+//   version: 1.0
+//   title: Boilerplate Go Kit Api
+//  Schemes: http
+//  Host: localhost:5600
+//  BasePath: /
+//  Produces:
+//    - application/json
+//
+// swagger:meta
 package main
 
 import (
@@ -112,6 +122,7 @@ func accessControl(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type")
 
 		if r.Method == "OPTIONS" {
