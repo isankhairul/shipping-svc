@@ -4,6 +4,7 @@ import (
 	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"math"
 	"strings"
 
 	"gorm.io/gorm"
@@ -19,6 +20,7 @@ type ProductRepository interface {
 	Create(product *entity.Product) (*entity.Product, error)
 	Update(uid string, input map[string]interface{}) error
 	Delete(uid string) error
+	Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
 }
 
 func NewProductRepository(br BaseRepository) ProductRepository {
@@ -61,7 +63,7 @@ func (r *productRepo) FindByParams(limit int, page int, sort string, filter map[
 
 	pagination.Limit = limit
 	pagination.Page = page
-	err := query.Scopes(r.base.Paginate(products, &pagination, query, int64(len(products)))).
+	err := query.Scopes(r.Paginate(products, &pagination, query, int64(len(products)))).
 		Find(&products).
 		Error
 
@@ -106,4 +108,17 @@ func (r *productRepo) Delete(uid string) error {
 	}
 
 	return nil
+}
+
+func (r *productRepo) Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB {
+	var totalRecords int64
+	db.Model(value).Count(&totalRecords)
+
+	pagination.TotalRecords = totalRecords
+	pagination.TotalPage = int(math.Ceil(float64(totalRecords) / float64(pagination.GetLimit())))
+	pagination.Records = int64(pagination.Limit*(pagination.Page-1)) + int64(currRecord)
+
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Offset(pagination.GetOffset()).Limit(pagination.GetLimit())
+	}
 }

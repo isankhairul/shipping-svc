@@ -5,6 +5,7 @@ import (
 	"go-klikdokter/app/model/entity"
 
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 type ProductRepositoryMock struct {
@@ -34,5 +35,9 @@ func (repository *ProductRepositoryMock) Delete(uid string) error {
 }
 
 func (repository *ProductRepositoryMock) Update(uid string, input map[string]interface{}) error {
+	return nil
+}
+
+func (repository *ProductRepositoryMock) Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB {
 	return nil
 }
