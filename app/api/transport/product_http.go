@@ -86,9 +86,6 @@ func decodeListProduct(ctx context.Context, r *http.Request) (rqst interface{}, 
 	if err = schema.NewDecoder().Decode(&params, r.Form); err != nil {
 		return nil, err
 	}
-	// if err = json.Unmarshal(data, &params); err != nil {
-	// 	return nil, err
-	// }
 
 	return params, nil
 }

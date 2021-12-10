@@ -1,6 +1,7 @@
 package service
 
 import (
+	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/repository"
@@ -89,4 +90,58 @@ func TestDeleteProduct(t *testing.T) {
 
 	assert.Equal(t, message.CODE_SUCCESS, code, "Code must be 1000")
 	assert.Equal(t, message.MSG_SUCCESS, msg, "Message must be Success")
+}
+
+func TestListProduct(t *testing.T) {
+	req := request.ProductListRequest{
+		Page: 1,
+		Sort: "",
+		UOM: "",
+		Limit: 10,
+	}
+
+	product := []entity.Product{
+		{
+			Uom:    "Pcs",
+			Sku:    "SKU_x",
+			Name:   "Prenagen",
+			Weight: 110,
+		},
+		{
+			Uom:    "Box",
+			Sku:    "SKU_34x",
+			Name:   "Milna",
+			Weight: 110,
+		},
+		{
+			Uom:    "Pcs",
+			Sku:    "SKU_4",
+			Name:   "Hydro COCO",
+			Weight: 199,
+		},
+	}
+
+	filter := map[string]interface{}{
+		"name": "",
+		"sku":  "",
+		"uom":  "",
+	}
+
+	paginationResult := base.Pagination{
+		Records: 120,
+		Limit: 10,
+		Page: 1,
+		TotalPage: 12,
+	}
+
+
+	productRepository.Mock.On("FindByParams",10,1,"",filter).Return(product, &paginationResult)
+	
+	products, pagination, code, msg := service.GetList(req)
+
+	assert.Equal(t, message.CODE_SUCCESS, code, "Code must be 1000")
+	assert.Equal(t, "", msg, "Message must be null")
+	assert.Equal(t, 3, len(products), "Count of products must be 3")
+	assert.Equal(t, int64(120), pagination.Records, "Total record pagination must be 120")
+	
 }

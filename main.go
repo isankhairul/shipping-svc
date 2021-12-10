@@ -108,16 +108,6 @@ func main() {
 	logger.Log("exit", <-errs)
 }
 
-//func handleSw() http.Handler {
-//	pr := mux.NewRouter()
-//	pr.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
-//	//opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml"}
-//	//sh := middleware.SwaggerUI(opts, nil)
-//	//pr.Handle("/docs", sh)
-//
-//	return pr
-//}
-
 func accessControl(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
