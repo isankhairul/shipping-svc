@@ -12,11 +12,11 @@ import (
 )
 
 type ProductService interface {
-	CreateProduct(input request.SaveProductRequest) (*entity.Product, int, string)
-	GetProduct(uid string) (*entity.Product, int, string)
-	GetList(input request.ProductListRequest) ([]entity.Product, *base.Pagination, int, string)
-	UpdateProduct(uid string, input request.SaveProductRequest) (int, string)
-	DeleteProduct(uid string) (int, string)
+	CreateProduct(input request.SaveProductRequest) (*entity.Product, message.Message)
+	GetProduct(uid string) (*entity.Product, message.Message)
+	GetList(input request.ProductListRequest) ([]entity.Product, *base.Pagination, message.Message)
+	UpdateProduct(uid string, input request.SaveProductRequest) message.Message
+	DeleteProduct(uid string) message.Message
 }
 
 type productServiceImpl struct {
@@ -41,7 +41,7 @@ func NewProductService(
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
-func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) (*entity.Product, int, string) {
+func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) (*entity.Product, message.Message) {
 	logger := log.With(s.logger, "ProductService", "CreateProduct")
 	s.baseRepo.BeginTx()
 	//Set request to entity
@@ -56,11 +56,11 @@ func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) (*e
 	if err != nil {
 		level.Error(logger).Log(err)
 		s.baseRepo.RollbackTx()
-		return nil, message.CODE_ERR_DB, message.MSG_ERR_SAVE_DATA
+		return nil, message.FailedMsg
 	}
 	s.baseRepo.CommitTx()
 
-	return result, message.CODE_SUCCESS, ""
+	return result, message.SuccessMsg
 }
 
 // swagger:route GET /product/ product get_product
@@ -71,20 +71,20 @@ func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) (*e
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *productServiceImpl) GetProduct(uid string) (*entity.Product, int, string) {
+func (s *productServiceImpl) GetProduct(uid string) (*entity.Product, message.Message) {
 	logger := log.With(s.logger, "ProductService", "GetProduct")
 
 	result, err := s.productRepo.FindByUid(&uid)
 	if err != nil {
 		level.Error(logger).Log(err)
-		return nil, message.CODE_ERR_DB, message.MSG_ERR_DB
+		return nil, message.FailedMsg
 	}
 
 	if result == nil {
-		return nil, message.CODE_ERR_DB, message.MSG_NO_DATA
+		return nil, message.FailedMsg
 	}
 
-	return result, message.CODE_SUCCESS, ""
+	return result, message.SuccessMsg
 }
 
 // swagger:route GET /product/list product productList
@@ -95,7 +95,7 @@ func (s *productServiceImpl) GetProduct(uid string) (*entity.Product, int, strin
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity.Product, *base.Pagination, int, string) {
+func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity.Product, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "ProductService", "GetList")
 
 	//Set default value
@@ -115,15 +115,15 @@ func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity
 	result, pagination, err := s.productRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
 	if err != nil {
 		level.Error(logger).Log(err)
-		return nil, nil, message.CODE_ERR_DB, message.MSG_ERR_DB
+		return nil, nil, message.FailedMsg
 	}
 
 	if result == nil {
 		level.Warn(logger).Log(message.MSG_NO_DATA)
-		return nil, nil, message.CODE_ERR_DB, message.MSG_NO_DATA
+		return nil, nil, message.FailedMsg
 	}
 
-	return result, pagination, message.CODE_SUCCESS, ""
+	return result, pagination, message.SuccessMsg
 }
 
 // swagger:route PUT /product/{id} product SaveProductRequest
@@ -134,13 +134,13 @@ func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProductRequest) (int, string) {
+func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProductRequest) message.Message {
 	logger := log.With(s.logger, "ProductService", "UpdateProduct")
 
 	_, err := s.productRepo.FindByUid(&uid)
 	if err != nil {
 		level.Error(logger).Log(err)
-		return message.CODE_ERR_DB, message.MSG_INVALID_REQUEST
+		return message.FailedMsg
 	}
 
 	data := map[string]interface{}{
@@ -153,10 +153,10 @@ func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProduct
 	err = s.productRepo.Update(uid, data)
 	if err != nil {
 		level.Error(logger).Log(err)
-		return message.CODE_ERR_DB, message.MSG_ERR_SAVE_DATA
+		return message.FailedMsg
 	}
 
-	return message.CODE_SUCCESS, ""
+	return message.FailedMsg
 }
 
 // swagger:route DELETE /product/{id} product delete_product
@@ -167,20 +167,20 @@ func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProduct
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *productServiceImpl) DeleteProduct(uid string) (int, string) {
+func (s *productServiceImpl) DeleteProduct(uid string) message.Message {
 	logger := log.With(s.logger, "ProductService", "DeleteProduct")
 
 	_, err := s.productRepo.FindByUid(&uid)
 	if err != nil {
 		level.Error(logger).Log(err)
-		return message.CODE_ERR_DB, message.MSG_INVALID_REQUEST
+		return message.FailedMsg
 	}
 
 	err = s.productRepo.Delete(uid)
 	if err != nil {
 		level.Error(logger).Log(err)
-		return message.CODE_ERR_DB, message.MSG_ERR_SAVE_DATA
+		return message.FailedMsg
 	}
 
-	return message.CODE_SUCCESS, ""
+	return message.SuccessMsg
 }

@@ -1,4 +1,4 @@
-package repository
+package repository_mock
 
 import (
 	"go-klikdokter/app/model/base"

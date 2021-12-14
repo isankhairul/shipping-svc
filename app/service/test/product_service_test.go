@@ -1,10 +1,11 @@
-package service
+package test
 
 import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
-	"go-klikdokter/app/repository"
+	"go-klikdokter/app/repository/repository_mock"
+	"go-klikdokter/app/service"
 	"go-klikdokter/helper/message"
 	"os"
 	"testing"
@@ -20,9 +21,9 @@ var logger log.Logger
 //var db *gorm.DB
 var err error
 
-var baseRepository = &repository.BaseRepositoryMock{Mock: mock.Mock{}}
-var productRepository = &repository.ProductRepositoryMock{Mock: mock.Mock{}}
-var service = NewProductService(logger, baseRepository, productRepository)
+var baseRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+var productRepository = &repository_mock.ProductRepositoryMock{Mock: mock.Mock{}}
+var svc = service.NewProductService(logger, baseRepository, productRepository)
 
 func init() {
 	{
@@ -42,7 +43,7 @@ func TestCreateProduct(t *testing.T) {
 		Uom:    "Pcs",
 	}
 
-	result, _, _ := service.CreateProduct(req)
+	result, _, _ := svc.CreateProduct(req)
 
 	assert.NotNil(t, result)
 	assert.Equal(t, "Prenagen", result.Name, "Name must be Prenagen")
@@ -61,7 +62,7 @@ func TestGetProduct(t *testing.T) {
 
 	uid := "123"
 	productRepository.Mock.On("FindByUid", &uid).Return(product)
-	result, _, _ := service.GetProduct(uid)
+	result, _, _ := svc.GetProduct(uid)
 
 	type responseHttp struct {
 		Meta       interface{}    `json:"meta"`
@@ -86,10 +87,10 @@ func TestDeleteProduct(t *testing.T) {
 
 	uid := "123"
 	productRepository.Mock.On("FindByUid", &uid).Return(product)
-	code, msg := service.DeleteProduct(uid)
+	code, msg := svc.DeleteProduct(uid)
 
 	assert.Equal(t, message.CODE_SUCCESS, code, "Code must be 1000")
-	assert.Equal(t, message.MSG_SUCCESS, msg, "Message must be Success")
+	assert.Equal(t, "", msg, "Message must be Null")
 }
 
 func TestListProduct(t *testing.T) {
@@ -137,7 +138,7 @@ func TestListProduct(t *testing.T) {
 
 	productRepository.Mock.On("FindByParams",10,1,"",filter).Return(product, &paginationResult)
 	
-	products, pagination, code, msg := service.GetList(req)
+	products, pagination, code, msg := svc.GetList(req)
 
 	assert.Equal(t, message.CODE_SUCCESS, code, "Code must be 1000")
 	assert.Equal(t, "", msg, "Message must be null")
