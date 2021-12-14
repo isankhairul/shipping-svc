@@ -119,7 +119,7 @@ func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity
 	}
 
 	if result == nil {
-		level.Warn(logger).Log(message.MSG_NO_DATA)
+		level.Warn(logger).Log(message.ErrNoData)
 		return nil, nil, message.FailedMsg
 	}
 

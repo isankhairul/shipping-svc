@@ -63,7 +63,7 @@ type SaveProductRequest struct {
 
 func (req SaveProductRequest) Validate() error {
 	return validation.ValidateStruct(&req,
-		validation.Field(&req.Name, validation.Required.Error(message.MSG_ERR_REQUIRED)),
-		validation.Field(&req.Uom, validation.Required.Error(message.MSG_ERR_REQUIRED)),
+		validation.Field(&req.Name, validation.Required.Error(message.ErrReq.Message)),
+		validation.Field(&req.Uom, validation.Required.Error(message.ErrReq.Message)),
 	)
 }

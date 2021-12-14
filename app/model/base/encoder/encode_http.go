@@ -38,13 +38,13 @@ func EncodeResponseHTTP(ctx context.Context, w http.ResponseWriter, resp interfa
 	result := base.GetHttpResponse(resp)
 	code := result.Meta.Code
 	switch code {
-	case message.CODE_ERR_NOTFOUND, message.CODE_ERR_BADROUTING:
+	case message.ErrPageNotFound.Code, message.ErrBadRouting.Code:
 		w.WriteHeader(http.StatusNotFound)
-	case message.CODE_ERR_NOAUTH:
+	case message.ErrNoAuth.Code:
 		w.WriteHeader(http.StatusUnauthorized)
-	case message.CODE_ERR_DB, message.CODE_ERR_BADREQUEST, message.CODE_ERR_VALIDATE:
+	case message.ErrDB.Code, message.ErrBadRouting.Code, message.ErrReq.Code:
 		w.WriteHeader(http.StatusBadRequest)
-	case message.CODE_SUCCESS:
+	case message.SuccessMsg.Code:
 		w.WriteHeader(http.StatusOK)
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
@@ -57,7 +57,7 @@ func EncodeResponseHTTP(ctx context.Context, w http.ResponseWriter, resp interfa
 func EncodeError(_ context.Context, err error, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	result := &errorResponse{}
-	result.Meta.Code = message.CODE_ERR_BADREQUEST
-	result.Meta.Message = message.MSG_INVALID_REQUEST
+	result.Meta.Code = message.ErrReq.Code
+	result.Meta.Message = message.ErrReq.Message
 	json.NewEncoder(w).Encode(result)
 }

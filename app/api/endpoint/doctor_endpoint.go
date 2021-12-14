@@ -25,22 +25,22 @@ func MakeDoctorEndpoints(s service.DoctorService) DoctorEndpoint {
 func makeSaveDoctor(s service.DoctorService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
 		req := rqst.(request.SaveDoctorRequest)
-		result, code, msg := s.CreateDoctor(req)
-		if code == 4000 {
-			return base.SetHttpResponse(code, msg, nil, nil), nil
+		result, msg := s.CreateDoctor(req)
+		if msg.Code == 4000 {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
 
-		return base.SetHttpResponse(code, msg, result, nil), nil
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }
 
 func makeShowDoctor(s service.DoctorService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-		result, code, msg := s.GetDoctor(fmt.Sprint(rqst))
-		if code == 4000 {
-			return base.SetHttpResponse(code, msg, nil, nil), nil
+		result, msg := s.GetDoctor(fmt.Sprint(rqst))
+		if msg.Code == 4000 {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
 
-		return base.SetHttpResponse(code, msg, result, nil), nil
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }

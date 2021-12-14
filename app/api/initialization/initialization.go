@@ -25,6 +25,19 @@ func DbInit() (*gorm.DB, error) {
 	db.AutoMigrate(&entity.Product{})
 	db.AutoMigrate(&entity.Doctor{})
 
+	// example Seeder
+	// for i := 0; i < 1000; i++ {
+	// 	fmt.Println("dijalankan")
+	// 	product := entity.Product{}
+	// 	err := faker.FakeData(&product)
+	// 	db.Create(&product)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// }
+
+
+
 	return db, nil
 }
 

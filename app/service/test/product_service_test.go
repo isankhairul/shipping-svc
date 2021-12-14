@@ -43,7 +43,7 @@ func TestCreateProduct(t *testing.T) {
 		Uom:    "Pcs",
 	}
 
-	result, _, _ := svc.CreateProduct(req)
+	result, _ := svc.CreateProduct(req)
 
 	assert.NotNil(t, result)
 	assert.Equal(t, "Prenagen", result.Name, "Name must be Prenagen")
@@ -62,7 +62,7 @@ func TestGetProduct(t *testing.T) {
 
 	uid := "123"
 	productRepository.Mock.On("FindByUid", &uid).Return(product)
-	result, _, _ := svc.GetProduct(uid)
+	result, _ := svc.GetProduct(uid)
 
 	type responseHttp struct {
 		Meta       interface{}    `json:"meta"`
@@ -87,10 +87,10 @@ func TestDeleteProduct(t *testing.T) {
 
 	uid := "123"
 	productRepository.Mock.On("FindByUid", &uid).Return(product)
-	code, msg := svc.DeleteProduct(uid)
+	msg := svc.DeleteProduct(uid)
 
-	assert.Equal(t, message.CODE_SUCCESS, code, "Code must be 1000")
-	assert.Equal(t, "", msg, "Message must be Null")
+	assert.Equal(t, message.SuccessMsg, msg.Code, "Code must be 1000")
+	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Message must be Null")
 }
 
 func TestListProduct(t *testing.T) {
@@ -138,10 +138,10 @@ func TestListProduct(t *testing.T) {
 
 	productRepository.Mock.On("FindByParams",10,1,"",filter).Return(product, &paginationResult)
 	
-	products, pagination, code, msg := svc.GetList(req)
+	products, pagination, msg := svc.GetList(req)
 
-	assert.Equal(t, message.CODE_SUCCESS, code, "Code must be 1000")
-	assert.Equal(t, "", msg, "Message must be null")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 1000")
+	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Message must be null")
 	assert.Equal(t, 3, len(products), "Count of products must be 3")
 	assert.Equal(t, int64(120), pagination.Records, "Total record pagination must be 120")
 	

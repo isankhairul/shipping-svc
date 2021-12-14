@@ -1,17 +1,18 @@
 package service
 
 import (
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
+
+	"github.com/go-kit/kit/log"
+	"github.com/go-kit/kit/log/level"
 )
 
 type DoctorService interface {
-	CreateDoctor(input request.SaveDoctorRequest) (*entity.Doctor, int, string)
-	GetDoctor(uid string) (*entity.Doctor, int, string)
+	CreateDoctor(input request.SaveDoctorRequest) (*entity.Doctor, message.Message)
+	GetDoctor(uid string) (*entity.Doctor, message.Message)
 }
 
 type doctorServiceImpl struct {
@@ -36,7 +37,7 @@ func NewDoctorService(
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
-func (s *doctorServiceImpl) CreateDoctor(input request.SaveDoctorRequest) (*entity.Doctor, int, string) {
+func (s *doctorServiceImpl) CreateDoctor(input request.SaveDoctorRequest) (*entity.Doctor, message.Message) {
 	logger := log.With(s.logger, "ProductService", "CreateProduct")
 	s.baseRepo.BeginTx()
 	//Set request to entity
@@ -49,11 +50,11 @@ func (s *doctorServiceImpl) CreateDoctor(input request.SaveDoctorRequest) (*enti
 	if err != nil {
 		level.Error(logger).Log(err)
 		s.baseRepo.RollbackTx()
-		return nil, message.CODE_ERR_DB, message.MSG_ERR_SAVE_DATA
+		return nil, message.ErrDB
 	}
 	s.baseRepo.CommitTx()
 
-	return result, message.CODE_SUCCESS, ""
+	return result, message.SuccessMsg
 }
 
 // swagger:route GET /doctor/{id} Doctor doctor
@@ -64,18 +65,18 @@ func (s *doctorServiceImpl) CreateDoctor(input request.SaveDoctorRequest) (*enti
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
-func (s *doctorServiceImpl) GetDoctor(uid string) (*entity.Doctor, int, string) {
+func (s *doctorServiceImpl) GetDoctor(uid string) (*entity.Doctor, message.Message) {
 	logger := log.With(s.logger, "ProductService", "GetProduct")
 
 	result, err := s.doctorRepo.FindByUid(&uid)
 	if err != nil {
 		level.Error(logger).Log(err)
-		return nil, message.CODE_ERR_DB, message.MSG_ERR_DB
+		return nil, message.ErrDB
 	}
 
 	if result == nil {
-		return nil, message.CODE_ERR_DB, message.MSG_NO_DATA
+		return nil, message.ErrNoData
 	}
 
-	return result, message.CODE_SUCCESS, ""
+	return result, message.SuccessMsg
 }
