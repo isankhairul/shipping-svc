@@ -22,8 +22,8 @@ func DbInit() (*gorm.DB, error) {
 	}
 
 	//Define auto migration here
-	db.AutoMigrate(&entity.Product{})
-	db.AutoMigrate(&entity.Doctor{})
+	_ = db.AutoMigrate(&entity.Product{})
+	_ = db.AutoMigrate(&entity.Doctor{})
 
 	// example Seeder
 	// for i := 0; i < 1000; i++ {

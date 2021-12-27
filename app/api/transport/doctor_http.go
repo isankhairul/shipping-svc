@@ -9,8 +9,8 @@ import (
 	"go-klikdokter/app/service"
 	"net/http"
 
-	"github.com/go-kit/kit/log"
 	httptransport "github.com/go-kit/kit/transport/http"
+	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
 )
 
@@ -46,9 +46,4 @@ func decodeSaveDoctor(ctx context.Context, r *http.Request) (rqst interface{}, e
 		return nil, err
 	}
 	return req, nil
-}
-
-func decodeShowDoctor(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	uid := mux.Vars(r)["id"]
-	return uid, nil
 }

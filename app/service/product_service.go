@@ -7,8 +7,8 @@ import (
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 )
 
 type ProductService interface {
@@ -54,7 +54,7 @@ func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) (*e
 
 	result, err := s.productRepo.Create(&product)
 	if err != nil {
-		level.Error(logger).Log(err)
+		_ = level.Error(logger).Log(err)
 		s.baseRepo.RollbackTx()
 		return nil, message.FailedMsg
 	}
@@ -76,7 +76,7 @@ func (s *productServiceImpl) GetProduct(uid string) (*entity.Product, message.Me
 
 	result, err := s.productRepo.FindByUid(&uid)
 	if err != nil {
-		level.Error(logger).Log(err)
+		_ = level.Error(logger).Log(err)
 		return nil, message.FailedMsg
 	}
 
@@ -114,12 +114,12 @@ func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity
 
 	result, pagination, err := s.productRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
 	if err != nil {
-		level.Error(logger).Log(err)
+		_ = level.Error(logger).Log(err)
 		return nil, nil, message.FailedMsg
 	}
 
 	if result == nil {
-		level.Warn(logger).Log(message.ErrNoData)
+		_ = level.Warn(logger).Log(message.ErrNoData)
 		return nil, nil, message.FailedMsg
 	}
 
@@ -139,7 +139,7 @@ func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProduct
 
 	_, err := s.productRepo.FindByUid(&uid)
 	if err != nil {
-		level.Error(logger).Log(err)
+		_ = level.Error(logger).Log(err)
 		return message.FailedMsg
 	}
 
@@ -152,7 +152,7 @@ func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProduct
 
 	err = s.productRepo.Update(uid, data)
 	if err != nil {
-		level.Error(logger).Log(err)
+		_ = level.Error(logger).Log(err)
 		return message.FailedMsg
 	}
 
@@ -172,13 +172,13 @@ func (s *productServiceImpl) DeleteProduct(uid string) message.Message {
 
 	_, err := s.productRepo.FindByUid(&uid)
 	if err != nil {
-		level.Error(logger).Log(err)
+		_ = level.Error(logger).Log(err)
 		return message.FailedMsg
 	}
 
 	err = s.productRepo.Delete(uid)
 	if err != nil {
-		level.Error(logger).Log(err)
+		_ = level.Error(logger).Log(err)
 		return message.FailedMsg
 	}
 

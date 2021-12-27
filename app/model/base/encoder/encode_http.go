@@ -59,5 +59,5 @@ func EncodeError(_ context.Context, err error, w http.ResponseWriter) {
 	result := &errorResponse{}
 	result.Meta.Code = message.ErrReq.Code
 	result.Meta.Message = message.ErrReq.Message
-	json.NewEncoder(w).Encode(result)
+	_ = json.NewEncoder(w).Encode(result)
 }

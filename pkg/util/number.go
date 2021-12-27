@@ -55,21 +55,3 @@ func ReformatMDNWithPrefiX(mdn string, prefixType int) string {
 
 	return mdn
 }
-
-func NewReformatMDN(mdn string, pref string) string { // jika pref ada value maka mdn akan dtambah prefixnya
-	mdn = strings.Trim(strings.Trim(mdn, " "), "+") // remove char +
-	if strings.HasPrefix(mdn, "0") {                // remove prefix char 0 one digit prefix
-		mdn = strings.TrimPrefix(mdn, "0")
-	}
-
-	if strings.HasPrefix(mdn, "62") { // remove prefix 62XXX -> XXXX
-		//remove leading +62
-		mdn = strings.Replace(mdn, "62", "", 1)
-	}
-
-	if mdn == "" {
-		return mdn
-	}
-
-	return pref + mdn
-}

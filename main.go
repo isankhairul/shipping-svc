@@ -20,8 +20,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 	_ "github.com/spf13/viper/remote"
@@ -69,10 +69,10 @@ func main() {
 	// Init DB Connection
 	db, err := initialization.DbInit()
 	if err != nil {
-		logger.Log("Err Db connection :", err.Error())
+		_ = logger.Log("Err Db connection :", err.Error())
 		panic(err.Error())
 	}
-	logger.Log("message", "Connection Db Success")
+	_ = logger.Log("message", "Connection Db Success")
 
 	// Consul initialization
 	registar := consul.ConsulRegisterService(viper.GetString("server.service-name"), viper.GetInt("server.port"), logger)
@@ -96,16 +96,16 @@ func main() {
 	// }()
 
 	go func() {
-		logger.Log("transport", "HTTP", "addr", viper.GetInt("server.port"))
+		_ = logger.Log("transport", "HTTP", "addr", viper.GetInt("server.port"))
 		errs <- http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("server.port")), nil)
 	}()
 	go func() {
-		c := make(chan os.Signal)
+		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT)
 		errs <- fmt.Errorf("%s", <-c)
 	}()
 
-	logger.Log("exit", <-errs)
+	_ = logger.Log("exit", <-errs)
 }
 
 func accessControl(h http.Handler) http.Handler {

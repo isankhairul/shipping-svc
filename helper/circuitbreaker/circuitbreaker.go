@@ -5,7 +5,7 @@ import (
 
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/go-kit/kit/endpoint"
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 )
 
 func Hystrix(commandName string, fallbackMesg string, logger log.Logger) endpoint.Middleware {
@@ -16,7 +16,7 @@ func Hystrix(commandName string, fallbackMesg string, logger log.Logger) endpoin
 				resp, err = next(ctx, request)
 				return err
 			}, func(err error) error {
-				logger.Log("fallbackErrorDesc", err.Error())
+				_ = logger.Log("fallbackErrorDesc", err.Error())
 				resp = struct {
 					Fallback string `json:"fallback"`
 				}{

@@ -10,16 +10,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
 var logger log.Logger
-
-//var db *gorm.DB
-var err error
 
 var baseRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
 var productRepository = &repository_mock.ProductRepositoryMock{Mock: mock.Mock{}}
@@ -63,12 +60,6 @@ func TestGetProduct(t *testing.T) {
 	uid := "123"
 	productRepository.Mock.On("FindByUid", &uid).Return(product)
 	result, _ := svc.GetProduct(uid)
-
-	type responseHttp struct {
-		Meta       interface{}    `json:"meta"`
-		Pagination *interface{}   `json:"pagination,omitempty"`
-		Data       entity.Product `json:"data"`
-	}
 
 	assert.NotNil(t, result, "Cannot nil")
 	assert.Equal(t, "Prenagen", result.Name, "Name must be Prenagen")

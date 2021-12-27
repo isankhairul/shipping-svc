@@ -7,6 +7,7 @@ The example to use this boilerplate please see this code
 
 ## How to run
 
+- git config core.hooksPath .githooks
 - Run consul agent (e.g consul agent -dev)
 - In a root folder type `go run main.go`
 - Swagger in /docs

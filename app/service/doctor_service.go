@@ -6,8 +6,8 @@ import (
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 )
 
 type DoctorService interface {
@@ -48,7 +48,7 @@ func (s *doctorServiceImpl) CreateDoctor(input request.SaveDoctorRequest) (*enti
 
 	result, err := s.doctorRepo.Create(&doctor)
 	if err != nil {
-		level.Error(logger).Log(err)
+		_ = level.Error(logger).Log(err)
 		s.baseRepo.RollbackTx()
 		return nil, message.ErrDB
 	}
@@ -70,7 +70,7 @@ func (s *doctorServiceImpl) GetDoctor(uid string) (*entity.Doctor, message.Messa
 
 	result, err := s.doctorRepo.FindByUid(&uid)
 	if err != nil {
-		level.Error(logger).Log(err)
+		_ = level.Error(logger).Log(err)
 		return nil, message.ErrDB
 	}
 

@@ -4,7 +4,7 @@ import (
 	rp "go-klikdokter/app/repository"
 	"go-klikdokter/app/service"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 	"gorm.io/gorm"
 )
 

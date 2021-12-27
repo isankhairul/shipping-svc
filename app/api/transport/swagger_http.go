@@ -1,10 +1,11 @@
 package transport
 
 import (
-	"github.com/go-openapi/runtime/middleware"
 	"net/http"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
 )
 

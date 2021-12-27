@@ -1,0 +1,14 @@
+
+#!/bin/sh
+
+if [ "$(uname)" = "Darwin" ]; then
+    exec golangci-lint run
+elif [ "$(uname)" = "Linux" ]; then
+    exec golangci-lint run
+fi
+
+
+SOB=$(git config github.user)
+grep -qs "^$SOB" "$1" || echo ". Cambio por @$SOB" >> "$1"
+
+
