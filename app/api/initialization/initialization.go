@@ -54,8 +54,8 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	// Routing path
 	mux := http.NewServeMux()
 	mux.Handle("/", swagHttp) //don't delete or change this!!
-	mux.Handle("/product/", prodHttp)
-	mux.Handle("/doctor/", doctorHttp)
+	mux.Handle("/products/", prodHttp)
+	mux.Handle("/doctors/", doctorHttp)
 
 	return mux
 }

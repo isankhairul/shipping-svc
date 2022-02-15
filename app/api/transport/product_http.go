@@ -25,35 +25,35 @@ func ProductHttpHandler(s service.ProductService, logger log.Logger) http.Handle
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("POST").Path("/product/").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path("/products/").Handler(httptransport.NewServer(
 		ep.Save,
 		decodeSaveProduct,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/product/list").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path("/products/list").Handler(httptransport.NewServer(
 		ep.List,
 		decodeListProduct,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/product/{id}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path("/products/{id}").Handler(httptransport.NewServer(
 		ep.Show,
 		decodeShowProduct,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path("/product/{id}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path("/products/{id}").Handler(httptransport.NewServer(
 		ep.Update,
 		decodeUpdateProduct,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("DELETE").Path("/product/{id}").Handler(httptransport.NewServer(
+	pr.Methods("DELETE").Path("/products/{id}").Handler(httptransport.NewServer(
 		ep.Update,
 		decodeDeleteProduct,
 		encoder.EncodeResponseHTTP,

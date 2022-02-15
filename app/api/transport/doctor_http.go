@@ -23,14 +23,14 @@ func DoctorHttpHandler(s service.DoctorService, logger log.Logger) http.Handler 
 		//httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("POST").Path("/doctor").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path("/doctors").Handler(httptransport.NewServer(
 		ep.SaveDoctor,
 		decodeSaveDoctor,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/doctor/{id}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path("/doctors/{id}").Handler(httptransport.NewServer(
 		ep.Show,
 		decodeShowProduct,
 		encoder.EncodeResponseHTTP,
