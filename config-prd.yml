@@ -5,17 +5,8 @@ log:
 
 #database settings
 database:
-  driver: ${db.driver}
-  hostname: ${db.host}
-  port: ${db.port}
-  username: ${db.username}
-  password: ${db.password}
-  dbname: ${db.schema}
-
-server:
-  port: 5600
-  env: dev
-  log-output: console
-  output-file-path: ./kd-microservice.log
-  config-path: .
-  service-name: kd-microservice
+  hostname: localhost
+  port: 5432
+  username: postgres
+  password: jiren1411
+  schema: testong
