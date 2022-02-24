@@ -31,8 +31,10 @@ func main() {
 	//Load configuration
 	viper.SetConfigType("yaml")
 	var profile string = "dev"
-	if os.Getenv("KD_ENV") != "" {
+	if os.Getenv("KD_ENV") == "prd" {
 		profile = "prd"
+	}else if os.Getenv("KD_ENV") == "stg" {
+		profile = "stg"
 	}
 
 	var configFileName []string
