@@ -33,11 +33,9 @@ func NewProductService(
 	return &productServiceImpl{lg, br, pr}
 }
 
-// swagger:route POST /product/ product SaveProductRequest
+// swagger:route POST /products/ product SaveProductRequest
 // Create product
-
-// security:
-// - apiKey: []
+//
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
@@ -63,11 +61,9 @@ func (s *productServiceImpl) CreateProduct(input request.SaveProductRequest) (*e
 	return result, message.SuccessMsg
 }
 
-// swagger:route GET /product/ product get_product
+// swagger:route GET /products/{id} get-product product byParamGet
 // Get product
 //
-// security:
-// - apiKey: []
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
@@ -87,11 +83,9 @@ func (s *productServiceImpl) GetProduct(uid string) (*entity.Product, message.Me
 	return result, message.SuccessMsg
 }
 
-// swagger:route GET /product/list product productList
-// Get products
+// swagger:route GET /products/list product productList
+// List products
 //
-// security:
-// - apiKey: []
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
@@ -126,11 +120,9 @@ func (s *productServiceImpl) GetList(input request.ProductListRequest) ([]entity
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route PUT /product/{id} product SaveProductRequest
+// swagger:route PUT /products/{id} product-update UpdateProductRequest
 // Update product
 //
-// security:
-// - apiKey: []
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
@@ -159,11 +151,9 @@ func (s *productServiceImpl) UpdateProduct(uid string, input request.SaveProduct
 	return message.FailedMsg
 }
 
-// swagger:route DELETE /product/{id} product delete_product
+// swagger:route DELETE /products/{id} product-delete byParamDelete
 // Delete product
 //
-// security:
-// - apiKey: []
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse

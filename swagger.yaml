@@ -231,12 +231,12 @@ definitions:
     type: object
     x-go-name: Product
     x-go-package: go-klikdokter/app/model/entity
-host: localhost:5700
+host: localhost:5600
 info:
   title: 'KD Boilerplate Go kit:'
   version: "1.0"
 paths:
-  /doctor/:
+  /doctors/:
     post:
       description: Create Doctor
       operationId: SaveDoctorRequest
@@ -246,20 +246,30 @@ paths:
         schema:
           $ref: '#/definitions/SaveDoctorRequest'
         x-go-name: Body
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
       tags:
       - Doctor
-  /doctor/{id}:
+  /doctors/{id}:
     get:
       description: Get Doctor
       operationId: doctor
-      tags:
-      - Doctor
-  /product/:
-    get:
-      description: Get product
-      operationId: get_product
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
-        "200":
+        "201":
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
@@ -267,13 +277,11 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-      security:
-      - apiKey:
-        - '[]'
       tags:
-      - product
+      - Get-Doctor
+  /products/:
     post:
-      description: Update product
+      description: Create product
       operationId: SaveProductRequest
       parameters:
       - in: body
@@ -282,7 +290,7 @@ paths:
           $ref: '#/definitions/SaveProductRequest'
         x-go-name: Body
       responses:
-        "200":
+        "201":
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
@@ -290,15 +298,19 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-      security:
-      - apiKey:
-        - '[]'
       tags:
       - product
-  /product/{id}:
+  /products/{id}:
     delete:
       description: Delete product
-      operationId: delete_product
+      operationId: byParamDelete
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
         "200":
           description: SuccessResponse
@@ -308,15 +320,40 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-      security:
-      - apiKey:
-        - '[]'
       tags:
+      - product-delete
+    get:
+      description: Get product
+      operationId: byParamGet
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - get-product
       - product
     put:
       description: Update product
-      operationId: SaveProductRequest
+      operationId: UpdateProductRequest
       parameters:
+      - description: 'name: id'
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       - in: body
         name: body
         schema:
@@ -331,14 +368,11 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-      security:
-      - apiKey:
-        - '[]'
       tags:
-      - product
-  /product/list:
+      - product-update
+  /products/list:
     get:
-      description: Get products
+      description: List products
       operationId: productList
       responses:
         "200":
@@ -349,9 +383,6 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-      security:
-      - apiKey:
-        - '[]'
       tags:
       - product
 produces:

@@ -29,11 +29,9 @@ func NewDoctorService(
 	return &doctorServiceImpl{lg, br, pr}
 }
 
-// swagger:route POST /doctor/ Doctor SaveDoctorRequest
+// swagger:route POST /doctors/ Doctor SaveDoctorRequest
 // Create Doctor
-
-// security:
-// - apiKey: []
+//
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
@@ -57,11 +55,9 @@ func (s *doctorServiceImpl) CreateDoctor(input request.SaveDoctorRequest) (*enti
 	return result, message.SuccessMsg
 }
 
-// swagger:route GET /doctor/{id} Doctor doctor
+// swagger:route GET /doctors/{id} Get-Doctor doctor
 // Get Doctor
-
-// security:
-// - apiKey: []
+//
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse

@@ -13,6 +13,7 @@ package main
 import (
 	"fmt"
 	"go-klikdokter/app/api/initialization"
+	_ "go-klikdokter/docs"
 	"go-klikdokter/helper/consul"
 	"net/http"
 	"os"

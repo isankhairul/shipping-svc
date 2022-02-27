@@ -39,6 +39,16 @@ type ReqProductBody struct {
 	Body SaveProductRequest `json:"body"`
 }
 
+// swagger:parameters UpdateProductRequest
+type ReqProductBodyUpdate struct {
+	// name: id
+	// in: path
+	// required: true
+	Id string `json:"id"`
+	//  in: body
+	Body SaveProductRequest `json:"body"`
+}
+
 type SaveProductRequest struct {
 	// Name of the product
 	// in: string
@@ -59,6 +69,22 @@ type SaveProductRequest struct {
 	// Uid of the product, use this on UPDATE function
 	// in: int32
 	Uid string `json:"uid" binding:"omitempty"`
+}
+
+// swagger:parameters byParamDelete
+type GetProductByParamDelete struct {
+	// name: id
+	// in: path
+	// required: true
+	Id string `json:"id"`
+}
+
+// swagger:parameters byParamGet
+type GetProductByParamGet struct {
+	// name: id
+	// in: path
+	// required: true
+	Id string `json:"id"`
 }
 
 func (req SaveProductRequest) Validate() error {

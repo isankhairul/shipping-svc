@@ -19,3 +19,11 @@ type SaveDoctorRequest struct {
 	// in: int32
 	Uid string `json:"uid" binding:"omitempty"`
 }
+
+// swagger:parameters doctor
+type GetDoctorRequest struct {
+	// name: id
+	// in: path
+	// required: true
+	Id string `json:"id"`
+}
