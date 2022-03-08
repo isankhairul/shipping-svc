@@ -4,6 +4,7 @@ import (
 	"go-klikdokter/app/api/transport"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/registry"
+	"go-klikdokter/helper/config"
 	"go-klikdokter/helper/database"
 	"net/http"
 
@@ -14,9 +15,9 @@ import (
 
 func DbInit() (*gorm.DB, error) {
 	// Init DB Connection
-	db, err := database.NewConnectionDB(viper.GetString("database.driver"), viper.GetString("database.dbname"),
-		viper.GetString("database.host"), viper.GetString("database.username"), viper.GetString("database.password"),
-		viper.GetInt("database.port"))
+	db, err := database.NewConnectionDB(config.GetConfigString(viper.GetString("database.driver")), config.GetConfigString(viper.GetString("database.dbname")),
+		config.GetConfigString(viper.GetString("database.host")), viper.GetString("database.username"), config.GetConfigString(viper.GetString("database.password")),
+		config.GetConfigInt(viper.GetString("database.port")))
 	if err != nil {
 		return nil, err
 	}
