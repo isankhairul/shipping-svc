@@ -5,12 +5,12 @@ log:
 
 #database settings
 database:
-  driver: ${db.driver}
-  hostname: ${db.host}
-  port: ${db.port}
-  username: ${db.username}
-  password: ${db.password}
-  dbname: ${db.schema}
+  driver: ${DB_DRIVER}
+  hostname: ${DB_HOST}
+  port: ${DB_PORT}
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
+  dbname: ${DB_NAME}
 
 server:
   port: 5600
