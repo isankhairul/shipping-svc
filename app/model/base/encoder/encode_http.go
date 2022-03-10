@@ -26,6 +26,9 @@ type errorResponse struct {
 	// Data is our data
 	// in: struct{}
 	Data interface{} `json:"data"`
+	// Errors is the response message
+	//in: string
+	Errors interface{} `json:"errors,omitempty"`
 }
 
 func EncodeResponseHTTP(ctx context.Context, w http.ResponseWriter, resp interface{}) error {

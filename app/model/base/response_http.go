@@ -13,6 +13,9 @@ type responseHttp struct {
 	// Data is our data
 	// in: DataResponse
 	Data data `json:"data"`
+	// Errors is the response message
+	//in: string
+	Errors interface{} `json:"errors,omitempty"`
 }
 
 // swagger:model MetaResponse
