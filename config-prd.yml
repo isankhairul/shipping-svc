@@ -6,7 +6,7 @@ log:
 #database settings
 database:
   driver: ${DB_DRIVER}
-  hostname: ${DB_HOST}
+  host: ${DB_HOST}
   port: ${DB_PORT}
   username: ${DB_USERNAME}
   password: ${DB_PASSWORD}
