@@ -11,3 +11,11 @@ database:
   username: ${DB_USERNAME}
   password: ${DB_PASSWORD}
   dbname: ${DB_NAME}
+
+server:
+  port: 5600
+  env: prd
+  log-output: console
+  output-file-path: ./kd-microservice.log
+  config-path: .
+  service-name: kd-microservice

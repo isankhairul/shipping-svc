@@ -16,7 +16,7 @@ import (
 func DbInit() (*gorm.DB, error) {
 	// Init DB Connection
 	db, err := database.NewConnectionDB(config.GetConfigString(viper.GetString("database.driver")), config.GetConfigString(viper.GetString("database.dbname")),
-		config.GetConfigString(viper.GetString("database.host")), viper.GetString("database.username"), config.GetConfigString(viper.GetString("database.password")),
+		config.GetConfigString(viper.GetString("database.host")), config.GetConfigString(viper.GetString("database.username")), config.GetConfigString(viper.GetString("database.password")),
 		config.GetConfigInt(viper.GetString("database.port")))
 	if err != nil {
 		return nil, err
