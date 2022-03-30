@@ -7,6 +7,7 @@ import (
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
+	"go-klikdokter/helper/global"
 	"net/http"
 
 	"github.com/gorilla/schema"
@@ -68,6 +69,9 @@ func decodeSaveProduct(ctx context.Context, r *http.Request) (rqst interface{}, 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
+	//add this to htmlescape body post
+	global.HtmlEscape(&req)
+
 	return req, nil
 }
 
@@ -95,6 +99,9 @@ func decodeUpdateProduct(ctx context.Context, r *http.Request) (rqst interface{}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
+	//add this to htmlescape body post
+	global.HtmlEscape(&req)
+
 	req.Uid = mux.Vars(r)["id"]
 	return req, nil
 }

@@ -6,7 +6,7 @@ log:
 #database settings
 database:
   driver: sqlite
-  host: 10.1.35.39
+  hostname: 10.1.35.39
   port: 5432
   username: app_user
   password: app_userPWD2019
@@ -32,3 +32,11 @@ cache:
     user: 
     password: 
     port: 6379
+
+#Access Control SETTING
+access-control:
+  allow-origin: "*"
+  allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+  allow-credentials: "true"
+  allow-headers: "Origin, Content-Type, Authorization"
+  request-headers: "Origin, Content-Type, Authorization"
