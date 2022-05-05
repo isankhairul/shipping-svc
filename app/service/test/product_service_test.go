@@ -86,9 +86,9 @@ func TestDeleteProduct(t *testing.T) {
 
 func TestListProduct(t *testing.T) {
 	req := request.ProductListRequest{
-		Page: 1,
-		Sort: "",
-		UOM: "",
+		Page:  1,
+		Sort:  "",
+		UOM:   "",
 		Limit: 10,
 	}
 
@@ -120,20 +120,19 @@ func TestListProduct(t *testing.T) {
 	}
 
 	paginationResult := base.Pagination{
-		Records: 120,
-		Limit: 10,
-		Page: 1,
+		Records:   120,
+		Limit:     10,
+		Page:      1,
 		TotalPage: 12,
 	}
 
+	productRepository.Mock.On("FindByParams", 10, 1, "", filter).Return(product, &paginationResult)
 
-	productRepository.Mock.On("FindByParams",10,1,"",filter).Return(product, &paginationResult)
-	
 	products, pagination, msg := svc.GetList(req)
 
 	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 1000")
 	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Message must be null")
 	assert.Equal(t, 3, len(products), "Count of products must be 3")
 	assert.Equal(t, int64(120), pagination.Records, "Total record pagination must be 120")
-	
+
 }
