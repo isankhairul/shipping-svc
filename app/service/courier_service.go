@@ -93,7 +93,8 @@ func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]entity
 	}
 
 	filter := map[string]interface{}{
-		"courier_name": input.CourierName,
+		"courier_type": input.CourierType,
+		"status":       input.Status,
 	}
 
 	result, pagination, err := s.courierRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
