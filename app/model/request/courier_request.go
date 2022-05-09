@@ -56,13 +56,35 @@ type CourierListRequest struct {
 	// in: string
 	Sort string `schema:"sort" binding:"omitempty"`
 
-	// Courier type keywork of product
+	// Courier type
 	// in: string
 	CourierType string `schema:"courier_type" binding:"omitempty"`
 
-	// Courier name keywork of product
+	// Courier status
 	// in: string
 	Status string `schema:"courier_name" binding:"omitempty"`
+}
+
+type UpdateCourierRequest struct {
+	// Uid of the courier, use this on UPDATE function
+	// in: int32
+	Uid string `json:"uid" binding:"omitempty"`
+
+	// Name of the courier
+	// in: string
+	CourierName string `json:"courier_name"`
+
+	// type of courier
+	// in: string
+	CourierType string `json:"courier_type"`
+
+	// Logo of courier
+	// in: string
+	Logo string `json:"logo"`
+
+	// Courier status
+	// in: string
+	Status string `json:"status" binding:"omitempty"`
 }
 
 func (req SaveCourierRequest) Validate() error {

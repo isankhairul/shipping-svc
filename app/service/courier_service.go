@@ -14,6 +14,7 @@ import (
 type CourierService interface {
 	CreateCourier(input request.SaveCourierRequest) (*entity.Courier, message.Message)
 	GetList(input request.CourierListRequest) ([]entity.Courier, *base.Pagination, message.Message)
+	UpdateCourier(uid string, input request.UpdateCourierRequest) message.Message
 	GetCourier(uid string) (*entity.Courier, message.Message)
 	DeleteCourier(uid string) message.Message
 }
@@ -46,6 +47,7 @@ func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*e
 		CourierName: input.CourierName,
 		Code:        input.Code,
 		CourierType: input.CourierType,
+		Logo:        input.Logo,
 	}
 
 	result, err := s.courierRepo.CreateCourier(&Courier)
@@ -117,20 +119,23 @@ func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]entity
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *productServiceImpl) UpdateCourier(uid string, input request.SaveCourierRequest) message.Message {
-	logger := log.With(s.logger, "ProductService", "UpdateProduct")
+func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCourierRequest) message.Message {
+	logger := log.With(s.logger, "CourierService", "UpdateCourier")
 
-	_, err := s.productRepo.FindByUid(&uid)
+	_, err := s.courierRepo.FindByUid(&uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return message.FailedMsg
 	}
 
 	data := map[string]interface{}{
-		"name": input.CourierName,
+		"name":         input.CourierName,
+		"status":       input.Status,
+		"logo":         input.Logo,
+		"courier_type": input.CourierType,
 	}
 
-	err = s.productRepo.Update(uid, data)
+	err = s.courierRepo.Update(uid, data)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return message.FailedMsg

@@ -20,6 +20,7 @@ type CourierRepository interface {
 	CreateCourier(product *entity.Courier) (*entity.Courier, error)
 	Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
 	Delete(uid string) error
+	Update(uid string, input map[string]interface{}) error
 }
 
 func NewCourierRepository(br BaseRepository) CourierRepository {
@@ -105,5 +106,15 @@ func (r *courierRepo) Delete(uid string) error {
 		return err
 	}
 
+	return nil
+}
+
+func (r *courierRepo) Update(uid string, input map[string]interface{}) error {
+	err := r.base.GetDB().Model(&entity.Courier{}).
+		Where("uid=?", uid).
+		Updates(input).Error
+	if err != nil {
+		return err
+	}
 	return nil
 }

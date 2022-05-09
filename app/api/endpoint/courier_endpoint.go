@@ -24,6 +24,7 @@ func MakeCourierEndpoints(s service.CourierService) CourierEndpoint {
 		Show:   makeShowCourier(s),
 		List:   getListCouriers(s),
 		Delete: makeDeleteCourier(s),
+		Update: makeUpdateCourier(s),
 	}
 }
 
@@ -65,6 +66,18 @@ func getListCouriers(s service.CourierService) endpoint.Endpoint {
 func makeDeleteCourier(s service.CourierService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		msg := s.DeleteCourier(fmt.Sprint(request))
+		if msg.Code == 4000 {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+	}
+}
+
+func makeUpdateCourier(s service.CourierService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		req := rqst.(request.UpdateCourierRequest)
+		msg := s.UpdateCourier(req.Uid, req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
