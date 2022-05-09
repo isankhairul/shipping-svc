@@ -114,7 +114,7 @@ func TestListCourier(t *testing.T) {
 
 	filter := map[string]interface{}{
 		"courier_type": "",
-		"status":       "",
+		"status":       0,
 	}
 
 	paginationResult := base.Pagination{
