@@ -23,3 +23,11 @@ func RegisterDoctorService(db *gorm.DB, logger log.Logger) service.DoctorService
 		rp.NewDoctorRepository(rp.NewBaseRepository(db)),
 	)
 }
+
+func RegisterCourierService(db *gorm.DB, logger log.Logger) service.CourierService {
+	return service.NewCourierService(
+		logger,
+		rp.NewBaseRepository(db),
+		rp.NewCourierRepository(rp.NewBaseRepository(db)),
+	)
+}
