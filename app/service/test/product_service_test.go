@@ -80,7 +80,7 @@ func TestDeleteProduct(t *testing.T) {
 	productRepository.Mock.On("FindByUid", &uid).Return(product)
 	msg := svc.DeleteProduct(uid)
 
-	assert.Equal(t, message.SuccessMsg, msg.Code, "Code must be 1000")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 1000")
 	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Message must be Null")
 }
 

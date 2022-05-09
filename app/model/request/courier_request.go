@@ -62,9 +62,10 @@ type CourierListRequest struct {
 
 	// Courier status
 	// in: string
-	Status string `schema:"courier_name" binding:"omitempty"`
+	Status string `schema:"status" binding:"omitempty"`
 }
 
+// swagger:parameters courier
 type UpdateCourierRequest struct {
 	// Uid of the courier, use this on UPDATE function
 	// in: int32
