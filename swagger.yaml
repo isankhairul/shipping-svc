@@ -1,392 +1,270 @@
-basePath: /
 definitions:
-  BaseIDModel:
+  entity.Channel:
     properties:
+      channel_code:
+        description: |-
+          ChannelCode of the Channel
+          in: string
+        type: string
+      channel_name:
+        description: |-
+          ChannelName of the Channel
+          in: string
+        type: string
+      description:
+        description: |-
+          Description of the Channel
+          in: string
+        type: string
       is_deleted:
         type: boolean
-        x-go-name: IsDeleted
+      logo:
+        description: |-
+          Logo of the Channel
+          in: string
+        type: string
+      status:
+        description: |-
+          Status of the Channel
+          in: integer
+        type: integer
       uid:
         description: |-
           UID of the product
           in: int64
         type: string
-        x-go-name: UID
     type: object
-    x-go-package: go-klikdokter/app/model/base
-  DataResponse:
-    properties:
-      record:
-        type: object
-        x-go-name: Record
-      records:
-        type: object
-        x-go-name: Records
-    type: object
-    x-go-name: data
-    x-go-package: go-klikdokter/app/model/base
-  MetaResponse:
+  message.Message:
     properties:
       code:
-        description: |-
-          Code is the response code
-          in: int
-        format: int64
         type: integer
-        x-go-name: Code
       message:
+        type: string
+    type: object
+  request.ChannelListRequest:
+    properties:
+      channelCode:
         description: |-
-          Message is the response message
+          ChannelCode
           in: string
         type: string
-        x-go-name: Message
-    type: object
-    x-go-name: metaResponse
-    x-go-package: go-klikdokter/app/model/base
-  PaginationResponse:
-    properties:
       limit:
-        format: int64
-        type: integer
-        x-go-name: Limit
-      page:
-        format: int64
-        type: integer
-        x-go-name: Page
-      records:
-        format: int64
-        type: integer
-        x-go-name: Records
-      total_page:
-        format: int64
-        type: integer
-        x-go-name: TotalPage
-      total_records:
-        format: int64
-        type: integer
-        x-go-name: TotalRecords
-    type: object
-    x-go-name: Pagination
-    x-go-package: go-klikdokter/app/model/base
-  ProductListRequest:
-    properties:
-      Limit:
         description: |-
           Maximun records per page
           in: int32
-        format: int64
+        maximum: 100
+        minimum: 1
         type: integer
-      Name:
-        description: |-
-          Name keyword of the product
-          in: string
-        type: string
-      Page:
+      page:
         description: |-
           Page No
           in: int32
-        format: int64
+        minimum: 1
         type: integer
-      Sku:
-        type: string
-      Sort:
-        example: name asc, uom desc
-        type: string
-      UOM:
+      sort:
         description: |-
-          Sku of the product
+          Sort fields, example: name asc, uom desc
           in: string
         type: string
-    type: object
-    x-go-package: go-klikdokter/app/model/request
-  SaveDoctorRequest:
-    properties:
-      gender:
+      status:
         description: |-
-          Gender of the doctor
-          in: string
-        type: string
-        x-go-name: Gender
-      name:
-        description: |-
-          Name of the doctor
-          in: string
-        type: string
-        x-go-name: Name
-      uid:
-        description: |-
-          Uid of the product, use this on UPDATE function
-          in: int32
-        type: string
-        x-go-name: Uid
-    type: object
-    x-go-package: go-klikdokter/app/model/request
-  SaveProductRequest:
-    properties:
-      name:
-        description: |-
-          Name of the product
-          in: string
-        type: string
-        x-go-name: Name
-      sku:
-        description: |-
-          Sku of the product
-          in: string
-        type: string
-        x-go-name: Sku
-      uid:
-        description: |-
-          Uid of the product, use this on UPDATE function
-          in: int32
-        type: string
-        x-go-name: Uid
-      uom:
-        description: |-
-          Uom of the product
-          in: string
-        type: string
-        x-go-name: Uom
-      weight:
-        description: |-
-          Weight of the product
-          in: int32
-        format: int32
+          Channel status
+          in: int
         type: integer
-        x-go-name: Weight
     type: object
-    x-go-package: go-klikdokter/app/model/request
-  SuccessResponse:
+  request.GetChannelRequest:
     properties:
-      data:
-        $ref: '#/definitions/DataResponse'
-      meta:
-        $ref: '#/definitions/MetaResponse'
-      pagination:
-        $ref: '#/definitions/PaginationResponse'
+      id:
+        description: |-
+          name: id
+          in: path
+          required: true
+        type: string
     type: object
-    x-go-name: responseHttp
-    x-go-package: go-klikdokter/app/model/base
-  doctor:
+  request.SaveChannelRequest:
     properties:
-      gender:
+      channel_code:
         description: |-
-          Gender of the doctor
+          ChannelCode of the Channel
           in: string
         type: string
-        x-go-name: Gender
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      name:
+      channel_name:
         description: |-
-          Name of the doctor
+          ChannelName of the Channel
           in: string
         type: string
-        x-go-name: Name
-      uid:
+      description:
         description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-    type: object
-    x-go-name: Doctor
-    x-go-package: go-klikdokter/app/model/entity
-  product:
-    properties:
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      name:
-        description: |-
-          Name of the product
+          Description of the Channel
           in: string
         type: string
-        x-go-name: Name
-      sku:
+      logo:
         description: |-
-          Sku of the product
+          Logo of Channel
           in: string
         type: string
-        x-go-name: Sku
-      uid:
+      status:
         description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-      uom:
-        description: |-
-          Uom of the product
-          in: string
-        type: string
-        x-go-name: Uom
-      weight:
-        description: |-
-          Weight of the product
-          in: int32
-        format: int32
+          status of Channel
+          in: int
         type: integer
-        x-go-name: Weight
+      uid:
+        description: |-
+          Uid of the courỉe, use this on UPDATE function
+          in: int32
+        type: string
     type: object
-    x-go-name: Product
-    x-go-package: go-klikdokter/app/model/entity
-host: localhost:5600
+  request.UpdateChannelRequest:
+    properties:
+      channel_code:
+        description: |-
+          ChannelCode of Channel
+          in: string
+        type: string
+      channel_name:
+        description: |-
+          ChannelName of the Channel
+          in: string
+        type: string
+      description:
+        description: |-
+          Description of the Channel
+          in: string
+        type: string
+      logo:
+        description: |-
+          Logo of Channel
+          in: string
+        type: string
+      status:
+        description: |-
+          Status of Channel
+          in: int
+        type: integer
+      uid:
+        description: |-
+          Uid of the Channel, use this on UPDATE function
+          in: int32
+        type: string
+    type: object
 info:
-  title: 'KD Boilerplate Go kit:'
-  version: "1.0"
+  contact: {}
 paths:
-  /doctors/:
-    post:
-      description: Create Doctor
-      operationId: SaveDoctorRequest
-      parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '#/definitions/SaveDoctorRequest'
-        x-go-name: Body
-      responses:
-        "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - Doctor
-  /doctors/{id}:
+  /channel/channel-app:
     get:
-      description: Get Doctor
-      operationId: doctor
+      consumes:
+      - application/json
+      description: API GetListChannel
       parameters:
-      - description: 'name: id'
-        in: path
-        name: id
+      - description: Request data
+        in: body
+        name: data
         required: true
-        type: string
-        x-go-name: Id
-      responses:
-        "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - Get-Doctor
-  /products/:
-    post:
-      description: Create product
-      operationId: SaveProductRequest
-      parameters:
-      - in: body
-        name: body
         schema:
-          $ref: '#/definitions/SaveProductRequest'
-        x-go-name: Body
+          $ref: '#/definitions/request.ChannelListRequest'
+      produces:
+      - application/json
       responses:
-        "201":
-          description: SuccessResponse
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            items:
+              $ref: '#/definitions/entity.Channel'
+            type: array
+      security:
+      - AuthorizationHeader: []
       tags:
-      - product
-  /products/{id}:
+      - Channel
+    post:
+      consumes:
+      - application/json
+      description: API CreateChannel
+      parameters:
+      - description: Request data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SaveChannelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/request.SaveChannelRequest'
+      security:
+      - AuthorizationHeader: []
+      summary: API CreateChannel
+      tags:
+      - Channel
+  /channel/channel-app/{id}:
     delete:
-      description: Delete product
-      operationId: byParamDelete
+      consumes:
+      - application/json
+      description: API DeleteChannel
       parameters:
-      - description: 'name: id'
-        in: path
-        name: id
+      - description: Request data
+        in: body
+        name: data
         required: true
-        type: string
-        x-go-name: Id
-      responses:
-        "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - product-delete
-    get:
-      description: Get product
-      operationId: byParamGet
-      parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
-      responses:
-        "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - get-product
-      - product
-    put:
-      description: Update product
-      operationId: UpdateProductRequest
-      parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
-      - in: body
-        name: body
         schema:
-          $ref: '#/definitions/SaveProductRequest'
-        x-go-name: Body
+          $ref: '#/definitions/request.GetChannelRequest'
+      produces:
+      - application/json
       responses:
         "200":
-          description: SuccessResponse
+          description: OK
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: '#/definitions/message.Message'
+      security:
+      - AuthorizationHeader: []
+      summary: API DeleteChannel
       tags:
-      - product-update
-  /products/list:
+      - Channel
     get:
-      description: List products
-      operationId: productList
+      consumes:
+      - application/json
+      description: API GetChannelById
+      parameters:
+      - description: Request data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetChannelRequest'
+      produces:
+      - application/json
       responses:
         "200":
-          description: SuccessResponse
+          description: OK
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: '#/definitions/entity.Channel'
+      security:
+      - AuthorizationHeader: []
       tags:
-      - product
-produces:
-- application/json
-schemes:
-- http
+      - Channel
+    put:
+      consumes:
+      - application/json
+      description: API UpdateChannel
+      parameters:
+      - description: Request data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateChannelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/message.Message'
+      security:
+      - AuthorizationHeader: []
+      summary: API UpdateChannel
+      tags:
+      - Channel
 swagger: "2.0"
