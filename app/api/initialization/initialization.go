@@ -55,7 +55,7 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	prodHttp := transport.ProductHttpHandler(prodSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
 	doctorHttp := transport.DoctorHttpHandler(doctorSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
 	courierHttp := transport.CourierHttpHandler(courierSvc, log.With(logger, "CourierTransportLayer", "HTTP"))
-	courierCoverageCodeHttp := transport.CourierCoverageCodeHttpHandler(courierCoverageCodeSvc, log.With(logger, "CourierCoverageCodeTransportLayer"))
+	courierCoverageCodeHttp := transport.CourierCoverageCodeHttpHandler(courierCoverageCodeSvc, log.With(logger, "CourierCoverageCodeTransportLayer", "HTTP"))
 
 	// Routing path
 	mux := http.NewServeMux()
@@ -63,7 +63,7 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	mux.Handle("/products/", prodHttp)
 	mux.Handle("/doctors/", doctorHttp)
 	mux.Handle("/courier/", courierHttp)
-	mux.Handle("/courier/courier-coverage-code", courierCoverageCodeHttp)
+	mux.Handle("/courier/courier-coverage-code/", courierCoverageCodeHttp)
 
 	return mux
 }

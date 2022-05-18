@@ -6,7 +6,7 @@ import (
 	validation "github.com/itgelo/ozzo-validation/v4"
 )
 
-// swagger:parameters ListCourierCoverageCode
+// swagger:parameters CourierCoverageCodeListRequest
 type CourierCoverageCodeListRequest struct {
 	// Maximun records per page
 	// in: path
@@ -28,24 +28,24 @@ type CourierCoverageCodeRequest struct {
 	Uid string `json:"uid" schema:"uid"`
 }
 
-// swagger:parameters SaveCourierCoverageCodeRequest
-type ReqCourierCoverageCodeBody struct {
+// swagger:parameters ReqSaveCourierCoverageCodeBody
+type ReqSaveCourierCoverageCodeBody struct {
 	// in: body
 	Body SaveCourierCoverageCodeRequest `json:"body"`
 }
 
-// swagger:parameters UpdateCourierCoverageCodeRequest
+// swagger:parameters ReqUpdateCourierCoverageCodeBody
 type ReqUpdateCourierCoverageCodeBody struct {
-	// Uid of the Courier Coverage Code, use this on UPDATE function
-	// required: True
-	// in: path
-	Uid string `json:"uid" binding:"omitempty"`
 
 	//  in: body
 	Body SaveCourierCoverageCodeRequest `json:"body"`
 }
 
 type SaveCourierCoverageCodeRequest struct {
+	// Uid of the courỉe, use this on UPDATE function
+	// in: int32
+	Uid string `json:"uid" binding:"omitempty"`
+
 	// Courier UID of the Courier
 	// required: True
 	// in: string
