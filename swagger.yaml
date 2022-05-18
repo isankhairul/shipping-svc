@@ -1,392 +1,607 @@
-basePath: /
 definitions:
-  BaseIDModel:
+  entity.CourierService:
     properties:
+      ETD_Max:
+        description: |-
+          ETD Max of the Courier Service
+          in: float64
+        type: number
+      ETD_Min:
+        description: |-
+          ETD Min of the Courier Service
+          in: float64
+        type: number
+      cancelable:
+        description: |-
+          Cancelable of the Courier Service
+          in: integer
+        type: integer
+      cod_available:
+        description: |-
+          Cod Available of the Courier Service
+          in: integer
+        type: integer
+      courier_id:
+        description: |-
+          Courier Id of the Courier Service
+          in: int
+        type: integer
+      courier_name:
+        description: |-
+          Courier Name of the Courier Service
+          in: string
+        type: string
+      end_time:
+        description: |-
+          End Time of the Courier Service
+          in: time
+        type: string
+      insurance:
+        description: |-
+          Insurance of the Courier Service
+          in: integer
+        type: integer
+      insurance_fee:
+        description: |-
+          Insurance Fee of the Courier Service
+          in: float64
+        type: number
+      insurance_fee_type:
+        description: |-
+          Insurance Fee Type of the Courier Service
+          in: string
+        type: string
+      insurance_min:
+        description: |-
+          Insurance Min of the Courier Service
+          in: float64
+        type: number
       is_deleted:
         type: boolean
-        x-go-name: IsDeleted
+      logo:
+        description: |-
+          Logo of the Courier Service
+          in: string
+        type: string
+      max_distance:
+        description: |-
+          Max Distance of the Courier Service
+          in: float64
+        type: number
+      max_purchase:
+        description: |-
+          Max Purchase of the Courier Service
+          in: float64
+        type: number
+      max_volume:
+        description: |-
+          Max Volume of the Courier Service
+          in: float64
+        type: number
+      max_weight:
+        description: |-
+          Max Weight of the Courier Service
+          in: float64
+        type: number
+      min_purchase:
+        description: |-
+          Min Purchase of the Courier Service
+          in: float64
+        type: number
+      prescription_allowed:
+        description: |-
+          Prescription Allowed of the Courier Service
+          in: integer
+        type: integer
+      repickup:
+        description: |-
+          Repickup Fee of the Courier Service
+          in: float64
+        type: number
+      shipping_code:
+        description: |-
+          Shipping Code of the Courier Service
+          in: string
+        type: string
+      shipping_description:
+        description: |-
+          Shipping Description of the Courier Service
+          in: string
+        type: string
+      shipping_name:
+        description: |-
+          Shipping Name of the Courier Service
+          in: string
+        type: string
+      shipping_type:
+        description: |-
+          Shipping Type of the Courier Service
+          in: string
+        type: string
+      start_time:
+        description: |-
+          Start Time of the Courier Service
+          in: time
+        type: string
+      status:
+        description: |-
+          Status of the Courier Service
+          in: integer
+        type: integer
+      tracking_available:
+        description: |-
+          Tracking Available of the Courier Service
+          in: integer
+        type: integer
       uid:
         description: |-
           UID of the product
           in: int64
         type: string
-        x-go-name: UID
     type: object
-    x-go-package: go-klikdokter/app/model/base
-  DataResponse:
-    properties:
-      record:
-        type: object
-        x-go-name: Record
-      records:
-        type: object
-        x-go-name: Records
-    type: object
-    x-go-name: data
-    x-go-package: go-klikdokter/app/model/base
-  MetaResponse:
+  message.Message:
     properties:
       code:
-        description: |-
-          Code is the response code
-          in: int
-        format: int64
         type: integer
-        x-go-name: Code
       message:
-        description: |-
-          Message is the response message
-          in: string
         type: string
-        x-go-name: Message
     type: object
-    x-go-name: metaResponse
-    x-go-package: go-klikdokter/app/model/base
-  PaginationResponse:
+  request.CourierServiceListRequest:
     properties:
       limit:
-        format: int64
-        type: integer
-        x-go-name: Limit
-      page:
-        format: int64
-        type: integer
-        x-go-name: Page
-      records:
-        format: int64
-        type: integer
-        x-go-name: Records
-      total_page:
-        format: int64
-        type: integer
-        x-go-name: TotalPage
-      total_records:
-        format: int64
-        type: integer
-        x-go-name: TotalRecords
-    type: object
-    x-go-name: Pagination
-    x-go-package: go-klikdokter/app/model/base
-  ProductListRequest:
-    properties:
-      Limit:
         description: |-
           Maximun records per page
           in: int32
-        format: int64
+        maximum: 100
+        minimum: 1
         type: integer
-      Name:
-        description: |-
-          Name keyword of the product
-          in: string
-        type: string
-      Page:
+      page:
         description: |-
           Page No
           in: int32
-        format: int64
+        minimum: 1
         type: integer
-      Sku:
-        type: string
-      Sort:
-        example: name asc, uom desc
-        type: string
-      UOM:
+      shippingType:
         description: |-
-          Sku of the product
+          Shipping type
           in: string
         type: string
-    type: object
-    x-go-package: go-klikdokter/app/model/request
-  SaveDoctorRequest:
-    properties:
-      gender:
+      sort:
         description: |-
-          Gender of the doctor
+          Sort fields, example: name asc, uom desc
           in: string
         type: string
-        x-go-name: Gender
-      name:
+      status:
         description: |-
-          Name of the doctor
-          in: string
-        type: string
-        x-go-name: Name
-      uid:
-        description: |-
-          Uid of the product, use this on UPDATE function
-          in: int32
-        type: string
-        x-go-name: Uid
-    type: object
-    x-go-package: go-klikdokter/app/model/request
-  SaveProductRequest:
-    properties:
-      name:
-        description: |-
-          Name of the product
-          in: string
-        type: string
-        x-go-name: Name
-      sku:
-        description: |-
-          Sku of the product
-          in: string
-        type: string
-        x-go-name: Sku
-      uid:
-        description: |-
-          Uid of the product, use this on UPDATE function
-          in: int32
-        type: string
-        x-go-name: Uid
-      uom:
-        description: |-
-          Uom of the product
-          in: string
-        type: string
-        x-go-name: Uom
-      weight:
-        description: |-
-          Weight of the product
-          in: int32
-        format: int32
+          Courier status
+          in: int
         type: integer
-        x-go-name: Weight
     type: object
-    x-go-package: go-klikdokter/app/model/request
-  SuccessResponse:
+  request.GetCourierServiceRequest:
     properties:
-      data:
-        $ref: '#/definitions/DataResponse'
-      meta:
-        $ref: '#/definitions/MetaResponse'
-      pagination:
-        $ref: '#/definitions/PaginationResponse'
+      id:
+        description: |-
+          name: id
+          in: path
+          required: true
+        type: string
     type: object
-    x-go-name: responseHttp
-    x-go-package: go-klikdokter/app/model/base
-  doctor:
+  request.SaveCourierServiceRequest:
     properties:
-      gender:
+      ETD_Max:
         description: |-
-          Gender of the doctor
-          in: string
-        type: string
-        x-go-name: Gender
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      name:
+          ETD Max of the Courier Service
+          in: float64
+        type: number
+      ETD_Min:
         description: |-
-          Name of the doctor
-          in: string
-        type: string
-        x-go-name: Name
-      uid:
+          ETD Min of the Courier Service
+          in: float64
+        type: number
+      cancelable:
         description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-    type: object
-    x-go-name: Doctor
-    x-go-package: go-klikdokter/app/model/entity
-  product:
-    properties:
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      name:
-        description: |-
-          Name of the product
-          in: string
-        type: string
-        x-go-name: Name
-      sku:
-        description: |-
-          Sku of the product
-          in: string
-        type: string
-        x-go-name: Sku
-      uid:
-        description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-      uom:
-        description: |-
-          Uom of the product
-          in: string
-        type: string
-        x-go-name: Uom
-      weight:
-        description: |-
-          Weight of the product
-          in: int32
-        format: int32
+          Cancelable of the Courier Service
+          in: integer
         type: integer
-        x-go-name: Weight
+      cod_available:
+        description: |-
+          Cod Available of the Courier Service
+          in: integer
+        type: integer
+      courier_id:
+        description: |-
+          Courier Id of the Courier Service
+          in: int
+        type: integer
+      courier_name:
+        description: |-
+          Courier Name of the Courier Service
+          in: string
+        type: string
+      created_at:
+        description: |-
+          Created At of the Courier Service
+          in: time
+        type: string
+      created_by:
+        description: |-
+          Created By Type of the Courier Service
+          in: string
+        type: string
+      end_time:
+        description: |-
+          End Time of the Courier Service
+          in: time
+        type: string
+      insurance:
+        description: |-
+          Insurance of the Courier Service
+          in: integer
+        type: integer
+      insurance_fee:
+        description: |-
+          Insurance Fee of the Courier Service
+          in: float64
+        type: number
+      insurance_fee_type:
+        description: |-
+          Insurance Fee Type of the Courier Service
+          in: string
+        type: string
+      insurance_min:
+        description: |-
+          Insurance Min of the Courier Service
+          in: float64
+        type: number
+      logo:
+        description: |-
+          Logo of the Courier Service
+          in: string
+        type: string
+      max_distance:
+        description: |-
+          Max Distance of the Courier Service
+          in: float64
+        type: number
+      max_purchase:
+        description: |-
+          Max Purchase of the Courier Service
+          in: integer
+        type: number
+      max_volume:
+        description: |-
+          Max Volume of the Courier Service
+          in: float64
+        type: number
+      max_weight:
+        description: |-
+          Max Weight of the Courier Service
+          in: float64
+        type: number
+      min_purchase:
+        description: |-
+          Min Purchase of the Courier Service
+          in: integer
+        type: number
+      prescription_allowed:
+        description: |-
+          Prescription Allowed of the Courier Service
+          in: integer
+        type: integer
+      repickup:
+        description: |-
+          Repickup Fee of the Courier Service
+          in: float64
+        type: number
+      shipping_code:
+        description: |-
+          Shipping Code of the Courier Service
+          in: string
+        type: string
+      shipping_description:
+        description: |-
+          Shipping Description of the Courier Service
+          in: string
+        type: string
+      shipping_name:
+        description: |-
+          Shipping Name of the Courier Service
+          in: string
+        type: string
+      shipping_type:
+        description: |-
+          Shipping Type of the Courier Service
+          in: string
+        type: string
+      start_time:
+        description: |-
+          Start Time of the Courier Service
+          in: time
+        type: string
+      status:
+        description: |-
+          Status of the Courier Service
+          in: integer
+        type: integer
+      tracking_available:
+        description: |-
+          Tracking Available of the Courier Service
+          in: integer
+        type: integer
+      uid:
+        description: |-
+          Uid of the Courier Service, use this on UPDATE function
+          in: int32
+        type: string
+      updated_at:
+        description: |-
+          Updated At of the Courier Service
+          in: time
+        type: string
+      updated_by:
+        description: |-
+          Updated By Type of the Courier Service
+          in: string
+        type: string
     type: object
-    x-go-name: Product
-    x-go-package: go-klikdokter/app/model/entity
-host: localhost:5600
+  request.UpdateCourierServiceRequest:
+    properties:
+      ETD_Max:
+        description: |-
+          ETD Max of the Courier Service
+          in: float64
+        type: number
+      ETD_Min:
+        description: |-
+          ETD Min of the Courier Service
+          in: float64
+        type: number
+      cancelable:
+        description: |-
+          Cancelable of the Courier Service
+          in: integer
+        type: integer
+      cod_available:
+        description: |-
+          Cod Available of the Courier Service
+          in: integer
+        type: integer
+      courier_id:
+        description: |-
+          Courier Id of the Courier Service
+          in: int
+        type: integer
+      courier_name:
+        description: |-
+          Courier Name of the Courier Service
+          in: string
+        type: string
+      end_time:
+        description: |-
+          End Time of the Courier Service
+          in: time
+        type: string
+      insurance:
+        description: |-
+          Insurance of the Courier Service
+          in: integer
+        type: integer
+      insurance_fee:
+        description: |-
+          Insurance Fee of the Courier Service
+          in: float64
+        type: number
+      insurance_fee_type:
+        description: |-
+          Insurance Fee Type of the Courier Service
+          in: string
+        type: string
+      insurance_min:
+        description: |-
+          Insurance Min of the Courier Service
+          in: float64
+        type: number
+      logo:
+        description: |-
+          Logo of the Courier Service
+          in: string
+        type: string
+      max_distance:
+        description: |-
+          Max Distance of the Courier Service
+          in: float64
+        type: number
+      max_purchase:
+        description: |-
+          Max Purchase of the Courier Service
+          in: integer
+        type: number
+      max_volume:
+        description: |-
+          Max Volume of the Courier Service
+          in: float64
+        type: number
+      max_weight:
+        description: |-
+          Max Weight of the Courier Service
+          in: float64
+        type: number
+      min_purchase:
+        description: |-
+          Min Purchase of the Courier Service
+          in: integer
+        type: number
+      prescription_allowed:
+        description: |-
+          Prescription Allowed of the Courier Service
+          in: integer
+        type: integer
+      repickup:
+        description: |-
+          Repickup Fee of the Courier Service
+          in: float64
+        type: number
+      shipping_code:
+        description: |-
+          Shipping Code of the Courier Service
+          in: string
+        type: string
+      shipping_description:
+        description: |-
+          Shipping Description of the Courier Service
+          in: string
+        type: string
+      shipping_name:
+        description: |-
+          Shipping Name of the Courier Service
+          in: string
+        type: string
+      shipping_type:
+        description: |-
+          Shipping Type of the Courier Service
+          in: string
+        type: string
+      start_time:
+        description: |-
+          Start Time of the Courier Service
+          in: time
+        type: string
+      status:
+        description: |-
+          Status of the Courier Service
+          in: integer
+        type: integer
+      tracking_available:
+        description: |-
+          Tracking Available of the Courier Service
+          in: integer
+        type: integer
+      uid:
+        description: |-
+          Uid of the courier service, use this on UPDATE function
+          in: string
+        type: string
+    type: object
 info:
-  title: 'KD Boilerplate Go kit:'
-  version: "1.0"
+  contact: {}
 paths:
-  /doctors/:
-    post:
-      description: Create Doctor
-      operationId: SaveDoctorRequest
-      parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '#/definitions/SaveDoctorRequest'
-        x-go-name: Body
-      responses:
-        "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - Doctor
-  /doctors/{id}:
+  /courier/courier-serivces:
     get:
-      description: Get Doctor
-      operationId: doctor
+      consumes:
+      - application/json
+      description: API GetListCourierService
       parameters:
-      - description: 'name: id'
-        in: path
-        name: id
+      - description: Request data
+        in: body
+        name: data
         required: true
-        type: string
-        x-go-name: Id
-      responses:
-        "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - Get-Doctor
-  /products/:
-    post:
-      description: Create product
-      operationId: SaveProductRequest
-      parameters:
-      - in: body
-        name: body
         schema:
-          $ref: '#/definitions/SaveProductRequest'
-        x-go-name: Body
+          $ref: '#/definitions/request.CourierServiceListRequest'
+      produces:
+      - application/json
       responses:
-        "201":
-          description: SuccessResponse
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            items:
+              $ref: '#/definitions/entity.CourierService'
+            type: array
+      security:
+      - AuthorizationHeader: []
+      summary: API GetListCourierService
       tags:
-      - product
-  /products/{id}:
+      - CourierService
+    post:
+      consumes:
+      - application/json
+      description: API CreateCourierServiceById
+      parameters:
+      - description: Request data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SaveCourierServiceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.CourierService'
+      security:
+      - AuthorizationHeader: []
+      summary: API CreateCourierServiceById
+      tags:
+      - CourierService
+  /courier/courier-serivces/{id}:
     delete:
-      description: Delete product
-      operationId: byParamDelete
+      consumes:
+      - application/json
+      description: API DeleteCourierService
       parameters:
-      - description: 'name: id'
-        in: path
-        name: id
+      - description: Request data
+        in: body
+        name: data
         required: true
-        type: string
-        x-go-name: Id
-      responses:
-        "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - product-delete
-    get:
-      description: Get product
-      operationId: byParamGet
-      parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
-      responses:
-        "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - get-product
-      - product
-    put:
-      description: Update product
-      operationId: UpdateProductRequest
-      parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
-      - in: body
-        name: body
         schema:
-          $ref: '#/definitions/SaveProductRequest'
-        x-go-name: Body
+          $ref: '#/definitions/request.GetCourierServiceRequest'
+      produces:
+      - application/json
       responses:
         "200":
-          description: SuccessResponse
+          description: OK
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: '#/definitions/message.Message'
+      security:
+      - AuthorizationHeader: []
+      summary: API DeleteCourierService
       tags:
-      - product-update
-  /products/list:
+      - CourierService
     get:
-      description: List products
-      operationId: productList
+      consumes:
+      - application/json
+      description: API GetListCourierService
+      parameters:
+      - description: Request data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetCourierServiceRequest'
+      produces:
+      - application/json
       responses:
         "200":
-          description: SuccessResponse
+          description: OK
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: '#/definitions/entity.CourierService'
+      security:
+      - AuthorizationHeader: []
+      summary: API GetListCourierService
       tags:
-      - product
-produces:
-- application/json
-schemes:
-- http
+      - CourierService
+    put:
+      consumes:
+      - application/json
+      description: API UpdateCourierService
+      parameters:
+      - description: Request data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateCourierServiceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/message.Message'
+      security:
+      - AuthorizationHeader: []
+      summary: API UpdateCourierService
+      tags:
+      - CourierService
 swagger: "2.0"
