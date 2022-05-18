@@ -26,6 +26,7 @@ func DbInit() (*gorm.DB, error) {
 	_ = db.AutoMigrate(&entity.Product{})
 	_ = db.AutoMigrate(&entity.Doctor{})
 	_ = db.AutoMigrate(&entity.Courier{})
+	_ = db.AutoMigrate(&entity.CourierCoverageCode{})
 
 	// example Seeder
 	// for i := 0; i < 1000; i++ {
@@ -47,12 +48,14 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	prodSvc := registry.RegisterProductService(db, logger)
 	doctorSvc := registry.RegisterDoctorService(db, logger)
 	courierSvc := registry.RegisterCourierService(db, logger)
+	courierCoverageCodeSvc := registry.RegisterCourierCoverageCodeService(db, logger)
 
 	// Transport initialization
 	swagHttp := transport.SwaggerHttpHandler(log.With(logger, "SwaggerTransportLayer", "HTTP")) //don't delete or change this !!
 	prodHttp := transport.ProductHttpHandler(prodSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
 	doctorHttp := transport.DoctorHttpHandler(doctorSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
 	courierHttp := transport.CourierHttpHandler(courierSvc, log.With(logger, "CourierTransportLayer", "HTTP"))
+	courierCoverageCodeHttp := transport.CourierCoverageCodeHttpHandler(courierCoverageCodeSvc, log.With(logger, "CourierCoverageCodeTransportLayer"))
 
 	// Routing path
 	mux := http.NewServeMux()
@@ -60,6 +63,7 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	mux.Handle("/products/", prodHttp)
 	mux.Handle("/doctors/", doctorHttp)
 	mux.Handle("/courier/", courierHttp)
+	mux.Handle("/courier/courier-coverage-code", courierCoverageCodeHttp)
 
 	return mux
 }

@@ -40,4 +40,6 @@ type Courier struct {
 	// Status of the Courier
 	// in: integer
 	Status int `gorm:"not null;default:1" json:"status"`
+
+	CourierCoverageCode []CourierCoverageCode
 }

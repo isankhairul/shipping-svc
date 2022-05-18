@@ -31,3 +31,11 @@ func RegisterCourierService(db *gorm.DB, logger log.Logger) service.CourierServi
 		rp.NewCourierRepository(rp.NewBaseRepository(db)),
 	)
 }
+
+func RegisterCourierCoverageCodeService(db *gorm.DB, logger log.Logger) service.CourierCoverageCodeService {
+	return service.NewCourierCoverageCodeService(
+		logger,
+		rp.NewBaseRepository(db),
+		rp.NewCourierCoverageCodeRepository(rp.NewBaseRepository(db)),
+	)
+}
