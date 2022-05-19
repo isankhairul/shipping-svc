@@ -5,7 +5,6 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"math"
-	"strings"
 
 	"gorm.io/gorm"
 )
@@ -69,14 +68,14 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 	query := r.base.GetDB()
 
 	if filter["shipping_type"] != "" {
-		query = query.Where("LOWER(shipping_type) LIKE ?", "%"+strings.ToLower(filter["shipping_type"].(string))+"%")
+		query = query.Where("shipping_type = ?", filter["shipping_type"])
 	}
 
 	if filter["status"] != "" {
 		query = query.Where("status = ?", filter["status"])
 	}
 
-	if filter["courier_id"] != "" {
+	if filter["courier_id"] != 0 {
 		query = query.Where("courier_id = ?", filter["courier_id"])
 	}
 

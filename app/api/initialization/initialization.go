@@ -48,14 +48,12 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	prodSvc := registry.RegisterProductService(db, logger)
 	doctorSvc := registry.RegisterDoctorService(db, logger)
 	courierSvc := registry.RegisterCourierService(db, logger)
-	courierServiceSvc := registry.RegisterCourierServiceService(db, logger)
 
 	// Transport initialization
 	swagHttp := transport.SwaggerHttpHandler(log.With(logger, "SwaggerTransportLayer", "HTTP")) //don't delete or change this !!
 	prodHttp := transport.ProductHttpHandler(prodSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
 	doctorHttp := transport.DoctorHttpHandler(doctorSvc, log.With(logger, "ProductTransportLayer", "HTTP"))
 	courierHttp := transport.CourierHttpHandler(courierSvc, log.With(logger, "CourierTransportLayer", "HTTP"))
-	courierServiceHttp := transport.CourierServiceHttpHandler(courierServiceSvc, log.With(logger, "CourierServiceTransportLayer", "HTTP"))
 
 	// Routing path
 	mux := http.NewServeMux()
@@ -63,7 +61,6 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	mux.Handle("/products/", prodHttp)
 	mux.Handle("/doctors/", doctorHttp)
 	mux.Handle("/courier/", courierHttp)
-	mux.Handle("/courier-serivce/", courierServiceHttp)
 
 	return mux
 }
