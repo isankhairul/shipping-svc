@@ -12,10 +12,10 @@ import (
 )
 
 type ChannelService interface {
-	CreateChannel(input request.SaveChannelRequest) (*entity.Channel, message.Message)
 	GetList(input request.ChannelListRequest) ([]entity.Channel, *base.Pagination, message.Message)
-	UpdateChannel(uid string, input request.SaveChannelRequest) message.Message
 	GetChannel(uid string) (*entity.Channel, message.Message)
+	CreateChannel(input request.SaveChannelRequest) (*entity.Channel, message.Message)
+	UpdateChannel(uid string, input request.UpdateChannelRequest) message.Message
 	DeleteChannel(uid string) message.Message
 }
 
@@ -33,8 +33,66 @@ func NewChannelService(
 	return &ChannelServiceImpl{lg, br, pr}
 }
 
-// swagger:route POST /channel/channel-app Channel ManagedChannelRequest
-// Manage Channel
+// swagger:route GET /channel/channel-app Channel-Apps Channels
+// List of Channel Apps
+//
+// responses:
+//  401: SuccessResponse
+//  201: SuccessResponse
+func (s *ChannelServiceImpl) GetList(input request.ChannelListRequest) ([]entity.Channel, *base.Pagination, message.Message) {
+	logger := log.With(s.logger, "ChannelService", "GetList")
+
+	//Set default value
+	if input.Limit <= 0 {
+		input.Limit = 10
+	}
+	if input.Page <= 0 {
+		input.Page = 1
+	}
+
+	filter := map[string]interface{}{
+		"channel_code": input.ChannelCode,
+		"channel_name": input.ChannelName,
+		"status":       input.Status,
+	}
+
+	result, pagination, err := s.channelRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
+	if err != nil {
+		_ = level.Error(logger).Log(err)
+		return nil, nil, message.FailedMsg
+	}
+
+	if result == nil {
+		_ = level.Warn(logger).Log(message.ErrNoData)
+		return nil, nil, message.FailedMsg
+	}
+
+	return result, pagination, message.SuccessMsg
+}
+
+// swagger:route GET /channel/channel-app/{uid} Channel-Apps ChannelRequestGetByUid
+// Get Detail of Channel Apps
+//
+// responses:
+//  401: SuccessResponse
+//  201: SuccessResponse
+func (s *ChannelServiceImpl) GetChannel(uid string) (*entity.Channel, message.Message) {
+	logger := log.With(s.logger, "ChannelService", "GetChannel")
+	result, err := s.channelRepo.FindByUid(&uid)
+	if err != nil {
+		_ = level.Error(logger).Log(err)
+		return nil, message.ErrDB
+	}
+
+	if result == nil {
+		return nil, message.ErrNoData
+	}
+
+	return result, message.SuccessMsg
+}
+
+// swagger:route POST /channel/channel-app Channel-Apps SaveChannelRequest
+// Add Channel App
 //
 // responses:
 //  401: SuccessResponse
@@ -81,67 +139,14 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 	return resultInsert, message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-app/{uid} Get-channel Channel
-// Get Channel
-//
-// responses:
-//  401: SuccessResponse
-//  201: SuccessResponse
-func (s *ChannelServiceImpl) GetChannel(uid string) (*entity.Channel, message.Message) {
-	logger := log.With(s.logger, "ChannelService", "GetChannel")
-
-	result, err := s.channelRepo.FindByUid(&uid)
-	if err != nil {
-		_ = level.Error(logger).Log(err)
-		return nil, message.ErrDB
-	}
-
-	if result == nil {
-		return nil, message.ErrNoData
-	}
-
-	return result, message.SuccessMsg
-}
-
-func (s *ChannelServiceImpl) GetList(input request.ChannelListRequest) ([]entity.Channel, *base.Pagination, message.Message) {
-	logger := log.With(s.logger, "ChannelService", "GetList")
-
-	//Set default value
-	if input.Limit <= 0 {
-		input.Limit = 10
-	}
-	if input.Page <= 0 {
-		input.Page = 1
-	}
-
-	filter := map[string]interface{}{
-		"channel_code": input.ChannelCode,
-		"status":       input.Status,
-	}
-
-	result, pagination, err := s.channelRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
-	if err != nil {
-		_ = level.Error(logger).Log(err)
-		return nil, nil, message.FailedMsg
-	}
-
-	if result == nil {
-		_ = level.Warn(logger).Log(message.ErrNoData)
-		return nil, nil, message.FailedMsg
-	}
-
-	return result, pagination, message.SuccessMsg
-}
-
-// swagger:route PUT /channel/channel-app/{uid} UpdateChannelRequest
-// Update Channel
+// swagger:route PUT /channel/channel-app/{uid} Channel-Apps UpdateChannelRequest
+// Update Channel App by uid
 //
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *ChannelServiceImpl) UpdateChannel(uid string, input request.SaveChannelRequest) message.Message {
+func (s *ChannelServiceImpl) UpdateChannel(uid string, input request.UpdateChannelRequest) message.Message {
 	logger := log.With(s.logger, "ChannelService", "UpdateChannel")
-
 	channel, err := s.channelRepo.FindByUid(&uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
@@ -169,15 +174,14 @@ func (s *ChannelServiceImpl) UpdateChannel(uid string, input request.SaveChannel
 	return message.FailedMsg
 }
 
-// swagger:route DELETE /channel/channel-app/{uid} channel-delete byParamDelete
-// Delete Channel
+// swagger:route DELETE /channel/channel-app/{uid} Channel-Apps ChannelRequestDeleteByUid
+// Delete Channel Apps by uid
 //
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
 func (s *ChannelServiceImpl) DeleteChannel(uid string) message.Message {
 	logger := log.With(s.logger, "ChannelService", "DeleteChannel")
-
 	_, err := s.channelRepo.FindByUid(&uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)

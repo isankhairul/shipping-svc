@@ -1,270 +1,485 @@
+basePath: /
 definitions:
-  entity.Channel:
+  BaseIDModel:
     properties:
-      channel_code:
-        description: |-
-          ChannelCode of the Channel
-          in: string
-        type: string
-      channel_name:
-        description: |-
-          ChannelName of the Channel
-          in: string
-        type: string
-      description:
-        description: |-
-          Description of the Channel
-          in: string
-        type: string
       is_deleted:
         type: boolean
-      logo:
-        description: |-
-          Logo of the Channel
-          in: string
-        type: string
-      status:
-        description: |-
-          Status of the Channel
-          in: integer
-        type: integer
+        x-go-name: IsDeleted
       uid:
         description: |-
           UID of the product
           in: int64
         type: string
+        x-go-name: UID
     type: object
-  message.Message:
-    properties:
-      code:
-        type: integer
-      message:
-        type: string
-    type: object
-  request.ChannelListRequest:
-    properties:
-      channelCode:
-        description: |-
-          ChannelCode
-          in: string
-        type: string
-      limit:
-        description: |-
-          Maximun records per page
-          in: int32
-        maximum: 100
-        minimum: 1
-        type: integer
-      page:
-        description: |-
-          Page No
-          in: int32
-        minimum: 1
-        type: integer
-      sort:
-        description: |-
-          Sort fields, example: name asc, uom desc
-          in: string
-        type: string
-      status:
-        description: |-
-          Channel status
-          in: int
-        type: integer
-    type: object
-  request.GetChannelRequest:
-    properties:
-      id:
-        description: |-
-          name: id
-          in: path
-          required: true
-        type: string
-    type: object
-  request.SaveChannelRequest:
+    x-go-package: go-klikdokter/app/model/base
+  Channel:
     properties:
       channel_code:
         description: |-
           ChannelCode of the Channel
           in: string
         type: string
+        x-go-name: ChannelCode
       channel_name:
         description: |-
           ChannelName of the Channel
           in: string
         type: string
+        x-go-name: ChannelName
       description:
         description: |-
           Description of the Channel
           in: string
         type: string
+        x-go-name: Description
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      logo:
+        description: |-
+          Logo of the Channel
+          in: string
+        type: string
+        x-go-name: Logo
+      status:
+        description: |-
+          Status of the Channel
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          UID of the product
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
+  Courier:
+    properties:
+      code:
+        description: |-
+          Code of the Courier
+          in: string
+        type: string
+        x-go-name: Code
+      courier_api_intergration:
+        description: |-
+          Courier Api Integration of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: CourierApiIntegration
+      courier_name:
+        description: |-
+          Name of the Courier
+          in: string
+        type: string
+        x-go-name: CourierName
+      courier_type:
+        description: |-
+          Type of the Courier
+          in: string
+        type: string
+        x-go-name: CourierType
+      hide_purpose:
+        description: |-
+          Hide purpose of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: HidePurpose
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      logo:
+        description: |-
+          Logo of the Courier
+          in: string
+        type: string
+        x-go-name: Logo
+      provide_airwaybill:
+        description: |-
+          Provide Airwaybill of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: ProvideAirwaybill
+      status:
+        description: |-
+          Status of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          UID of the product
+          in: int64
+        type: string
+        x-go-name: UID
+      use_geocoodinate:
+        description: |-
+          Geo Coodinate of the Courier
+          in: string
+        format: int64
+        type: integer
+        x-go-name: UseGeocoodinate
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
+  DataResponse:
+    properties:
+      record:
+        type: object
+        x-go-name: Record
+      records:
+        type: object
+        x-go-name: Records
+    type: object
+    x-go-name: data
+    x-go-package: go-klikdokter/app/model/base
+  MetaResponse:
+    properties:
+      code:
+        description: |-
+          Code is the response code
+          in: int
+        format: int64
+        type: integer
+        x-go-name: Code
+      message:
+        description: |-
+          Message is the response message
+          in: string
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-name: metaResponse
+    x-go-package: go-klikdokter/app/model/base
+  PaginationResponse:
+    properties:
+      limit:
+        format: int64
+        type: integer
+        x-go-name: Limit
+      page:
+        format: int64
+        type: integer
+        x-go-name: Page
+      records:
+        format: int64
+        type: integer
+        x-go-name: Records
+      total_page:
+        format: int64
+        type: integer
+        x-go-name: TotalPage
+      total_records:
+        format: int64
+        type: integer
+        x-go-name: TotalRecords
+    type: object
+    x-go-name: Pagination
+    x-go-package: go-klikdokter/app/model/base
+  SaveChannelRequest:
+    properties:
+      channel_code:
+        description: |-
+          ChannelCode of the Channel
+          in: string
+        type: string
+        x-go-name: ChannelCode
+      channel_name:
+        description: |-
+          ChannelName of the Channel
+          in: string
+        type: string
+        x-go-name: ChannelName
+      description:
+        description: |-
+          Description of the Channel
+          in: string
+        type: string
+        x-go-name: Description
       logo:
         description: |-
           Logo of Channel
           in: string
         type: string
+        x-go-name: Logo
       status:
         description: |-
           status of Channel
           in: int
+        format: int64
         type: integer
+        x-go-name: Status
       uid:
         description: |-
           Uid of the courỉe, use this on UPDATE function
           in: int32
         type: string
+        x-go-name: Uid
     type: object
-  request.UpdateChannelRequest:
+    x-go-package: go-klikdokter/app/model/request
+  SaveCourierRequest:
     properties:
-      channel_code:
+      code:
         description: |-
-          ChannelCode of Channel
+          Code of the courier
           in: string
         type: string
-      channel_name:
+        x-go-name: Code
+      courier_api_intergration:
         description: |-
-          ChannelName of the Channel
+          Courier Api Integration of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: CourierApiIntegration
+      courier_name:
+        description: |-
+          Name of the courier
           in: string
         type: string
-      description:
+        x-go-name: CourierName
+      courier_type:
         description: |-
-          Description of the Channel
+          type of courier
           in: string
         type: string
+        x-go-name: CourierType
+      hide_purpose:
+        description: |-
+          Hide purpose of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: HidePurpose
       logo:
         description: |-
-          Logo of Channel
+          Logo of courier
           in: string
         type: string
+        x-go-name: Logo
+      provide_airwaybill:
+        description: |-
+          Provide Airwaybill of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: ProvideAirwaybill
       status:
         description: |-
-          Status of Channel
+          Courier status
           in: int
+        format: int64
         type: integer
+        x-go-name: Status
       uid:
         description: |-
-          Uid of the Channel, use this on UPDATE function
+          Uid of the courỉe, use this on UPDATE function
           in: int32
         type: string
+        x-go-name: Uid
+      use_geocoodinate:
+        description: |-
+          Geo Coodinate of the Courier
+          in: string
+        format: int64
+        type: integer
+        x-go-name: UseGeocoodinate
     type: object
+    x-go-package: go-klikdokter/app/model/request
+  SuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/DataResponse'
+      errors:
+        description: |-
+          Errors is the response message
+          in: string
+        type: object
+        x-go-name: Errors
+      meta:
+        $ref: '#/definitions/MetaResponse'
+      pagination:
+        $ref: '#/definitions/PaginationResponse'
+    type: object
+    x-go-name: responseHttp
+    x-go-package: go-klikdokter/app/model/base
+host: localhost:5600
 info:
-  contact: {}
+  title: 'KD Boilerplate Go kit:'
+  version: "1.0"
 paths:
   /channel/channel-app:
     get:
-      consumes:
-      - application/json
-      description: API GetListChannel
-      parameters:
-      - description: Request data
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.ChannelListRequest'
-      produces:
-      - application/json
+      description: List of Channel Apps
+      operationId: Channels
       responses:
-        "200":
-          description: OK
+        "201":
+          description: SuccessResponse
           schema:
-            items:
-              $ref: '#/definitions/entity.Channel'
-            type: array
-      security:
-      - AuthorizationHeader: []
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
       tags:
-      - Channel
+      - Channel-Apps
     post:
-      consumes:
-      - application/json
-      description: API CreateChannel
+      description: Add Channel App
+      operationId: SaveChannelRequest
       parameters:
-      - description: Request data
-        in: body
-        name: data
-        required: true
+      - in: body
+        name: body
         schema:
-          $ref: '#/definitions/request.SaveChannelRequest'
-      produces:
-      - application/json
+          $ref: '#/definitions/SaveChannelRequest'
+        x-go-name: Body
       responses:
-        "200":
-          description: OK
+        "201":
+          description: SuccessResponse
           schema:
-            $ref: '#/definitions/request.SaveChannelRequest'
-      security:
-      - AuthorizationHeader: []
-      summary: API CreateChannel
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
       tags:
-      - Channel
+      - Channel-Apps
   /channel/channel-app/{uid}:
     delete:
-      consumes:
-      - application/json
-      description: API DeleteChannel
+      description: Delete Channel Apps by uid
+      operationId: ChannelRequestDeleteByUid
       parameters:
-      - description: Request data
-        in: body
-        name: data
+      - description: Uid of the Channel
+        in: path
+        name: uid
         required: true
-        schema:
-          $ref: '#/definitions/request.GetChannelRequest'
-      produces:
-      - application/json
+        type: string
+        x-go-name: UId
       responses:
         "200":
-          description: OK
+          description: SuccessResponse
           schema:
-            $ref: '#/definitions/message.Message'
-      security:
-      - AuthorizationHeader: []
-      summary: API DeleteChannel
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
       tags:
-      - Channel
+      - Channel-Apps
     get:
-      consumes:
-      - application/json
-      description: API GetChannelById
+      description: Get Detail of Channel Apps
+      operationId: ChannelRequestGetByUid
       parameters:
-      - description: Request data
-        in: body
-        name: data
+      - description: Uid of the Channel
+        in: path
+        name: uid
         required: true
-        schema:
-          $ref: '#/definitions/request.GetChannelRequest'
-      produces:
-      - application/json
+        type: string
+        x-go-name: UId
       responses:
-        "200":
-          description: OK
+        "201":
+          description: SuccessResponse
           schema:
-            $ref: '#/definitions/entity.Channel'
-      security:
-      - AuthorizationHeader: []
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
       tags:
-      - Channel
+      - Channel-Apps
     put:
-      consumes:
-      - application/json
-      description: API UpdateChannel
+      description: Update Channel App by uid
+      operationId: UpdateChannelRequest
       parameters:
-      - description: Request data
-        in: body
-        name: data
+      - description: Uid of the Channel
+        in: path
+        name: uid
         required: true
+        type: string
+        x-go-name: Id
+      - in: body
+        name: body
         schema:
-          $ref: '#/definitions/request.UpdateChannelRequest'
-      produces:
-      - application/json
+          $ref: '#/definitions/SaveChannelRequest'
+        x-go-name: Body
       responses:
         "200":
-          description: OK
+          description: SuccessResponse
           schema:
-            $ref: '#/definitions/message.Message'
-      security:
-      - AuthorizationHeader: []
-      summary: API UpdateChannel
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
       tags:
-      - Channel
+      - Channel-Apps
+  /courier/{id}:
+    put:
+      description: Update courier
+      operationId: UpdateCourierRequest
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - courier-update
+  /courier/courier:
+    post:
+      description: Manage Courier
+      operationId: ManagedCourierRequest
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier
+  /courier/courier/{id}:
+    delete:
+      description: Delete courier
+      operationId: byParamDelete
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - courier-delete
+    get:
+      description: Get Courier
+      operationId: Courier
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Get-Courier
+produces:
+- application/json
+schemes:
+- http
 swagger: "2.0"

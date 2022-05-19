@@ -64,20 +64,25 @@ type ChannelListRequest struct {
 	// in: string
 	ChannelCode string `schema:"channel_code" binding:"channel_code"`
 
+	// ChannelName
+	// in: string
+	ChannelName string `schema:"channel_name" binding:"channel_name"`
+
 	// Channel status
 	// in: int
 	Status int `schema:"status" binding:"omitempty"`
 }
 
-// swagger:parameters Channel
+// swagger:parameters UpdateChannelRequest
 type ReqChannelBodyUpdate struct {
-	// name: id
+	// Uid of the Channel
 	// in: path
 	// required: true
-	Id string `json:"id"`
+	Id string `json:"uid"`
 	//  in: body
 	Body SaveChannelRequest `json:"body"`
 }
+
 type UpdateChannelRequest struct {
 	// Uid of the Channel, use this on UPDATE function
 	// in: int32
@@ -102,6 +107,22 @@ type UpdateChannelRequest struct {
 	// Status of Channel
 	// in: int
 	Status int `json:"status" binding:"omitempty"`
+}
+
+// swagger:parameters ChannelRequestGetByUid
+type ChannelGetByUid struct {
+	// Uid of the Channel
+	// in: path
+	// required: true
+	UId string `json:"uid"`
+}
+
+// swagger:parameters ChannelRequestDeleteByUid
+type ChannelDeleteByUid struct {
+	// Uid of the Channel
+	// in: path
+	// required: true
+	UId string `json:"uid"`
 }
 
 func (req SaveChannelRequest) Validate() error {

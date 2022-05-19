@@ -70,6 +70,9 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 	if filter["channel_code"] != "" {
 		query = query.Where("channel_code = ?", filter["channel_code"])
 	}
+	if filter["channel_name"] != "" {
+		query = query.Where("channel_name = ?", filter["channel_name"])
+	}
 	if filter["status"] != "" {
 		query = query.Where("status = ?", filter["status"])
 	}
