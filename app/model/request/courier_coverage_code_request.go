@@ -35,10 +35,6 @@ type ReqSaveCourierCoverageCodeBody struct {
 }
 
 type SaveCourierCoverageCodeRequest struct {
-	// Uid of the courỉe, use this on UPDATE function
-	// in: int32
-	Uid string `json:"uid" binding:"omitempty"`
-
 	// Courier UID of the Courier
 	// required: True
 	// in: string
@@ -81,6 +77,10 @@ type SaveCourierCoverageCodeRequest struct {
 	// Code 6 of the Courier Coverage Code
 	// in: string
 	Code6 string `json:"code6"`
+
+	// Uid of the courỉe, use this on UPDATE function
+	// in: int32
+	Uid string `json:"-"`
 }
 
 // swagger:parameters CourierCoverageCodeByIDParam

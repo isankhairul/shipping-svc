@@ -32,7 +32,7 @@ func NewCourierCoverageCodeService(
 	return &CourierCoverageCodeServiceImpl{lg, br, pr}
 }
 
-// swagger:route POST /courier/courier-coverage-code Courier-Coverage-Code SaveCourierCoverageCodeRequest
+// swagger:route POST /courier/courier-coverage-code/ Courier-Coverage-Code SaveCourierCoverageCodeRequest
 // Create Courier Coverage Code
 //
 // responses:

@@ -1,255 +1,5 @@
 basePath: /
 definitions:
-  BaseIDModel:
-    properties:
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      uid:
-        description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-    type: object
-    x-go-package: go-klikdokter/app/model/base
-  Courier:
-    properties:
-      CourierCoverageCode:
-        items:
-          $ref: '#/definitions/CourierCoverageCode'
-        type: array
-      code:
-        description: |-
-          Code of the Courier
-          in: string
-        type: string
-        x-go-name: Code
-      courier_api_intergration:
-        description: |-
-          Courier Api Integration of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: CourierApiIntegration
-      courier_name:
-        description: |-
-          Name of the Courier
-          in: string
-        type: string
-        x-go-name: CourierName
-      courier_type:
-        description: |-
-          Type of the Courier
-          in: string
-        type: string
-        x-go-name: CourierType
-      hide_purpose:
-        description: |-
-          Hide purpose of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: HidePurpose
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      logo:
-        description: |-
-          Logo of the Courier
-          in: string
-        type: string
-        x-go-name: Logo
-      provide_airwaybill:
-        description: |-
-          Provide Airwaybill of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: ProvideAirwaybill
-      status:
-        description: |-
-          Status of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: Status
-      uid:
-        description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-      use_geocoodinate:
-        description: |-
-          Geo Coodinate of the Courier
-          in: string
-        format: int64
-        type: integer
-        x-go-name: UseGeocoodinate
-    type: object
-    x-go-package: go-klikdokter/app/model/entity
-  CourierCoverageCode:
-    properties:
-      code1:
-        description: |-
-          Code 1 of the Courier Coverage Code
-          in: string
-        example: '"CKG011"'
-        type: string
-        x-go-name: Code1
-      code2:
-        description: |-
-          Code 2 of the Courier Coverage Code
-          in: string
-        example: '"CKG012"'
-        type: string
-        x-go-name: Code2
-      code3:
-        description: |-
-          Code 3 of the Courier Coverage Code
-          in: string
-        example: '""'
-        type: string
-        x-go-name: Code3
-      code4:
-        description: |-
-          Code 4 of the Courier Coverage Code
-          in: string
-        example: '""'
-        type: string
-        x-go-name: Code4
-      code5:
-        description: |-
-          Code 5 of the Courier Coverage Code
-          in: string
-        type: string
-        x-go-name: Code5
-      code6:
-        description: |-
-          Code 6 of the Courier Coverage Code
-          in: string
-        type: string
-        x-go-name: Code6
-      country_code:
-        description: |-
-          Country code of the Courier Coverage Code
-          in: string
-          require: true
-        example: '"ID"'
-        type: string
-        x-go-name: CountryCode
-      description:
-        description: |-
-          Description of the Courier Coverage Code
-          in: string
-        example: '"PAGEDANGAN"'
-        type: string
-        x-go-name: Description
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      postal_code:
-        description: |-
-          Postal code of the Courier Coverage Code
-          in: string
-          require: true
-        example: '"151338"'
-        type: string
-        x-go-name: PostalCode
-      uid:
-        description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-    type: object
-    x-go-package: go-klikdokter/app/model/entity
-  DataResponse:
-    properties:
-      record:
-        type: object
-        x-go-name: Record
-      records:
-        type: object
-        x-go-name: Records
-    type: object
-    x-go-name: data
-    x-go-package: go-klikdokter/app/model/base
-  MetaResponse:
-    properties:
-      code:
-        description: |-
-          Code is the response code
-          in: int
-        format: int64
-        type: integer
-        x-go-name: Code
-      message:
-        description: |-
-          Message is the response message
-          in: string
-        type: string
-        x-go-name: Message
-    type: object
-    x-go-name: metaResponse
-    x-go-package: go-klikdokter/app/model/base
-  PaginationResponse:
-    properties:
-      limit:
-        format: int64
-        type: integer
-        x-go-name: Limit
-      page:
-        format: int64
-        type: integer
-        x-go-name: Page
-      records:
-        format: int64
-        type: integer
-        x-go-name: Records
-      total_page:
-        format: int64
-        type: integer
-        x-go-name: TotalPage
-      total_records:
-        format: int64
-        type: integer
-        x-go-name: TotalRecords
-    type: object
-    x-go-name: Pagination
-    x-go-package: go-klikdokter/app/model/base
-  ProductListRequest:
-    properties:
-      Limit:
-        description: |-
-          Maximun records per page
-          in: int32
-        format: int64
-        type: integer
-      Name:
-        description: |-
-          Name keyword of the product
-          in: string
-        type: string
-      Page:
-        description: |-
-          Page No
-          in: int32
-        format: int64
-        type: integer
-      Sku:
-        type: string
-      Sort:
-        example: name asc, uom desc
-        type: string
-      UOM:
-        description: |-
-          Sku of the product
-          in: string
-        type: string
-    type: object
-    x-go-package: go-klikdokter/app/model/request
   SaveCourierCoverageCodeRequest:
     properties:
       code1:
@@ -315,12 +65,6 @@ definitions:
           in: string
         type: string
         x-go-name: PostalCode
-      uid:
-        description: |-
-          Uid of the courỉe, use this on UPDATE function
-          in: int32
-        type: string
-        x-go-name: Uid
     type: object
     x-go-package: go-klikdokter/app/model/request
   SaveCourierRequest:
@@ -449,124 +193,6 @@ definitions:
         x-go-name: Weight
     type: object
     x-go-package: go-klikdokter/app/model/request
-  SuccessResponse:
-    properties:
-      data:
-        $ref: '#/definitions/DataResponse'
-      errors:
-        description: |-
-          Errors is the response message
-          in: string
-        type: object
-        x-go-name: Errors
-      meta:
-        $ref: '#/definitions/MetaResponse'
-      pagination:
-        $ref: '#/definitions/PaginationResponse'
-    type: object
-    x-go-name: responseHttp
-    x-go-package: go-klikdokter/app/model/base
-  doctor:
-    properties:
-      gender:
-        description: |-
-          Gender of the doctor
-          in: string
-        type: string
-        x-go-name: Gender
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      name:
-        description: |-
-          Name of the doctor
-          in: string
-        type: string
-        x-go-name: Name
-      uid:
-        description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-    type: object
-    x-go-name: Doctor
-    x-go-package: go-klikdokter/app/model/entity
-  errorResponse:
-    properties:
-      data:
-        description: |-
-          Data is our data
-          in: struct{}
-        type: object
-        x-go-name: Data
-      errors:
-        description: |-
-          Errors is the response message
-          in: string
-        type: object
-        x-go-name: Errors
-      meta:
-        description: |-
-          Meta is the API response information
-          in: struct{}
-        properties:
-          code:
-            description: |-
-              Code is the response code
-              in: int
-            format: int64
-            type: integer
-            x-go-name: Code
-          message:
-            description: |-
-              Message is the response message
-              in: string
-            type: string
-            x-go-name: Message
-        type: object
-        x-go-name: Meta
-    type: object
-    x-go-package: go-klikdokter/app/model/base/encoder
-  product:
-    properties:
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      name:
-        description: |-
-          Name of the product
-          in: string
-        type: string
-        x-go-name: Name
-      sku:
-        description: |-
-          Sku of the product
-          in: string
-        type: string
-        x-go-name: Sku
-      uid:
-        description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-      uom:
-        description: |-
-          Uom of the product
-          in: string
-        type: string
-        x-go-name: Uom
-      weight:
-        description: |-
-          Weight of the product
-          in: int32
-        format: int32
-        type: integer
-        x-go-name: Weight
-    type: object
-    x-go-name: Product
-    x-go-package: go-klikdokter/app/model/entity
 host: localhost:5600
 info:
   title: 'KD Boilerplate Go kit:'
@@ -578,13 +204,9 @@ paths:
       operationId: UpdateCourierRequest
       responses:
         "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - courier-update
   /courier/courier:
@@ -593,36 +215,11 @@ paths:
       operationId: ManagedCourierRequest
       responses:
         "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - Courier
-  /courier/courier-coverage-code:
-    post:
-      description: Update courier coverage by uid
-      operationId: SaveCourierCoverageCodeRequest
-      parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '#/definitions/SaveCourierCoverageCodeRequest'
-        x-go-name: Body
-      responses:
-        "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - Courier-Coverage-Code
   /courier/courier-coverage-code/:
     get:
       description: List products
@@ -647,13 +244,25 @@ paths:
         type: string
       responses:
         "200":
-          description: PaginationResponse
-          schema:
-            $ref: '#/definitions/PaginationResponse'
+          $ref: '#/responses/PaginationResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
+      tags:
+      - Courier-Coverage-Code
+    post:
+      description: Update courier coverage by uid
+      operationId: SaveCourierCoverageCodeRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierCoverageCodeRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          $ref: '#/responses/SuccessResponse'
+        "401":
+          $ref: '#/responses/SuccessResponse'
       tags:
       - Courier-Coverage-Code
   /courier/courier-coverage-code/{uid}:
@@ -669,13 +278,9 @@ paths:
         x-go-name: UId
       responses:
         "200":
-          description: CourierCoverageCode
-          schema:
-            $ref: '#/definitions/CourierCoverageCode'
+          $ref: '#/responses/CourierCoverageCode'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - Courier-Coverage-Code
     put:
@@ -689,13 +294,9 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - Courier-Coverage-Code
   /courier/courier/{id}:
@@ -711,13 +312,9 @@ paths:
         x-go-name: Id
       responses:
         "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - product-delete
     get:
@@ -725,13 +322,9 @@ paths:
       operationId: Courier
       responses:
         "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - Get-Courier
   /doctors/:
@@ -746,13 +339,9 @@ paths:
         x-go-name: Body
       responses:
         "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - Doctor
   /doctors/{id}:
@@ -768,13 +357,9 @@ paths:
         x-go-name: Id
       responses:
         "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - Get-Doctor
   /products/:
@@ -789,13 +374,9 @@ paths:
         x-go-name: Body
       responses:
         "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - product
   /products/{id}:
@@ -811,13 +392,9 @@ paths:
         x-go-name: Id
       responses:
         "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - product-delete
     get:
@@ -832,13 +409,9 @@ paths:
         x-go-name: Id
       responses:
         "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - get-product
       - product
@@ -859,13 +432,9 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - product-update
   /products/list:
@@ -874,13 +443,9 @@ paths:
       operationId: productList
       responses:
         "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
         "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+          $ref: '#/responses/SuccessResponse'
       tags:
       - product
 produces:
