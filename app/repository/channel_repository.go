@@ -27,15 +27,15 @@ func NewChannelRepository(br BaseRepository) ChannelRepository {
 }
 
 func (r *channelRepo) FindByUid(uid *string) (*entity.Channel, error) {
-	var Channel entity.Channel
+	var channel entity.Channel
 	err := r.base.GetDB().
 		Where("uid=?", uid).
-		First(&Channel).Error
+		First(&channel).Error
 	if err != nil {
 		return nil, err
 	}
 
-	return &Channel, nil
+	return &channel, nil
 }
 
 func (r *channelRepo) CreateChannel(Channel *entity.Channel) (*entity.Channel, error) {
@@ -62,7 +62,7 @@ func (r *channelRepo) Paginate(value interface{}, pagination *base.Pagination, d
 }
 
 func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Channel, *base.Pagination, error) {
-	var Channels []entity.Channel
+	var channels []entity.Channel
 	var pagination base.Pagination
 
 	query := r.base.GetDB()
@@ -73,7 +73,7 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 	if filter["channel_name"] != "" {
 		query = query.Where("channel_name = ?", filter["channel_name"])
 	}
-	if filter["status"] != "" {
+	if filter["status"] != 0 {
 		query = query.Where("status = ?", filter["status"])
 	}
 
@@ -83,8 +83,8 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 
 	pagination.Limit = limit
 	pagination.Page = page
-	err := query.Scopes(r.Paginate(Channels, &pagination, query, int64(len(Channels)))).
-		Find(&Channels).
+	err := query.Scopes(r.Paginate(channels, &pagination, query, int64(len(channels)))).
+		Find(&channels).
 		Error
 
 	if err != nil {
@@ -94,14 +94,14 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 		return nil, nil, err
 	}
 
-	return Channels, &pagination, nil
+	return channels, &pagination, nil
 }
 
 func (r *channelRepo) Delete(uid string) error {
-	var Channel entity.Channel
+	var channel entity.Channel
 	err := r.base.GetDB().
 		Where("uid = ?", uid).
-		Delete(&Channel).
+		Delete(&channel).
 		Error
 	if err != nil {
 		return err

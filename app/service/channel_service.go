@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
@@ -61,8 +62,10 @@ func (s *ChannelServiceImpl) GetList(input request.ChannelListRequest) ([]entity
 		_ = level.Error(logger).Log(err)
 		return nil, nil, message.FailedMsg
 	}
+	fmt.Println("fdaf", result)
+	fmt.Println("fda2f", filter)
 
-	if result == nil {
+	if len(result) == 0 {
 		_ = level.Warn(logger).Log(message.ErrNoData)
 		return nil, nil, message.FailedMsg
 	}
@@ -113,14 +116,14 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 		_ = level.Error(logger).Log(err)
 		return nil, message.FailedMsg
 	}
-	if result != nil {
+	if len(result) != 0 {
 		_ = level.Error(logger).Log(err)
 		return nil, message.ErrDataChannelExists
 	}
 
 	s.baseRepo.BeginTx()
 	//Set request to entity
-	Channel := entity.Channel{
+	channel := entity.Channel{
 		ChannelName: input.ChannelName,
 		ChannelCode: input.ChannelCode,
 		Description: input.Description,
@@ -128,7 +131,7 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 		Status:      input.Status,
 	}
 
-	resultInsert, err := s.channelRepo.CreateChannel(&Channel)
+	resultInsert, err := s.channelRepo.CreateChannel(&channel)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		s.baseRepo.RollbackTx()
@@ -171,7 +174,7 @@ func (s *ChannelServiceImpl) UpdateChannel(uid string, input request.UpdateChann
 		return message.FailedMsg
 	}
 
-	return message.FailedMsg
+	return message.SuccessMsg
 }
 
 // swagger:route DELETE /channel/channel-app/{uid} Channel-Apps ChannelRequestDeleteByUid
