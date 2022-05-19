@@ -63,8 +63,8 @@ func makeGetCourierCoverageCodes(s service.CourierCoverageCodeService) endpoint.
 
 func makeUpdateCourierCoverageCodes(s service.CourierCoverageCodeService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-		req := rqst.(request.SaveCourierCoverageCodeRequest)
-		msg := s.UpdateCourierCoverageCode(req.Uid, req)
+		req := rqst.(request.SaveCourierCoverageCodeRequest)		
+		msg := s.UpdateCourierCoverageCode(req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}

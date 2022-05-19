@@ -12,6 +12,7 @@ type errorer interface {
 	error() error
 }
 
+// swagger:model errorResponse
 type errorResponse struct {
 	// Meta is the API response information
 	// in: struct{}

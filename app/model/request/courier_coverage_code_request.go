@@ -28,16 +28,9 @@ type CourierCoverageCodeRequest struct {
 	Uid string `json:"uid" schema:"uid"`
 }
 
-// swagger:parameters ReqSaveCourierCoverageCodeBody
+// swagger:parameters SaveCourierCoverageCodeRequest
 type ReqSaveCourierCoverageCodeBody struct {
 	// in: body
-	Body SaveCourierCoverageCodeRequest `json:"body"`
-}
-
-// swagger:parameters ReqUpdateCourierCoverageCodeBody
-type ReqUpdateCourierCoverageCodeBody struct {
-
-	//  in: body
 	Body SaveCourierCoverageCodeRequest `json:"body"`
 }
 
@@ -88,6 +81,14 @@ type SaveCourierCoverageCodeRequest struct {
 	// Code 6 of the Courier Coverage Code
 	// in: string
 	Code6 string `json:"code6"`
+}
+
+// swagger:parameters CourierCoverageCodeByIDParam
+type CourierCoverageCodeByIDParam struct {
+	// name: id
+	// in: path
+	// required: true
+	UId string `json:"uid"`
 }
 
 func (req SaveCourierCoverageCodeRequest) Validate() error {

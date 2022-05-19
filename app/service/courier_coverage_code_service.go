@@ -15,7 +15,7 @@ type CourierCoverageCodeService interface {
 	CreateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message)
 	GetList(input request.CourierCoverageCodeListRequest) ([]entity.CourierCoverageCode, *base.Pagination, message.Message)
 	GetCourierCoverageCode(uid string) (*entity.CourierCoverageCode, message.Message)
-	UpdateCourierCoverageCode(uid string, input request.SaveCourierCoverageCodeRequest) message.Message
+	UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) message.Message
 }
 
 type CourierCoverageCodeServiceImpl struct {
@@ -32,12 +32,12 @@ func NewCourierCoverageCodeService(
 	return &CourierCoverageCodeServiceImpl{lg, br, pr}
 }
 
-// swagger:route POST /courier/courier-coverage-code  CreateCourierCoverageCode
+// swagger:route POST /courier/courier-coverage-code Courier-Coverage-Code SaveCourierCoverageCodeRequest
 // Create Courier Coverage Code
 //
 // responses:
-//  401: SuccessResponse
-//  201: SuccessResponse
+//  401: errorResponse
+//  201: CourierCoverageCode
 
 func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Create Courier Coverage Code")
@@ -74,12 +74,12 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 
 }
 
-// swagger:route GET /courier/courier-coverage-code/ CourierCoverageCodeList
+// swagger:route GET /courier/courier-coverage-code/ Courier-Coverage-Code CourierCoverageCodeListRequest
 // List products
 //
 // responses:
 //  401: SuccessResponse
-//  200: SuccessResponse
+//  200: PaginationResponse
 func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCodeListRequest) ([]entity.CourierCoverageCode, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Codes")
 
@@ -105,16 +105,16 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier-coverage-code/{id} GetCourierCoverageCode
-// Get Courier
+// swagger:route GET /courier/courier-coverage-code/{uid} Courier-Coverage-Code CourierCoverageCodeByIDParam
+// Get Courier Coverage Code by uid
 //
 // responses:
 //  401: SuccessResponse
-//  201: SuccessResponse
+//  200: CourierCoverageCode
 func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*entity.CourierCoverageCode, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Get Courier Coverage Code")
 
-	result, err := s.courierCoverageCodeRepo.FindByUid(&uid)
+	result, err := s.courierCoverageCodeRepo.FindByUid(uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, message.ErrDB
@@ -127,16 +127,16 @@ func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*en
 	return result, message.SuccessMsg
 }
 
-// swagger:route PUT /courier/courier-coverage-code/{id}  UpdateCourierCoverageCode
-// Update courier
+// swagger:route PUT /courier/courier-coverage-code/{uid} Courier-Coverage-Code SaveCourierCoverageCodeRequest
+// Update courier coverage by uid
 //
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(uid string, input request.SaveCourierCoverageCodeRequest) message.Message {
+func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) message.Message {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Code")
 
-	_, err := s.courierCoverageCodeRepo.FindByUid(&uid)
+	_, err := s.courierCoverageCodeRepo.FindByUid(input.Uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return message.FailedMsg
@@ -162,7 +162,7 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(uid string, i
 		"code6":        input.Code6,
 	}
 
-	err = s.courierCoverageCodeRepo.Update(uid, data)
+	err = s.courierCoverageCodeRepo.Update(input.Uid, data)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return message.FailedMsg

@@ -17,7 +17,7 @@ type CourierCoverageCodeRepository interface {
 	CreateCourierCoverageCodeRepo(courierCoverageCode *entity.CourierCoverageCode) (*entity.CourierCoverageCode, error)
 	GetCourierUid(courier *entity.Courier, uid string) error
 	FindByParams(limit int, page int, sort string) ([]entity.CourierCoverageCode, *base.Pagination, error)
-	FindByUid(uid *string) (*entity.CourierCoverageCode, error)
+	FindByUid(uid string) (*entity.CourierCoverageCode, error)
 	Update(uid string, input map[string]interface{}) error
 }
 
@@ -86,7 +86,7 @@ func (r *CourierCoverageCodeRepo) Paginate(value interface{}, pagination *base.P
 	}
 }
 
-func (r *CourierCoverageCodeRepo) FindByUid(uid *string) (*entity.CourierCoverageCode, error) {
+func (r *CourierCoverageCodeRepo) FindByUid(uid string) (*entity.CourierCoverageCode, error) {
 	var courierCoverageCode entity.CourierCoverageCode
 	err := r.base.GetDB().
 		Where("uid=?", uid).
