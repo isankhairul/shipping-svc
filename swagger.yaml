@@ -514,7 +514,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: API CreateCourierServiceById
+      description: API CreateCourierService
       parameters:
       - description: Request data
         in: body
@@ -531,10 +531,10 @@ paths:
             $ref: '#/definitions/entity.CourierService'
       security:
       - AuthorizationHeader: []
-      summary: API CreateCourierServiceById
+      summary: API CreateCourierService
       tags:
       - CourierService
-  /courier/courier-serivces/{id}:
+  /courier/courier-serivces/{uid}:
     delete:
       consumes:
       - application/json

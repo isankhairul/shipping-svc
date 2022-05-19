@@ -61,7 +61,7 @@ func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*e
 	return result, message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier/{id} Get-Courier Courier
+// swagger:route GET /courier/courier/{uid} Get-Courier Courier
 // Get Courier
 //
 // responses:

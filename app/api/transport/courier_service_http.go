@@ -64,9 +64,9 @@ func CourierServiceHttpHandler(s service.CourierServiceService, logger log.Logge
 	return pr
 }
 
-// CreateCourierServiceById godoc
-// @Summary API CreateCourierServiceById
-// @Description API CreateCourierServiceById
+// CreateCourierService godoc
+// @Summary API CreateCourierService
+// @Description API CreateCourierService
 // @Security AuthorizationHeader
 // @Tags CourierService
 // @Accept json
@@ -94,7 +94,7 @@ func decodeSaveCourierService(ctx context.Context, r *http.Request) (rqst interf
 // @Param data body request.GetCourierServiceRequest true "Request data"
 // @Produce json
 // @Success 200 {object}  entity.CourierService
-// @Router /courier/courier-serivces/{id} [get]
+// @Router /courier/courier-serivces/{uid} [get]
 func decodeShowCourierService(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	uid := mux.Vars(r)["id"]
 	return uid, nil
@@ -133,7 +133,7 @@ func decodeListCourierService(ctx context.Context, r *http.Request) (rqst interf
 // @Param data body request.UpdateCourierServiceRequest true "Request data"
 // @Produce json
 // @Success 200 {object}  message.Message
-// @Router /courier/courier-serivces/{id} [put]
+// @Router /courier/courier-serivces/{uid} [put]
 func decodeUpdateCourierService(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	var req request.UpdateCourierServiceRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -155,7 +155,7 @@ func decodeUpdateCourierService(ctx context.Context, r *http.Request) (rqst inte
 // @Param data body request.GetCourierServiceRequest true "Request data"
 // @Produce json
 // @Success 200 {object}  message.Message
-// @Router /courier/courier-serivces/{id} [delete]
+// @Router /courier/courier-serivces/{uid} [delete]
 func decodeDeleteCourierService(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	uid := mux.Vars(r)["id"]
 	return uid, nil

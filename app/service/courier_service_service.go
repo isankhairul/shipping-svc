@@ -107,7 +107,7 @@ func (s *courierServiceServiceImpl) CreateCourierService(input request.SaveCouri
 	return resultInsert, message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier-services/{id} Get-Courier-Service CourierService
+// swagger:route GET /courier/courier-services/{uid} Get-Courier-Service CourierService
 // Get CourierService
 //
 // responses:
@@ -159,7 +159,7 @@ func (s *courierServiceServiceImpl) GetList(input request.CourierServiceListRequ
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route PUT courier/courier-services/{id} courier-service-update UpdateCourierServiceRequest
+// swagger:route PUT courier/courier-services/{uid} courier-service-update UpdateCourierServiceRequest
 // Update courierservice
 //
 // responses:
@@ -212,7 +212,7 @@ func (s *courierServiceServiceImpl) UpdateCourierService(uid string, input reque
 	return message.FailedMsg
 }
 
-// swagger:route DELETE /courier/courier-services/{id} courier-delete byParamDelete
+// swagger:route DELETE /courier/courier-services/{uid} courier-delete byParamDelete
 // Delete courierservice
 //
 // responses:
