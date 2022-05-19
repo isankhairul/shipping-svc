@@ -14,7 +14,9 @@ type channelRepo struct {
 }
 
 type ChannelRepository interface {
+	FindAll(limit int, page int, sort string) ([]entity.Channel, *base.Pagination, error)
 	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Channel, *base.Pagination, error)
+	CheckExistsByUIdChannelCode(uid, channelCode string) (bool, error)
 	FindByUid(uid *string) (*entity.Channel, error)
 	CreateChannel(product *entity.Channel) (*entity.Channel, error)
 	Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
@@ -61,19 +63,60 @@ func (r *channelRepo) Paginate(value interface{}, pagination *base.Pagination, d
 	}
 }
 
+func (r *channelRepo) FindAll(limit int, page int, sort string) ([]entity.Channel, *base.Pagination, error) {
+	var channels []entity.Channel
+	var pagination base.Pagination
+
+	query := r.base.GetDB()
+	if len(sort) > 0 {
+		query = query.Order(sort)
+	}
+	pagination.Limit = limit
+	pagination.Page = page
+	err := query.Scopes(r.Paginate(channels, &pagination, query, int64(len(channels)))).
+		Find(&channels).
+		Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil, nil
+		}
+		return nil, nil, err
+	}
+
+	return channels, &pagination, nil
+}
+
+func (r *channelRepo) CheckExistsByUIdChannelCode(uid, channelCode string) (bool, error) {
+	var exists bool
+	err := r.base.GetDB().
+		Model(&entity.Channel{}).
+		Select("count(*) > 0").
+		Where("uid != ? AND channel_code = ?", uid, channelCode).
+		Find(&exists).
+		Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return exists, nil
+}
+
 func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Channel, *base.Pagination, error) {
 	var channels []entity.Channel
 	var pagination base.Pagination
 
 	query := r.base.GetDB()
-
-	if filter["channel_code"] != "" {
+	if filter["channel_code"] != nil {
 		query = query.Where("channel_code = ?", filter["channel_code"])
 	}
-	if filter["channel_name"] != "" {
+	if filter["channel_name"] != nil {
 		query = query.Where("channel_name = ?", filter["channel_name"])
 	}
-	if filter["status"] != 0 {
+	if filter["status"] != nil {
 		query = query.Where("status = ?", filter["status"])
 	}
 

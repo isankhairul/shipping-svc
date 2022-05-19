@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
@@ -16,7 +15,7 @@ type ChannelService interface {
 	GetList(input request.ChannelListRequest) ([]entity.Channel, *base.Pagination, message.Message)
 	GetChannel(uid string) (*entity.Channel, message.Message)
 	CreateChannel(input request.SaveChannelRequest) (*entity.Channel, message.Message)
-	UpdateChannel(uid string, input request.UpdateChannelRequest) message.Message
+	UpdateChannel(input request.UpdateChannelRequest) message.Message
 	DeleteChannel(uid string) message.Message
 }
 
@@ -50,21 +49,11 @@ func (s *ChannelServiceImpl) GetList(input request.ChannelListRequest) ([]entity
 	if input.Page <= 0 {
 		input.Page = 1
 	}
-
-	filter := map[string]interface{}{
-		"channel_code": input.ChannelCode,
-		"channel_name": input.ChannelName,
-		"status":       input.Status,
-	}
-
-	result, pagination, err := s.channelRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
+	result, pagination, err := s.channelRepo.FindAll(input.Limit, input.Page, input.Sort)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, nil, message.FailedMsg
 	}
-	fmt.Println("fdaf", result)
-	fmt.Println("fda2f", filter)
-
 	if len(result) == 0 {
 		_ = level.Warn(logger).Log(message.ErrNoData)
 		return nil, nil, message.FailedMsg
@@ -148,7 +137,8 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *ChannelServiceImpl) UpdateChannel(uid string, input request.UpdateChannelRequest) message.Message {
+func (s *ChannelServiceImpl) UpdateChannel(input request.UpdateChannelRequest) message.Message {
+	uid := input.Uid
 	logger := log.With(s.logger, "ChannelService", "UpdateChannel")
 	channel, err := s.channelRepo.FindByUid(&uid)
 	if err != nil {
@@ -158,6 +148,17 @@ func (s *ChannelServiceImpl) UpdateChannel(uid string, input request.UpdateChann
 	if channel == nil {
 		_ = level.Error(logger).Log(message.ErrNoData)
 		return message.FailedMsg
+	}
+
+	//Check exists channel_code
+	isExists, err := s.channelRepo.CheckExistsByUIdChannelCode(uid, input.ChannelCode)
+	if err != nil {
+		_ = level.Error(logger).Log(err)
+		return message.FailedMsg
+	}
+	if isExists {
+		_ = level.Error(logger).Log(message.ErrNoData)
+		return message.ErrDataChannelExists
 	}
 
 	data := map[string]interface{}{

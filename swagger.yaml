@@ -216,12 +216,6 @@ definitions:
         format: int64
         type: integer
         x-go-name: Status
-      uid:
-        description: |-
-          Uid of the courỉe, use this on UPDATE function
-          in: int32
-        type: string
-        x-go-name: Uid
     type: object
     x-go-package: go-klikdokter/app/model/request
   SaveCourierRequest:
@@ -310,6 +304,41 @@ definitions:
     type: object
     x-go-name: responseHttp
     x-go-package: go-klikdokter/app/model/base
+  UpdateChannelRequest:
+    properties:
+      channel_code:
+        description: |-
+          ChannelCode of Channel
+          in: string
+        type: string
+        x-go-name: ChannelCode
+      channel_name:
+        description: |-
+          ChannelName of the Channel
+          in: string
+        type: string
+        x-go-name: ChannelName
+      description:
+        description: |-
+          Description of the Channel
+          in: string
+        type: string
+        x-go-name: Description
+      logo:
+        description: |-
+          Logo of Channel
+          in: string
+        type: string
+        x-go-name: Logo
+      status:
+        description: |-
+          Status of Channel
+          in: int
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: go-klikdokter/app/model/request
 host: localhost:5600
 info:
   title: 'KD Boilerplate Go kit:'
@@ -319,6 +348,44 @@ paths:
     get:
       description: List of Channel Apps
       operationId: Channels
+      parameters:
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: Limit
+        type: integer
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: Page
+        type: integer
+      - example: name asc, uom desc
+        in: query
+        name: Sort
+        type: string
+      - description: |-
+          Channel Code
+          in: string
+        in: query
+        name: ChannelCode
+        type: string
+      - description: |-
+          Channel Name
+          in: string
+        in: query
+        name: ChannelName
+        type: string
+      - description: |-
+          Channel Status
+          in: int
+        format: int64
+        in: query
+        name: Status
+        type: integer
       responses:
         "201":
           description: SuccessResponse
@@ -402,11 +469,11 @@ paths:
         name: uid
         required: true
         type: string
-        x-go-name: Id
+        x-go-name: UId
       - in: body
         name: body
         schema:
-          $ref: '#/definitions/SaveChannelRequest'
+          $ref: '#/definitions/UpdateChannelRequest'
         x-go-name: Body
       responses:
         "200":

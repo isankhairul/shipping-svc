@@ -64,16 +64,6 @@ func ChannelHttpHandler(s service.ChannelService, logger log.Logger) http.Handle
 	return pr
 }
 
-// CreateChannel godoc
-// @Summary API CreateChannel
-// @Description API CreateChannel
-// @Security AuthorizationHeader
-// @Tags Channel
-// @Accept json
-// @Param data body request.SaveChannelRequest true "Request data"
-// @Produce json
-// @Success 200 {object} request.SaveChannelRequest
-// @Router /channel/channel-app [post]
 func decodeSaveChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	var req request.SaveChannelRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -85,31 +75,11 @@ func decodeSaveChannel(ctx context.Context, r *http.Request) (rqst interface{}, 
 	return req, nil
 }
 
-// GetChannelById godoc
-// @Summard API GetChannelById
-// @Description API GetChannelById
-// @Security AuthorizationHeader
-// @Tags Channel
-// @Accept json
-// @Param data body request.GetChannelRequest true "Request data"
-// @Produce json
-// @Success 200 {object} entity.Channel
-// @Router /channel/channel-app/{uid} [get]
 func decodeShowChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	uid := mux.Vars(r)["id"]
 	return uid, nil
 }
 
-// GetListChannel godoc
-// @Summard API GetListChannel
-// @Description API GetListChannel
-// @Security AuthorizationHeader
-// @Tags Channel
-// @Accept json
-// @Param data body request.ChannelListRequest true "Request data"
-// @Produce json
-// @Success 200 {object} []entity.Channel
-// @Router /channel/channel-app [get]
 func decodeListChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	var params request.ChannelListRequest
 
@@ -124,16 +94,6 @@ func decodeListChannel(ctx context.Context, r *http.Request) (rqst interface{}, 
 	return params, nil
 }
 
-// UpdateChannel godoc
-// @Summary API UpdateChannel
-// @Description API UpdateChannel
-// @Security AuthorizationHeader
-// @Tags Channel
-// @Accept json
-// @Param data body request.UpdateChannelRequest true "Request data"
-// @Produce json
-// @Success 200 {object}  message.Message
-// @Router /channel/channel-app/{uid} [put]
 func decodeUpdateChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	var req request.UpdateChannelRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -141,21 +101,10 @@ func decodeUpdateChannel(ctx context.Context, r *http.Request) (rqst interface{}
 	}
 	//add this to htmlescape body post
 	global.HtmlEscape(&req)
-
 	req.Uid = mux.Vars(r)["id"]
 	return req, nil
 }
 
-// DeleteChannel godoc
-// @Summary API DeleteChannel
-// @Description API DeleteChannel
-// @Security AuthorizationHeader
-// @Tags Channel
-// @Accept json
-// @Param data body request.GetChannelRequest true "Request data"
-// @Produce json
-// @Success 200 {object}  message.Message
-// @Router /channel/channel-app/{uid} [delete]
 func decodeDeleteChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	uid := mux.Vars(r)["id"]
 	return uid, nil

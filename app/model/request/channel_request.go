@@ -21,10 +21,6 @@ type SaveChannelRequest struct {
 	// in: string
 	ChannelCode string `json:"channel_code" binding:"omitempty"`
 
-	// Uid of the courỉe, use this on UPDATE function
-	// in: int32
-	Uid string `json:"uid" binding:"omitempty"`
-
 	// Description of the Channel
 	// in: string
 	Description string `json:"description" binding:"omitempty"`
@@ -46,7 +42,7 @@ type GetChannelRequest struct {
 	Id string `json:"id"`
 }
 
-// swagger:parameters list Channel
+// swagger:parameters Channels
 type ChannelListRequest struct {
 	// Maximun records per page
 	// in: int32
@@ -60,15 +56,15 @@ type ChannelListRequest struct {
 	// in: string
 	Sort string `schema:"sort" binding:"omitempty"`
 
-	// ChannelCode
+	// Channel Code
 	// in: string
 	ChannelCode string `schema:"channel_code" binding:"channel_code"`
 
-	// ChannelName
+	// Channel Name
 	// in: string
 	ChannelName string `schema:"channel_name" binding:"channel_name"`
 
-	// Channel status
+	// Channel Status
 	// in: int
 	Status int `schema:"status" binding:"omitempty"`
 }
@@ -78,15 +74,15 @@ type ReqChannelBodyUpdate struct {
 	// Uid of the Channel
 	// in: path
 	// required: true
-	Id string `json:"uid"`
+	UId string `json:"uid"`
 	//  in: body
-	Body SaveChannelRequest `json:"body"`
+	Body UpdateChannelRequest `json:"body"`
 }
 
 type UpdateChannelRequest struct {
-	// Uid of the Channel, use this on UPDATE function
+	// Uid of the courier, use this on UPDATE function
 	// in: int32
-	Uid string `json:"uid" binding:"omitempty"`
+	Uid string `json:"-" binding:"omitempty"`
 
 	// ChannelName of the Channel
 	// in: string

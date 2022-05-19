@@ -77,7 +77,7 @@ func makeDeleteChannel(s service.ChannelService) endpoint.Endpoint {
 func makeUpdateChannel(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
 		req := rqst.(request.UpdateChannelRequest)
-		msg := s.UpdateChannel(req.Uid, req)
+		msg := s.UpdateChannel(req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
