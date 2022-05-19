@@ -198,7 +198,7 @@ paths:
       summary: API CreateChannel
       tags:
       - Channel
-  /channel/channel-app/{id}:
+  /channel/channel-app/{uid}:
     delete:
       consumes:
       - application/json

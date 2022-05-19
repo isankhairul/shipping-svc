@@ -81,7 +81,7 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 	return resultInsert, message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-app/{id} Get-channel Channel
+// swagger:route GET /channel/channel-app/{uid} Get-channel Channel
 // Get Channel
 //
 // responses:
@@ -133,7 +133,7 @@ func (s *ChannelServiceImpl) GetList(input request.ChannelListRequest) ([]entity
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route PUT /channel/channel-app/{id} UpdateChannelRequest
+// swagger:route PUT /channel/channel-app/{uid} UpdateChannelRequest
 // Update Channel
 //
 // responses:
@@ -169,7 +169,7 @@ func (s *ChannelServiceImpl) UpdateChannel(uid string, input request.SaveChannel
 	return message.FailedMsg
 }
 
-// swagger:route DELETE /channel/channel-app/{id} channel-delete byParamDelete
+// swagger:route DELETE /channel/channel-app/{uid} channel-delete byParamDelete
 // Delete Channel
 //
 // responses:

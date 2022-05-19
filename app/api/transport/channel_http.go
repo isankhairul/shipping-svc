@@ -94,7 +94,7 @@ func decodeSaveChannel(ctx context.Context, r *http.Request) (rqst interface{}, 
 // @Param data body request.GetChannelRequest true "Request data"
 // @Produce json
 // @Success 200 {object} entity.Channel
-// @Router /channel/channel-app/{id} [get]
+// @Router /channel/channel-app/{uid} [get]
 func decodeShowChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	uid := mux.Vars(r)["id"]
 	return uid, nil
@@ -133,7 +133,7 @@ func decodeListChannel(ctx context.Context, r *http.Request) (rqst interface{}, 
 // @Param data body request.UpdateChannelRequest true "Request data"
 // @Produce json
 // @Success 200 {object}  message.Message
-// @Router /channel/channel-app/{id} [put]
+// @Router /channel/channel-app/{uid} [put]
 func decodeUpdateChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	var req request.UpdateChannelRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -155,7 +155,7 @@ func decodeUpdateChannel(ctx context.Context, r *http.Request) (rqst interface{}
 // @Param data body request.GetChannelRequest true "Request data"
 // @Produce json
 // @Success 200 {object}  message.Message
-// @Router /channel/channel-app/{id} [delete]
+// @Router /channel/channel-app/{uid} [delete]
 func decodeDeleteChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	uid := mux.Vars(r)["id"]
 	return uid, nil
