@@ -170,12 +170,12 @@ type CourierServiceListRequest struct {
 	Status int `schema:"status" binding:"omitempty"`
 }
 
-// swagger:parameters courier service
+// swagger:parameters UpdateCourierServiceRequest
 type ReqCourierServiceBodyUpdate struct {
-	// name: id
+	// Uid of the courier service.
 	// in: path
 	// required: true
-	Id string `json:"id"`
+	UId string `json:"uid"`
 	//  in: body
 	Body SaveCourierServiceRequest `json:"body"`
 }
@@ -288,6 +288,22 @@ type UpdateCourierServiceRequest struct {
 	// Repickup Fee of the Courier Service
 	// in: float64
 	Repickup float64 `json:"repickup"`
+}
+
+// swagger:parameters CourierServiceRequestGetByUid
+type CourierServiceGetByUid struct {
+	// Uid of the Courier Service
+	// in: path
+	// required: true
+	UId string `json:"uid"`
+}
+
+// swagger:parameters CourierServiceRequestDeleteByUid
+type CourierServiceDeleteByUid struct {
+	// Uid of the Courier Service
+	// in: path
+	// required: true
+	UId string `json:"uid"`
 }
 
 func (req SaveCourierServiceRequest) Validate() error {

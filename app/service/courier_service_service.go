@@ -14,7 +14,7 @@ import (
 type CourierServiceService interface {
 	CreateCourierService(input request.SaveCourierServiceRequest) (*entity.CourierService, message.Message)
 	GetList(input request.CourierServiceListRequest) ([]entity.CourierService, *base.Pagination, message.Message)
-	UpdateCourierService(uid string, input request.SaveCourierServiceRequest) message.Message
+	UpdateCourierService(uid string, input request.UpdateCourierServiceRequest) message.Message
 	GetCourierService(uid string) (*entity.CourierService, message.Message)
 	DeleteCourierService(uid string) message.Message
 }
@@ -33,8 +33,8 @@ func NewCourierServiceService(
 	return &courierServiceServiceImpl{lg, br, pr}
 }
 
-// swagger:route POST /courier/courier-services Courier Service ManagedCourierServiceRequest
-// Manage CourierService
+// swagger:route POST /courier/courier-services Courier-Services SaveCourierServiceRequest
+// Add Courier Services
 //
 // responses:
 //  401: SuccessResponse
@@ -107,8 +107,8 @@ func (s *courierServiceServiceImpl) CreateCourierService(input request.SaveCouri
 	return resultInsert, message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier-services/{uid} Get-Courier-Service CourierService
-// Get CourierService
+// swagger:route GET /courier/courier-services/{uid} Courier-Services CourierServiceRequestGetByUid
+// Detail Courier Services
 //
 // responses:
 //  401: SuccessResponse
@@ -129,6 +129,12 @@ func (s *courierServiceServiceImpl) GetCourierService(uid string) (*entity.Couri
 	return result, message.SuccessMsg
 }
 
+// swagger:route GET /courier/courier-services Courier-Services GetList
+// List of Courier Services
+//
+// responses:
+//  401: SuccessResponse
+//  201: SuccessResponse
 func (s *courierServiceServiceImpl) GetList(input request.CourierServiceListRequest) ([]entity.CourierService, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierServiceService", "GetList")
 
@@ -159,13 +165,13 @@ func (s *courierServiceServiceImpl) GetList(input request.CourierServiceListRequ
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route PUT courier/courier-services/{uid} courier-service-update UpdateCourierServiceRequest
-// Update courierservice
+// swagger:route PUT /courier/courier-services/{uid} Courier-Services UpdateCourierServiceRequest
+// Update Courier Services
 //
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *courierServiceServiceImpl) UpdateCourierService(uid string, input request.SaveCourierServiceRequest) message.Message {
+func (s *courierServiceServiceImpl) UpdateCourierService(uid string, input request.UpdateCourierServiceRequest) message.Message {
 	logger := log.With(s.logger, "CourierServiceService", "UpdateCourierService")
 
 	_, err := s.courierServiceRepo.FindByUid(&uid)
@@ -212,8 +218,8 @@ func (s *courierServiceServiceImpl) UpdateCourierService(uid string, input reque
 	return message.FailedMsg
 }
 
-// swagger:route DELETE /courier/courier-services/{uid} courier-delete byParamDelete
-// Delete courierservice
+// swagger:route DELETE /courier/courier-services/{uid} Courier-Services CourierServiceRequestDeleteByUid
+// Delete Courier Services
 //
 // responses:
 //  401: SuccessResponse
