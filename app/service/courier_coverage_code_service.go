@@ -42,16 +42,33 @@ func NewCourierCoverageCodeService(
 func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Create Courier Coverage Code")
 	s.baseReo.BeginTx()
+
 	var courier entity.Courier
 	err := s.courierCoverageCodeRepo.GetCourierUid(&courier, input.CourierUID)
+	if err != nil {
+		_ = level.Error(logger).Log(err)
+		s.baseReo.RollbackTx()
+		mess := message.ErrDataExists
+		mess.Message = "Not found courier_uid"
+		return nil, mess
+	}
+	var courierCoverageCode entity.CourierCoverageCode
+	count, err := s.courierCoverageCodeRepo.CombinationUnique(courierCoverageCode, courier.ID, input.CountryCode, input.PostalCode)
+
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		s.baseReo.RollbackTx()
 		return nil, message.ErrDB
 	}
 
+	if count > 0 {
+		mess := message.Message{Code: 34005, Message: "The combination of courier_uid, country_code and postal_code is exist in database"}
+		s.baseReo.RollbackTx()
+		return nil, mess
+	}
+
 	// set request to entity
-	courierCoverageCode := entity.CourierCoverageCode{
+	courierCoverageCode = entity.CourierCoverageCode{
 		CourierID:   courier.ID,
 		CountryCode: input.CountryCode,
 		PostalCode:  input.PostalCode,
@@ -70,6 +87,7 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 		return nil, message.ErrDB
 	}
 	s.baseReo.CommitTx()
+	result.CourierUID = courier.UID
 	return result, message.SuccessMsg
 
 }

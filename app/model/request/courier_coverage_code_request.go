@@ -95,5 +95,6 @@ func (req SaveCourierCoverageCodeRequest) Validate() error {
 	return validation.ValidateStruct(&req,
 		validation.Field(&req.CountryCode, validation.Required.Error(message.ErrReq.Message)),
 		validation.Field(&req.PostalCode, validation.Required.Error(message.ErrReq.Message)),
+		validation.Field(&req.CourierUID, validation.Required.Error(message.ErrReq.Message)),
 	)
 }

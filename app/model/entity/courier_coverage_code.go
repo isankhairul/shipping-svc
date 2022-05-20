@@ -11,6 +11,12 @@ type CourierCoverageCode struct {
 	// require: true
 	CourierID uint64 `gorm:"not null" json:"-"`
 
+	// Courier UID of the Courier
+	// in: string
+	// require: false
+	// example: "ggkjhsdf6668885555"
+	CourierUID string `gorm:"-" json:"courier_uid"`
+
 	// Country code of the Courier Coverage Code
 	// in: string
 	// require: true

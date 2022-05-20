@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"math"
@@ -19,6 +20,7 @@ type CourierCoverageCodeRepository interface {
 	FindByParams(limit int, page int, sort string) ([]entity.CourierCoverageCode, *base.Pagination, error)
 	FindByUid(uid string) (*entity.CourierCoverageCode, error)
 	Update(uid string, input map[string]interface{}) error
+	CombinationUnique(courierCoverageCode entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string) (int64, error)
 }
 
 func NewCourierCoverageCodeRepository(br BaseRepository) CourierCoverageCodeRepository {
@@ -44,6 +46,17 @@ func (r *CourierCoverageCodeRepo) GetCourierUid(courier *entity.Courier, uid str
 	}
 
 	return nil
+
+}
+
+func (r *CourierCoverageCodeRepo) CombinationUnique(courierCoverageCode entity.CourierCoverageCode, courierId uint64, countryCode, postalCode string) (int64, error) {
+	result := r.base.GetDB().First(&courierCoverageCode, "courier_id = ? AND country_code = ? AND postal_code = ?", courierId, countryCode, postalCode)
+
+	if result.Error != nil && fmt.Sprint(result.Error) != "record not found" {
+		return 0, result.Error
+	}
+
+	return result.RowsAffected, nil
 
 }
 
