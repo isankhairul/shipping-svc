@@ -27,31 +27,11 @@ type SaveCourierRequest struct {
 
 	// type of courier
 	// in: string
-	CourierType string `json:"courier_type" binding:"omitempty"`
-
-	// Courier status
-	// in: int
-	Status int `json:"status" binding:"omitempty"`
+	CourierType string `json:"courier_type"`
 
 	// Logo of courier
 	// in: string
-	Logo string `json:"logo" binding:"omitempty"`
-
-	// Hide purpose of the Courier
-	// in: integer
-	HidePurpose int `json:"hide_purpose" binding:"omitempty"`
-
-	// Courier Api Integration of the Courier
-	// in: integer
-	CourierApiIntegration int `json:"courier_api_intergration" binding:"omitempty"`
-
-	// Geo Coodinate of the Courier
-	// in: string
-	UseGeocoodinate int `json:"use_geocoodinate" binding:"omitempty"`
-
-	// Provide Airwaybill of the Courier
-	// in: integer
-	ProvideAirwaybill int `json:"provide_airwaybill" binding:"omitempty"`
+	Logo string `json:"logo"`
 }
 
 // swagger:parameters courier
@@ -81,19 +61,10 @@ type CourierListRequest struct {
 	CourierType string `schema:"courier_type" binding:"omitempty"`
 
 	// Courier status
-	// in: int
-	Status int `schema:"status" binding:"omitempty"`
+	// in: string
+	Status string `schema:"courier_name" binding:"omitempty"`
 }
 
-// swagger:parameters courier
-type ReqCourierBodyUpdate struct {
-	// name: id
-	// in: path
-	// required: true
-	Id string `json:"id"`
-	//  in: body
-	Body SaveCourierRequest `json:"body"`
-}
 type UpdateCourierRequest struct {
 	// Uid of the courier, use this on UPDATE function
 	// in: int32
@@ -112,24 +83,8 @@ type UpdateCourierRequest struct {
 	Logo string `json:"logo"`
 
 	// Courier status
-	// in: int
-	Status int `json:"status" binding:"omitempty"`
-
-	// Hide purpose of the Courier
-	// in: integer
-	HidePurpose int `json:"hide_purpose"`
-
-	// Courier Api Integration of the Courier
-	// in: integer
-	CourierApiIntegration int `json:"courier_api_intergration"`
-
-	// Geo Coodinate of the Courier
 	// in: string
-	UseGeocoodinate int `json:"use_geocoodinate"`
-
-	// Provide Airwaybill of the Courier
-	// in: integer
-	ProvideAirwaybill int `json:"provide_airwaybill"`
+	Status string `json:"status" binding:"omitempty"`
 }
 
 func (req SaveCourierRequest) Validate() error {
