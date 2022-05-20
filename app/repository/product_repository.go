@@ -49,7 +49,7 @@ func (r *productRepo) FindByParams(limit int, page int, sort string, filter map[
 		query = query.Where("LOWER(name) LIKE ?", "%"+strings.ToLower(filter["name"].(string))+"%")
 	}
 
-	if filter["sku"] != "" {
+	if filter["name"] != "" {
 		query = query.Where("LOWER(sku) LIKE ?", "%"+strings.ToLower(filter["sku"].(string))+"%")
 	}
 
