@@ -17,6 +17,7 @@ type CourierCoverageCodeRepo struct {
 type CourierCoverageCodeRepository interface {
 	CreateCourierCoverageCodeRepo(courierCoverageCode *entity.CourierCoverageCode) (*entity.CourierCoverageCode, error)
 	GetCourierUid(courier *entity.Courier, uid string) error
+	GetCourierId(courier *entity.Courier, id uint64) error
 	FindByParams(limit int, page int, sort string) ([]entity.CourierCoverageCode, *base.Pagination, error)
 	FindByUid(uid string) (*entity.CourierCoverageCode, error)
 	Update(uid string, input map[string]interface{}) error
@@ -46,7 +47,15 @@ func (r *CourierCoverageCodeRepo) GetCourierUid(courier *entity.Courier, uid str
 	}
 
 	return nil
+}
+func (r *CourierCoverageCodeRepo) GetCourierId(courier *entity.Courier, id uint64) error {
+	err := r.base.GetDB().First(courier, "id = ?", id).Error
 
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *CourierCoverageCodeRepo) CombinationUnique(courierCoverageCode entity.CourierCoverageCode, courierId uint64, countryCode, postalCode string) (int64, error) {
@@ -102,7 +111,7 @@ func (r *CourierCoverageCodeRepo) Paginate(value interface{}, pagination *base.P
 func (r *CourierCoverageCodeRepo) FindByUid(uid string) (*entity.CourierCoverageCode, error) {
 	var courierCoverageCode entity.CourierCoverageCode
 	err := r.base.GetDB().
-		Where("uid=?", uid).
+		Where("uid = ?", uid).
 		First(&courierCoverageCode).Error
 	if err != nil {
 		return nil, err
