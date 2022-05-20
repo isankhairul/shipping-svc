@@ -14,6 +14,8 @@ type courierServiceRepo struct {
 }
 
 type CourierServiceRepository interface {
+	FindAll(limit int, page int, sort string) ([]entity.CourierService, *base.Pagination, error)
+	CheckExistsByUIdCourierIdShippingCode(uid string, courierId int, shippingCode string) (bool, error)
 	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.CourierService, *base.Pagination, error)
 	FindByUid(uid *string) (*entity.CourierService, error)
 	CreateCourierService(product *entity.CourierService) (*entity.CourierService, error)
@@ -61,25 +63,66 @@ func (r *courierServiceRepo) Paginate(value interface{}, pagination *base.Pagina
 	}
 }
 
+func (r *courierServiceRepo) FindAll(limit int, page int, sort string) ([]entity.CourierService, *base.Pagination, error) {
+	var courierService []entity.CourierService
+	var pagination base.Pagination
+
+	query := r.base.GetDB()
+	if len(sort) > 0 {
+		query = query.Order(sort)
+	}
+	pagination.Limit = limit
+	pagination.Page = page
+	err := query.Scopes(r.Paginate(courierService, &pagination, query, int64(len(courierService)))).
+		Find(&courierService).
+		Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil, nil
+		}
+		return nil, nil, err
+	}
+	return courierService, &pagination, nil
+}
+
+func (r *courierServiceRepo) CheckExistsByUIdCourierIdShippingCode(uid string, courierId int, shippingCode string) (bool, error) {
+	var exists bool
+	err := r.base.GetDB().
+		Model(&entity.CourierService{}).
+		Select("count(*) > 0").
+		Where("uid != ? AND shipping_code = ? AND courier_id = ?", uid, shippingCode, courierId).
+		Find(&exists).
+		Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return exists, nil
+}
+
 func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.CourierService, *base.Pagination, error) {
 	var couriers []entity.CourierService
 	var pagination base.Pagination
 
 	query := r.base.GetDB()
 
-	if filter["shipping_type"] != "" {
+	if filter["shipping_type"] != nil {
 		query = query.Where("shipping_type = ?", filter["shipping_type"])
 	}
 
-	if filter["status"] != "" {
+	if filter["status"] != nil {
 		query = query.Where("status = ?", filter["status"])
 	}
 
-	if filter["courier_id"] != 0 {
+	if filter["courier_id"] != nil {
 		query = query.Where("courier_id = ?", filter["courier_id"])
 	}
 
-	if filter["shipping_code"] != "" {
+	if filter["shipping_code"] != nil {
 		query = query.Where("shipping_code = ?", filter["shipping_code"])
 	}
 

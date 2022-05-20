@@ -14,10 +14,6 @@ type ReqCourierServiceBody struct {
 }
 
 type SaveCourierServiceRequest struct {
-	// Uid of the Courier Service, use this on UPDATE function
-	// in: int32
-	Uid string `json:"uid" binding:"omitempty"`
-
 	// Courier Id of the Courier Service
 	// in: int
 	CourierId int `json:"courier_id"`
@@ -147,7 +143,7 @@ type GetCourierServiceRequest struct {
 	Id string `json:"id"`
 }
 
-// swagger:parameters list courier service
+// swagger:parameters CourierServiceListRequest
 type CourierServiceListRequest struct {
 	// Maximun records per page
 	// in: int32
@@ -183,7 +179,7 @@ type ReqCourierServiceBodyUpdate struct {
 type UpdateCourierServiceRequest struct {
 	// Uid of the courier service, use this on UPDATE function
 	// in: string
-	Uid string `json:"uid" binding:"omitempty"`
+	Uid string `json:"-" binding:"omitempty"`
 
 	// Courier Id of the Courier Service
 	// in: int

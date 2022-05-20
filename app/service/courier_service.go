@@ -272,7 +272,7 @@ func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierServi
 	return result, message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier-services Courier-Services GetList
+// swagger:route GET /courier/courier-services Courier-Services CourierServiceListRequest
 // List of Courier Services
 //
 // responses:
@@ -288,13 +288,7 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 	if input.Page <= 0 {
 		input.Page = 1
 	}
-
-	filter := map[string]interface{}{
-		"shipping_type": input.ShippingType,
-		"status":        input.Status,
-	}
-
-	result, pagination, err := s.courierServiceRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
+	result, pagination, err := s.courierServiceRepo.FindAll(input.Limit, input.Page, input.Sort)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, nil, message.FailedMsg
@@ -317,10 +311,23 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 func (s *courierServiceImpl) UpdateCourierService(uid string, input request.UpdateCourierServiceRequest) message.Message {
 	logger := log.With(s.logger, "CourierServiceService", "UpdateCourierService")
 
-	_, err := s.courierServiceRepo.FindByUid(&uid)
+	courierService, err := s.courierServiceRepo.FindByUid(&uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return message.FailedMsg
+	}
+	if courierService == nil {
+		return message.ErrNoData
+	}
+
+	//Check exists
+	isExists, err := s.courierServiceRepo.CheckExistsByUIdCourierIdShippingCode(uid, input.CourierId, input.ShippingCode)
+	if err != nil {
+		_ = level.Error(logger).Log(err)
+		return message.FailedMsg
+	}
+	if isExists {
+		return message.ErrDataCourierServiceExists
 	}
 
 	data := map[string]interface{}{
@@ -370,10 +377,13 @@ func (s *courierServiceImpl) UpdateCourierService(uid string, input request.Upda
 func (s *courierServiceImpl) DeleteCourierService(uid string) message.Message {
 	logger := log.With(s.logger, "CourierServiceService", "DeleteCourierService")
 
-	_, err := s.courierServiceRepo.FindByUid(&uid)
+	courierService, err := s.courierServiceRepo.FindByUid(&uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return message.FailedMsg
+	}
+	if courierService == nil {
+		return message.ErrNoData
 	}
 
 	err = s.courierServiceRepo.Delete(uid)

@@ -427,12 +427,6 @@ definitions:
         format: int64
         type: integer
         x-go-name: TrackingAvailable
-      uid:
-        description: |-
-          Uid of the Courier Service, use this on UPDATE function
-          in: int32
-        type: string
-        x-go-name: Uid
       updated_at:
         description: |-
           Updated At of the Courier Service
@@ -625,7 +619,39 @@ paths:
   /courier/courier-services:
     get:
       description: List of Courier Services
-      operationId: GetList
+      operationId: CourierServiceListRequest
+      parameters:
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: Limit
+        type: integer
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: Page
+        type: integer
+      - example: name asc, uom desc
+        in: query
+        name: Sort
+        type: string
+      - description: |-
+          Shipping type
+          in: string
+        in: query
+        name: ShippingType
+        type: string
+      - description: |-
+          Courier status
+          in: int
+        format: int64
+        in: query
+        name: Status
+        type: integer
       responses:
         "201":
           description: SuccessResponse
