@@ -76,7 +76,7 @@ func makeDeleteCourier(s service.CourierService) endpoint.Endpoint {
 
 func makeUpdateCourier(s service.CourierService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-		req := rqst.(request.SaveCourierRequest)
+		req := rqst.(request.UpdateCourierRequest)
 		msg := s.UpdateCourier(req.Uid, req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
