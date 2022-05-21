@@ -157,13 +157,25 @@ type CourierServiceListRequest struct {
 	// in: string
 	Sort string `schema:"sort" binding:"omitempty"`
 
-	// Shipping type
+	// CourierName
 	// in: string
-	ShippingType string `schema:"shipping_type" binding:"omitempty"`
+	CourierName string `schema:"CourierName" binding:"omitempty"`
 
-	// Courier status
+	// CourierType
+	// in: string
+	CourierType string `schema:"CourierType" binding:"omitempty"`
+
+	// ShippingCode
+	// in: string
+	ShippingCode string `schema:"ShippingCode" binding:"omitempty"`
+
+	// ShippingName
+	// in: string
+	ShippingName string `schema:"ShippingName" binding:"omitempty"`
+
+	// Status
 	// in: int
-	Status int `schema:"status" binding:"omitempty"`
+	Status int `schema:"Status" binding:"omitempty"`
 }
 
 // swagger:parameters UpdateCourierServiceRequest

@@ -640,13 +640,31 @@ paths:
         name: Sort
         type: string
       - description: |-
-          Shipping type
+          CourierName
           in: string
         in: query
-        name: ShippingType
+        name: CourierName
         type: string
       - description: |-
-          Courier status
+          CourierType
+          in: string
+        in: query
+        name: CourierType
+        type: string
+      - description: |-
+          ShippingCode
+          in: string
+        in: query
+        name: ShippingCode
+        type: string
+      - description: |-
+          ShippingName
+          in: string
+        in: query
+        name: ShippingName
+        type: string
+      - description: |-
+          Status
           in: int
         format: int64
         in: query

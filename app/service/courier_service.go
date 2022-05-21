@@ -288,7 +288,14 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 	if input.Page <= 0 {
 		input.Page = 1
 	}
-	result, pagination, err := s.courierServiceRepo.FindAll(input.Limit, input.Page, input.Sort)
+	filter := map[string]interface{}{
+		"courier_name":  input.CourierName,
+		"courier_type":  input.CourierType,
+		"shipping_code": input.ShippingCode,
+		"shipping_name": input.ShippingName,
+		"status":        input.Status,
+	}
+	result, pagination, err := s.courierServiceRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, nil, message.FailedMsg

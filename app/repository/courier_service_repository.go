@@ -110,20 +110,24 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 
 	query := r.base.GetDB()
 
-	if filter["shipping_type"] != nil {
-		query = query.Where("shipping_type = ?", filter["shipping_type"])
+	if filter["courier_name"] != "" {
+		query = query.Where("courier_name = ?", filter["courier_name"])
 	}
 
-	if filter["status"] != nil {
-		query = query.Where("status = ?", filter["status"])
+	if filter["courier_type"] != "" {
+		query = query.Where("courier_type = ?", filter["courier_type"])
 	}
 
-	if filter["courier_id"] != nil {
-		query = query.Where("courier_id = ?", filter["courier_id"])
-	}
-
-	if filter["shipping_code"] != nil {
+	if filter["shipping_code"] != "" {
 		query = query.Where("shipping_code = ?", filter["shipping_code"])
+	}
+
+	if filter["shipping_name"] != "" {
+		query = query.Where("shipping_name = ?", filter["shipping_name"])
+	}
+
+	if filter["status"] != 0 {
+		query = query.Where("status = ?", filter["status"])
 	}
 
 	if len(sort) > 0 {
