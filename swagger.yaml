@@ -226,13 +226,6 @@ definitions:
           in: string
         type: string
         x-go-name: Code
-      courier_api_intergration:
-        description: |-
-          Courier Api Integration of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: CourierApiIntegration
       courier_name:
         description: |-
           Name of the courier
@@ -245,46 +238,18 @@ definitions:
           in: string
         type: string
         x-go-name: CourierType
-      hide_purpose:
-        description: |-
-          Hide purpose of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: HidePurpose
       logo:
         description: |-
           Logo of courier
           in: string
         type: string
         x-go-name: Logo
-      provide_airwaybill:
-        description: |-
-          Provide Airwaybill of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: ProvideAirwaybill
-      status:
-        description: |-
-          Courier status
-          in: int
-        format: int64
-        type: integer
-        x-go-name: Status
       uid:
         description: |-
           Uid of the courỉe, use this on UPDATE function
           in: int32
         type: string
         x-go-name: Uid
-      use_geocoodinate:
-        description: |-
-          Geo Coodinate of the Courier
-          in: string
-        format: int64
-        type: integer
-        x-go-name: UseGeocoodinate
     type: object
     x-go-package: go-klikdokter/app/model/request
   SuccessResponse:

@@ -58,15 +58,15 @@ type ChannelListRequest struct {
 
 	// Channel Code
 	// in: string
-	ChannelCode string `schema:"channel_code" binding:"channel_code"`
+	ChannelCode string `schema:"ChannelCode" binding:"omitempty"`
 
 	// Channel Name
 	// in: string
-	ChannelName string `schema:"channel_name" binding:"channel_name"`
+	ChannelName string `schema:"ChannelName" binding:"omitempty"`
 
 	// Channel Status
 	// in: int
-	Status int `schema:"status" binding:"omitempty"`
+	Status int `schema:"Status" binding:"omitempty"`
 }
 
 // swagger:parameters UpdateChannelRequest

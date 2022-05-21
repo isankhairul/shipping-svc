@@ -110,13 +110,13 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 	var pagination base.Pagination
 
 	query := r.base.GetDB()
-	if filter["channel_code"] != nil {
+	if filter["channel_code"] != "" {
 		query = query.Where("channel_code = ?", filter["channel_code"])
 	}
-	if filter["channel_name"] != nil {
+	if filter["channel_name"] != "" {
 		query = query.Where("channel_name = ?", filter["channel_name"])
 	}
-	if filter["status"] != nil {
+	if filter["status"] != 0 {
 		query = query.Where("status = ?", filter["status"])
 	}
 

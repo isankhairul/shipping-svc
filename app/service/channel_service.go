@@ -49,14 +49,19 @@ func (s *ChannelServiceImpl) GetList(input request.ChannelListRequest) ([]entity
 	if input.Page <= 0 {
 		input.Page = 1
 	}
-	result, pagination, err := s.channelRepo.FindAll(input.Limit, input.Page, input.Sort)
+	filter := map[string]interface{}{
+		"channel_code": input.ChannelCode,
+		"channel_name": input.ChannelName,
+		"status":       input.Status,
+	}
+	result, pagination, err := s.channelRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, nil, message.FailedMsg
 	}
 	if len(result) == 0 {
 		_ = level.Warn(logger).Log(message.ErrNoData)
-		return nil, nil, message.FailedMsg
+		return nil, nil, message.ErrNoData
 	}
 
 	return result, pagination, message.SuccessMsg
