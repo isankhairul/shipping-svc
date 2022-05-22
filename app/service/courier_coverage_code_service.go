@@ -1,11 +1,14 @@
 package service
 
 import (
+	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
+	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
+	"gorm.io/gorm"
 
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -15,7 +18,8 @@ type CourierCoverageCodeService interface {
 	CreateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message)
 	GetList(input request.CourierCoverageCodeListRequest) ([]entity.CourierCoverageCode, *base.Pagination, message.Message)
 	GetCourierCoverageCode(uid string) (*entity.CourierCoverageCode, message.Message)
-	UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) message.Message
+	UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message)
+	ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) ([]response.ImportStatus, message.Message)
 }
 
 type CourierCoverageCodeServiceImpl struct {
@@ -53,7 +57,7 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 		return nil, mess
 	}
 	var courierCoverageCode entity.CourierCoverageCode
-	count, err := s.courierCoverageCodeRepo.CombinationUnique(courierCoverageCode, courier.ID, input.CountryCode, input.PostalCode)
+	count, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, input.CountryCode, input.PostalCode, 0)
 
 	if err != nil {
 		_ = level.Error(logger).Log(err)
@@ -80,14 +84,14 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 		Code5:       input.Code5,
 		Code6:       input.Code6,
 	}
-	result, err := s.courierCoverageCodeRepo.CreateCourierCoverageCodeRepo(&courierCoverageCode)
+	result, err := s.courierCoverageCodeRepo.Create(&courierCoverageCode)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		s.baseReo.RollbackTx()
 		return nil, message.FailedMsg
 	}
 	s.baseReo.CommitTx()
-	result.CourierUID = courier.UID
+	courierCoverageCode.CourierUID = courier.UID
 	return result, message.SuccessMsg
 
 }
@@ -155,40 +159,40 @@ func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*en
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) message.Message {
+func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message) {
 	s.baseReo.BeginTx()
 	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Code")
 
-	_, err := s.courierCoverageCodeRepo.FindByUid(input.Uid)
+	courierCoverageCodeRepo, err := s.courierCoverageCodeRepo.FindByUid(input.Uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		s.baseReo.RollbackTx()
-		return message.ErrNoData
+		return nil, message.ErrNoData
 	}
-
+	courierId := courierCoverageCodeRepo.ID
 	var courier entity.Courier
 	err = s.courierCoverageCodeRepo.GetCourierUid(&courier, input.CourierUID)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		s.baseReo.RollbackTx()
 		mess := message.ErrDataExists
-		mess.Message = "Not found courier_uid"
-		return mess
+		mess.Message = "Not found Courier UID in Courier table"
+		return nil, mess
 	}
 
 	var courierCoverageCode entity.CourierCoverageCode
-	count, err := s.courierCoverageCodeRepo.CombinationUnique(courierCoverageCode, courier.ID, input.CountryCode, input.PostalCode)
+	count, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, input.CountryCode, input.PostalCode, courierId)
 
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		s.baseReo.RollbackTx()
-		return message.FailedMsg
+		return nil, message.FailedMsg
 	}
 
 	if count > 0 {
 		mess := message.Message{Code: 34005, Message: "The combination of courier_uid, country_code and postal_code is exist in database"}
 		s.baseReo.RollbackTx()
-		return mess
+		return nil, mess
 	}
 
 	data := map[string]interface{}{
@@ -203,13 +207,104 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 		"code5":        input.Code5,
 		"code6":        input.Code6,
 	}
-
-	err = s.courierCoverageCodeRepo.Update(input.Uid, data)
+	result, err := s.courierCoverageCodeRepo.Update(input.Uid, data)
 	if err != nil {
 		s.baseReo.RollbackTx()
 		_ = level.Error(logger).Log(err)
-		return message.FailedMsg
+		return nil, message.FailedMsg
 	}
 
-	return message.SuccessMsg
+	return result, message.SuccessMsg
+}
+
+func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) ([]response.ImportStatus, message.Message) {
+	s.baseReo.BeginTx()
+	logger := log.With(s.logger, "CourierCoverageCodeService", "Import Courier Coverage Codes")
+
+	var resp []response.ImportStatus
+	for _, row := range input.Rows {
+		courierUid, courierUidOk := row["courier_uid"]
+		countryCode, countryCodeOk := row["country_code"]
+		postalCode, postalCodeOk := row["postal_code"]
+		description, descriptionOk := row["description"]
+		code1, code1Ok := row["code1"]
+		code2, code2Ok := row["code2"]
+		code3, code3Ok := row["code3"]
+		code4, code4Ok := row["code4"]
+		code5, code5Ok := row["code5"]
+		code6, code6Ok := row["code6"]
+
+		if !courierUidOk || !countryCodeOk || !postalCodeOk || !descriptionOk || !code1Ok || !code2Ok || !code3Ok || !code4Ok || !code5Ok || !code6Ok {
+			return nil, message.ErrImportData
+		}
+
+		// check courier_id existing
+		var courier entity.Courier
+		err := s.courierCoverageCodeRepo.GetCourierUid(&courier, courierUid)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				resp = append(resp, response.ImportStatus{CourierUID: courierUid, Message: "Not found Courier UID in Courier table", Status: false})
+			} else {
+				_ = level.Error(logger).Log(err)
+				s.baseReo.RollbackTx()
+				return nil, message.ErrDB
+			}
+		} else {
+			// Check CourierUID, country_code and postal_code are unique
+			var courierCoverageCode entity.CourierCoverageCode
+			count, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, countryCode, postalCode, 0)
+
+			if err != nil {
+				_ = level.Error(logger).Log(err)
+				s.baseReo.RollbackTx()
+				return nil, message.ErrDB
+			}
+
+			if count == 0 {
+				data := entity.CourierCoverageCode{
+					CourierID:   courier.ID,
+					CountryCode: countryCode,
+					PostalCode:  postalCode,
+					Description: description,
+					Code1:       code1,
+					Code2:       code2,
+					Code3:       code3,
+					Code4:       code4,
+					Code5:       code5,
+					Code6:       code6,
+				}
+				result, err := s.courierCoverageCodeRepo.Create(&data)
+				if err != nil {
+					_ = level.Error(logger).Log(err)
+					s.baseReo.RollbackTx()
+					return nil, message.ErrDB
+				}
+				resp = append(resp, response.ImportStatus{UID: result.UID, CourierUID: courierUid, Message: "Created", Status: true})
+
+			} else {
+				data := map[string]interface{}{
+					"courier_id":   courier.ID,
+					"country_code": countryCode,
+					"postal_code":  postalCode,
+					"description":  description,
+					"code1":        code1,
+					"code2":        code2,
+					"code3":        code3,
+					"code4":        code4,
+					"code5":        code5,
+					"code6":        code6,
+				}
+				_, err := s.courierCoverageCodeRepo.Update(courierCoverageCode.UID, data)
+				if err != nil {
+					_ = level.Error(logger).Log(err)
+					s.baseReo.RollbackTx()
+					return nil, message.ErrDB
+				}
+				resp = append(resp, response.ImportStatus{UID: courierCoverageCode.UID, CourierUID: courierUid, Message: "Updated", Status: true})
+			}
+		}
+
+	}
+	s.baseReo.CommitTx()
+	return resp, message.SuccessMsg
 }

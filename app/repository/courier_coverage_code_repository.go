@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"math"
@@ -15,20 +14,20 @@ type CourierCoverageCodeRepo struct {
 }
 
 type CourierCoverageCodeRepository interface {
-	CreateCourierCoverageCodeRepo(courierCoverageCode *entity.CourierCoverageCode) (*entity.CourierCoverageCode, error)
+	Create(courierCoverageCode *entity.CourierCoverageCode) (*entity.CourierCoverageCode, error)
 	GetCourierUid(courier *entity.Courier, uid string) error
 	GetCourierId(courier *entity.Courier, id uint64) error
 	FindByParams(limit int, page int, sort string) ([]entity.CourierCoverageCode, *base.Pagination, error)
 	FindByUid(uid string) (*entity.CourierCoverageCode, error)
-	Update(uid string, input map[string]interface{}) error
-	CombinationUnique(courierCoverageCode entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string) (int64, error)
+	Update(uid string, values map[string]interface{}) (*entity.CourierCoverageCode, error)
+	CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string, id uint64) (int64, error)
 }
 
 func NewCourierCoverageCodeRepository(br BaseRepository) CourierCoverageCodeRepository {
 	return &CourierCoverageCodeRepo{br}
 }
 
-func (r *CourierCoverageCodeRepo) CreateCourierCoverageCodeRepo(courierCoverageCode *entity.CourierCoverageCode) (*entity.CourierCoverageCode, error) {
+func (r *CourierCoverageCodeRepo) Create(courierCoverageCode *entity.CourierCoverageCode) (*entity.CourierCoverageCode, error) {
 	err := r.base.GetDB().Create(courierCoverageCode).Error
 
 	if err != nil {
@@ -58,10 +57,14 @@ func (r *CourierCoverageCodeRepo) GetCourierId(courier *entity.Courier, id uint6
 	return nil
 }
 
-func (r *CourierCoverageCodeRepo) CombinationUnique(courierCoverageCode entity.CourierCoverageCode, courierId uint64, countryCode, postalCode string) (int64, error) {
-	result := r.base.GetDB().First(&courierCoverageCode, "courier_id = ? AND country_code = ? AND postal_code = ?", courierId, countryCode, postalCode)
-
-	if result.Error != nil && fmt.Sprint(result.Error) != "record not found" {
+func (r *CourierCoverageCodeRepo) CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierId uint64, countryCode, postalCode string, id uint64) (int64, error) {
+	var result = r.base.GetDB()
+	if id == 0 {
+		result = result.First(&courierCoverageCode, "courier_id = ? AND country_code = ? AND postal_code = ?", courierId, countryCode, postalCode)
+	} else {
+		result = result.First(&courierCoverageCode, "courier_id = ? AND country_code = ? AND postal_code = ? AND id != ?", courierId, countryCode, postalCode, id)
+	}
+	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return 0, result.Error
 	}
 
@@ -120,12 +123,13 @@ func (r *CourierCoverageCodeRepo) FindByUid(uid string) (*entity.CourierCoverage
 	return &courierCoverageCode, nil
 }
 
-func (r *CourierCoverageCodeRepo) Update(uid string, input map[string]interface{}) error {
-	err := r.base.GetDB().Model(&entity.CourierCoverageCode{}).
+func (r *CourierCoverageCodeRepo) Update(uid string, values map[string]interface{}) (*entity.CourierCoverageCode, error) {
+	var courierCoverageCode entity.CourierCoverageCode
+	err := r.base.GetDB().Model(&courierCoverageCode).
 		Where("uid=?", uid).
-		Updates(input).Error
+		Updates(values).Error
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &courierCoverageCode, nil
 }

@@ -3,11 +3,13 @@ package transport
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go-klikdokter/app/api/endpoint"
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/global"
+	"go-klikdokter/pkg/util"
 	"net/http"
 
 	httptransport "github.com/go-kit/kit/transport/http"
@@ -53,12 +55,12 @@ func CourierCoverageCodeHttpHandler(s service.CourierCoverageCodeService, logger
 		options...,
 	))
 
-	// pr.Methods("DELETE").Path("/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
-	// 	ep.Delete,
-	// 	decodeDeleteCourierCoverageCode,
-	// 	encoder.EncodeResponseHTTP,
-	// 	options...,
-	// ))
+	pr.Methods("POST").Path("/courier/courier-coverage-code/import/").Handler(httptransport.NewServer(
+		ep.Import,
+		decodeImportCourierCoverageCode,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
 
 	return pr
 }
@@ -105,7 +107,20 @@ func decodeUpdateCourierCoverageCode(ctx context.Context, r *http.Request) (rqst
 	return req, nil
 }
 
-func decodeDeleteCourierCoverageCode(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	uid := mux.Vars(r)["id"]
-	return uid, nil
+func decodeImportCourierCoverageCode(ctx context.Context, r *http.Request) (rsqt interface{}, err error) {
+	var req request.ImportCourierCoverageCodeRequest
+	file, handler, err := r.FormFile("file")
+	fmt.Println(file, handler)
+	if err != nil {
+		return nil, err
+
+	}
+	// Close the file at the end of the program
+	defer file.Close()
+	rows, err := util.ReadCsvFile(file)
+	if err != nil {
+		return nil, err
+	}
+	req.Rows = rows
+	return req, nil
 }
