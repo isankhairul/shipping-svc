@@ -43,17 +43,17 @@ type SaveCourierCoverageCodeRequest struct {
 	// Courier UID of the Courier
 	// required: True
 	// in: string
-	CourierUID string `json:"courier_uid" binding:"omitempty"`
+	CourierUID string `json:"courier_uid"`
 
 	// Country code of the Courier Coverage Code
 	// required: True
 	// in: string
-	CountryCode string `json:"country_code" binding:"omitempty"`
+	CountryCode string `json:"country_code"`
 
 	// Postal code of the Courier Coverage Code
 	// required: True
 	// in: string
-	PostalCode string `json:"postal_code" binding:"omitempty"`
+	PostalCode string `json:"postal_code"`
 
 	// Description of the Courier Coverage Code
 	// in: string
