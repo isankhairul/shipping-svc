@@ -1,9 +1,9 @@
 package request
 
 import (
+	"bytes"
 	validation "github.com/itgelo/ozzo-validation/v4"
 	"go-klikdokter/helper/message"
-	"mime/multipart"
 )
 
 // swagger:parameters CourierCoverageCodeListRequest
@@ -32,6 +32,11 @@ type CourierCoverageCodeRequest struct {
 type ReqSaveCourierCoverageCodeBody struct {
 	// in: body
 	Body SaveCourierCoverageCodeRequest `json:"body"`
+}
+
+type ReqImportCourierCoverageCodeBody struct {
+	// in: body
+	Body ImportCourierCoverageCodeRequest `json:"body"`
 }
 
 type SaveCourierCoverageCodeRequest struct {
@@ -94,10 +99,11 @@ type CourierCoverageCodeByIDParam struct {
 // swagger:parameters ImportCourierCoverageCodeRequest
 type ImportCourierCoverageCodeRequest struct {
 	Rows []map[string]string `json:"-"`
-	// name: id
-	// in: body
+	// in: formData
+	// name: file
+	// swagger:file
 	// required: true
-	File multipart.File `json:"file"`
+	File *bytes.Buffer `json:"file"`
 }
 
 func (req SaveCourierCoverageCodeRequest) Validate() error {

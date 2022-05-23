@@ -12,7 +12,7 @@ type ImportStatus struct {
 
 	// Country code of the Courier Coverage Code
 	// in: body
-	CountryCode string `json:"country_code" binding:"omitempty"`
+	CountryCode string `json:"country_code"`
 
 	// Postal code of the Courier Coverage Code
 	// in: body

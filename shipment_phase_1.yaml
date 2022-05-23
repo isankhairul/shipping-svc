@@ -699,6 +699,26 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Courier-Coverage-Code
+  /courier/courier-coverage-code/import/:
+    post:
+      description: Import courier coverage code by CSV file
+      operationId: ImportCourierCoverageCodeRequest
+      parameters:
+      - in: formData
+        name: file
+        type: file
+        x-go-name: File
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Coverage-Code
   /courier/courier/{id}:
     delete:
       description: Delete product
@@ -886,6 +906,9 @@ paths:
       - product
 produces:
 - application/json
+responses:
+  ImportStatus:
+    description: ""
 schemes:
 - http
 swagger: "2.0"

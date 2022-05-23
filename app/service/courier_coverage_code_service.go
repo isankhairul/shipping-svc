@@ -217,6 +217,12 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 	return result, message.SuccessMsg
 }
 
+// swagger:route POST /courier/courier-coverage-code/import/ Courier-Coverage-Code ImportCourierCoverageCodeRequest
+// Import courier coverage code by CSV file
+//
+// responses:
+//  401: SuccessResponse
+//  200: SuccessResponse
 func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) ([]response.ImportStatus, message.Message) {
 	s.baseReo.BeginTx()
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Import Courier Coverage Codes")
