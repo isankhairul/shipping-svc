@@ -40,11 +40,11 @@ type SaveCourierServiceRequest struct {
 
 	// ETD Min of the Courier Service
 	// in: float64
-	ETD_Min float64 `json:"ETD_Min"`
+	ETD_Min float64 `json:"etd_min"`
 
 	// ETD Max of the Courier Service
 	// in: float64
-	ETD_Max float64 `json:"ETD_Max"`
+	ETD_Max float64 `json:"etd_max"`
 
 	// Logo of the Courier Service
 	// in: string
@@ -219,11 +219,11 @@ type UpdateCourierServiceRequest struct {
 
 	// ETD Min of the Courier Service
 	// in: float64
-	ETD_Min float64 `json:"ETD_Min"`
+	ETD_Min float64 `json:"etd_min"`
 
 	// ETD Max of the Courier Service
 	// in: float64
-	ETD_Max float64 `json:"ETD_Max"`
+	ETD_Max float64 `json:"etd_max"`
 
 	// Logo of the Courier Service
 	// in: string

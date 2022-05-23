@@ -34,11 +34,11 @@ type CourierService struct {
 
 	// ETD Min of the Courier Service
 	// in: float64
-	ETD_Min float64 `gorm:"not null" json:"ETD_Min"`
+	ETD_Min float64 `gorm:"not null" json:"etd_min"`
 
 	// ETD Max of the Courier Service
 	// in: float64
-	ETD_Max float64 `gorm:"not null" json:"ETD_Max"`
+	ETD_Max float64 `gorm:"not null" json:"etd_max"`
 
 	// Logo of the Courier Service
 	// in: string

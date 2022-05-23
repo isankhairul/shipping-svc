@@ -241,18 +241,6 @@ definitions:
     x-go-package: go-klikdokter/app/model/request
   SaveCourierServiceRequest:
     properties:
-      ETD_Max:
-        description: |-
-          ETD Max of the Courier Service
-          in: float64
-        format: double
-        type: number
-      ETD_Min:
-        description: |-
-          ETD Min of the Courier Service
-          in: float64
-        format: double
-        type: number
       cancelable:
         description: |-
           Cancelable of the Courier Service
@@ -300,6 +288,20 @@ definitions:
         format: date-time
         type: string
         x-go-name: EndTime
+      etd_max:
+        description: |-
+          ETD Max of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: ETD_Max
+      etd_min:
+        description: |-
+          ETD Min of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: ETD_Min
       insurance:
         description: |-
           Insurance of the Courier Service
