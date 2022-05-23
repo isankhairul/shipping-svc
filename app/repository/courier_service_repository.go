@@ -15,7 +15,8 @@ type courierServiceRepo struct {
 
 type CourierServiceRepository interface {
 	FindAll(limit int, page int, sort string) ([]entity.CourierService, *base.Pagination, error)
-	CheckExistsByUIdCourierIdShippingCode(uid string, courierId int, shippingCode string) (bool, error)
+	CheckExistsByCourierIdShippingCode(courierUId string, shippingCode string) (bool, error)
+	CheckExistsByUIdCourierIdShippingCode(uid string, courierUId string, shippingCode string) (bool, error)
 	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.CourierService, *base.Pagination, error)
 	FindByUid(uid *string) (*entity.CourierService, error)
 	CreateCourierService(product *entity.CourierService) (*entity.CourierService, error)
@@ -86,12 +87,30 @@ func (r *courierServiceRepo) FindAll(limit int, page int, sort string) ([]entity
 	return courierService, &pagination, nil
 }
 
-func (r *courierServiceRepo) CheckExistsByUIdCourierIdShippingCode(uid string, courierId int, shippingCode string) (bool, error) {
+func (r *courierServiceRepo) CheckExistsByCourierIdShippingCode(courierUId string, shippingCode string) (bool, error) {
 	var exists bool
 	err := r.base.GetDB().
 		Model(&entity.CourierService{}).
 		Select("count(*) > 0").
-		Where("uid != ? AND shipping_code = ? AND courier_id = ?", uid, shippingCode, courierId).
+		Where("shipping_code = ? AND courier_uid = ?", shippingCode, courierUId).
+		Find(&exists).
+		Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func (r *courierServiceRepo) CheckExistsByUIdCourierIdShippingCode(uid string, courierUId string, shippingCode string) (bool, error) {
+	var exists bool
+	err := r.base.GetDB().
+		Model(&entity.CourierService{}).
+		Select("count(*) > 0").
+		Where("uid != ? AND shipping_code = ? AND courier_uid = ?", uid, shippingCode, courierUId).
 		Find(&exists).
 		Error
 	if err != nil {
@@ -110,12 +129,8 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 
 	query := r.base.GetDB()
 
-	if filter["courier_name"] != "" {
-		query = query.Where("courier_name = ?", filter["courier_name"])
-	}
-
-	if filter["courier_type"] != "" {
-		query = query.Where("courier_type = ?", filter["courier_type"])
+	if filter["courier_uid"] != "" {
+		query = query.Where("courier_uid = ?", filter["courier_uid"])
 	}
 
 	if filter["shipping_code"] != "" {

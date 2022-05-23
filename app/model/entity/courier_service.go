@@ -8,13 +8,9 @@ import (
 // swagger:model Courier Service
 type CourierService struct {
 	base.BaseIDModel
-	// Courier Id of the Courier Service
+	// Courier UId of the Courier Service
 	// in: int
-	CourierId int `gorm:"not null;default:0" json:"courier_id"`
-
-	// Courier Name of the Courier Service
-	// in: string
-	CourierName string `gorm:"not null" json:"courier_name"`
+	CourierUId string `gorm:"not null" json:"courier_uid"`
 
 	// Shipping Code of the Courier Service
 	// in: string

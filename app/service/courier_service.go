@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
@@ -9,6 +11,7 @@ import (
 
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
+	"gorm.io/gorm"
 )
 
 type CourierService interface {
@@ -42,7 +45,7 @@ func NewCourierService(
 	return &courierServiceImpl{lg, br, pr, pcrp}
 }
 
-// swagger:route POST /courier/courier Courier ManagedCourierRequest
+// swagger:route POST /courier/courier Courier SaveCourierRequest
 // Manage Courier
 //
 // responses:
@@ -185,23 +188,25 @@ func (s *courierServiceImpl) DeleteCourier(uid string) message.Message {
 //  201: SuccessResponse
 func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServiceRequest) (*entity.CourierService, message.Message) {
 	logger := log.With(s.logger, "CourierServiceService", "CreateCourierService")
-	//Check exits `courier_id & shiping_code`
-	//Set default value
-	defaultLimit := 10
-	defaultPage := 1
-	defaultSort := ""
-	filter := map[string]interface{}{
-		"shipping_code": input.ShippingCode,
-		"courier_id":    input.CourierId,
+	//Check exist courier_uid update
+	courier, err := s.courierRepo.FindByUid(&input.CourierUId)
+	if err != nil {
+		_ = level.Error(logger).Log(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, message.ErrDataCourierUIdNotExist
+		}
+		return nil, message.FailedMsg
 	}
-	result, _, err := s.courierServiceRepo.FindByParams(defaultLimit, defaultPage, defaultSort, filter)
+	if courier == nil {
+		return nil, message.ErrDataCourierUIdNotExist
+	}
+	//Check exists duplicate courier_uid/shipping_code
+	isExists, err := s.courierServiceRepo.CheckExistsByCourierIdShippingCode(input.CourierUId, input.ShippingCode)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, message.FailedMsg
 	}
-
-	if len(result) != 0 {
-		_ = level.Error(logger).Log(err)
+	if isExists {
 		return nil, message.ErrDataCourierServiceExists
 	}
 
@@ -209,8 +214,7 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 	//Set request to entity
 	CourierService := entity.CourierService{
 		//General
-		CourierId:           input.CourierId,
-		CourierName:         input.CourierName,
+		CourierUId:          input.CourierUId,
 		ShippingCode:        input.ShippingCode,
 		ShippingName:        input.ShippingName,
 		ShippingType:        input.ShippingType,
@@ -260,11 +264,14 @@ func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierServi
 	logger := log.With(s.logger, "CourierServiceService", "GetCourierService")
 
 	result, err := s.courierServiceRepo.FindByUid(&uid)
+	fmt.Println("fafdsafs", err)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, message.ErrNoDataCourierService
+		}
 		return nil, message.ErrDB
 	}
-
 	if result == nil {
 		return nil, message.ErrNoDataCourierService
 	}
@@ -289,8 +296,7 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 		input.Page = 1
 	}
 	filter := map[string]interface{}{
-		"courier_name":  input.CourierName,
-		"courier_type":  input.CourierType,
+		"courier_uid":   input.CourierUID,
 		"shipping_code": input.ShippingCode,
 		"shipping_name": input.ShippingName,
 		"status":        input.Status,
@@ -317,18 +323,33 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 //  200: SuccessResponse
 func (s *courierServiceImpl) UpdateCourierService(uid string, input request.UpdateCourierServiceRequest) message.Message {
 	logger := log.With(s.logger, "CourierServiceService", "UpdateCourierService")
-
+	//Check exist courierServiceUId
 	courierService, err := s.courierServiceRepo.FindByUid(&uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return message.ErrDataCourierServiceUidNotExist
+		}
 		return message.FailedMsg
 	}
 	if courierService == nil {
-		return message.ErrNoData
+		return message.ErrDataCourierServiceUidNotExist
+	}
+	//Check exist courier_uid update
+	courier, err := s.courierRepo.FindByUid(&input.CourierUId)
+	if err != nil {
+		_ = level.Error(logger).Log(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return message.ErrDataCourierUIdNotExist
+		}
+		return message.FailedMsg
+	}
+	if courier == nil {
+		return message.ErrDataCourierUIdNotExist
 	}
 
-	//Check exists
-	isExists, err := s.courierServiceRepo.CheckExistsByUIdCourierIdShippingCode(uid, input.CourierId, input.ShippingCode)
+	//Check exists duplicate courier_uid/shipping_code
+	isExists, err := s.courierServiceRepo.CheckExistsByUIdCourierIdShippingCode(uid, input.CourierUId, input.ShippingCode)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return message.FailedMsg
@@ -338,8 +359,7 @@ func (s *courierServiceImpl) UpdateCourierService(uid string, input request.Upda
 	}
 
 	data := map[string]interface{}{
-		"courier_id":           input.CourierId,
-		"courier_name":         input.CourierName,
+		"courier_uid":          input.CourierUId,
 		"shipping_code":        input.ShippingCode,
 		"shipping_name":        input.ShippingName,
 		"shipping_type":        input.ShippingType,
@@ -383,10 +403,12 @@ func (s *courierServiceImpl) UpdateCourierService(uid string, input request.Upda
 //  200: SuccessResponse
 func (s *courierServiceImpl) DeleteCourierService(uid string) message.Message {
 	logger := log.With(s.logger, "CourierServiceService", "DeleteCourierService")
-
 	courierService, err := s.courierServiceRepo.FindByUid(&uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return message.ErrNoDataCourierService
+		}
 		return message.FailedMsg
 	}
 	if courierService == nil {

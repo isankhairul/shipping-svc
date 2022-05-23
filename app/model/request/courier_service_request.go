@@ -14,13 +14,9 @@ type ReqCourierServiceBody struct {
 }
 
 type SaveCourierServiceRequest struct {
-	// Courier Id of the Courier Service
-	// in: int
-	CourierId int `json:"courier_id"`
-
-	// Courier Name of the Courier Service
+	// Courier UId of the Courier Service
 	// in: string
-	CourierName string `json:"courier_name"`
+	CourierUId string `json:"courier_uid"`
 
 	// Shipping Code of the Courier Service
 	// in: string
@@ -157,13 +153,9 @@ type CourierServiceListRequest struct {
 	// in: string
 	Sort string `schema:"sort" binding:"omitempty"`
 
-	// CourierName
+	// CourierUID
 	// in: string
-	CourierName string `schema:"CourierName" binding:"omitempty"`
-
-	// CourierType
-	// in: string
-	CourierType string `schema:"CourierType" binding:"omitempty"`
+	CourierUID string `schema:"CourierUID" binding:"omitempty"`
 
 	// ShippingCode
 	// in: string
@@ -193,13 +185,9 @@ type UpdateCourierServiceRequest struct {
 	// in: string
 	Uid string `json:"-" binding:"omitempty"`
 
-	// Courier Id of the Courier Service
+	// CourierUId of the Courier Service
 	// in: int
-	CourierId int `json:"courier_id"`
-
-	// Courier Name of the Courier Service
-	// in: string
-	CourierName string `json:"courier_name"`
+	CourierUId string `json:"courier_uid"`
 
 	// Shipping Code of the Courier Service
 	// in: string
@@ -316,8 +304,7 @@ type CourierServiceDeleteByUid struct {
 
 func (req SaveCourierServiceRequest) Validate() error {
 	return validation.ValidateStruct(&req,
-		validation.Field(&req.CourierId, validation.Required.Error(message.ErrReq.Message)),
-		validation.Field(&req.CourierName, validation.Required.Error(message.ErrReq.Message)),
+		validation.Field(&req.CourierUId, validation.Required.Error(message.ErrReq.Message)),
 		validation.Field(&req.ShippingCode, validation.Required.Error(message.ErrReq.Message)),
 		validation.Field(&req.ShippingName, validation.Required.Error(message.ErrReq.Message)),
 		validation.Field(&req.ShippingType, validation.Required.Error(message.ErrReq.Message)),

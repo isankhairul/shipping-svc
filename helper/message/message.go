@@ -17,8 +17,11 @@ var ErrNoData = Message{Code: 34005, Message: "Data is not found"}
 var ErrSaveData = Message{Code: 34005, Message: "Data cannot be saved, please check your request"}
 var ErrReq = Message{Code: 34005, Message: "Required field"}
 
+var ErrDataCourierUIdNotExist = Message{Code: 34001, Message: "CourierUID not exist"}
+
+var ErrDataCourierServiceUidNotExist = Message{Code: 34001, Message: "CourierSerivceUID not exist"}
 var ErrDataCourierServiceExists = Message{Code: 34001, Message: "Data courier_id/shipping_code already exists"}
-var ErrNoDataCourierService = Message{Code: 34005, Message: "Courier data not found or invalid"}
+var ErrNoDataCourierService = Message{Code: 34005, Message: "Courier Service data not found"}
 var ErrDataChannelExists = Message{Code: 34001, Message: "Data channel_code already exists"}
 
 // Code 39000 - 39999 Server error

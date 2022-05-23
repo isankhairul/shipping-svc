@@ -268,19 +268,12 @@ definitions:
         format: int64
         type: integer
         x-go-name: CodAvailable
-      courier_id:
+      courier_uid:
         description: |-
-          Courier Id of the Courier Service
-          in: int
-        format: int64
-        type: integer
-        x-go-name: CourierId
-      courier_name:
-        description: |-
-          Courier Name of the Courier Service
+          Courier UId of the Courier Service
           in: string
         type: string
-        x-go-name: CourierName
+        x-go-name: CourierUId
       created_at:
         description: |-
           Created At of the Courier Service
@@ -674,7 +667,13 @@ paths:
   /courier/courier:
     post:
       description: Manage Courier
-      operationId: ManagedCourierRequest
+      operationId: SaveCourierRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierRequest'
+        x-go-name: Body
       responses:
         "201":
           description: SuccessResponse
@@ -710,16 +709,10 @@ paths:
         name: Sort
         type: string
       - description: |-
-          CourierName
+          CourierUID
           in: string
         in: query
-        name: CourierName
-        type: string
-      - description: |-
-          CourierType
-          in: string
-        in: query
-        name: CourierType
+        name: CourierUID
         type: string
       - description: |-
           ShippingCode
