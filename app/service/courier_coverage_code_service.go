@@ -91,7 +91,7 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 		return nil, message.FailedMsg
 	}
 	s.baseReo.CommitTx()
-	courierCoverageCode.CourierUID = courier.UID
+	courierCoverageCode.CourierUID = input.CourierUID
 	return result, message.SuccessMsg
 
 }
@@ -122,6 +122,15 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 	if result == nil {
 		_ = level.Warn(logger).Log(message.ErrNoData)
 		return nil, nil, message.FailedMsg
+	}
+
+	for i := range result {
+		var courier entity.Courier
+		err := s.courierCoverageCodeRepo.GetCourierId(&courier, result[i].CourierID)
+		if err != nil {
+			return nil, nil, message.FailedMsg
+		}
+		result[i].CourierUID = courier.UID
 	}
 
 	return result, pagination, message.SuccessMsg

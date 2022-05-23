@@ -11,13 +11,14 @@ type CourierCoverageCodeRepositoryMock struct {
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) GetCourierUid(courier *entity.Courier, uid string) error {
-	arguments := repository.Mock.Called(courier, uid)
-	return arguments.Error(0)
+	return nil
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) GetCourierId(courier *entity.Courier, id uint64) error {
-	arguments := repository.Mock.Called(courier, id)
-	return arguments.Error(0)
+	arguments := repository.Mock.Called(id)
+	arg := arguments.Get(0).(entity.Courier)
+	courier.UID = arg.UID
+	return nil
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) FindByParams(limit int, page int, sort string) ([]entity.CourierCoverageCode, *base.Pagination, error) {
@@ -26,8 +27,7 @@ func (repository *CourierCoverageCodeRepositoryMock) FindByParams(limit int, pag
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string, id uint64) (int64, error) {
-	arguments := repository.Mock.Called(courierCoverageCode, courierUid, countryCode, postalCode, id)
-	return 0, arguments.Error(1)
+	return 0, nil
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) FindByUid(uid string) (*entity.CourierCoverageCode, error) {
@@ -41,11 +41,10 @@ func (repository *CourierCoverageCodeRepositoryMock) FindByUid(uid string) (*ent
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) Create(courierCoverageCode *entity.CourierCoverageCode) (*entity.CourierCoverageCode, error) {
-	arguments := repository.Mock.Called(courierCoverageCode)
-	return arguments.Get(0).(*entity.CourierCoverageCode), arguments.Error(1)
+	return courierCoverageCode, nil
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) Update(uid string, value map[string]interface{}) (*entity.CourierCoverageCode, error) {
-	arguments := repository.Mock.Called(uid, value)
+	arguments := repository.Mock.Called(uid)
 	return arguments.Get(0).(*entity.CourierCoverageCode), arguments.Error(1)
 }
