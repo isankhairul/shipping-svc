@@ -19,6 +19,7 @@ var ErrReq = Message{Code: 34005, Message: "Required field"}
 
 var ErrDataCourierServiceExists = Message{Code: 34001, Message: "Data courier_id/shipping_code already exists"}
 var ErrNoDataCourierService = Message{Code: 34005, Message: "Courier data not found or invalid"}
+var ErrDataChannelExists = Message{Code: 34001, Message: "Data channel_code already exists"}
 
 // Code 39000 - 39999 Server error
 var ErrRevocerRoute = Message{Code: 39000, Message: "Terjadi kesalahan routing"}

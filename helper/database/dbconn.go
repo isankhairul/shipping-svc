@@ -52,8 +52,7 @@ func NewConnectionDB(driverDB string, database string, host string, user string,
 		return nil, err
 	}
 
-	_ = db.AutoMigrate(&entity.Product{})
-	_ = db.AutoMigrate(&entity.Doctor{})
+	_ = db.AutoMigrate(&entity.Channel{})
 
 	sqlDB, err := db.DB()
 	if err != nil {

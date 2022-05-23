@@ -13,6 +13,50 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/base
+  Channel:
+    properties:
+      channel_code:
+        description: |-
+          ChannelCode of the Channel
+          in: string
+        type: string
+        x-go-name: ChannelCode
+      channel_name:
+        description: |-
+          ChannelName of the Channel
+          in: string
+        type: string
+        x-go-name: ChannelName
+      description:
+        description: |-
+          Description of the Channel
+          in: string
+        type: string
+        x-go-name: Description
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      logo:
+        description: |-
+          Logo of the Channel
+          in: string
+        type: string
+        x-go-name: Logo
+      status:
+        description: |-
+          Status of the Channel
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          UID of the product
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
   Courier:
     properties:
       code:
@@ -139,35 +183,39 @@ definitions:
     type: object
     x-go-name: Pagination
     x-go-package: go-klikdokter/app/model/base
-  ProductListRequest:
+  SaveChannelRequest:
     properties:
-      Limit:
+      channel_code:
         description: |-
-          Maximun records per page
-          in: int32
-        format: int64
-        type: integer
-      Name:
-        description: |-
-          Name keyword of the product
+          ChannelCode of the Channel
           in: string
         type: string
-      Page:
+        x-go-name: ChannelCode
+      channel_name:
         description: |-
-          Page No
-          in: int32
-        format: int64
-        type: integer
-      Sku:
-        type: string
-      Sort:
-        example: name asc, uom desc
-        type: string
-      UOM:
-        description: |-
-          Sku of the product
+          ChannelName of the Channel
           in: string
         type: string
+        x-go-name: ChannelName
+      description:
+        description: |-
+          Description of the Channel
+          in: string
+        type: string
+        x-go-name: Description
+      logo:
+        description: |-
+          Logo of Channel
+          in: string
+        type: string
+        x-go-name: Logo
+      status:
+        description: |-
+          status of Channel
+          in: int
+        format: int64
+        type: integer
+        x-go-name: Status
     type: object
     x-go-package: go-klikdokter/app/model/request
   SaveCourierRequest:
@@ -178,13 +226,6 @@ definitions:
           in: string
         type: string
         x-go-name: Code
-      courier_api_intergration:
-        description: |-
-          Courier Api Integration of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: CourierApiIntegration
       courier_name:
         description: |-
           Name of the courier
@@ -197,46 +238,18 @@ definitions:
           in: string
         type: string
         x-go-name: CourierType
-      hide_purpose:
-        description: |-
-          Hide purpose of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: HidePurpose
       logo:
         description: |-
           Logo of courier
           in: string
         type: string
         x-go-name: Logo
-      provide_airwaybill:
-        description: |-
-          Provide Airwaybill of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: ProvideAirwaybill
-      status:
-        description: |-
-          Courier status
-          in: int
-        format: int64
-        type: integer
-        x-go-name: Status
       uid:
         description: |-
           Uid of the courỉe, use this on UPDATE function
           in: int32
         type: string
         x-go-name: Uid
-      use_geocoodinate:
-        description: |-
-          Geo Coodinate of the Courier
-          in: string
-        format: int64
-        type: integer
-        x-go-name: UseGeocoodinate
     type: object
     x-go-package: go-klikdokter/app/model/request
   SaveCourierServiceRequest:
@@ -444,63 +457,6 @@ definitions:
         x-go-name: UpdatedBy
     type: object
     x-go-package: go-klikdokter/app/model/request
-  SaveDoctorRequest:
-    properties:
-      gender:
-        description: |-
-          Gender of the doctor
-          in: string
-        type: string
-        x-go-name: Gender
-      name:
-        description: |-
-          Name of the doctor
-          in: string
-        type: string
-        x-go-name: Name
-      uid:
-        description: |-
-          Uid of the product, use this on UPDATE function
-          in: int32
-        type: string
-        x-go-name: Uid
-    type: object
-    x-go-package: go-klikdokter/app/model/request
-  SaveProductRequest:
-    properties:
-      name:
-        description: |-
-          Name of the product
-          in: string
-        type: string
-        x-go-name: Name
-      sku:
-        description: |-
-          Sku of the product
-          in: string
-        type: string
-        x-go-name: Sku
-      uid:
-        description: |-
-          Uid of the product, use this on UPDATE function
-          in: int32
-        type: string
-        x-go-name: Uid
-      uom:
-        description: |-
-          Uom of the product
-          in: string
-        type: string
-        x-go-name: Uom
-      weight:
-        description: |-
-          Weight of the product
-          in: int32
-        format: int32
-        type: integer
-        x-go-name: Weight
-    type: object
-    x-go-package: go-klikdokter/app/model/request
   SuccessResponse:
     properties:
       data:
@@ -518,76 +474,188 @@ definitions:
     type: object
     x-go-name: responseHttp
     x-go-package: go-klikdokter/app/model/base
-  doctor:
+  UpdateChannelRequest:
     properties:
-      gender:
+      channel_code:
         description: |-
-          Gender of the doctor
+          ChannelCode of Channel
           in: string
         type: string
-        x-go-name: Gender
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      name:
+        x-go-name: ChannelCode
+      channel_name:
         description: |-
-          Name of the doctor
+          ChannelName of the Channel
           in: string
         type: string
-        x-go-name: Name
-      uid:
+        x-go-name: ChannelName
+      description:
         description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-    type: object
-    x-go-name: Doctor
-    x-go-package: go-klikdokter/app/model/entity
-  product:
-    properties:
-      is_deleted:
-        type: boolean
-        x-go-name: IsDeleted
-      name:
-        description: |-
-          Name of the product
+          Description of the Channel
           in: string
         type: string
-        x-go-name: Name
-      sku:
+        x-go-name: Description
+      logo:
         description: |-
-          Sku of the product
+          Logo of Channel
           in: string
         type: string
-        x-go-name: Sku
-      uid:
+        x-go-name: Logo
+      status:
         description: |-
-          UID of the product
-          in: int64
-        type: string
-        x-go-name: UID
-      uom:
-        description: |-
-          Uom of the product
-          in: string
-        type: string
-        x-go-name: Uom
-      weight:
-        description: |-
-          Weight of the product
-          in: int32
-        format: int32
+          Status of Channel
+          in: int
+        format: int64
         type: integer
-        x-go-name: Weight
+        x-go-name: Status
     type: object
-    x-go-name: Product
-    x-go-package: go-klikdokter/app/model/entity
+    x-go-package: go-klikdokter/app/model/request
 host: localhost:5600
 info:
   title: 'KD Boilerplate Go kit:'
   version: "1.0"
 paths:
+  /channel/channel-app:
+    get:
+      description: List of Channel Apps
+      operationId: Channels
+      parameters:
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: Limit
+        type: integer
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: Page
+        type: integer
+      - example: name asc, uom desc
+        in: query
+        name: Sort
+        type: string
+      - description: |-
+          Channel Code
+          in: string
+        in: query
+        name: ChannelCode
+        type: string
+      - description: |-
+          Channel Name
+          in: string
+        in: query
+        name: ChannelName
+        type: string
+      - description: |-
+          Channel Status
+          in: int
+        format: int64
+        in: query
+        name: Status
+        type: integer
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Apps
+    post:
+      description: Add Channel App
+      operationId: SaveChannelRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveChannelRequest'
+        x-go-name: Body
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Apps
+  /channel/channel-app/{uid}:
+    delete:
+      description: Delete Channel Apps by uid
+      operationId: ChannelRequestDeleteByUid
+      parameters:
+      - description: Uid of the Channel
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Apps
+    get:
+      description: Get Detail of Channel Apps
+      operationId: ChannelRequestGetByUid
+      parameters:
+      - description: Uid of the Channel
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Apps
+    put:
+      description: Update Channel App by uid
+      operationId: UpdateChannelRequest
+      parameters:
+      - description: Uid of the Channel
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/UpdateChannelRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Apps
   /courier/{id}:
     put:
       description: Update courier
@@ -774,15 +842,8 @@ paths:
       - Courier-Services
   /courier/courier/{id}:
     delete:
-      description: Delete product
+      description: Delete courier
       operationId: byParamDelete
-      parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
       responses:
         "200":
           description: SuccessResponse
@@ -793,7 +854,7 @@ paths:
           schema:
             $ref: '#/definitions/SuccessResponse'
       tags:
-      - product-delete
+      - courier-delete
   /courier/courier/{uid}:
     get:
       description: Get Courier
@@ -809,155 +870,6 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Get-Courier
-  /doctors/:
-    post:
-      description: Create Doctor
-      operationId: SaveDoctorRequest
-      parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '#/definitions/SaveDoctorRequest'
-        x-go-name: Body
-      responses:
-        "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - Doctor
-  /doctors/{id}:
-    get:
-      description: Get Doctor
-      operationId: doctor
-      parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
-      responses:
-        "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - Get-Doctor
-  /products/:
-    post:
-      description: Create product
-      operationId: SaveProductRequest
-      parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '#/definitions/SaveProductRequest'
-        x-go-name: Body
-      responses:
-        "201":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - product
-  /products/{id}:
-    delete:
-      description: Delete product
-      operationId: byParamDelete
-      parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
-      responses:
-        "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - product-delete
-    get:
-      description: Get product
-      operationId: byParamGet
-      parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
-      responses:
-        "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - get-product
-      - product
-    put:
-      description: Update product
-      operationId: UpdateProductRequest
-      parameters:
-      - description: 'name: id'
-        in: path
-        name: id
-        required: true
-        type: string
-        x-go-name: Id
-      - in: body
-        name: body
-        schema:
-          $ref: '#/definitions/SaveProductRequest'
-        x-go-name: Body
-      responses:
-        "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - product-update
-  /products/list:
-    get:
-      description: List products
-      operationId: productList
-      responses:
-        "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-      tags:
-      - product
 produces:
 - application/json
 schemes:
