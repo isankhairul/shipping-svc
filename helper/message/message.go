@@ -2,7 +2,7 @@ package message
 
 // Message wrapper.
 type Message struct {
-	Code    int `json:"code"`
+	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
@@ -17,10 +17,11 @@ var ErrNoData = Message{Code: 34005, Message: "Data is not found"}
 var ErrSaveData = Message{Code: 34005, Message: "Data cannot be saved, please check your request"}
 var ErrReq = Message{Code: 34005, Message: "Required field"}
 
+var ErrDataChannelExists = Message{Code: 34001, Message: "Data channel_code already exists"}
 
 // Code 39000 - 39999 Server error
 var ErrRevocerRoute = Message{Code: 39000, Message: "Terjadi kesalahan routing"}
 var ErrPageNotFound = Message{Code: 39404, Message: "Halaman Tidak ditemukan"}
-var SuccessMsg = Message{Code: 1000, Message: "Success"}
+var SuccessMsg = Message{Code: 201000, Message: "Success"}
 var FailedMsg = Message{Code: 0000, Message: "Failed"}
 var ErrReqParam = Message{Code: 4000, Message: "Invalid Request Parameter(s)"}

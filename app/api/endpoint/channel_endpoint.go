@@ -10,7 +10,7 @@ import (
 	"github.com/go-kit/kit/endpoint"
 )
 
-type ProductEndpoint struct {
+type ChannelEndpoint struct {
 	Save   endpoint.Endpoint
 	Show   endpoint.Endpoint
 	List   endpoint.Endpoint
@@ -18,20 +18,20 @@ type ProductEndpoint struct {
 	Delete endpoint.Endpoint
 }
 
-func MakeProductEndpoints(s service.ProductService) ProductEndpoint {
-	return ProductEndpoint{
-		Save:   makeSaveProduct(s),
-		Show:   makeShowProduct(s),
-		List:   makeGetProducts(s),
-		Update: makeUpdateProduct(s),
-		Delete: makeDeleteProduct(s),
+func MakeChannelEndpoints(s service.ChannelService) ChannelEndpoint {
+	return ChannelEndpoint{
+		Save:   makeSaveChannel(s),
+		Show:   makeShowChannel(s),
+		List:   getListChannels(s),
+		Delete: makeDeleteChannel(s),
+		Update: makeUpdateChannel(s),
 	}
 }
 
-func makeSaveProduct(s service.ProductService) endpoint.Endpoint {
+func makeSaveChannel(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-		req := rqst.(request.SaveProductRequest)
-		result, msg := s.CreateProduct(req)
+		req := rqst.(request.SaveChannelRequest)
+		result, msg := s.CreateChannel(req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
@@ -40,9 +40,9 @@ func makeSaveProduct(s service.ProductService) endpoint.Endpoint {
 	}
 }
 
-func makeShowProduct(s service.ProductService) endpoint.Endpoint {
+func makeShowChannel(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-		result, msg := s.GetProduct(fmt.Sprint(rqst))
+		result, msg := s.GetChannel(fmt.Sprint(rqst))
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
@@ -51,9 +51,9 @@ func makeShowProduct(s service.ProductService) endpoint.Endpoint {
 	}
 }
 
-func makeGetProducts(s service.ProductService) endpoint.Endpoint {
+func getListChannels(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-		req := rqst.(request.ProductListRequest)
+		req := rqst.(request.ChannelListRequest)
 		result, pagination, msg := s.GetList(req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
@@ -63,10 +63,9 @@ func makeGetProducts(s service.ProductService) endpoint.Endpoint {
 	}
 }
 
-func makeUpdateProduct(s service.ProductService) endpoint.Endpoint {
-	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-		req := rqst.(request.SaveProductRequest)
-		msg := s.UpdateProduct(req.Uid, req)
+func makeDeleteChannel(s service.ChannelService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		msg := s.DeleteChannel(fmt.Sprint(request))
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
@@ -75,9 +74,10 @@ func makeUpdateProduct(s service.ProductService) endpoint.Endpoint {
 	}
 }
 
-func makeDeleteProduct(s service.ProductService) endpoint.Endpoint {
+func makeUpdateChannel(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-		msg := s.DeleteProduct(fmt.Sprint(rqst))
+		req := rqst.(request.UpdateChannelRequest)
+		msg := s.UpdateChannel(req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
