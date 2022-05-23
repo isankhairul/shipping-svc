@@ -238,31 +238,32 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 			return nil, message.ErrImportData
 		}
 
+		// Check empty string
+		if courierUid == "" || countryCode == "" || postalCode == "" {
+			resp = append(resp, response.ImportStatus{
+				CourierUID:  courierUid,
+				CountryCode: countryCode,
+				PostalCode:  postalCode,
+				Description: description,
+				Code1:       code1,
+				Code2:       code2,
+				Code3:       code3,
+				Code4:       code4,
+				Code5:       code5,
+				Code6:       code6,
+				Message:     "Can not import missing Courier UID, Country Code, and Postal Code",
+				Status:      false,
+			})
+			continue
+		}
+
 		// check courier_id existing
 		var courier entity.Courier
 		err := s.courierCoverageCodeRepo.GetCourierUid(&courier, courierUid)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				resp = append(resp, response.ImportStatus{CourierUID: courierUid, Message: "Not found Courier UID in Courier table", Status: false})
-			} else {
-				_ = level.Error(logger).Log(err)
-				s.baseReo.RollbackTx()
-				return nil, message.ErrDB
-			}
-		} else {
-			// Check CourierUID, country_code and postal_code are unique
-			var courierCoverageCode entity.CourierCoverageCode
-			count, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, countryCode, postalCode, 0)
-
-			if err != nil {
-				_ = level.Error(logger).Log(err)
-				s.baseReo.RollbackTx()
-				return nil, message.ErrDB
-			}
-
-			if count == 0 {
-				data := entity.CourierCoverageCode{
-					CourierID:   courier.ID,
+				resp = append(resp, response.ImportStatus{
+					CourierUID:  courierUid,
 					CountryCode: countryCode,
 					PostalCode:  postalCode,
 					Description: description,
@@ -272,38 +273,96 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 					Code4:       code4,
 					Code5:       code5,
 					Code6:       code6,
-				}
-				result, err := s.courierCoverageCodeRepo.Create(&data)
-				if err != nil {
-					_ = level.Error(logger).Log(err)
-					s.baseReo.RollbackTx()
-					return nil, message.ErrDB
-				}
-				resp = append(resp, response.ImportStatus{UID: result.UID, CourierUID: courierUid, Message: "Created", Status: true})
-
+					Message:     "Not found Courier UID in Courier table",
+					Status:      false,
+				})
+				continue
 			} else {
-				data := map[string]interface{}{
-					"courier_id":   courier.ID,
-					"country_code": countryCode,
-					"postal_code":  postalCode,
-					"description":  description,
-					"code1":        code1,
-					"code2":        code2,
-					"code3":        code3,
-					"code4":        code4,
-					"code5":        code5,
-					"code6":        code6,
-				}
-				_, err := s.courierCoverageCodeRepo.Update(courierCoverageCode.UID, data)
-				if err != nil {
-					_ = level.Error(logger).Log(err)
-					s.baseReo.RollbackTx()
-					return nil, message.ErrDB
-				}
-				resp = append(resp, response.ImportStatus{UID: courierCoverageCode.UID, CourierUID: courierUid, Message: "Updated", Status: true})
+				_ = level.Error(logger).Log(err)
+				s.baseReo.RollbackTx()
+				return nil, message.ErrDB
 			}
 		}
+		// Check CourierUID, country_code and postal_code are unique
+		var courierCoverageCode entity.CourierCoverageCode
+		count, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, countryCode, postalCode, 0)
 
+		if err != nil {
+			_ = level.Error(logger).Log(err)
+			s.baseReo.RollbackTx()
+			return nil, message.ErrDB
+		}
+
+		if count == 0 {
+			data := entity.CourierCoverageCode{
+				CourierID:   courier.ID,
+				CountryCode: countryCode,
+				PostalCode:  postalCode,
+				Description: description,
+				Code1:       code1,
+				Code2:       code2,
+				Code3:       code3,
+				Code4:       code4,
+				Code5:       code5,
+				Code6:       code6,
+			}
+			result, err := s.courierCoverageCodeRepo.Create(&data)
+			if err != nil {
+				_ = level.Error(logger).Log(err)
+				s.baseReo.RollbackTx()
+				return nil, message.ErrDB
+			}
+			resp = append(resp, response.ImportStatus{
+				UID:         result.UID,
+				CourierUID:  courierUid,
+				CountryCode: countryCode,
+				PostalCode:  postalCode,
+				Description: description,
+				Code1:       code1,
+				Code2:       code2,
+				Code3:       code3,
+				Code4:       code4,
+				Code5:       code5,
+				Code6:       code6,
+				Message:     "Created",
+				Status:      true,
+			})
+
+		} else {
+			data := map[string]interface{}{
+				"courier_id":   courier.ID,
+				"country_code": countryCode,
+				"postal_code":  postalCode,
+				"description":  description,
+				"code1":        code1,
+				"code2":        code2,
+				"code3":        code3,
+				"code4":        code4,
+				"code5":        code5,
+				"code6":        code6,
+			}
+			_, err := s.courierCoverageCodeRepo.Update(courierCoverageCode.UID, data)
+			if err != nil {
+				_ = level.Error(logger).Log(err)
+				s.baseReo.RollbackTx()
+				return nil, message.ErrDB
+			}
+			resp = append(resp, response.ImportStatus{
+				UID:         courierCoverageCode.UID,
+				CourierUID:  courierUid,
+				CountryCode: countryCode,
+				PostalCode:  postalCode,
+				Description: description,
+				Code1:       code1,
+				Code2:       code2,
+				Code3:       code3,
+				Code4:       code4,
+				Code5:       code5,
+				Code6:       code6,
+				Message:     "Updated",
+				Status:      true,
+			})
+		}
 	}
 	s.baseReo.CommitTx()
 	return resp, message.SuccessMsg
