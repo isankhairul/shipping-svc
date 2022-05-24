@@ -8,27 +8,20 @@ import (
 	"gorm.io/gorm"
 )
 
-func RegisterProductService(db *gorm.DB, logger log.Logger) service.ProductService {
-	return service.NewProductService(
-		logger,
-		rp.NewBaseRepository(db),
-		rp.NewProductRepository(rp.NewBaseRepository(db)),
-	)
-}
-
-func RegisterDoctorService(db *gorm.DB, logger log.Logger) service.DoctorService {
-	return service.NewDoctorService(
-		logger,
-		rp.NewBaseRepository(db),
-		rp.NewDoctorRepository(rp.NewBaseRepository(db)),
-	)
-}
-
 func RegisterCourierService(db *gorm.DB, logger log.Logger) service.CourierService {
 	return service.NewCourierService(
 		logger,
 		rp.NewBaseRepository(db),
 		rp.NewCourierRepository(rp.NewBaseRepository(db)),
+		rp.NewCourierServiceRepository(rp.NewBaseRepository(db)),
+	)
+}
+
+func RegisterChannelService(db *gorm.DB, logger log.Logger) service.ChannelService {
+	return service.NewChannelService(
+		logger,
+		rp.NewBaseRepository(db),
+		rp.NewChannelRepository(rp.NewBaseRepository(db)),
 	)
 }
 

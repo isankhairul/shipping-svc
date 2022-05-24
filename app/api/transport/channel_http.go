@@ -17,46 +17,46 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func ProductHttpHandler(s service.ProductService, logger log.Logger) http.Handler {
+func ChannelHttpHandler(s service.ChannelService, logger log.Logger) http.Handler {
 	pr := mux.NewRouter()
 
-	ep := endpoint.MakeProductEndpoints(s)
+	ep := endpoint.MakeChannelEndpoints(s)
 	options := []httptransport.ServerOption{
 		httptransport.ServerErrorLogger(logger),
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("POST").Path("/products/").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path("/channel/channel-app").Handler(httptransport.NewServer(
 		ep.Save,
-		decodeSaveProduct,
+		decodeSaveChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/products/list").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path("/channel/channel-app").Handler(httptransport.NewServer(
 		ep.List,
-		decodeListProduct,
+		decodeListChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/products/{id}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path("/channel/channel-app/{id}").Handler(httptransport.NewServer(
 		ep.Show,
-		decodeShowProduct,
+		decodeShowChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path("/products/{id}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path("/channel/channel-app/{id}").Handler(httptransport.NewServer(
 		ep.Update,
-		decodeUpdateProduct,
+		decodeUpdateChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("DELETE").Path("/products/{id}").Handler(httptransport.NewServer(
-		ep.Update,
-		decodeDeleteProduct,
+	pr.Methods("DELETE").Path("/channel/channel-app/{id}").Handler(httptransport.NewServer(
+		ep.Delete,
+		decodeDeleteChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
@@ -64,8 +64,8 @@ func ProductHttpHandler(s service.ProductService, logger log.Logger) http.Handle
 	return pr
 }
 
-func decodeSaveProduct(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	var req request.SaveProductRequest
+func decodeSaveChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var req request.SaveChannelRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
@@ -75,13 +75,13 @@ func decodeSaveProduct(ctx context.Context, r *http.Request) (rqst interface{}, 
 	return req, nil
 }
 
-func decodeShowProduct(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+func decodeShowChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	uid := mux.Vars(r)["id"]
 	return uid, nil
 }
 
-func decodeListProduct(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	var params request.ProductListRequest
+func decodeListChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var params request.ChannelListRequest
 
 	if err := r.ParseForm(); err != nil {
 		return nil, err
@@ -94,19 +94,18 @@ func decodeListProduct(ctx context.Context, r *http.Request) (rqst interface{}, 
 	return params, nil
 }
 
-func decodeUpdateProduct(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	var req request.SaveProductRequest
+func decodeUpdateChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var req request.UpdateChannelRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
 	//add this to htmlescape body post
 	global.HtmlEscape(&req)
-
 	req.Uid = mux.Vars(r)["id"]
 	return req, nil
 }
 
-func decodeDeleteProduct(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+func decodeDeleteChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	uid := mux.Vars(r)["id"]
 	return uid, nil
 }
