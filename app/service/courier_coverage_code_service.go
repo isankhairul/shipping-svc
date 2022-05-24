@@ -8,6 +8,7 @@ import (
 	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
+
 	"gorm.io/gorm"
 
 	"github.com/go-kit/log"
@@ -162,7 +163,7 @@ func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*en
 	return result, message.SuccessMsg
 }
 
-// swagger:route PUT /courier/courier-coverage-code/{uid} Courier-Coverage-Code SaveCourierCoverageCodeRequest
+// swagger:route PUT /courier/courier-coverage-code/{uid} Courier-Coverage-Code ReqUpdateCourierCoverageCodeBody
 // Update courier coverage by uid
 //
 // responses:

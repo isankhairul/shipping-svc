@@ -2,8 +2,9 @@ package request
 
 import (
 	"bytes"
-	validation "github.com/itgelo/ozzo-validation/v4"
 	"go-klikdokter/helper/message"
+
+	validation "github.com/itgelo/ozzo-validation/v4"
 )
 
 // swagger:parameters CourierCoverageCodeListRequest
@@ -26,6 +27,13 @@ type CourierCoverageCodeRequest struct {
 	// Uid of the article
 	// in: path
 	Uid string `json:"uid" schema:"uid"`
+}
+
+// swagger:parameters ReqUpdateCourierCoverageCodeBody
+type ReqUpdateCourierCoverageCodeBody struct {
+	Uid string
+	// in: body
+	Body SaveCourierCoverageCodeRequest `json:"body"`
 }
 
 // swagger:parameters SaveCourierCoverageCodeRequest
