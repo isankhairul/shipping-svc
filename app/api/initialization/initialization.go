@@ -24,6 +24,7 @@ func DbInit() (*gorm.DB, error) {
 
 	//Define auto migration here
 	_ = db.AutoMigrate(&entity.Courier{})
+	_ = db.AutoMigrate(&entity.CourierService{})
 	_ = db.AutoMigrate(&entity.Channel{})
 
 	// example Seeder

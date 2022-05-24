@@ -252,6 +252,204 @@ definitions:
         x-go-name: Uid
     type: object
     x-go-package: go-klikdokter/app/model/request
+  SaveCourierServiceRequest:
+    properties:
+      cancelable:
+        description: |-
+          Cancelable of the Courier Service
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: Cancelable
+      cod_available:
+        description: |-
+          Cod Available of the Courier Service
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: CodAvailable
+      courier_uid:
+        description: |-
+          Courier UId of the Courier Service
+          in: string
+        type: string
+        x-go-name: CourierUId
+      created_at:
+        description: |-
+          Created At of the Courier Service
+          in: time
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      created_by:
+        description: |-
+          Created By Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: CreatedBy
+      end_time:
+        description: |-
+          End Time of the Courier Service
+          in: time
+        format: date-time
+        type: string
+        x-go-name: EndTime
+      etd_max:
+        description: |-
+          ETD Max of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: ETD_Max
+      etd_min:
+        description: |-
+          ETD Min of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: ETD_Min
+      insurance:
+        description: |-
+          Insurance of the Courier Service
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: Insurance
+      insurance_fee:
+        description: |-
+          Insurance Fee of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: InsuranceFee
+      insurance_fee_type:
+        description: |-
+          Insurance Fee Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: InsuranceFeeType
+      insurance_min:
+        description: |-
+          Insurance Min of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: InsuranceMin
+      logo:
+        description: |-
+          Logo of the Courier Service
+          in: string
+        type: string
+        x-go-name: Logo
+      max_distance:
+        description: |-
+          Max Distance of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxDistance
+      max_purchase:
+        description: |-
+          Max Purchase of the Courier Service
+          in: integer
+        format: double
+        type: number
+        x-go-name: MaxPurchase
+      max_volume:
+        description: |-
+          Max Volume of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxVolume
+      max_weight:
+        description: |-
+          Max Weight of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxWeight
+      min_purchase:
+        description: |-
+          Min Purchase of the Courier Service
+          in: integer
+        format: double
+        type: number
+        x-go-name: MinPurchase
+      prescription_allowed:
+        description: |-
+          Prescription Allowed of the Courier Service
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: PrescriptionAllowed
+      repickup:
+        description: |-
+          Repickup Fee of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: Repickup
+      shipping_code:
+        description: |-
+          Shipping Code of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingCode
+      shipping_description:
+        description: |-
+          Shipping Description of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingDescription
+      shipping_name:
+        description: |-
+          Shipping Name of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingName
+      shipping_type:
+        description: |-
+          Shipping Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingType
+      start_time:
+        description: |-
+          Start Time of the Courier Service
+          in: time
+        format: date-time
+        type: string
+        x-go-name: StartTime
+      status:
+        description: |-
+          Status of the Courier Service
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: Status
+      tracking_available:
+        description: |-
+          Tracking Available of the Courier Service
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: TrackingAvailable
+      updated_at:
+        description: |-
+          Updated At of the Courier Service
+          in: time
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+      updated_by:
+        description: |-
+          Updated By Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: UpdatedBy
+    type: object
+    x-go-package: go-klikdokter/app/model/request
   SuccessResponse:
     properties:
       data:
@@ -469,7 +667,13 @@ paths:
   /courier/courier:
     post:
       description: Manage Courier
-      operationId: ManagedCourierRequest
+      operationId: SaveCourierRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierRequest'
+        x-go-name: Body
       responses:
         "201":
           description: SuccessResponse
@@ -481,6 +685,154 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Courier
+  /courier/courier-services:
+    get:
+      description: List of Courier Services
+      operationId: CourierServiceListRequest
+      parameters:
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: Limit
+        type: integer
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: Page
+        type: integer
+      - example: name asc, uom desc
+        in: query
+        name: Sort
+        type: string
+      - description: |-
+          CourierUID
+          in: string
+        in: query
+        name: CourierUID
+        type: string
+      - description: |-
+          ShippingCode
+          in: string
+        in: query
+        name: ShippingCode
+        type: string
+      - description: |-
+          ShippingName
+          in: string
+        in: query
+        name: ShippingName
+        type: string
+      - description: |-
+          Status
+          in: int
+        format: int64
+        in: query
+        name: Status
+        type: integer
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Services
+    post:
+      description: Add Courier Services
+      operationId: SaveCourierServiceRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierServiceRequest'
+        x-go-name: Body
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Services
+  /courier/courier-services/{uid}:
+    delete:
+      description: Delete Courier Services
+      operationId: CourierServiceRequestDeleteByUid
+      parameters:
+      - description: Uid of the Courier Service
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Services
+    get:
+      description: Detail Courier Services
+      operationId: CourierServiceRequestGetByUid
+      parameters:
+      - description: Uid of the Courier Service
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Services
+    put:
+      description: Update Courier Services
+      operationId: UpdateCourierServiceRequest
+      parameters:
+      - description: Uid of the courier service.
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierServiceRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Services
   /courier/courier/{id}:
     delete:
       description: Delete courier
@@ -496,6 +848,7 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - courier-delete
+  /courier/courier/{uid}:
     get:
       description: Get Courier
       operationId: Courier

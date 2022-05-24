@@ -16,6 +16,13 @@ type CourierEndpoint struct {
 	List   endpoint.Endpoint
 	Update endpoint.Endpoint
 	Delete endpoint.Endpoint
+
+	//Courier-Serivce
+	SaveCourierSerivce   endpoint.Endpoint
+	ShowCourierSerivce   endpoint.Endpoint
+	ListCourierSerivce   endpoint.Endpoint
+	UpdateCourierSerivce endpoint.Endpoint
+	DeleteCourierSerivce endpoint.Endpoint
 }
 
 func MakeCourierEndpoints(s service.CourierService) CourierEndpoint {
@@ -25,6 +32,12 @@ func MakeCourierEndpoints(s service.CourierService) CourierEndpoint {
 		List:   getListCouriers(s),
 		Delete: makeDeleteCourier(s),
 		Update: makeUpdateCourier(s),
+
+		SaveCourierSerivce:   makeSaveCourierService(s),
+		ShowCourierSerivce:   makeShowCourierService(s),
+		ListCourierSerivce:   getListCourierServices(s),
+		DeleteCourierSerivce: makeDeleteCourierService(s),
+		UpdateCourierSerivce: makeUpdateCourierService(s),
 	}
 }
 
@@ -83,5 +96,63 @@ func makeUpdateCourier(s service.CourierService) endpoint.Endpoint {
 		}
 
 		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+	}
+}
+
+func makeSaveCourierService(s service.CourierService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		req := rqst.(request.SaveCourierServiceRequest)
+		result, msg := s.CreateCourierService(req)
+		if msg.Code == 4000 {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
+	}
+}
+
+func makeShowCourierService(s service.CourierService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		result, msg := s.GetCourierService(fmt.Sprint(rqst))
+		if msg.Code == 4000 {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
+	}
+}
+
+func getListCourierServices(s service.CourierService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		req := rqst.(request.CourierServiceListRequest)
+		result, pagination, msg := s.GetListCourierService(req)
+		if msg.Code == 4000 {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		return base.SetHttpResponse(msg.Code, msg.Message, result, pagination), nil
+	}
+}
+
+func makeDeleteCourierService(s service.CourierService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		msg := s.DeleteCourierService(fmt.Sprint(request))
+		if msg.Code == 4000 {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+	}
+}
+
+func makeUpdateCourierService(s service.CourierService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		req := rqst.(request.UpdateCourierServiceRequest)
+		result, msg := s.UpdateCourierService(req.Uid, req)
+		if msg.Code == 4000 {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }
