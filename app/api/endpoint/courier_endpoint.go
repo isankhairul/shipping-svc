@@ -148,11 +148,11 @@ func makeDeleteCourierService(s service.CourierService) endpoint.Endpoint {
 func makeUpdateCourierService(s service.CourierService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
 		req := rqst.(request.UpdateCourierServiceRequest)
-		msg := s.UpdateCourierService(req.Uid, req)
+		result, msg := s.UpdateCourierService(req.Uid, req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
 
-		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }
