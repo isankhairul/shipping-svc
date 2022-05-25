@@ -21,7 +21,7 @@ func (repository *CourierCoverageCodeRepositoryMock) GetCourierId(courier *entit
 	return nil
 }
 
-func (repository *CourierCoverageCodeRepositoryMock) FindByParams(limit int, page int, sort string) ([]*entity.CourierCoverageCode, *base.Pagination, error) {
+func (repository *CourierCoverageCodeRepositoryMock) FindByParams(limit int, page int, sort string, filters map[string]interface{}) ([]*entity.CourierCoverageCode, *base.Pagination, error) {
 	arguments := repository.Mock.Called(limit, page, sort)
 	return arguments.Get(0).([]*entity.CourierCoverageCode), arguments.Get(1).(*base.Pagination), nil
 }
