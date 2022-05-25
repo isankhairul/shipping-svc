@@ -9,17 +9,33 @@ import (
 
 // swagger:parameters CourierCoverageCodeListRequest
 type CourierCoverageCodeListRequest struct {
-	// Maximun records per page
-	// in: path
-	Limit int `schema:"limit" binding:"omitempty,numeric,min=10,max=100"`
+	// Maximum records per page
+	// in: int32
+	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
 
 	// Page No
-	// in: path
-	Page int `schema:"page" binding:"omitempty,numeric,min=1"`
+	// in: int32
+	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
 	// Sort fields, example: name asc, uom desc
-	// in: path
-	Sort string `schema:"sort" binding:"omitempty"`
+	// in: string
+	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
+
+	// Courier Name
+	// in: string
+	CourierName string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
+
+	// Country Code
+	// in: string
+	CountryCode string `schema:"country_code" binding:"omitempty" json:"country_code"`
+
+	// Postal Code
+	// in: string
+	PostalCode string `schema:"postal_code" binding:"omitempty" json:"postal_code"`
+
+	// Description
+	// in: string
+	Description string `schema:"description" binding:"omitempty" json:"description"`
 }
 
 // swagger:parameters GetCourierCoverageCodeRequest DeleteCourierCoverageCodeRequest

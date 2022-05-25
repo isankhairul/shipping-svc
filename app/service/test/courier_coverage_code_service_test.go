@@ -15,7 +15,7 @@ import (
 	"testing"
 )
 
-//var loggerCourierCoverageCode log.Logger
+var logger log.Logger
 
 var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
 var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}

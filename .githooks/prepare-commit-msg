@@ -1,11 +1,11 @@
 
 #!/bin/sh
 
-if [ "$(uname)" = "Darwin" ]; then
-    exec golangci-lint run
-elif [ "$(uname)" = "Linux" ]; then
-    exec golangci-lint run
-fi
+#if [ "$(uname)" = "Darwin" ]; then
+    #exec golangci-lint run
+#elif [ "$(uname)" = "Linux" ]; then
+    #exec golangci-lint run
+#fi
 
 
 SOB=$(git config github.user)

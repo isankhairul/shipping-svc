@@ -17,7 +17,7 @@ type CourierCoverageCodeRepository interface {
 	Create(courierCoverageCode *entity.CourierCoverageCode) (*entity.CourierCoverageCode, error)
 	GetCourierUid(courier *entity.Courier, uid string) error
 	GetCourierId(courier *entity.Courier, id uint64) error
-	FindByParams(limit int, page int, sort string) ([]entity.CourierCoverageCode, *base.Pagination, error)
+	FindByParams(limit int, page int, sort string, filters map[string]interface{}) ([]*entity.CourierCoverageCode, *base.Pagination, error)
 	FindByUid(uid string) (*entity.CourierCoverageCode, error)
 	Update(uid string, values map[string]interface{}) (*entity.CourierCoverageCode, error)
 	CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string, id uint64) (int64, error)
@@ -72,11 +72,25 @@ func (r *CourierCoverageCodeRepo) CombinationUnique(courierCoverageCode *entity.
 
 }
 
-func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string) ([]entity.CourierCoverageCode, *base.Pagination, error) {
-	var courierCoverageCodes []entity.CourierCoverageCode
+func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string, filters map[string]interface{}) ([]*entity.CourierCoverageCode, *base.Pagination, error) {
+	var items []*entity.CourierCoverageCode
 	var pagination base.Pagination
 
-	query := r.base.GetDB()
+	db := r.base.GetDB()
+	query := db.Model(entity.CourierCoverageCode{})
+
+	if filters["courier_name"] != "" {
+		query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id AND courier.courier_name = ?", filters["courier_name"].(string))
+	}
+	if filters["country_code"] != "" {
+		query = query.Where(entity.CourierCoverageCode{CountryCode: filters["country_code"].(string)})
+	}
+	if filters["postal_code"] != "" {
+		query = query.Where(entity.CourierCoverageCode{PostalCode: filters["postal_code"].(string)})
+	}
+	if filters["description"] != "" {
+		query = query.Where(entity.CourierCoverageCode{Description: filters["description"].(string)})
+	}
 
 	if len(sort) > 0 {
 		query = query.Order(sort)
@@ -84,18 +98,22 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string)
 
 	pagination.Limit = limit
 	pagination.Page = page
-	err := query.Scopes(r.Paginate(courierCoverageCodes, &pagination, query, int64(len(courierCoverageCodes)))).
-		Find(&courierCoverageCodes).
-		Error
 
+	var totalRecords int64
+	err := query.Count(&totalRecords).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil, nil
-		}
 		return nil, nil, err
 	}
 
-	return courierCoverageCodes, &pagination, nil
+	pagination.TotalRecords = totalRecords
+	pagination.TotalPage = int(math.Ceil(float64(totalRecords) / float64(pagination.GetLimit())))
+	// err = query.Scopes(r.Paginate(&pagination)).Find(&items).Error
+	err = query.Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Find(&items).Error
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return items, &pagination, nil
 }
 
 func (r *CourierCoverageCodeRepo) Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB {

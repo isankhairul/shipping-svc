@@ -17,7 +17,7 @@ import (
 
 type CourierCoverageCodeService interface {
 	CreateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message)
-	GetList(input request.CourierCoverageCodeListRequest) ([]entity.CourierCoverageCode, *base.Pagination, message.Message)
+	GetList(input request.CourierCoverageCodeListRequest) ([]*entity.CourierCoverageCode, *base.Pagination, message.Message)
 	GetCourierCoverageCode(uid string) (*entity.CourierCoverageCode, message.Message)
 	UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message)
 	ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) ([]response.ImportStatus, message.Message)
@@ -103,18 +103,17 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 // responses:
 //  401: SuccessResponse
 //  200: PaginationResponse
-func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCodeListRequest) ([]entity.CourierCoverageCode, *base.Pagination, message.Message) {
+func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCodeListRequest) ([]*entity.CourierCoverageCode, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Codes")
 
-	//Set default value
-	if input.Limit <= 0 {
-		input.Limit = 10
-	}
-	if input.Page <= 0 {
-		input.Page = 1
+	filter := map[string]interface{}{
+		"courier_name": input.CourierName,
+		"country_code": input.CountryCode,
+		"postal_code":  input.PostalCode,
+		"description":  input.Description,
 	}
 
-	result, pagination, err := s.courierCoverageCodeRepo.FindByParams(input.Limit, input.Page, input.Sort)
+	result, pagination, err := s.courierCoverageCodeRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, nil, message.FailedMsg
