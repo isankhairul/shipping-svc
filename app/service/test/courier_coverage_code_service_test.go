@@ -1,10 +1,6 @@
 package test
 
 import (
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
@@ -13,6 +9,11 @@ import (
 	"go-klikdokter/helper/message"
 	"os"
 	"testing"
+
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 var logger log.Logger
@@ -109,7 +110,7 @@ func TestListCourierCoverageCode(t *testing.T) {
 		Limit: 10,
 	}
 
-	courierCoverageCode := []entity.CourierCoverageCode{
+	courierCoverageCode := []*entity.CourierCoverageCode{
 		{
 			CourierUID:  "UCMvWngocMqKbaC3AWQBF",
 			CountryCode: "VN",

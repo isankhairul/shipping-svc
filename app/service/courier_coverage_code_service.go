@@ -124,14 +124,15 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 		return nil, nil, message.FailedMsg
 	}
 
-	for i := range result {
-		var courier entity.Courier
-		err := s.courierCoverageCodeRepo.GetCourierId(&courier, result[i].CourierID)
-		if err != nil {
-			return nil, nil, message.FailedMsg
-		}
-		result[i].CourierUID = courier.UID
-	}
+	// for i := range result {
+	// 	var courier entity.Courier
+	// 	_ = s.courierCoverageCodeRepo.GetCourierId(&courier, result[i].CourierID)
+	// 	//temproriy not check issue here.
+	// 	// if err != nil {
+	// 	// 	return nil, nil, message.FailedMsg
+	// 	// }
+	// 	result[i].CourierUID = courier.UID
+	// }
 
 	return result, pagination, message.SuccessMsg
 }

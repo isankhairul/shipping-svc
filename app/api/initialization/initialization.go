@@ -22,6 +22,8 @@ func DbInit() (*gorm.DB, error) {
 		return nil, err
 	}
 
+	// db.Migrator().DropTable(&entity.CourierCoverageCode{})
+
 	//Define auto migration here
 	_ = db.AutoMigrate(&entity.Courier{})
 	_ = db.AutoMigrate(&entity.CourierCoverageCode{})

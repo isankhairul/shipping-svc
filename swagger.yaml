@@ -881,23 +881,55 @@ paths:
       description: List products
       operationId: CourierCoverageCodeListRequest
       parameters:
-      - description: Maximun records per page
+      - description: |-
+          Maximum records per page
+          in: int32
         format: int64
-        in: path
-        name: Limit
-        required: true
+        in: query
+        name: limit
         type: integer
-      - description: Page No
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
         format: int64
-        in: path
-        name: Page
-        required: true
+        in: query
+        name: page
         type: integer
+        x-go-name: Page
       - example: name asc, uom desc
-        in: path
-        name: Sort
-        required: true
+        in: query
+        name: sort
         type: string
+        x-go-name: Sort
+      - description: |-
+          Courier Name
+          in: string
+        in: query
+        name: courier_name
+        type: string
+        x-go-name: CourierName
+      - description: |-
+          Country Code
+          in: string
+        in: query
+        name: country_code
+        type: string
+        x-go-name: CountryCode
+      - description: |-
+          Postal Code
+          in: string
+        in: query
+        name: postal_code
+        type: string
+        x-go-name: PostalCode
+      - description: |-
+          Description
+          in: string
+        in: query
+        name: description
+        type: string
+        x-go-name: Description
       responses:
         "200":
           description: PaginationResponse
