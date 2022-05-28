@@ -18,6 +18,7 @@ var ErrSaveData = Message{Code: 34005, Message: "Data cannot be saved, please ch
 var ErrImportData = Message{Code: 34005, Message: "Data cannot be saved or updated, please check your import file"}
 var ErrReq = Message{Code: 34005, Message: "Required field"}
 
+var ErrCourierCoverageCodeUidNotExist = Message{Code: 34001, Message: "Courier Coverage Code not exist"}
 var ErrDataCourierUIdNotExist = Message{Code: 34001, Message: "CourierUID not exist"}
 
 var ErrDataCourierServiceUidNotExist = Message{Code: 34001, Message: "CourierSerivceUID not exist"}

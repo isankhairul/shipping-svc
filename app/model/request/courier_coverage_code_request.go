@@ -112,6 +112,15 @@ type SaveCourierCoverageCodeRequest struct {
 	Uid string `json:"-"`
 }
 
+// swagger:parameters DeleteCourierCoverageCodeByIDParam
+type DeleteCourierCoverageCodeByIDParam struct {
+	// name: id
+	// in: path
+	// required: true
+	UId string `json:"uid"`
+}
+
+
 // swagger:parameters CourierCoverageCodeByIDParam
 type CourierCoverageCodeByIDParam struct {
 	// name: id

@@ -16,6 +16,7 @@ type CourierCoverageCodeEndpoint struct {
 	List   endpoint.Endpoint
 	Update endpoint.Endpoint
 	Import endpoint.Endpoint
+	Delete endpoint.Endpoint
 }
 
 func MakeCourierCoverageCodeEndpoints(s service.CourierCoverageCodeService) CourierCoverageCodeEndpoint {
@@ -25,6 +26,7 @@ func MakeCourierCoverageCodeEndpoints(s service.CourierCoverageCodeService) Cour
 		List:   makeGetCourierCoverageCodes(s),
 		Update: makeUpdateCourierCoverageCodes(s),
 		Import: makeImportCourierCoverageCode(s),
+		Delete: makeDeleteCourierCoverageCode(s),
 	}
 }
 
@@ -84,5 +86,17 @@ func makeImportCourierCoverageCode(s service.CourierCoverageCodeService) endpoin
 		}
 
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
+	}
+}
+
+
+func makeDeleteCourierCoverageCode(s service.CourierCoverageCodeService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		msg := s.DeleteCourierCoverageCode(fmt.Sprint(rqst))
+		if msg.Code == 4000 {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 	}
 }

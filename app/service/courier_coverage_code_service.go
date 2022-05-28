@@ -20,6 +20,7 @@ type CourierCoverageCodeService interface {
 	GetList(input request.CourierCoverageCodeListRequest) ([]*entity.CourierCoverageCode, *base.Pagination, message.Message)
 	GetCourierCoverageCode(uid string) (*entity.CourierCoverageCode, message.Message)
 	UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message)
+	DeleteCourierCoverageCode(uid string) message.Message
 	ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) ([]response.ImportStatus, message.Message)
 }
 
@@ -124,17 +125,21 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 		return nil, nil, message.FailedMsg
 	}
 
-	// for i := range result {
-	// 	var courier entity.Courier
-	// 	_ = s.courierCoverageCodeRepo.GetCourierId(&courier, result[i].CourierID)
-	// 	//temproriy not check issue here.
-	// 	// if err != nil {
-	// 	// 	return nil, nil, message.FailedMsg
-	// 	// }
-	// 	result[i].CourierUID = courier.UID
-	// }
-
 	return result, pagination, message.SuccessMsg
+}
+
+// swagger:route GET /courier/courier-coverage-code/{uid} Courier-Coverage-Code DeleteCourierCoverageCodeByIDParam
+// Get Courier Coverage Code by uid
+//
+// responses:
+//  401: SuccessResponse
+//  200: CourierCoverageCode
+func (s *CourierCoverageCodeServiceImpl) DeleteCourierCoverageCode(uid string) message.Message {
+	err := s.courierCoverageCodeRepo.DeleteByUid(uid)
+	if err != nil {
+		return message.ErrCourierCoverageCodeUidNotExist
+	}
+	return message.SuccessMsg
 }
 
 // swagger:route GET /courier/courier-coverage-code/{uid} Courier-Coverage-Code CourierCoverageCodeByIDParam
@@ -215,7 +220,8 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 		_ = level.Error(logger).Log(err)
 		return nil, message.FailedMsg
 	}
-
+	result.CourierUID = input.CourierUID
+	result.UID = input.Uid
 	return result, message.SuccessMsg
 }
 

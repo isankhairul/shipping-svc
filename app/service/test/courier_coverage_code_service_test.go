@@ -103,6 +103,30 @@ func TestGetCourierCoverageCode(t *testing.T) {
 	assert.Equal(t, "Vietnam code", result.Description, "Description is Vietnam code")
 }
 
+func TestDeleteCourierCoverageCode(t *testing.T) {
+	courierCoverageCode := entity.CourierCoverageCode{
+		CourierID:   555,
+		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
+		CountryCode: "VN",
+		PostalCode:  "70000",
+		Description: "Vietnam code",
+	}
+	var courier entity.Courier
+	courier.UID = "UCMvWngocMqKbaC3AWQBF"
+	courier.ID = 555
+	uid := "123"
+
+	courierCoverageCodeRepository.Mock.On("FindByUid", uid).Return(courierCoverageCode)
+	courierCoverageCodeRepository.Mock.On("GetCourierId", mock.Anything, mock.Anything).Return(courier)
+
+	result, _ := svcCourierCoverageCode.GetCourierCoverageCode(uid)
+	assert.NotNil(t, result)
+	assert.Equal(t, "UCMvWngocMqKbaC3AWQBF", result.CourierUID, "Courier UID is UCMvWngocMqKbaC3AWQBF")
+	assert.Equal(t, "VN", result.CountryCode, "Courier UID is VN")
+	assert.Equal(t, "70000", result.PostalCode, "Courier UID is 70000")
+	assert.Equal(t, "Vietnam code", result.Description, "Description is Vietnam code")
+}
+
 func TestListCourierCoverageCode(t *testing.T) {
 	req := request.CourierCoverageCodeListRequest{
 		Page:  1,

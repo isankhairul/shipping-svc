@@ -61,6 +61,14 @@ func CourierCoverageCodeHttpHandler(s service.CourierCoverageCodeService, logger
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
+	
+
+	pr.Methods("DELETE").Path("/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
+		ep.Delete,
+		decodeShowCourierCoverageCode,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
 
 	return pr
 }

@@ -21,6 +21,7 @@ type CourierCoverageCodeRepository interface {
 	FindByUid(uid string) (*entity.CourierCoverageCode, error)
 	Update(uid string, values map[string]interface{}) (*entity.CourierCoverageCode, error)
 	CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string, id uint64) (int64, error)
+	DeleteByUid(uid string) error
 }
 
 func NewCourierCoverageCodeRepository(br BaseRepository) CourierCoverageCodeRepository {
@@ -77,7 +78,7 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 	var pagination base.Pagination
 
 	db := r.base.GetDB()
-	query := db.Model(entity.CourierCoverageCode{})
+	query := db.Model(entity.CourierCoverageCode{}).Preload("Courier")
 
 	if filters["courier_name"] != "" {
 		query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id AND courier.courier_name = ?", filters["courier_name"].(string))
@@ -151,4 +152,15 @@ func (r *CourierCoverageCodeRepo) Update(uid string, values map[string]interface
 		return nil, err
 	}
 	return &courierCoverageCode, nil
+}
+
+func (r *CourierCoverageCodeRepo) DeleteByUid(uid string) error {
+	var ret entity.CourierCoverageCode
+	err := r.base.GetDB().Where("uid=?", uid).Delete(&ret).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
