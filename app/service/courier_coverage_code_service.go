@@ -128,8 +128,8 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier-coverage-code/{uid} Courier-Coverage-Code DeleteCourierCoverageCodeByIDParam
-// Get Courier Coverage Code by uid
+// swagger:route DELETE /courier/courier-coverage-code/{uid} Courier-Coverage-Code DeleteCourierCoverageCodeByIDParam
+// Delete courier coverage code by UID
 //
 // responses:
 //  401: SuccessResponse
