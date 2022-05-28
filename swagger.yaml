@@ -856,6 +856,51 @@ paths:
       tags:
       - courier-update
   /courier/courier:
+    get:
+      description: Get list of couriers
+      operationId: CourierListRequest
+      parameters:
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: Limit
+        type: integer
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: Page
+        type: integer
+      - example: name asc, uom desc
+        in: query
+        name: Sort
+        type: string
+      - description: |-
+          Courier type
+          in: string
+        in: query
+        name: CourierType
+        type: string
+      - description: |-
+          Courier status
+          in: string
+        in: query
+        name: Status
+        type: string
+      responses:
+        "200":
+          description: PaginationResponse
+          schema:
+            $ref: '#/definitions/PaginationResponse'
+        "401":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+      tags:
+      - Couriers
     post:
       description: Manage Courier
       operationId: SaveCourierRequest

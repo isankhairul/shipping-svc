@@ -151,15 +151,7 @@ func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*en
 		_ = level.Error(logger).Log(err)
 		return nil, message.ErrNoData
 	}
-
-	var courier entity.Courier
-	err = s.courierCoverageCodeRepo.GetCourierId(&courier, result.CourierID)
-	if err != nil {
-		_ = level.Error(logger).Log(err)
-		s.baseReo.RollbackTx()
-		return nil, message.ErrDB
-	}
-	result.CourierUID = courier.UID
+	result.CourierUID = result.Courier.UID
 	return result, message.SuccessMsg
 }
 

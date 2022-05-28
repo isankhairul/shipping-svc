@@ -132,6 +132,7 @@ func (r *CourierCoverageCodeRepo) Paginate(value interface{}, pagination *base.P
 func (r *CourierCoverageCodeRepo) FindByUid(uid string) (*entity.CourierCoverageCode, error) {
 	var courierCoverageCode entity.CourierCoverageCode
 	err := r.base.GetDB().
+		Preload("Courier").
 		Where("uid = ?", uid).
 		First(&courierCoverageCode).Error
 	if err != nil {
