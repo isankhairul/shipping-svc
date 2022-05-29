@@ -183,6 +183,14 @@ definitions:
         example: '"ID"'
         type: string
         x-go-name: CountryCode
+      courier_id:
+        description: |-
+          Relation with CourierID
+          in: Courier
+          require: true
+        format: uint64
+        type: integer
+        x-go-name: CourierID
       courier_uid:
         description: |-
           Courier UID of the Courier
@@ -1007,6 +1015,27 @@ paths:
       tags:
       - Courier-Coverage-Code
   /courier/courier-coverage-code/{uid}:
+    delete:
+      description: Delete courier coverage code by UID
+      operationId: DeleteCourierCoverageCodeByIDParam
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: CourierCoverageCode
+          schema:
+            $ref: '#/definitions/CourierCoverageCode'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Coverage-Code
     get:
       description: Get Courier Coverage Code by uid
       operationId: CourierCoverageCodeByIDParam
