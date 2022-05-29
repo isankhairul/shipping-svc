@@ -9,13 +9,15 @@ type CourierCoverageCode struct {
 	// Relation with CourierID
 	// in: Courier
 	// require: true
-	CourierID uint64 `gorm:"not null" json:"courier_id"`
+	CourierID uint64 `gorm:"not null" json:"-"`
 
 	// Courier UID of the Courier
 	// in: string
 	// require: false
 	// example: "ggkjhsdf6668885555"
 	CourierUID string `gorm:"not null" json:"courier_uid"`
+
+	CourierName string `gorm:"-" json:"courier_name"`
 
 	// Country code of the Courier Coverage Code
 	// in: string
@@ -61,6 +63,10 @@ type CourierCoverageCode struct {
 	// Code 6 of the Courier Coverage Code
 	// in: string
 	Code6 string `gorm:"type:varchar(50)" json:"code6"`
+
+	// Status of the Courier
+	// in: integer
+	Status int `gorm:"not null;default:1" json:"status"`
 
 	Courier *Courier `json:"-" gorm:"foreignKey:courier_id"`
 }

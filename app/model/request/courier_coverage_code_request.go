@@ -36,6 +36,10 @@ type CourierCoverageCodeListRequest struct {
 	// Description
 	// in: string
 	Description string `schema:"description" binding:"omitempty" json:"description"`
+
+	// Courier coverage code status
+	// in: int
+	Status *int `json:"status" binding:"omitempty"`
 }
 
 // swagger:parameters GetCourierCoverageCodeRequest DeleteCourierCoverageCodeRequest
@@ -110,6 +114,10 @@ type SaveCourierCoverageCodeRequest struct {
 	// Uid of the courỉe, use this on UPDATE function
 	// in: int32
 	Uid string `json:"-"`
+	
+	// Status of coverage code of the courỉe, use this on UPDATE function
+	// in: int32
+	Status int `json:"status"`
 }
 
 // swagger:parameters DeleteCourierCoverageCodeByIDParam
@@ -119,7 +127,6 @@ type DeleteCourierCoverageCodeByIDParam struct {
 	// required: true
 	UId string `json:"uid"`
 }
-
 
 // swagger:parameters CourierCoverageCodeByIDParam
 type CourierCoverageCodeByIDParam struct {

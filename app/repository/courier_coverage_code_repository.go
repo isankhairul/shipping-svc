@@ -78,7 +78,7 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 	var pagination base.Pagination
 
 	db := r.base.GetDB()
-	query := db.Model(entity.CourierCoverageCode{}).Preload("Courier")
+	query := db.Model(entity.CourierCoverageCode{}).Preload("Courier").Joins("Courier")
 
 	if filters["courier_name"] != "" {
 		query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id AND courier.courier_name = ?", filters["courier_name"].(string))
@@ -93,6 +93,9 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 		query = query.Where(entity.CourierCoverageCode{Description: filters["description"].(string)})
 	}
 
+	if filters["status"].(*int) != nil {
+		query = query.Where(entity.CourierCoverageCode{Status: *filters["status"].(*int)})
+	}
 	if len(sort) > 0 {
 		query = query.Order(sort)
 	}
@@ -113,7 +116,11 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 	if err != nil {
 		return nil, nil, err
 	}
-
+	for _, item := range items {
+		if item.Courier != nil {
+			item.CourierName = item.Courier.CourierName
+		}
+	}
 	return items, &pagination, nil
 }
 
@@ -139,7 +146,9 @@ func (r *CourierCoverageCodeRepo) FindByUid(uid string) (*entity.CourierCoverage
 	if err != nil {
 		return nil, err
 	}
-
+	if courierCoverageCode.Courier != nil {
+		courierCoverageCode.CourierName = courierCoverageCode.Courier.CourierName
+	}
 	return &courierCoverageCode, nil
 }
 

@@ -85,6 +85,7 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 		Code4:       input.Code3,
 		Code5:       input.Code5,
 		Code6:       input.Code6,
+		Status:      input.Status,
 	}
 	result, err := s.courierCoverageCodeRepo.Create(&courierCoverageCode)
 	if err != nil {
@@ -112,6 +113,7 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 		"country_code": input.CountryCode,
 		"postal_code":  input.PostalCode,
 		"description":  input.Description,
+		"status":       input.Status,
 	}
 
 	result, pagination, err := s.courierCoverageCodeRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
@@ -213,6 +215,7 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 		"code4":        input.Code3,
 		"code5":        input.Code5,
 		"code6":        input.Code6,
+		"status":       input.Status,
 	}
 	result, err := s.courierCoverageCodeRepo.Update(input.Uid, data)
 	if err != nil {
