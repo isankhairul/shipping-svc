@@ -1,6 +1,7 @@
 package test
 
 import (
+	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
@@ -16,8 +17,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
-
-var logger log.Logger
 
 var baseRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
 var courierRepository = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
@@ -152,4 +151,119 @@ func TestListCourierService(t *testing.T) {
 	assert.Equal(t, 3, len(CourierServices), "Count of CourierServices must be 3")
 	assert.Equal(t, int64(120), pagination.Records, "Total record pagination must be 120")
 
+}
+
+func TestCreateCourierServiceFail(t *testing.T) {
+	req := request.SaveCourierServiceRequest{
+		Cancelable:          1,
+		CodAvailable:        1,
+		CourierUId:          "gj2MZ9CBhcHSNVOLpUeqU",
+		CreatedAt:           time.Now(),
+		CreatedBy:           "Test",
+		EndTime:             time.Now(),
+		ETD_Max:             1,
+		ETD_Min:             1,
+		Insurance:           1,
+		InsuranceFee:        1,
+		InsuranceFeeType:    "Test",
+		InsuranceMin:        1,
+		Logo:                "Test",
+		MaxDistance:         1,
+		MaxPurchase:         1,
+		MaxVolume:           1,
+		MaxWeight:           1,
+		MinPurchase:         1,
+		PrescriptionAllowed: 1,
+		Repickup:            1,
+		ShippingCode:        "string",
+		ShippingDescription: "Test",
+		ShippingName:        "Test",
+		ShippingType:        "Test",
+		StartTime:           time.Now(),
+		Status:              1,
+		TrackingAvailable:   1,
+		UpdatedAt:           time.Now(),
+		UpdatedBy:           "Test",
+	}
+	var isExist bool
+	courier := entity.Courier{}
+	courierService := entity.CourierService{
+		CourierUId:   "gj2MZ9CBhcHSNVOLpUeqU",
+		ShippingCode: "string",
+	}
+	courierUId := req.CourierUId
+
+	courierRepository.Mock.On("FindByUid", &courierUId).Return(courier)
+	courierServiceRepository.Mock.On("CheckExistsByCourierIdShippingCode", &req).Return(isExist)
+	courierServiceRepository.Mock.On("CreateCourierService", &req).Return(courierService)
+	_, err := svc.CreateCourierService(req)
+
+	errIsExists := "Data courier_id/shipping_code already exists"
+	errCodeIsExists := 34001
+	assert.EqualError(t, errors.New(errIsExists), err.Message, "CourierUId and ShippingCode must be unique for each Courier")
+	assert.Equal(t, errCodeIsExists, err.Code, "CourierUId and ShippingCode must be unique for each Courier")
+}
+
+func TestUpdateCourierServiceFail(t *testing.T) {
+	req := request.UpdateCourierServiceRequest{
+		Uid:                 "DYcO8MEsPJcuPIXlq30-T",
+		Cancelable:          1,
+		CodAvailable:        1,
+		CourierUId:          "gj2MZ9CBhcHSNVOLpUeqU",
+		EndTime:             time.Now(),
+		ETD_Max:             1,
+		ETD_Min:             1,
+		Insurance:           1,
+		InsuranceFee:        1,
+		InsuranceFeeType:    "Test",
+		InsuranceMin:        1,
+		Logo:                "Test",
+		MaxDistance:         1,
+		MaxPurchase:         1,
+		MaxVolume:           1,
+		MaxWeight:           1,
+		MinPurchase:         1,
+		PrescriptionAllowed: 1,
+		Repickup:            1,
+		ShippingCode:        "string2",
+		ShippingDescription: "Test",
+		ShippingName:        "Test",
+		ShippingType:        "Test",
+		StartTime:           time.Now(),
+		Status:              1,
+		TrackingAvailable:   1,
+	}
+	var isExist bool
+	courier := entity.Courier{}
+	courierService := entity.CourierService{
+		CourierUId:   "gj2MZ9CBhcHSNVOLpUeqU",
+		ShippingCode: "string2",
+	}
+	courierUId := req.CourierUId
+
+	courierRepository.Mock.On("FindByUid", &courierUId).Return(courier)
+	courierServiceRepository.Mock.On("FindByUid", &req.Uid).Return(courierService)
+	courierServiceRepository.Mock.On("CheckExistsByUIdCourierIdShippingCode", &req).Return(isExist)
+	courierServiceRepository.Mock.On("UpdateCourierService", &req).Return(courierService)
+	_, err := svc.UpdateCourierService(req.Uid, req)
+
+	errIsExists := "Data courier_id/shipping_code already exists"
+	errCodeIsExists := 34001
+	assert.EqualError(t, errors.New(errIsExists), err.Message, "CourierUId and ShippingCode must be unique for each Courier")
+	assert.Equal(t, errCodeIsExists, err.Code, "CourierUId and ShippingCode must be unique for each Courier")
+}
+
+func TestGetCourierServiceFail(t *testing.T) {
+	CourierService := entity.CourierService{}
+	errTest := message.ErrNoDataCourierService
+
+	uid := "gj2MZ9CBfdfdhcHSNVOLpUeqUU"
+	courierServiceRepository.Mock.On("FindByUid", &uid).Return(CourierService, errTest)
+	courierServiceRepository.Mock.On("GetCourierService", &uid).Return(CourierService)
+	svc.GetCourierService(uid)
+
+	errIsNotFound := "Courier Service data not found"
+	errCodeIsNotFound := 34005
+	assert.EqualError(t, errors.New(errIsNotFound), errTest.Message, "Courier Service is not found")
+	assert.Equal(t, errCodeIsNotFound, errTest.Code, "Courier Service is not found")
 }
