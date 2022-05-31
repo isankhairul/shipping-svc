@@ -49,9 +49,13 @@ type CourierCoverageCodeRequest struct {
 	Uid string `json:"uid" schema:"uid"`
 }
 
-// swagger:parameters ReqUpdateCourierCoverageCodeBody
+// swagger:parameters UpdateCourierCoverageCodeBody
 type ReqUpdateCourierCoverageCodeBody struct {
-	Uid string
+	// name: id
+	// in: path
+	// required: true
+	UId string `json:"uid"`
+
 	// in: body
 	Body SaveCourierCoverageCodeRequest `json:"body"`
 }
@@ -60,11 +64,6 @@ type ReqUpdateCourierCoverageCodeBody struct {
 type ReqSaveCourierCoverageCodeBody struct {
 	// in: body
 	Body SaveCourierCoverageCodeRequest `json:"body"`
-}
-
-type ReqImportCourierCoverageCodeBody struct {
-	// in: body
-	Body ImportCourierCoverageCodeRequest `json:"body"`
 }
 
 type SaveCourierCoverageCodeRequest struct {
@@ -114,7 +113,7 @@ type SaveCourierCoverageCodeRequest struct {
 	// Uid of the courỉe, use this on UPDATE function
 	// in: int32
 	Uid string `json:"-"`
-	
+
 	// Status of coverage code of the courỉe, use this on UPDATE function
 	// in: int32
 	Status int `json:"status"`
@@ -138,11 +137,11 @@ type CourierCoverageCodeByIDParam struct {
 
 // swagger:parameters ImportCourierCoverageCodeRequest
 type ImportCourierCoverageCodeRequest struct {
-	Rows []map[string]string `json:"-"`
+	Rows []map[string]string `json:"-" binding:"omitempty"`
 	// in: formData
 	// name: file
 	// swagger:file
-	// required: true
+	// require:true
 	File *bytes.Buffer `json:"file"`
 }
 

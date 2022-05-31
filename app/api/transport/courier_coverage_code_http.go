@@ -55,7 +55,7 @@ func CourierCoverageCodeHttpHandler(s service.CourierCoverageCodeService, logger
 		options...,
 	))
 
-	pr.Methods("POST").Path("/courier/courier-coverage-code/import/").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path("/courier/courier-coverage-code/import").Handler(httptransport.NewServer(
 		ep.Import,
 		decodeImportCourierCoverageCode,
 		encoder.EncodeResponseHTTP,
@@ -121,7 +121,6 @@ func decodeImportCourierCoverageCode(ctx context.Context, r *http.Request) (rsqt
 	fmt.Println(file, handler)
 	if err != nil {
 		return nil, err
-
 	}
 	// Close the file at the end of the program
 	defer file.Close()

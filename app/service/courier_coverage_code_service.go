@@ -42,18 +42,17 @@ func NewCourierCoverageCodeService(
 // Create Courier Coverage Code
 //
 // responses:
-//  401: errorResponse
+//  400: errorResponse
+//  500: InternalServerErrorResponse
 //  201: CourierCoverageCode
 
 func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Create Courier Coverage Code")
-	s.baseReo.BeginTx()
 
 	var courier entity.Courier
 	err := s.courierCoverageCodeRepo.GetCourierUid(&courier, input.CourierUID)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		s.baseReo.RollbackTx()
 		mess := message.ErrDataExists
 		mess.Message = "Not found courier_uid"
 		return nil, mess
@@ -63,13 +62,11 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		s.baseReo.RollbackTx()
 		return nil, message.FailedMsg
 	}
 
 	if count > 0 {
 		mess := message.Message{Code: 34005, Message: "The combination of courier_uid, country_code and postal_code is exist in database"}
-		s.baseReo.RollbackTx()
 		return nil, mess
 	}
 
@@ -90,21 +87,20 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 	result, err := s.courierCoverageCodeRepo.Create(&courierCoverageCode)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		s.baseReo.RollbackTx()
 		return nil, message.FailedMsg
 	}
-	s.baseReo.CommitTx()
 	courierCoverageCode.CourierUID = input.CourierUID
 	return result, message.SuccessMsg
 
 }
 
 // swagger:route GET /courier/courier-coverage-code/ Courier-Coverage-Code CourierCoverageCodeListRequest
-// List products
+// List couriers coverage code
 //
 // responses:
-//  401: SuccessResponse
 //  200: PaginationResponse
+//  400: errorResponse
+//  500: InternalServerErrorResponse
 func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCodeListRequest) ([]*entity.CourierCoverageCode, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Codes")
 
@@ -134,8 +130,9 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 // Delete courier coverage code by UID
 //
 // responses:
-//  401: SuccessResponse
-//  200: CourierCoverageCode
+//  200: SuccessResponse
+//  400: errorResponse
+//  500: InternalServerErrorResponse
 func (s *CourierCoverageCodeServiceImpl) DeleteCourierCoverageCode(uid string) message.Message {
 	err := s.courierCoverageCodeRepo.DeleteByUid(uid)
 	if err != nil {
@@ -148,7 +145,8 @@ func (s *CourierCoverageCodeServiceImpl) DeleteCourierCoverageCode(uid string) m
 // Get Courier Coverage Code by uid
 //
 // responses:
-//  401: SuccessResponse
+//  400: errorResponse
+//  500: InternalServerErrorResponse
 //  200: CourierCoverageCode
 func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*entity.CourierCoverageCode, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Get Courier Coverage Code")
@@ -158,24 +156,25 @@ func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*en
 		_ = level.Error(logger).Log(err)
 		return nil, message.ErrNoData
 	}
-	result.CourierUID = result.Courier.UID
+	if result.Courier != nil {
+		result.CourierUID = result.Courier.UID
+	}
 	return result, message.SuccessMsg
 }
 
-// swagger:route PUT /courier/courier-coverage-code/{uid} Courier-Coverage-Code ReqUpdateCourierCoverageCodeBody
+// swagger:route PUT /courier/courier-coverage-code/{uid} Courier-Coverage-Code UpdateCourierCoverageCodeBody
 // Update courier coverage by uid
 //
 // responses:
-//  401: SuccessResponse
 //  200: SuccessResponse
+//  400: errorResponse
+//  500: InternalServerErrorResponse
 func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message) {
-	s.baseReo.BeginTx()
 	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Code")
 
 	courierCoverageCodeRepo, err := s.courierCoverageCodeRepo.FindByUid(input.Uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		s.baseReo.RollbackTx()
 		return nil, message.ErrNoData
 	}
 	courierId := courierCoverageCodeRepo.ID
@@ -183,7 +182,6 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 	err = s.courierCoverageCodeRepo.GetCourierUid(&courier, input.CourierUID)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		s.baseReo.RollbackTx()
 		mess := message.ErrDataExists
 		mess.Message = "Not found Courier UID in Courier table"
 		return nil, mess
@@ -194,13 +192,11 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		s.baseReo.RollbackTx()
 		return nil, message.FailedMsg
 	}
 
 	if count > 0 {
 		mess := message.Message{Code: 34005, Message: "The combination of courier_uid, country_code and postal_code is exist in database"}
-		s.baseReo.RollbackTx()
 		return nil, mess
 	}
 
@@ -219,7 +215,6 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 	}
 	result, err := s.courierCoverageCodeRepo.Update(input.Uid, data)
 	if err != nil {
-		s.baseReo.RollbackTx()
 		_ = level.Error(logger).Log(err)
 		return nil, message.FailedMsg
 	}
@@ -228,14 +223,14 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 	return result, message.SuccessMsg
 }
 
-// swagger:route POST /courier/courier-coverage-code/import/ Courier-Coverage-Code ImportCourierCoverageCodeRequest
+// swagger:route POST /courier/courier-coverage-code/import Courier-Coverage-Code ImportCourierCoverageCodeRequest
 // Import courier coverage code by CSV file
 //
 // responses:
-//  401: SuccessResponse
+//  400: errorResponse
+//  500: InternalServerErrorResponse
 //  200: SuccessResponse
 func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) ([]response.ImportStatus, message.Message) {
-	s.baseReo.BeginTx()
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Import Courier Coverage Codes")
 
 	var resp []response.ImportStatus
@@ -296,7 +291,6 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 				continue
 			} else {
 				_ = level.Error(logger).Log(err)
-				s.baseReo.RollbackTx()
 				return nil, message.ErrDB
 			}
 		}
@@ -306,7 +300,6 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 
 		if err != nil {
 			_ = level.Error(logger).Log(err)
-			s.baseReo.RollbackTx()
 			return nil, message.ErrDB
 		}
 
@@ -326,7 +319,6 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 			result, err := s.courierCoverageCodeRepo.Create(&data)
 			if err != nil {
 				_ = level.Error(logger).Log(err)
-				s.baseReo.RollbackTx()
 				return nil, message.ErrDB
 			}
 			resp = append(resp, response.ImportStatus{
@@ -361,7 +353,6 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 			_, err := s.courierCoverageCodeRepo.Update(courierCoverageCode.UID, data)
 			if err != nil {
 				_ = level.Error(logger).Log(err)
-				s.baseReo.RollbackTx()
 				return nil, message.ErrDB
 			}
 			resp = append(resp, response.ImportStatus{
@@ -381,6 +372,5 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 			})
 		}
 	}
-	s.baseReo.CommitTx()
 	return resp, message.SuccessMsg
 }

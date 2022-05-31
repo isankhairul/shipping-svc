@@ -86,6 +86,9 @@ func TestGetCourierCoverageCode(t *testing.T) {
 		CountryCode: "VN",
 		PostalCode:  "70000",
 		Description: "Vietnam code",
+		Courier: &entity.Courier{
+			BaseIDModel: base.BaseIDModel{UID: "UCMvWngocMqKbaC3AWQBF"},
+		},
 	}
 	var courier entity.Courier
 	courier.UID = "UCMvWngocMqKbaC3AWQBF"
@@ -93,7 +96,7 @@ func TestGetCourierCoverageCode(t *testing.T) {
 	uid := "123"
 
 	courierCoverageCodeRepository.Mock.On("FindByUid", uid).Return(courierCoverageCode)
-	courierCoverageCodeRepository.Mock.On("GetCourierId", mock.Anything, mock.Anything).Return(courier)
+	// courierCoverageCodeRepository.Mock.On("GetCourierId", mock.Anything, mock.Anything).Return(courier)
 
 	result, _ := svcCourierCoverageCode.GetCourierCoverageCode(uid)
 	assert.NotNil(t, result)
@@ -104,27 +107,13 @@ func TestGetCourierCoverageCode(t *testing.T) {
 }
 
 func TestDeleteCourierCoverageCode(t *testing.T) {
-	courierCoverageCode := entity.CourierCoverageCode{
-		CourierID:   555,
-		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-		CountryCode: "VN",
-		PostalCode:  "70000",
-		Description: "Vietnam code",
-	}
-	var courier entity.Courier
-	courier.UID = "UCMvWngocMqKbaC3AWQBF"
-	courier.ID = 555
-	uid := "123"
+	uid := "UCMvWngocMqKbaC3AWQBF"
 
-	courierCoverageCodeRepository.Mock.On("FindByUid", uid).Return(courierCoverageCode)
-	courierCoverageCodeRepository.Mock.On("GetCourierId", mock.Anything, mock.Anything).Return(courier)
+	courierCoverageCodeRepository.Mock.On("DeleteByUid", uid).Return(nil)
 
-	result, _ := svcCourierCoverageCode.GetCourierCoverageCode(uid)
-	assert.NotNil(t, result)
-	assert.Equal(t, "UCMvWngocMqKbaC3AWQBF", result.CourierUID, "Courier UID is UCMvWngocMqKbaC3AWQBF")
-	assert.Equal(t, "VN", result.CountryCode, "Courier UID is VN")
-	assert.Equal(t, "70000", result.PostalCode, "Courier UID is 70000")
-	assert.Equal(t, "Vietnam code", result.Description, "Description is Vietnam code")
+	message := svcCourierCoverageCode.DeleteCourierCoverageCode(uid)
+	assert.NotNil(t, message)
+	assert.NotNil(t, 201000, message.Code, "Expected 201000")
 }
 
 func TestListCourierCoverageCode(t *testing.T) {

@@ -119,6 +119,7 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 	for _, item := range items {
 		if item.Courier != nil {
 			item.CourierName = item.Courier.CourierName
+			item.CourierUID = item.Courier.UID
 		}
 	}
 	return items, &pagination, nil
@@ -164,8 +165,15 @@ func (r *CourierCoverageCodeRepo) Update(uid string, values map[string]interface
 }
 
 func (r *CourierCoverageCodeRepo) DeleteByUid(uid string) error {
+
 	var ret entity.CourierCoverageCode
-	err := r.base.GetDB().Where("uid=?", uid).Delete(&ret).Error
+	err := r.base.GetDB().Where("uid=?", uid).First(&ret).Error
+
+	if err != nil {
+		return err
+	}
+
+	err = r.base.GetDB().Where("uid=?", uid).Delete(&ret).Error
 
 	if err != nil {
 		return err

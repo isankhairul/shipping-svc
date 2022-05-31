@@ -1,9 +1,10 @@
 package repository_mock
 
 import (
-	"github.com/stretchr/testify/mock"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+
+	"github.com/stretchr/testify/mock"
 )
 
 type CourierCoverageCodeRepositoryMock struct {
@@ -47,4 +48,8 @@ func (repository *CourierCoverageCodeRepositoryMock) Create(courierCoverageCode 
 func (repository *CourierCoverageCodeRepositoryMock) Update(uid string, value map[string]interface{}) (*entity.CourierCoverageCode, error) {
 	arguments := repository.Mock.Called(uid)
 	return arguments.Get(0).(*entity.CourierCoverageCode), arguments.Error(1)
+}
+
+func (repository *CourierCoverageCodeRepositoryMock) DeleteByUid(uid string) error {
+	return nil
 }

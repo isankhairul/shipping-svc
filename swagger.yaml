@@ -183,14 +183,9 @@ definitions:
         example: '"ID"'
         type: string
         x-go-name: CountryCode
-      courier_id:
-        description: |-
-          Relation with CourierID
-          in: Courier
-          require: true
-        format: uint64
-        type: integer
-        x-go-name: CourierID
+      courier_name:
+        type: string
+        x-go-name: CourierName
       courier_uid:
         description: |-
           Courier UID of the Courier
@@ -217,6 +212,13 @@ definitions:
         example: '"151338"'
         type: string
         x-go-name: PostalCode
+      status:
+        description: |-
+          Status of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: Status
       uid:
         description: |-
           UID of the product
@@ -236,6 +238,12 @@ definitions:
     type: object
     x-go-name: data
     x-go-package: go-klikdokter/app/model/base
+  InternalServerErrorResponse:
+    type: object
+    x-go-package: go-klikdokter/app/model/base/encoder
+  InvalidRequestDataResponse:
+    type: object
+    x-go-package: go-klikdokter/app/model/base/encoder
   MetaResponse:
     properties:
       code:
@@ -379,6 +387,13 @@ definitions:
           in: string
         type: string
         x-go-name: PostalCode
+      status:
+        description: |-
+          Status of coverage code of the courỉe, use this on UPDATE function
+          in: int32
+        format: int64
+        type: integer
+        x-go-name: Status
     type: object
     x-go-package: go-klikdokter/app/model/request
   SaveCourierRequest:
@@ -630,6 +645,9 @@ definitions:
     type: object
     x-go-name: responseHttp
     x-go-package: go-klikdokter/app/model/base
+  UnauthorizedResponse:
+    type: object
+    x-go-package: go-klikdokter/app/model/base/encoder
   UpdateChannelRequest:
     properties:
       channel_code:
@@ -931,7 +949,7 @@ paths:
       - Courier
   /courier/courier-coverage-code/:
     get:
-      description: List products
+      description: List couriers coverage code
       operationId: CourierCoverageCodeListRequest
       parameters:
       - description: |-
@@ -983,15 +1001,27 @@ paths:
         name: description
         type: string
         x-go-name: Description
+      - description: |-
+          Courier coverage code status
+          in: int
+        format: int64
+        in: query
+        name: status
+        type: integer
+        x-go-name: Status
       responses:
         "200":
           description: PaginationResponse
           schema:
             $ref: '#/definitions/PaginationResponse'
-        "401":
-          description: SuccessResponse
+        "400":
+          description: errorResponse
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
     post:
@@ -1008,10 +1038,14 @@ paths:
           description: CourierCoverageCode
           schema:
             $ref: '#/definitions/CourierCoverageCode'
-        "401":
+        "400":
           description: errorResponse
           schema:
             $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
   /courier/courier-coverage-code/{uid}:
@@ -1027,13 +1061,17 @@ paths:
         x-go-name: UId
       responses:
         "200":
-          description: CourierCoverageCode
-          schema:
-            $ref: '#/definitions/CourierCoverageCode'
-        "401":
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
     get:
@@ -1051,19 +1089,26 @@ paths:
           description: CourierCoverageCode
           schema:
             $ref: '#/definitions/CourierCoverageCode'
-        "401":
-          description: SuccessResponse
+        "400":
+          description: errorResponse
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
     put:
       description: Update courier coverage by uid
-      operationId: ReqUpdateCourierCoverageCodeBody
+      operationId: UpdateCourierCoverageCodeBody
       parameters:
-      - in: query
-        name: Uid
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
         type: string
+        x-go-name: UId
       - in: body
         name: body
         schema:
@@ -1074,13 +1119,17 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
+        "400":
+          description: errorResponse
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
-  /courier/courier-coverage-code/import/:
+  /courier/courier-coverage-code/import:
     post:
       description: Import courier coverage code by CSV file
       operationId: ImportCourierCoverageCodeRequest
@@ -1094,10 +1143,14 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
+        "400":
+          description: errorResponse
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
   /courier/courier-services:
