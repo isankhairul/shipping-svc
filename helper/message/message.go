@@ -15,8 +15,10 @@ var ErrInvalidHeader = Message{Code: 34005, Message: "Invalid header"}
 var ErrDB = Message{Code: 34005, Message: "Error has been occured while processing database request"}
 var ErrNoData = Message{Code: 34005, Message: "Data is not found"}
 var ErrSaveData = Message{Code: 34005, Message: "Data cannot be saved, please check your request"}
+var ErrImportData = Message{Code: 34005, Message: "Data cannot be saved or updated, please check your import file"}
 var ErrReq = Message{Code: 34005, Message: "Required field"}
 
+var ErrCourierCoverageCodeUidNotExist = Message{Code: 34001, Message: "Courier Coverage Code not exist"}
 var ErrDataCourierUIdNotExist = Message{Code: 34001, Message: "CourierUID not exist"}
 
 var ErrDataCourierServiceUidNotExist = Message{Code: 34001, Message: "CourierSerivceUID not exist"}

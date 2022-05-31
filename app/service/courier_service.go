@@ -94,6 +94,12 @@ func (s *courierServiceImpl) GetCourier(uid string) (*entity.Courier, message.Me
 	return result, message.SuccessMsg
 }
 
+// swagger:route GET /courier/courier Couriers CourierListRequest
+// Get list of couriers
+//
+// responses:
+//  401: errorResponse
+//  200: PaginationResponse
 func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]entity.Courier, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierService", "GetList")
 

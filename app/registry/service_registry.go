@@ -24,3 +24,11 @@ func RegisterChannelService(db *gorm.DB, logger log.Logger) service.ChannelServi
 		rp.NewChannelRepository(rp.NewBaseRepository(db)),
 	)
 }
+
+func RegisterCourierCoverageCodeService(db *gorm.DB, logger log.Logger) service.CourierCoverageCodeService {
+	return service.NewCourierCoverageCodeService(
+		logger,
+		rp.NewBaseRepository(db),
+		rp.NewCourierCoverageCodeRepository(rp.NewBaseRepository(db)),
+	)
+}

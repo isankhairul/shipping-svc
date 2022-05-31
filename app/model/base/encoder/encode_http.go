@@ -12,6 +12,22 @@ type errorer interface {
 	error() error
 }
 
+// swagger:model InternalServerErrorResponse
+type InternalServerErrorResponse struct {
+	base errorResponse
+}
+
+// swagger:model InvalidRequestDataResponse
+type InvalidRequestDataResponse struct {
+	base errorResponse
+}
+
+// swagger:model UnauthorizedResponse
+type UnauthorizedResponse struct {
+	base errorResponse
+}
+
+// swagger:model errorResponse
 type errorResponse struct {
 	// Meta is the API response information
 	// in: struct{}
@@ -61,6 +77,7 @@ func EncodeError(_ context.Context, err error, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	result := &errorResponse{}
 	result.Meta.Code = message.ErrReq.Code
-	result.Meta.Message = message.ErrReq.Message
+	result.Meta.Message = err.Error()
+	w.WriteHeader(http.StatusInternalServerError)
 	_ = json.NewEncoder(w).Encode(result)
 }

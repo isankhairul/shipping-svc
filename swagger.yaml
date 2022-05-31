@@ -59,6 +59,10 @@ definitions:
     x-go-package: go-klikdokter/app/model/entity
   Courier:
     properties:
+      CourierCoverageCode:
+        items:
+          $ref: '#/definitions/CourierCoverageCode'
+        type: array
       code:
         description: |-
           Code of the Courier
@@ -129,6 +133,100 @@ definitions:
         x-go-name: UseGeocoodinate
     type: object
     x-go-package: go-klikdokter/app/model/entity
+  CourierCoverageCode:
+    properties:
+      code1:
+        description: |-
+          Code 1 of the Courier Coverage Code
+          in: string
+        example: '"CKG011"'
+        type: string
+        x-go-name: Code1
+      code2:
+        description: |-
+          Code 2 of the Courier Coverage Code
+          in: string
+        example: '"CKG012"'
+        type: string
+        x-go-name: Code2
+      code3:
+        description: |-
+          Code 3 of the Courier Coverage Code
+          in: string
+        example: '""'
+        type: string
+        x-go-name: Code3
+      code4:
+        description: |-
+          Code 4 of the Courier Coverage Code
+          in: string
+        example: '""'
+        type: string
+        x-go-name: Code4
+      code5:
+        description: |-
+          Code 5 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code5
+      code6:
+        description: |-
+          Code 6 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code6
+      country_code:
+        description: |-
+          Country code of the Courier Coverage Code
+          in: string
+          require: true
+        example: '"ID"'
+        type: string
+        x-go-name: CountryCode
+      courier_name:
+        type: string
+        x-go-name: CourierName
+      courier_uid:
+        description: |-
+          Courier UID of the Courier
+          in: string
+          require: false
+        example: '"ggkjhsdf6668885555"'
+        type: string
+        x-go-name: CourierUID
+      description:
+        description: |-
+          Description of the Courier Coverage Code
+          in: string
+        example: '"PAGEDANGAN"'
+        type: string
+        x-go-name: Description
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      postal_code:
+        description: |-
+          Postal code of the Courier Coverage Code
+          in: string
+          require: true
+        example: '"151338"'
+        type: string
+        x-go-name: PostalCode
+      status:
+        description: |-
+          Status of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          UID of the product
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
   DataResponse:
     properties:
       record:
@@ -140,6 +238,12 @@ definitions:
     type: object
     x-go-name: data
     x-go-package: go-klikdokter/app/model/base
+  InternalServerErrorResponse:
+    type: object
+    x-go-package: go-klikdokter/app/model/base/encoder
+  InvalidRequestDataResponse:
+    type: object
+    x-go-package: go-klikdokter/app/model/base/encoder
   MetaResponse:
     properties:
       code:
@@ -213,6 +317,80 @@ definitions:
         description: |-
           status of Channel
           in: int
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  SaveCourierCoverageCodeRequest:
+    properties:
+      code1:
+        description: |-
+          Code 1 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code1
+      code2:
+        description: |-
+          Code 2 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code2
+      code3:
+        description: |-
+          Code 3 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code3
+      code4:
+        description: |-
+          Code 4 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code4
+      code5:
+        description: |-
+          Code 5 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code5
+      code6:
+        description: |-
+          Code 6 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code6
+      country_code:
+        description: |-
+          Country code of the Courier Coverage Code
+          required: True
+          in: string
+        type: string
+        x-go-name: CountryCode
+      courier_uid:
+        description: |-
+          Courier UID of the Courier
+          required: True
+          in: string
+        type: string
+        x-go-name: CourierUID
+      description:
+        description: |-
+          Description of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Description
+      postal_code:
+        description: |-
+          Postal code of the Courier Coverage Code
+          required: True
+          in: string
+        type: string
+        x-go-name: PostalCode
+      status:
+        description: |-
+          Status of coverage code of the courỉe, use this on UPDATE function
+          in: int32
         format: int64
         type: integer
         x-go-name: Status
@@ -467,6 +645,9 @@ definitions:
     type: object
     x-go-name: responseHttp
     x-go-package: go-klikdokter/app/model/base
+  UnauthorizedResponse:
+    type: object
+    x-go-package: go-klikdokter/app/model/base/encoder
   UpdateChannelRequest:
     properties:
       channel_code:
@@ -502,6 +683,42 @@ definitions:
         x-go-name: Status
     type: object
     x-go-package: go-klikdokter/app/model/request
+  errorResponse:
+    properties:
+      data:
+        description: |-
+          Data is our data
+          in: struct{}
+        type: object
+        x-go-name: Data
+      errors:
+        description: |-
+          Errors is the response message
+          in: string
+        type: object
+        x-go-name: Errors
+      meta:
+        description: |-
+          Meta is the API response information
+          in: struct{}
+        properties:
+          code:
+            description: |-
+              Code is the response code
+              in: int
+            format: int64
+            type: integer
+            x-go-name: Code
+          message:
+            description: |-
+              Message is the response message
+              in: string
+            type: string
+            x-go-name: Message
+        type: object
+        x-go-name: Meta
+    type: object
+    x-go-package: go-klikdokter/app/model/base/encoder
 host: localhost:5600
 info:
   title: 'KD Boilerplate Go kit:'
@@ -665,6 +882,51 @@ paths:
       tags:
       - courier-update
   /courier/courier:
+    get:
+      description: Get list of couriers
+      operationId: CourierListRequest
+      parameters:
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: Limit
+        type: integer
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: Page
+        type: integer
+      - example: name asc, uom desc
+        in: query
+        name: Sort
+        type: string
+      - description: |-
+          Courier type
+          in: string
+        in: query
+        name: CourierType
+        type: string
+      - description: |-
+          Courier status
+          in: string
+        in: query
+        name: Status
+        type: string
+      responses:
+        "200":
+          description: PaginationResponse
+          schema:
+            $ref: '#/definitions/PaginationResponse'
+        "401":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+      tags:
+      - Couriers
     post:
       description: Manage Courier
       operationId: SaveCourierRequest
@@ -685,6 +947,212 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Courier
+  /courier/courier-coverage-code/:
+    get:
+      description: List couriers coverage code
+      operationId: CourierCoverageCodeListRequest
+      parameters:
+      - description: |-
+          Maximum records per page
+          in: int32
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - example: name asc, uom desc
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      - description: |-
+          Courier Name
+          in: string
+        in: query
+        name: courier_name
+        type: string
+        x-go-name: CourierName
+      - description: |-
+          Country Code
+          in: string
+        in: query
+        name: country_code
+        type: string
+        x-go-name: CountryCode
+      - description: |-
+          Postal Code
+          in: string
+        in: query
+        name: postal_code
+        type: string
+        x-go-name: PostalCode
+      - description: |-
+          Description
+          in: string
+        in: query
+        name: description
+        type: string
+        x-go-name: Description
+      - description: |-
+          Courier coverage code status
+          in: int
+        format: int64
+        in: query
+        name: status
+        type: integer
+        x-go-name: Status
+      responses:
+        "200":
+          description: PaginationResponse
+          schema:
+            $ref: '#/definitions/PaginationResponse'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
+      tags:
+      - Courier-Coverage-Code
+    post:
+      description: Create Courier Coverage Code
+      operationId: SaveCourierCoverageCodeRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierCoverageCodeRequest'
+        x-go-name: Body
+      responses:
+        "201":
+          description: CourierCoverageCode
+          schema:
+            $ref: '#/definitions/CourierCoverageCode'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
+      tags:
+      - Courier-Coverage-Code
+  /courier/courier-coverage-code/{uid}:
+    delete:
+      description: Delete courier coverage code by UID
+      operationId: DeleteCourierCoverageCodeByIDParam
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
+      tags:
+      - Courier-Coverage-Code
+    get:
+      description: Get Courier Coverage Code by uid
+      operationId: CourierCoverageCodeByIDParam
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: CourierCoverageCode
+          schema:
+            $ref: '#/definitions/CourierCoverageCode'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
+      tags:
+      - Courier-Coverage-Code
+    put:
+      description: Update courier coverage by uid
+      operationId: UpdateCourierCoverageCodeBody
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierCoverageCodeRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
+      tags:
+      - Courier-Coverage-Code
+  /courier/courier-coverage-code/import:
+    post:
+      description: Import courier coverage code by CSV file
+      operationId: ImportCourierCoverageCodeRequest
+      parameters:
+      - in: formData
+        name: file
+        type: file
+        x-go-name: File
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: InternalServerErrorResponse
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
+      tags:
+      - Courier-Coverage-Code
   /courier/courier-services:
     get:
       description: List of Courier Services
@@ -865,6 +1333,9 @@ paths:
       - Get-Courier
 produces:
 - application/json
+responses:
+  ImportStatus:
+    description: ""
 schemes:
 - http
 swagger: "2.0"

@@ -42,7 +42,7 @@ type GetCourierRequest struct {
 	Id string `json:"id"`
 }
 
-// swagger:parameters list courier
+// swagger:parameters CourierListRequest
 type CourierListRequest struct {
 	// Maximun records per page
 	// in: int32
