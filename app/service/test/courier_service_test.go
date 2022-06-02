@@ -65,11 +65,13 @@ func TestCreateCourierService(t *testing.T) {
 		UpdatedAt:           time.Now(),
 		UpdatedBy:           "Test",
 	}
+	var isExist bool
 	courier := entity.Courier{}
 	courierService := entity.CourierService{}
 	courierUId := req.CourierUId
 
 	courierRepository.Mock.On("FindByUid", &courierUId).Return(courier)
+	courierServiceRepository.Mock.On("CheckExistsByCourierIdShippingCode", req.CourierUId, req.ShippingCode).Return(isExist)
 	courierServiceRepository.Mock.On("CreateCourierService", &req).Return(courierService)
 	result, _ := svc.CreateCourierService(req)
 	assert.NotNil(t, result)
@@ -185,7 +187,7 @@ func TestCreateCourierServiceFail(t *testing.T) {
 		UpdatedAt:           time.Now(),
 		UpdatedBy:           "Test",
 	}
-	var isExist bool
+	isExist := true
 	courier := entity.Courier{}
 	courierService := entity.CourierService{
 		CourierUId:   "gj2MZ9CBhcHSNVOLpUeqU",
@@ -194,7 +196,7 @@ func TestCreateCourierServiceFail(t *testing.T) {
 	courierUId := req.CourierUId
 
 	courierRepository.Mock.On("FindByUid", &courierUId).Return(courier)
-	courierServiceRepository.Mock.On("CheckExistsByCourierIdShippingCode", &req).Return(isExist)
+	courierServiceRepository.Mock.On("CheckExistsByCourierIdShippingCode", req.CourierUId, req.ShippingCode).Return(isExist)
 	courierServiceRepository.Mock.On("CreateCourierService", &req).Return(courierService)
 	_, err := svc.CreateCourierService(req)
 
@@ -243,7 +245,7 @@ func TestUpdateCourierServiceFail(t *testing.T) {
 
 	courierRepository.Mock.On("FindByUid", &courierUId).Return(courier)
 	courierServiceRepository.Mock.On("FindByUid", &req.Uid).Return(courierService)
-	courierServiceRepository.Mock.On("CheckExistsByUIdCourierIdShippingCode", &req).Return(isExist)
+	courierServiceRepository.Mock.On("CheckExistsByCourierIdShippingCode", req.CourierUId, req.ShippingCode).Return(isExist)
 	courierServiceRepository.Mock.On("UpdateCourierService", &req).Return(courierService)
 	_, err := svc.UpdateCourierService(req.Uid, req)
 

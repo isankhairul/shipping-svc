@@ -57,7 +57,8 @@ func (repository *CourierServiceRepositoryMock) Paginate(value interface{}, pagi
 }
 
 func (repository *CourierServiceRepositoryMock) CheckExistsByCourierIdShippingCode(courierUId string, shippingCode string) (bool, error) {
-	return true, nil
+	arguments := repository.Mock.Called(courierUId, shippingCode)
+	return arguments.Get(0).(bool), nil
 }
 
 func (repository *CourierServiceRepositoryMock) CheckExistsByUIdCourierIdShippingCode(uid string, courierUId string, shippingCode string) (bool, error) {
