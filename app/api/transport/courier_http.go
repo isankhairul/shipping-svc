@@ -10,17 +10,16 @@ import (
 	"go-klikdokter/helper/global"
 	"net/http"
 
-	"github.com/gorilla/schema"
-
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
 )
 
-func CourierHttpHandler(s service.CourierService, logger log.Logger) http.Handler {
+func CourierHttpHandler(s service.CourierService, cc service.ChannelCourierService, logger log.Logger) http.Handler {
 	pr := mux.NewRouter()
 
-	ep := endpoint.MakeCourierEndpoints(s)
+	ep := endpoint.MakeCourierEndpoints(s, cc)
 	options := []httptransport.ServerOption{
 		httptransport.ServerErrorLogger(logger),
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
@@ -35,7 +34,7 @@ func CourierHttpHandler(s service.CourierService, logger log.Logger) http.Handle
 
 	pr.Methods("GET").Path("/courier/courier").Handler(httptransport.NewServer(
 		ep.List,
-		decodeListCourier,
+		encoder.DecodePaginationRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
@@ -115,22 +114,8 @@ func decodeShowCourier(ctx context.Context, r *http.Request) (rqst interface{}, 
 	return uid, nil
 }
 
-func decodeListCourier(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	var params request.CourierListRequest
-
-	if err := r.ParseForm(); err != nil {
-		return nil, err
-	}
-
-	if err = schema.NewDecoder().Decode(&params, r.Form); err != nil {
-		return nil, err
-	}
-
-	return params, nil
-}
-
 func decodeUpdateCourier(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	var req request.SaveCourierRequest
+	var req request.UpdateCourierRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}

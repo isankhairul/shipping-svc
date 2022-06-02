@@ -10,7 +10,7 @@ database:
   port: 5432
   username: app_user
   password: app_userPWD2019
-  dbname: local.db
+  dbname: ./db/local.db
 
 server:
   port: 5600

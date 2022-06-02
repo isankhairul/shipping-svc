@@ -19,15 +19,15 @@ type Courier struct {
 
 	// Logo of the Courier
 	// in: string
-	Logo string `json:"logo"`
+	Logo string `gorm:"null;type:varchar(500)" json:"logo"`
 
 	// Hide purpose of the Courier
 	// in: integer
 	HidePurpose int `gorm:"not null;default:0" json:"hide_purpose"`
 
-	// Courier Api Integration of the Courier
+	// Courier Api Integration of the Courier. Need to set column becase snake-case cannot understand convetnion.
 	// in: integer
-	CourierApiIntegration int `gorm:"not null;default:1" json:"courier_api_intergration"`
+	CourierApiIntegration int `gorm:"not null;default:1;column:api_integration" json:"courier_api_intergration"`
 
 	// Geo Coodinate of the Courier
 	// in: string
@@ -40,6 +40,8 @@ type Courier struct {
 	// Status of the Courier
 	// in: integer
 	Status int `gorm:"not null;default:1" json:"status"`
+	
+	CourierCoverageCode []*CourierCoverageCode`gorm:"foreignKey:courier_uid" json:"course_coverage_codes"`
 
-	CourierCoverageCode []CourierCoverageCode
+	CourierServices []*CourierService `json:"course_services" gorm:"foreignKey:courier_uid"`
 }

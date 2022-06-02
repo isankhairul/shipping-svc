@@ -14,8 +14,10 @@ require (
 	github.com/itgelo/ozzo-validation/v4 v4.3.1
 	github.com/lib/pq v1.10.4
 	github.com/matoous/go-nanoid/v2 v2.0.0
+	github.com/sa-/slicefunk v0.1.3 // indirect
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
+	google.golang.org/genproto v0.0.0-20210917145530-b395a37504d4 // indirect
 	gorm.io/driver/mysql v1.2.0
 	gorm.io/driver/postgres v1.2.2
 	gorm.io/driver/sqlite v1.2.4

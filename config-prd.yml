@@ -12,6 +12,14 @@ database:
   password: ${DB_PASSWORD}
   dbname: ${DB_NAME}
 
+# database:
+#   driver: sqlite
+#   hostname: 10.1.35.39
+#   port: 5432
+#   username: app_user
+#   password: app_userPWD2019
+#   dbname: local.db
+  
 #server settings
 server:
   port: 5600

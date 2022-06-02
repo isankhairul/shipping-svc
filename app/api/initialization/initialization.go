@@ -23,19 +23,14 @@ func DbInit(logger log.Logger) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	// db.Migrator().DropTable(&entity.ShippmentPredefined{})
 	//Define auto migration here
 	_ = db.AutoMigrate(&entity.Courier{})
 	_ = db.AutoMigrate(&entity.ShippmentPredefined{})
-	// db.Migrator().DropTable(&entity.CourierCoverageCode{})
-
-	//Define auto migration here
-	// db.Migrator().DropTable(&entity.CourierCoverageCode{})
-
-	//Define auto migration here
 	_ = db.AutoMigrate(&entity.CourierCoverageCode{})
 	_ = db.AutoMigrate(&entity.CourierService{})
 	_ = db.AutoMigrate(&entity.Channel{})
+	_ = db.AutoMigrate(&entity.ChannelCourier{})
+	_ = db.AutoMigrate(&entity.ChannelCourierService{})
 
 	seedingPredefined(db, logger)
 
@@ -67,16 +62,18 @@ func seedingPredefined(db *gorm.DB, logger log.Logger) {
 func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	// Service registry
 	courierSvc := registry.RegisterCourierService(db, logger)
-	courierCoverageCodeSvc := registry.RegisterCourierCoverageCodeService(db, logger)
+	channelCourierSvc := registry.RegisterChannelCourierService(db, logger)
 	channelSvc := registry.RegisterChannelService(db, logger)
 	shipmentPredefinedService := registry.RegisterShipmentPredefinedService(db, logger)
+	courierCoverageCodeSvc := registry.RegisterCourierCoverageCodeService(db, logger)
 
 	// Transport initialization
 	swagHttp := transport.SwaggerHttpHandler(log.With(logger, "SwaggerTransportLayer", "HTTP")) //don't delete or change this !!
-	courierHttp := transport.CourierHttpHandler(courierSvc, log.With(logger, "CourierTransportLayer", "HTTP"))
+	courierHttp := transport.CourierHttpHandler(courierSvc, channelCourierSvc, log.With(logger, "CourierTransportLayer", "HTTP"))
+	channelCourierHttp := transport.ChannelCourierHttpHandler(channelCourierSvc, log.With(logger, "ChannelCourierTransportLayer", "HTTP"))
 	courierCoverageCodeHttp := transport.CourierCoverageCodeHttpHandler(courierCoverageCodeSvc, log.With(logger, "CourierCoverageCodeTransportLayer", "HTTP"))
-	channelHttp := transport.ChannelHttpHandler(channelSvc, log.With(logger, "ChannelTransportLayer", "HTTP"))
 	shipmentPredefinedHttp := transport.ShipmentPredefinedHandler(shipmentPredefinedService, log.With(logger, "ShipmentPredefinedTransportLayer", "HTTP"))
+	channelHttp := transport.ChannelHttpHandler(channelSvc, log.With(logger, "ChannelTransportLayer", "HTTP"))
 
 	// Routing path
 	mux := http.NewServeMux()
@@ -85,6 +82,7 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	mux.Handle("/other/", shipmentPredefinedHttp)
 	mux.Handle("/courier/courier-coverage-code/", courierCoverageCodeHttp)
 	mux.Handle("/channel/", channelHttp)
+	mux.Handle("/channel/channel-courier/", channelCourierHttp)
 
 	return mux
 }

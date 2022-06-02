@@ -14,8 +14,8 @@ type Pagination struct {
 func (p *Pagination) SetTotalRecords(totalRecords int64) {
 	p.TotalRecords = totalRecords
 	p.TotalPage = int(math.Ceil(float64(totalRecords) / float64(p.GetLimit())))
-
 }
+
 func (p *Pagination) GetOffset() int {
 	return (p.GetPage() - 1) * p.GetLimit()
 }
