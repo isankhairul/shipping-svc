@@ -16,8 +16,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-var logger log.Logger
-
 var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
 var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
 var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)

@@ -71,7 +71,7 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 	if filter["courier_type"] != "" {
 		query = query.Where("LOWER(courier_type) LIKE ?", "%"+strings.ToLower(filter["courier_type"].(string))+"%")
 	}
-
+	
 	if filter["status"] != "" {
 		query = query.Where("LOWER(status) LIKE ?", "%"+strings.ToLower(filter["status"].(string))+"%")
 	}

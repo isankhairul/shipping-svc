@@ -59,79 +59,48 @@ definitions:
     x-go-package: go-klikdokter/app/model/entity
   Courier:
     properties:
-      CourierCoverageCode:
-        items:
-          $ref: '#/definitions/CourierCoverageCode'
-        type: array
       code:
         description: |-
-          Code of the Courier
+          Code of the ShippmentPredefined
           in: string
         type: string
         x-go-name: Code
-      courier_api_intergration:
-        description: |-
-          Courier Api Integration of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: CourierApiIntegration
-      courier_name:
-        description: |-
-          Name of the Courier
-          in: string
-        type: string
-        x-go-name: CourierName
-      courier_type:
-        description: |-
-          Type of the Courier
-          in: string
-        type: string
-        x-go-name: CourierType
-      hide_purpose:
-        description: |-
-          Hide purpose of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: HidePurpose
       is_deleted:
         type: boolean
         x-go-name: IsDeleted
-      logo:
+      note:
         description: |-
-          Logo of the Courier
+          Note of the Courier
           in: string
         type: string
-        x-go-name: Logo
-      provide_airwaybill:
-        description: |-
-          Provide Airwaybill of the Courier
-          in: integer
-        format: int64
-        type: integer
-        x-go-name: ProvideAirwaybill
+        x-go-name: Note
       status:
         description: |-
-          Status of the Courier
+          Status of the ShippmentPredefined
           in: integer
         format: int64
         type: integer
         x-go-name: Status
+      title:
+        description: |-
+          Type of the Courier
+          in: string
+        type: string
+        x-go-name: Title
+      type:
+        description: |-
+          Name of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Type
       uid:
         description: |-
           UID of the product
           in: int64
         type: string
         x-go-name: UID
-      use_geocoodinate:
-        description: |-
-          Geo Coodinate of the Courier
-          in: string
-        format: int64
-        type: integer
-        x-go-name: UseGeocoodinate
     type: object
+    x-go-name: ShippmentPredefined
     x-go-package: go-klikdokter/app/model/entity
   CourierCoverageCode:
     properties:
@@ -681,6 +650,42 @@ definitions:
         format: int64
         type: integer
         x-go-name: Status
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  UpdateShipmentPredefinedRequest:
+    properties:
+      code:
+        description: |-
+          Code of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Code
+      note:
+        description: |-
+          Note of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Note
+      status:
+        description: |-
+          Status of the ShippmentPredefined
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: Status
+      title:
+        description: |-
+          Type of the Courier
+          in: string
+        type: string
+        x-go-name: Title
+      type:
+        description: |-
+          Name of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Type
+    title: 'swaggers:'
     type: object
     x-go-package: go-klikdokter/app/model/request
   errorResponse:
@@ -1331,6 +1336,92 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Get-Courier
+  /other/shipment-predefined:
+    get:
+      description: Get predefined
+      operationId: ListShipmentPredefinedRequest
+      parameters:
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: Limit
+        type: integer
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: Page
+        type: integer
+      - example: name asc, uom desc
+        in: query
+        name: Sort
+        type: string
+      - description: |-
+          Type
+          in: string
+        in: query
+        name: Type
+        type: string
+      - description: |-
+          Code
+          in: string
+        in: query
+        name: Code
+        type: string
+      - description: |-
+          Title
+          in: string
+        in: query
+        name: Title
+        type: string
+      - description: |-
+          Courier status
+          in: int
+        format: int64
+        in: query
+        name: Status
+        type: integer
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Predefined
+  /other/shipment-predefined/{uid}:
+    put:
+      description: Update a shipment predefined
+      operationId: UpdateShipmentPredefinedRequest
+      parameters:
+      - description: Uid of the shipmentPredefinedRequest
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/UpdateShipmentPredefinedRequest'
+        x-go-name: Body
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Predefined
 produces:
 - application/json
 responses:

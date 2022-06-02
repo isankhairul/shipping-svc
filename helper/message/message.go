@@ -26,6 +26,9 @@ var ErrDataCourierServiceExists = Message{Code: 34001, Message: "Data courier_id
 var ErrNoDataCourierService = Message{Code: 34005, Message: "Courier Service data not found"}
 var ErrDataChannelExists = Message{Code: 34001, Message: "Data channel_code already exists"}
 
+// Shipment predefine section
+var ErrShipmentPredefinedNotFound = Message{Code: 34501, Message: "Shipment predefined not found"}
+
 // Code 39000 - 39999 Server error
 var ErrRevocerRoute = Message{Code: 39000, Message: "Terjadi kesalahan routing"}
 var ErrPageNotFound = Message{Code: 39404, Message: "Halaman Tidak ditemukan"}
