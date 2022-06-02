@@ -25,17 +25,26 @@ func RegisterChannelService(db *gorm.DB, logger log.Logger) service.ChannelServi
 	)
 }
 
-func RegisterShipmentPredefinedService(db *gorm.DB, logger log.Logger) service.ShipmentPredefinedService {
+func RegisterChannelCourierService(db *gorm.DB, logger log.Logger) service.ChannelCourierService {
 	repo := rp.NewBaseRepository(db)
-
-	return service.NewShipmentPredefinedService(
-		logger, repo, rp.NewShipmentPredefinedRepository(repo))
+	return service.NewChannelCourierService(
+		logger, repo,
+		rp.NewChannelCourierRepository(repo),
+		rp.NewChannelCourierServiceRepository(repo),
+		rp.NewCourierServiceRepository(repo))
 }
 
 func RegisterCourierCoverageCodeService(db *gorm.DB, logger log.Logger) service.CourierCoverageCodeService {
 	return service.NewCourierCoverageCodeService(
 		logger,
 		rp.NewBaseRepository(db),
-		rp.NewCourierCoverageCodeRepository(rp.NewBaseRepository(db)),
+		rp.NewCourierCoverageCodeRepository(rp.NewBaseRepository(db)))
+}
+
+func RegisterShipmentPredefinedService(db *gorm.DB, logger log.Logger) service.ShipmentPredefinedService {
+	repo := rp.NewBaseRepository(db)
+
+	return service.NewShipmentPredefinedService(
+		logger, repo, rp.NewShipmentPredefinedRepository(repo),
 	)
 }

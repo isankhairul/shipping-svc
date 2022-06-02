@@ -19,7 +19,7 @@ type CourierServiceRepository interface {
 	CheckExistsByUIdCourierIdShippingCode(uid string, courierUId string, shippingCode string) (bool, error)
 	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.CourierService, *base.Pagination, error)
 	FindByUid(uid *string) (*entity.CourierService, error)
-	CreateCourierService(product *entity.CourierService) (*entity.CourierService, error)
+	CreateCourierService(courierservice *entity.CourierService) (*entity.CourierService, error)
 	Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
 	Delete(uid string) error
 	Update(uid string, input map[string]interface{}) error
@@ -31,7 +31,7 @@ func NewCourierServiceRepository(br BaseRepository) CourierServiceRepository {
 
 func (r *courierServiceRepo) FindByUid(uid *string) (*entity.CourierService, error) {
 	var courierService entity.CourierService
-	err := r.base.GetDB().
+	err := r.base.GetDB().Preload("Courier").
 		Where("uid=?", uid).
 		First(&courierService).Error
 	if err != nil {
@@ -127,7 +127,7 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 	var couriers []entity.CourierService
 	var pagination base.Pagination
 
-	query := r.base.GetDB()
+	query := r.base.GetDB().Model(&entity.CourierService{}).Preload("Courier").Joins("Courier")
 
 	if filter["courier_uid"] != "" {
 		query = query.Where("courier_uid = ?", filter["courier_uid"])
@@ -142,7 +142,8 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 	}
 
 	if filter["status"] != 0 {
-		query = query.Where("status = ?", filter["status"])
+		//query = query.Where("status = ?", filter["status"])
+		query = query.Where(&entity.CourierService{Status: filter["status"].(int)})
 	}
 
 	if len(sort) > 0 {

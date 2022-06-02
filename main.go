@@ -75,7 +75,7 @@ func main() {
 	}
 	_ = logger.Log("message", "Connection Db Success")
 
-	// Consul initialization
+	//Consul initialization
 	registar := consul.ConsulRegisterService(config.GetConfigString(viper.GetString("server.service-name")), config.GetConfigInt(viper.GetString("server.port")), logger)
 	registar.Register()
 	defer registar.Deregister()

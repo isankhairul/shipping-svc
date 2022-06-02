@@ -16,15 +16,15 @@ import (
 type CourierService interface {
 	CreateCourier(input request.SaveCourierRequest) (*entity.Courier, message.Message)
 	GetList(input request.CourierListRequest) ([]entity.Courier, *base.Pagination, message.Message)
-	UpdateCourier(uid string, input request.UpdateCourierRequest) message.Message
+	UpdateCourier(uid string, input request.UpdateCourierRequest) (*entity.Courier, message.Message)
 	GetCourier(uid string) (*entity.Courier, message.Message)
 	DeleteCourier(uid string) message.Message
 
 	//Courier-Service
 	CreateCourierService(input request.SaveCourierServiceRequest) (*entity.CourierService, message.Message)
-	GetListCourierService(input request.CourierServiceListRequest) ([]entity.CourierService, *base.Pagination, message.Message)
+	GetListCourierService(input request.CourierServiceListRequest) ([]*entity.CourierServiceDetailDTO, *base.Pagination, message.Message)
 	UpdateCourierService(uid string, input request.UpdateCourierServiceRequest) (*entity.CourierService, message.Message)
-	GetCourierService(uid string) (*entity.CourierService, message.Message)
+	GetCourierService(uid string) (*entity.CourierServiceDetailDTO, message.Message)
 	DeleteCourierService(uid string) message.Message
 }
 
@@ -44,47 +44,55 @@ func NewCourierService(
 	return &courierServiceImpl{lg, br, pr, pcrp}
 }
 
-// swagger:route POST /courier/courier Courier SaveCourierRequest
-// Manage Courier
+// swagger:route POST /courier/courier Couriers SaveCourierRequest
+// Create a new Courier
 //
 // responses:
-//  401: SuccessResponse
-//  201: SuccessResponse
+//  401: errorResponse
+//  500: errorResponse
+//  201: Courier
 func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*entity.Courier, message.Message) {
 	logger := log.With(s.logger, "CourierService", "CreateCourier")
-	s.baseRepo.BeginTx()
+	courier, err := s.courierRepo.FindByCode(input.Code)
+	if courier != nil {
+		return nil, message.ErrDuplicatedCourier
+	}
+
 	//Set request to entity
 	Courier := entity.Courier{
-		CourierName: input.CourierName,
-		Code:        input.Code,
-		CourierType: input.CourierType,
-		Logo:        input.Logo,
+		CourierName:           input.CourierName,
+		Code:                  input.Code,
+		CourierType:           input.CourierType,
+		Logo:                  input.Logo,
+		ProvideAirwaybill:     input.ProvideAirwaybill,
+		CourierApiIntegration: input.CourierApiIntegration,
+		HidePurpose:           input.HidePurpose,
+		UseGeocoodinate:       input.UseGeocoodinate,
+		Status:                1,
 	}
 
 	result, err := s.courierRepo.CreateCourier(&Courier)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		s.baseRepo.RollbackTx()
 		return nil, message.ErrDB
 	}
-	s.baseRepo.CommitTx()
 
 	return result, message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier/{uid} Get-Courier Courier
+// swagger:route GET /courier/courier/{uid} Couriers CourierByUIdParam
 // Get Courier
 //
 // responses:
 //  401: SuccessResponse
-//  201: SuccessResponse
+//  200: Courier
 func (s *courierServiceImpl) GetCourier(uid string) (*entity.Courier, message.Message) {
 	logger := log.With(s.logger, "CourierService", "GetCourier")
 
 	result, err := s.courierRepo.FindByUid(&uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		return nil, message.ErrDB
+		return nil, message.ErrCourierNotFound
 	}
 
 	if result == nil {
@@ -112,8 +120,10 @@ func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]entity
 	}
 
 	filter := map[string]interface{}{
-		"courier_type": input.CourierType,
 		"status":       input.Status,
+		"courier_type": input.CourierType,
+		"courier_code": input.CourierCode,
+		"courier_name": input.CourierName,
 	}
 
 	result, pagination, err := s.courierRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
@@ -130,56 +140,54 @@ func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]entity
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route PUT /courier/{id} courier-update UpdateCourierRequest
-// Update courier
+// swagger:route PUT /courier/courier/{uid} Couriers UpdateCourierRequest
+// Update courier with specifeied id
 //
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
-func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCourierRequest) message.Message {
+func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCourierRequest) (*entity.Courier, message.Message) {
 	logger := log.With(s.logger, "CourierService", "UpdateCourier")
 
 	_, err := s.courierRepo.FindByUid(&uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		return message.FailedMsg
+		return nil, message.ErrCourierNotFound
 	}
 
 	data := map[string]interface{}{
-		"name":         input.CourierName,
-		"status":       input.Status,
-		"logo":         input.Logo,
-		"courier_type": input.CourierType,
+		"courier_name":       input.CourierName,
+		"courier_type":       input.CourierType,
+		"logo":               input.Logo,
+		"status":             input.Status,
+		"use_geocoodinate":   input.UseGeocoodinate,
+		"provide_airwaybill": input.ProvideAirwaybill,
+		"api_integration":    input.CourierApiIntegration,
+		"hide_purpose":       input.HidePurpose,
 	}
 
 	err = s.courierRepo.Update(uid, data)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		return message.FailedMsg
+		return nil, message.ErrCourierNotFound
 	}
-
-	return message.FailedMsg
+	return s.GetCourier(uid)
 }
 
-// swagger:route DELETE /courier/courier/{id} courier-delete byParamDelete
-// Delete courier
+// swagger:route DELETE /courier/courier/{uid} Couriers DeleteCourierByUIdParam
+// Delete courier by uid
 //
 // responses:
-//  401: SuccessResponse
 //  200: SuccessResponse
+//  400: errorResponse
+//  500: InternalServerErrorResponse
 func (s *courierServiceImpl) DeleteCourier(uid string) message.Message {
 	logger := log.With(s.logger, "CourierService", "DeleteCourier")
 
-	_, err := s.courierRepo.FindByUid(&uid)
+	err := s.courierRepo.Delete(uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		return message.FailedMsg
-	}
-
-	err = s.courierRepo.Delete(uid)
-	if err != nil {
-		_ = level.Error(logger).Log(err)
-		return message.FailedMsg
+		return message.ErrCourierNotFound
 	}
 
 	return message.SuccessMsg
@@ -215,10 +223,10 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 		return nil, message.ErrDataCourierServiceExists
 	}
 
-	s.baseRepo.BeginTx()
 	//Set request to entity
 	CourierService := entity.CourierService{
 		//General
+		CourierID:           courier.ID,
 		CourierUId:          input.CourierUId,
 		ShippingCode:        input.ShippingCode,
 		ShippingName:        input.ShippingName,
@@ -251,10 +259,8 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 	resultInsert, err := s.courierServiceRepo.CreateCourierService(&CourierService)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		s.baseRepo.RollbackTx()
 		return nil, message.ErrDB
 	}
-	s.baseRepo.CommitTx()
 
 	return resultInsert, message.SuccessMsg
 }
@@ -265,7 +271,7 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
-func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierService, message.Message) {
+func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierServiceDetailDTO, message.Message) {
 	logger := log.With(s.logger, "CourierServiceService", "GetCourierService")
 
 	result, err := s.courierServiceRepo.FindByUid(&uid)
@@ -280,7 +286,7 @@ func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierServi
 		return nil, message.ErrNoDataCourierService
 	}
 
-	return result, message.SuccessMsg
+	return ToCourierServiceDetailDTO(result), message.SuccessMsg
 }
 
 // swagger:route GET /courier/courier-services Courier-Services CourierServiceListRequest
@@ -289,7 +295,7 @@ func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierServi
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
-func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceListRequest) ([]entity.CourierService, *base.Pagination, message.Message) {
+func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceListRequest) ([]*entity.CourierServiceDetailDTO, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierServiceService", "GetList")
 
 	//Set default value
@@ -316,7 +322,7 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 		return nil, nil, message.ErrNoDataCourierService
 	}
 
-	return result, pagination, message.SuccessMsg
+	return convertToDTO(result), pagination, message.SuccessMsg
 }
 
 // swagger:route PUT /courier/courier-services/{uid} Courier-Services UpdateCourierServiceRequest
@@ -363,6 +369,7 @@ func (s *courierServiceImpl) UpdateCourierService(uid string, input request.Upda
 	}
 
 	data := map[string]interface{}{
+		"courier_id":           courier.ID,
 		"courier_uid":          input.CourierUId,
 		"shipping_code":        input.ShippingCode,
 		"shipping_name":        input.ShippingName,
@@ -438,4 +445,50 @@ func (s *courierServiceImpl) DeleteCourierService(uid string) message.Message {
 	}
 
 	return message.SuccessMsg
+}
+
+func convertToDTO(services []entity.CourierService) []*entity.CourierServiceDetailDTO {
+	items := make([]*entity.CourierServiceDetailDTO, len(services))
+	for index, value := range services {
+		items[index] = ToCourierServiceDetailDTO(&value)
+	}
+	return items
+}
+
+func ToCourierServiceDetailDTO(cs *entity.CourierService) *entity.CourierServiceDetailDTO {
+	ret := &entity.CourierServiceDetailDTO{
+		Uid:                 cs.UID,
+		CourierUId:          cs.CourierUId,
+		ShippingCode:        cs.ShippingCode,
+		ShippingName:        cs.ShippingName,
+		ShippingType:        cs.ShippingType,
+		ShippingDescription: cs.ShippingDescription,
+		ETD_Min:             cs.ETD_Min,
+		ETD_Max:             cs.ETD_Max,
+		Logo:                cs.Logo,
+		CodAvailable:        cs.CodAvailable,
+		PrescriptionAllowed: cs.PrescriptionAllowed,
+		Cancelable:          cs.Cancelable,
+		TrackingAvailable:   cs.TrackingAvailable,
+		Status:              cs.Status,
+		MaxWeight:           cs.MaxWeight,
+		MaxVolume:           cs.MaxVolume,
+		MaxDistance:         cs.MaxDistance,
+		MinPurchase:         cs.MinPurchase,
+		MaxPurchase:         cs.MaxPurchase,
+		Insurance:           cs.Insurance,
+		InsuranceMin:        cs.InsuranceMin,
+		InsuranceFeeType:    cs.InsuranceFeeType,
+		InsuranceFee:        cs.InsuranceFee,
+		StartTime:           cs.StartTime,
+		EndTime:             cs.EndTime,
+		Repickup:            cs.Repickup,
+	}
+	if cs.Courier != nil {
+		ret.CourierName = cs.Courier.CourierName
+		ret.CourierType = cs.Courier.CourierType
+		ret.CourierUId = cs.Courier.UID
+	}
+
+	return ret
 }

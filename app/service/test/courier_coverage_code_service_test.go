@@ -96,7 +96,7 @@ func TestGetCourierCoverageCode(t *testing.T) {
 	courierCoverageCodeRepository.Mock.On("FindByUid", uid).Return(courierCoverageCode)
 	// courierCoverageCodeRepository.Mock.On("GetCourierId", mock.Anything, mock.Anything).Return(courier)
 
-	result, _ := svcCourierCoverageCode.GetCourierCoverageCode(uid)
+	result, _ := svcCourierCoverageCode.GetCourierCoverageCode(uid)	
 	assert.NotNil(t, result)
 	assert.Equal(t, "UCMvWngocMqKbaC3AWQBF", result.CourierUID, "Courier UID is UCMvWngocMqKbaC3AWQBF")
 	assert.Equal(t, "VN", result.CountryCode, "Courier UID is VN")

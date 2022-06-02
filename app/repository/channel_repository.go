@@ -18,7 +18,7 @@ type ChannelRepository interface {
 	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Channel, *base.Pagination, error)
 	CheckExistsByUIdChannelCode(uid, channelCode string) (bool, error)
 	FindByUid(uid *string) (*entity.Channel, error)
-	CreateChannel(product *entity.Channel) (*entity.Channel, error)
+	CreateChannel(channel *entity.Channel) (*entity.Channel, error)
 	Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
 	Delete(uid string) error
 	Update(uid string, input map[string]interface{}) error

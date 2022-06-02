@@ -10,18 +10,19 @@ import (
 )
 
 type BaseIDModel struct {
+	//gorm.Model
 	// Id of as primary key
 	// in: int64
-	ID uint64 `gorm:"primary_key:auto_increment" json:"-"`
+	ID uint64 `gorm:"primary_key:auto_increment" json:"id"`
 
-	// UID of the product
+	// UID of the a model
 	// in: int64
 	UID string `gorm:"uniqueIndex" json:"uid"`
 
-	IsDeleted bool   `json:"is_deleted"`
-	CreatedBy string `json:"-" gorm:"type:varchar"`
+	IsDeleted bool      `json:"is_deleted"`
+	CreatedBy string    `json:"-" gorm:"type:varchar"`
 	CreatedAt time.Time `json:"-"`
-	UpdatedBy string `json:"-" gorm:"type:varchar"`
+	UpdatedBy string    `json:"-" gorm:"type:varchar"`
 	UpdatedAt time.Time `json:"-"`
 }
 

@@ -115,7 +115,6 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 		return nil, message.ErrDataChannelExists
 	}
 
-	s.baseRepo.BeginTx()
 	//Set request to entity
 	channel := entity.Channel{
 		ChannelName: input.ChannelName,
@@ -128,10 +127,8 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 	resultInsert, err := s.channelRepo.CreateChannel(&channel)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		s.baseRepo.RollbackTx()
 		return nil, message.ErrDB
 	}
-	s.baseRepo.CommitTx()
 
 	return resultInsert, message.SuccessMsg
 }

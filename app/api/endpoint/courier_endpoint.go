@@ -11,11 +11,12 @@ import (
 )
 
 type CourierEndpoint struct {
-	Save   endpoint.Endpoint
-	Show   endpoint.Endpoint
-	List   endpoint.Endpoint
-	Update endpoint.Endpoint
-	Delete endpoint.Endpoint
+	Save                endpoint.Endpoint
+	Show                endpoint.Endpoint
+	List                endpoint.Endpoint
+	Update              endpoint.Endpoint
+	Delete              endpoint.Endpoint
+	ListChannelCouriers endpoint.Endpoint
 
 	//Courier-Serivce
 	SaveCourierSerivce   endpoint.Endpoint
@@ -25,13 +26,14 @@ type CourierEndpoint struct {
 	DeleteCourierSerivce endpoint.Endpoint
 }
 
-func MakeCourierEndpoints(s service.CourierService) CourierEndpoint {
+func MakeCourierEndpoints(s service.CourierService, cc service.ChannelCourierService) CourierEndpoint {
 	return CourierEndpoint{
-		Save:   makeSaveCourier(s),
-		Show:   makeShowCourier(s),
-		List:   getListCouriers(s),
-		Delete: makeDeleteCourier(s),
-		Update: makeUpdateCourier(s),
+		Save:                makeSaveCourier(s),
+		Show:                makeShowCourier(s),
+		List:                getListCouriers(s),
+		Delete:              makeDeleteCourier(s),
+		Update:              makeUpdateCourier(s),
+		ListChannelCouriers: ListChannelCouriers(cc),
 
 		SaveCourierSerivce:   makeSaveCourierService(s),
 		ShowCourierSerivce:   makeShowCourierService(s),
@@ -90,12 +92,12 @@ func makeDeleteCourier(s service.CourierService) endpoint.Endpoint {
 func makeUpdateCourier(s service.CourierService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
 		req := rqst.(request.UpdateCourierRequest)
-		msg := s.UpdateCourier(req.Uid, req)
+		ret, msg := s.UpdateCourier(req.Uid, req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
 
-		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		return base.SetHttpResponse(msg.Code, msg.Message, ret, nil), nil
 	}
 }
 

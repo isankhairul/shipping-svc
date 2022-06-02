@@ -32,37 +32,80 @@ type SaveCourierRequest struct {
 	// Logo of courier
 	// in: string
 	Logo string `json:"logo"`
+
+	// Hide purpose of the Courier
+	// in: integer
+	HidePurpose int `gorm:"not null;default:0" json:"hide_purpose"`
+
+	// Courier Api Integration of the Courier
+	// in: integer
+	CourierApiIntegration int `gorm:"not null;default:1" json:"courier_api_intergration"`
+
+	// Geo Coodinate of the Courier
+	// in: string
+	UseGeocoodinate int `gorm:"not null;default:0" json:"use_geocoodinate"`
+
+	// Provide Airwaybill of the Courier
+	// in: integer
+	ProvideAirwaybill int `gorm:"not null;default:0" json:"provide_airwaybill"`
 }
 
-// swagger:parameters courier
-type GetCourierRequest struct {
+// swagger:parameters CourierByUIdParam
+type CourierByUIdParam struct {
 	// name: id
 	// in: path
 	// required: true
-	Id string `json:"id"`
+	UId string `json:"uid"`
+}
+
+// swagger:parameters DeleteCourierByUIdParam
+type DeleteCourierByUIdParam struct {
+	// name: id
+	// in: path
+	// required: true
+	UId string `json:"uid"`
 }
 
 // swagger:parameters CourierListRequest
 type CourierListRequest struct {
 	// Maximun records per page
 	// in: int32
-	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100"`
+	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
 
 	// Page No
 	// in: int32
-	Page int `schema:"page" binding:"omitempty,numeric,min=1"`
+	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
 	// Sort fields, example: name asc, uom desc
 	// in: string
-	Sort string `schema:"sort" binding:"omitempty"`
+	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 
 	// Courier type
 	// in: string
-	CourierType string `schema:"courier_type" binding:"omitempty"`
+	CourierType string `schema:"courier_type" binding:"omitempty" json:"courier_type"`
+
+	// Courier name
+	// in: string
+	CourierName string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
+
+	// Courier code
+	// in: string
+	CourierCode string `schema:"courier_code" binding:"omitempty" json:"courier_code"`
 
 	// Courier status
-	// in: string
-	Status string `schema:"courier_name" binding:"omitempty"`
+	// in: int
+	Status *int `binding:"omitempty"`
+}
+
+// swagger:parameters UpdateCourierRequest
+type ReqUpdateCourierBody struct {
+	// name: id
+	// in: path
+	// required: true
+	UId string `json:"uid"`
+
+	//  in: body
+	Body UpdateCourierRequest `json:"body"`
 }
 
 type UpdateCourierRequest struct {
@@ -82,9 +125,25 @@ type UpdateCourierRequest struct {
 	// in: string
 	Logo string `json:"logo"`
 
-	// Courier status
+	// Hide purpose of the Courier
+	// in: integer
+	HidePurpose int `json:"hide_purpose"`
+
+	// Courier Api Integration of the Courier
+	// in: integer
+	CourierApiIntegration int `json:"courier_api_intergration"`
+
+	// Geo Coodinate of the Courier
 	// in: string
-	Status string `json:"status" binding:"omitempty"`
+	UseGeocoodinate int `json:"use_geocoodinate"`
+
+	// Provide Airwaybill of the Courier
+	// in: integer
+	ProvideAirwaybill int `json:"provide_airwaybill"`
+
+	// Courier status
+	// in: int
+	Status int `json:"status" binding:"omitempty"`
 }
 
 func (req SaveCourierRequest) Validate() error {
