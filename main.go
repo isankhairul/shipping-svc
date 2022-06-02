@@ -68,7 +68,7 @@ func main() {
 	}
 
 	// Init DB Connection
-	db, err := initialization.DbInit()
+	db, err := initialization.DbInit(logger)
 	if err != nil {
 		_ = logger.Log("Err Db connection :", err.Error())
 		panic(err.Error())
