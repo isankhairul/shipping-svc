@@ -43,5 +43,5 @@ type Courier struct {
 	
 	CourierCoverageCode []*CourierCoverageCode`gorm:"foreignKey:courier_uid" json:"course_coverage_codes"`
 
-	CourierServices []*CourierService `json:"course_services" gorm:"foreignKey:courier_uid"`
+	CourierServices []*CourierService `json:"course_services" gorm:"foreignKey:courier_id"`
 }

@@ -3,7 +3,6 @@ package transport
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"go-klikdokter/app/api/endpoint"
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
@@ -117,8 +116,7 @@ func decodeUpdateCourierCoverageCode(ctx context.Context, r *http.Request) (rqst
 
 func decodeImportCourierCoverageCode(ctx context.Context, r *http.Request) (rsqt interface{}, err error) {
 	var req request.ImportCourierCoverageCodeRequest
-	file, handler, err := r.FormFile("file")
-	fmt.Println(file, handler)
+	file, _, err := r.FormFile("file")
 	if err != nil {
 		return nil, err
 	}

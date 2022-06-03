@@ -29,8 +29,8 @@ func NewCourierRepository(br BaseRepository) CourierRepository {
 
 func (r *courierRepo) FindByUid(uid *string) (*entity.Courier, error) {
 	var courier entity.Courier
-	err := r.base.GetDB().Preload("CourierServices").
-		Where("uid=?", uid).
+	err := r.base.GetDB().Preload("CourierServices").		
+		Where(&entity.Courier{BaseIDModel: base.BaseIDModel{UID: *uid}}).
 		First(&courier).Error
 	if err != nil {
 		return nil, err
