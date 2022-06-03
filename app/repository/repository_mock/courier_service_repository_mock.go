@@ -36,6 +36,14 @@ func (repository *CourierServiceRepositoryMock) CreateCourierService(courierServ
 	return courierService, nil
 }
 
+func (repository *CourierServiceRepositoryMock) UpdateCourierService(courierService *entity.CourierService) (*entity.CourierService, error) {
+	return courierService, nil
+}
+
+func (repository *CourierServiceRepositoryMock) GetCourierService(courierService *entity.CourierService) (*entity.CourierService, error) {
+	return courierService, nil
+}
+
 func (repository *CourierServiceRepositoryMock) Delete(uid string) error {
 	return nil
 }
@@ -49,9 +57,10 @@ func (repository *CourierServiceRepositoryMock) Paginate(value interface{}, pagi
 }
 
 func (repository *CourierServiceRepositoryMock) CheckExistsByCourierIdShippingCode(courierUId string, shippingCode string) (bool, error) {
-	return false, nil
+	arguments := repository.Mock.Called(courierUId, shippingCode)
+	return arguments.Get(0).(bool), nil
 }
 
 func (repository *CourierServiceRepositoryMock) CheckExistsByUIdCourierIdShippingCode(uid string, courierUId string, shippingCode string) (bool, error) {
-	return false, nil
+	return true, nil
 }

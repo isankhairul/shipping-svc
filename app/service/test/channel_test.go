@@ -1,6 +1,7 @@
 package test
 
 import (
+	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
@@ -122,4 +123,75 @@ func TestListChannel(t *testing.T) {
 	assert.Equal(t, 1, len(channels), "Count of Channels must be 1")
 	assert.Equal(t, int64(120), pagination.Records, "Total record pagination must be 120")
 
+}
+
+func TestCreateChannelFail(t *testing.T) {
+	req := request.SaveChannelRequest{
+		ChannelName: "test",
+		ChannelCode: "string",
+		Description: "description test",
+		Status:      1,
+		Logo:        "logo test",
+	}
+	channels := []entity.Channel{}
+	channel := entity.Channel{}
+
+	errTest := message.ErrDataChannelExists
+	filter := map[string]interface{}{
+		"channel_code": "string",
+	}
+	paginationResult := base.Pagination{
+		Records:   120,
+		Limit:     10,
+		Page:      1,
+		TotalPage: 12,
+	}
+
+	channelRepository.Mock.On("FindByParams", 10, 1, "", filter).Return(channels, &paginationResult)
+	channelRepository.Mock.On("CreateChannel", &req).Return(channel)
+	channelSvc.CreateChannel(req)
+
+	errIsExists := "Data channel_code already exists"
+	errCodeIsExists := 34001
+	assert.EqualError(t, errors.New(errIsExists), errTest.Message, "Channel Code must be unique")
+	assert.Equal(t, errCodeIsExists, errTest.Code, "Channel Code must be unique")
+}
+
+func TestUpdateChannelFail(t *testing.T) {
+	req := request.UpdateChannelRequest{
+		Uid:         "BnOI8D7p9rR7tI1R9rySw",
+		ChannelName: "test",
+		ChannelCode: "string1",
+		Description: "description test",
+		Status:      1,
+		Logo:        "logo test",
+	}
+	channel := entity.Channel{}
+
+	var isExist bool
+	errTest := message.ErrDataChannelExists
+
+	channelRepository.Mock.On("FindByUid", &req.Uid).Return(channel)
+	channelRepository.Mock.On("CheckExistsByUIdChannelCode", req.Uid, req.ChannelCode).Return(isExist)
+	channelRepository.Mock.On("UpdateChannel", &req).Return(channel)
+	channelSvc.UpdateChannel(req)
+
+	errIsExists := "Data channel_code already exists"
+	errCodeIsExists := 34001
+	assert.EqualError(t, errors.New(errIsExists), errTest.Message, "Channel Code must be unique")
+	assert.Equal(t, errCodeIsExists, errTest.Code, "Channel Code must be unique")
+}
+func TestGetChannelFail(t *testing.T) {
+	channel := entity.Channel{}
+	errTest := message.ErrNoData
+
+	uid := "gj2MZ9CBfdfdhcHSNVOLpUeqUUUU"
+	channelRepository.Mock.On("FindByUid", &uid).Return(channel, errTest)
+	channelRepository.Mock.On("GetChannel", &uid).Return(channel)
+	channelSvc.GetChannel(uid)
+
+	errIsNotFound := "Data is not found"
+	errCodeIsNotFound := 34005
+	assert.EqualError(t, errors.New(errIsNotFound), errTest.Message, "Channel is not found")
+	assert.Equal(t, errCodeIsNotFound, errTest.Code, "Channel is not found")
 }
