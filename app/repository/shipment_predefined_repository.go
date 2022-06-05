@@ -78,7 +78,7 @@ func (r *ShipmentPredefinedRepositoryImpl) UpdateShipmentPredefined(dto entity.S
 	var db = r.base.GetDB()
 	var ret *entity.ShippmentPredefined
 
-	err := db.Where(&entity.ShippmentPredefined{BaseIDModel: base.BaseIDModel{UID: dto.UID}}).Find(&ret).Error
+	ret, err := r.GetShipmentPredefinedByUid(dto.UID)
 	if err != nil {
 		return nil, err
 	}
@@ -99,8 +99,6 @@ func (r *ShipmentPredefinedRepositoryImpl) UpdateShipmentPredefined(dto entity.S
 	if dto.Note != ret.Note {
 		data["note"] = dto.Note
 	}
-
-	// err = db.Model(&entity.ShippmentPredefined{}).Update(&ret)
 
 	err = db.Model(&entity.ShippmentPredefined{}).Where("uid=?", dto.UID).Updates(data).Error
 	if err != nil {

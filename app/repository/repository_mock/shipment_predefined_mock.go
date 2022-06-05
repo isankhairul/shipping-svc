@@ -11,10 +11,17 @@ type ShipmentPredefinedMock struct {
 	Mock mock.Mock
 }
 
-func (repository *ShipmentPredefinedMock)  GetShipmentPredefinedByUid(uid string) (*entity.ShippmentPredefined, error) {
+func (repository *ShipmentPredefinedMock) GetShipmentPredefinedByUid(uid string) (*entity.ShippmentPredefined, error) {
 	arguments := repository.Mock.Called(uid)
-	ret := arguments.Get(0).(entity.ShippmentPredefined)
-	return &ret, nil
+	ret := arguments.Get(0)
+	var s entity.ShippmentPredefined
+	if ret != nil {
+		s = ret.(entity.ShippmentPredefined)
+	}
+	if len(arguments) > 1 {
+		return nil, arguments.Get(1).(error)
+	}
+	return &s, nil
 }
 func (repository *ShipmentPredefinedMock) GetAll(limit int, page int, sort string, filter map[string]interface{}) ([]*entity.ShippmentPredefined, *base.Pagination, error) {
 	arguments := repository.Mock.Called(limit, page, sort)

@@ -1,6 +1,7 @@
 package test
 
 import (
+	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
@@ -16,10 +17,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-var baseshipmentPredefinedRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
-var shipmentPredefinedRepository = &repository_mock.ShipmentPredefinedMock{Mock: mock.Mock{}}
-var shipmentPredefinedService = service.NewShipmentPredefinedService(logger, baseshipmentPredefinedRepository, shipmentPredefinedRepository)
-
 func init() {
 	{
 		logger = log.NewLogfmtLogger(os.Stderr)
@@ -30,6 +27,11 @@ func init() {
 }
 
 func TestUpdateShipmentPredefined(t *testing.T) {
+
+	var baseshipmentPredefinedRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var shipmentPredefinedRepository = &repository_mock.ShipmentPredefinedMock{Mock: mock.Mock{}}
+	var shipmentPredefinedService = service.NewShipmentPredefinedService(logger, baseshipmentPredefinedRepository, shipmentPredefinedRepository)
+
 	item := entity.ShippmentPredefined{
 		Type:   "type",
 		Code:   "code",
@@ -57,6 +59,11 @@ func TestUpdateShipmentPredefined(t *testing.T) {
 }
 
 func TestGetAll(t *testing.T) {
+
+	var baseshipmentPredefinedRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var shipmentPredefinedRepository = &repository_mock.ShipmentPredefinedMock{Mock: mock.Mock{}}
+	var shipmentPredefinedService = service.NewShipmentPredefinedService(logger, baseshipmentPredefinedRepository, shipmentPredefinedRepository)
+
 	req := request.ListShipmentPredefinedRequest{
 		Page:  1,
 		Limit: 10,
@@ -98,4 +105,34 @@ func TestGetAll(t *testing.T) {
 	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 201000")
 	assert.Equal(t, 3, len(predefines), "Count of predefines must be 3")
 	assert.Equal(t, int64(120), pagination.Records, "Total record pagination must be 120")
+}
+
+func TestUpdateShipmentPredefinedFailNotFound(t *testing.T) {
+
+	var baseshipmentPredefinedRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var shipmentPredefinedRepository = &repository_mock.ShipmentPredefinedMock{Mock: mock.Mock{}}
+	var shipmentPredefinedService = service.NewShipmentPredefinedService(logger, baseshipmentPredefinedRepository, shipmentPredefinedRepository)
+
+	item := entity.ShippmentPredefined{
+		Type:   "type",
+		Code:   "code",
+		Title:  "title",
+		Note:   "note",
+		Status: 0,
+	}
+
+	req := request.UpdateShipmentPredefinedRequest{
+		Uid:    "UCMvWngocMqKbaC3AWQBF",
+		Type:   "type 1",
+		Code:   "code 1",
+		Title:  "title 1",
+		Note:   "note 1",
+		Status: 0,
+	}
+
+	shipmentPredefinedRepository.Mock.On("GetShipmentPredefinedByUid", mock.Anything).Return(nil, errors.New("Not found"))
+	shipmentPredefinedRepository.Mock.On("UpdateShipmentPredefined", mock.Anything).Return(item)
+	result, msg := shipmentPredefinedService.UpdateShipmentPredefined(req)
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Message, message.ErrShipmentPredefinedNotFound.Message, "Not found")
 }
