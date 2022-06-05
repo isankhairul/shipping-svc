@@ -29,7 +29,7 @@ func NewCourierRepository(br BaseRepository) CourierRepository {
 
 func (r *courierRepo) FindByUid(uid *string) (*entity.Courier, error) {
 	var courier entity.Courier
-	err := r.base.GetDB().Preload("CourierServices").		
+	err := r.base.GetDB().Preload("CourierServices").
 		Where(&entity.Courier{BaseIDModel: base.BaseIDModel{UID: *uid}}).
 		First(&courier).Error
 	if err != nil {
@@ -76,7 +76,7 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 	query := r.base.GetDB()
 
 	if filter["courier_code"] != "" {
-		query = query.Where("LOWER(courier_code) LIKE ?", "%"+strings.ToLower(filter["courier_code"].(string))+"%")
+		query = query.Where("LOWER(code) LIKE ?", "%"+strings.ToLower(filter["courier_code"].(string))+"%")
 	}
 
 	if filter["courier_type"] != "" {

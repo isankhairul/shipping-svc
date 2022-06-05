@@ -31,6 +31,10 @@ func (repository *CourierRepositoryMock) FindByCode(code string) (*entity.Courie
 func (repository *CourierRepositoryMock) FindByUid(uid *string) (*entity.Courier, error) {
 	arguments := repository.Mock.Called(uid)
 	if arguments.Get(0) == nil {
+		if len(arguments) > 1 {
+			err := arguments.Get(1)
+			return nil, err.(error)
+		}
 		return nil, nil
 	} else {
 		courier := arguments.Get(0).(entity.Courier)
@@ -43,6 +47,11 @@ func (repository *CourierRepositoryMock) CreateCourier(courier *entity.Courier) 
 }
 
 func (repository *CourierRepositoryMock) Delete(uid string) error {
+	arguments := repository.Mock.Called(uid)
+	v1 := arguments.Get(0)
+	if v1 != nil {
+		return v1.(error)
+	}
 	return nil
 }
 

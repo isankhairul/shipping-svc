@@ -158,6 +158,7 @@ func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCouri
 	data := map[string]interface{}{
 		"courier_name":       input.CourierName,
 		"courier_type":       input.CourierType,
+		"code":               input.Code,
 		"logo":               input.Logo,
 		"status":             input.Status,
 		"use_geocoodinate":   input.UseGeocoodinate,
