@@ -117,6 +117,10 @@ type UpdateCourierRequest struct {
 	// in: string
 	CourierName string `json:"courier_name"`
 
+	// Code of the courier
+	// in: string
+	Code string `json:"code"`
+	
 	// type of courier
 	// in: string
 	CourierType string `json:"courier_type"`

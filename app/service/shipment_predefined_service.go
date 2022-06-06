@@ -56,11 +56,20 @@ func (s *ShipmentPredefinedServiceImpl) CreateShipmentPredefined(input request.C
 //  201: SuccessResponse
 func (s *ShipmentPredefinedServiceImpl) UpdateShipmentPredefined(input request.UpdateShipmentPredefinedRequest) (*entity.ShippmentPredefined, message.Message) {
 	logger := log.With(s.logger, "ShipmentPredefinedService", "Update")
+
+	var ret *entity.ShippmentPredefined
+
+	_, err := s.predefines.GetShipmentPredefinedByUid(input.Uid)
+
+	if err != nil {
+		return nil, message.ErrShipmentPredefinedNotFound
+	}
+
 	predefined := &entity.ShippmentPredefined{Type: input.Type,
 		Title: input.Title,
 		Code:  input.Code, Status: input.Status,
 		Note: input.Note, BaseIDModel: base.BaseIDModel{UID: input.Uid}}
-	ret, err := s.predefines.UpdateShipmentPredefined(*predefined)
+	ret, err = s.predefines.UpdateShipmentPredefined(*predefined)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, message.FailedMsg
