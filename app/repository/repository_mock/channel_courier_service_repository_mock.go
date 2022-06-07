@@ -24,5 +24,10 @@ func (r *ChannelCourierServiceRepositoryMock) DeleteChannelCourierServiceByID(id
 }
 
 func (r *ChannelCourierServiceRepositoryMock) DeleteChannelCourierServicesByChannelID(channelID uint64, courierID uint64) error {
+	arguments := r.Mock.Called("DeleteChannelCourierServicesByChannelID")
+	f := arguments.Get(0)
+	if f != nil {
+		return f.(error)
+	}
 	return nil
 }
