@@ -75,6 +75,9 @@ func (s *ChannelCourierServiceImpl) createChannelCourierInTx(input request.SaveC
 	}
 	for _, courierServiceUID := range input.CourierServiceUIDs {
 		courierService, err := s.courierServices.FindByUid(&courierServiceUID.CourierServiceUid)
+		if courierService == nil {
+			return nil, message.ErrNoDataCourierService
+		}
 		if err != nil || courierService.Status == 0 {
 			return nil, message.ErrCourierServiceHasInvalidStatus
 		}
@@ -176,10 +179,6 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 		return nil, message.ErrChannelCourierNotFound
 	}
 	result := s.channelCouriers.UpdateChannelCourier(input.Uid, data)
-	// result := s.baseRepo.GetDB().Model(&entity.ChannelCourier{}).
-	// 	Where(&entity.ChannelCourier{BaseIDModel: base.BaseIDModel{UID: input.Uid}}).
-	// 	Updates(data)
-	// if result != nil && result.RowsAffected == 0 {
 	if result != nil {
 		_ = level.Error(logger).Log(message.ErrNoData)
 		return nil, message.ErrChannelCourierNotFound
@@ -187,6 +186,9 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 
 	for _, courierServiceUID := range input.CourierServiceUIDs {
 		courierService, err := s.courierServices.FindByUid(&courierServiceUID.CourierServiceUid)
+		if courierService == nil {
+			return nil, message.ErrNoDataCourierService
+		}
 		if err != nil || courierService.Status == 0 {
 			return nil, message.ErrCourierServiceHasInvalidStatus
 		}
@@ -227,7 +229,7 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 func (s *ChannelCourierServiceImpl) DeleteChannelCourier(uid string) message.Message {
 	channelCourier, err := s.channelCouriers.GetChannelCourierByUID(uid)
 	if err != nil {
-		return message.ErrUnableToDeleteChannelCourier
+		return message.ErrChannelCourierNotFound
 	}
 	err = s.channelCourierServices.DeleteChannelCourierServicesByChannelID(channelCourier.ChannelID, channelCourier.CourierID)
 	if err != nil {

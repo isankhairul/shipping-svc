@@ -32,7 +32,13 @@ func (r *ChannelCourierRepositoryMock) GetChannelCourierByUID(uid string) (*enti
 	arguments := r.Mock.Called(uid)
 	f := arguments.Get(0)
 	if f == nil {
+		if len(arguments) > 1 {
+			return nil, arguments.Get(1).(error)
+		}
 		return nil, nil
+	}
+	if len(arguments) > 1 {
+		return f.(*entity.ChannelCourier), arguments.Get(1).(error)
 	}
 	return f.(*entity.ChannelCourier), nil
 }
@@ -59,10 +65,18 @@ func (r *ChannelCourierRepositoryMock) DeleteChannelCourierByID(id uint64) error
 
 func (r *ChannelCourierRepositoryMock) FindCourierByUID(uid string) (*entity.Courier, error) {
 	arguments := r.Mock.Called("FindCourierByUID")
+	c := arguments.Get(0)
+	if c == nil {
+		return nil, arguments.Get(1).(error)
+	}
 	return arguments.Get(0).(*entity.Courier), nil
 }
 
 func (r *ChannelCourierRepositoryMock) FindChannelByUID(uid string) (*entity.Channel, error) {
 	arguments := r.Mock.Called("FindChannelByUID")
+	c := arguments.Get(0)
+	if c == nil {
+		return nil, arguments.Get(1).(error)
+	}
 	return arguments.Get(0).(*entity.Channel), nil
 }
