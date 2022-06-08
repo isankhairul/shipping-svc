@@ -62,7 +62,7 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		return nil, message.FailedMsg
+		return nil, message.ErrCourierCoverageCodeUidExist
 	}
 
 	if count > 0 {

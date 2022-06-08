@@ -3,6 +3,7 @@ package repository_mock
 import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"reflect"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -12,6 +13,17 @@ type CourierCoverageCodeRepositoryMock struct {
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) GetCourierUid(courier *entity.Courier, uid string) error {
+	arguments := repository.Mock.Called("GetCourierUid")
+	if len(arguments) > 0 {
+		f := arguments.Get(0)
+		if f != nil {
+			t := reflect.TypeOf(f).String()
+			if t == "entity.Courier" {
+				return nil
+			}
+			return arguments.Get(0).(error)
+		}
+	}
 	return nil
 }
 
@@ -28,12 +40,27 @@ func (repository *CourierCoverageCodeRepositoryMock) FindByParams(limit int, pag
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string, id uint64) (int64, error) {
+	arguments := repository.Mock.Called("CombinationUnique")
+	if len(arguments) > 1 {
+		a2 := arguments.Get(1)
+		if a2 != nil {
+			return 0, a2.(error)
+		}
+	}
+
 	return 0, nil
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) FindByUid(uid string) (*entity.CourierCoverageCode, error) {
 	arguments := repository.Mock.Called(uid)
 	if arguments.Get(0) == nil {
+		if len(arguments) > 1 {
+			f := arguments.Get(1)
+			if f == nil {
+				return nil, nil
+			}
+			return nil, arguments.Get(1).(error)
+		}
 		return nil, nil
 	} else {
 		courierCoverageCode := arguments.Get(0).(entity.CourierCoverageCode)
@@ -51,5 +78,12 @@ func (repository *CourierCoverageCodeRepositoryMock) Update(uid string, value ma
 }
 
 func (repository *CourierCoverageCodeRepositoryMock) DeleteByUid(uid string) error {
+	arguments := repository.Mock.Called()
+	if len(arguments) > 0 {
+		f := arguments.Get(0)
+		if f != nil {
+			return f.(error)
+		}
+	}
 	return nil
 }
