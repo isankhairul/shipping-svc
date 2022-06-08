@@ -1,6 +1,7 @@
 package test
 
 import (
+	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
@@ -31,12 +32,19 @@ func init() {
 }
 
 func TestCreateCourierCoverageCode(t *testing.T) {
+	var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
+	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
+
 	req := request.SaveCourierCoverageCodeRequest{
 		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
 		CountryCode: "VN",
 		PostalCode:  "70000",
 		Description: "Vietnam code",
 	}
+
+	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(nil)
+	courierCoverageCodeRepository.Mock.On("CombinationUnique", mock.Anything).Return(0, nil)
 
 	result, _ := svcCourierCoverageCode.CreateCourierCoverageCode(req)
 	assert.NotNil(t, result)
@@ -66,7 +74,8 @@ func TestUpdateCourierCoverageCode(t *testing.T) {
 	courier.ID = 555
 
 	courierCoverageCodeRepository.Mock.On("FindByUid", req.Uid).Return(courierCoverageCode)
-	courierCoverageCodeRepository.Mock.On("GetCourierId", &courier, courier.ID).Return(courier)
+	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(courier)
+	courierCoverageCodeRepository.Mock.On("CombinationUnique", mock.Anything).Return(0, nil)
 	courierCoverageCodeRepository.Mock.On("Update", req.Uid, mock.Anything).Return(&courierCoverageCode, nil)
 
 	result, _ := svcCourierCoverageCode.UpdateCourierCoverageCode(req)
@@ -96,7 +105,7 @@ func TestGetCourierCoverageCode(t *testing.T) {
 	courierCoverageCodeRepository.Mock.On("FindByUid", uid).Return(courierCoverageCode)
 	// courierCoverageCodeRepository.Mock.On("GetCourierId", mock.Anything, mock.Anything).Return(courier)
 
-	result, _ := svcCourierCoverageCode.GetCourierCoverageCode(uid)	
+	result, _ := svcCourierCoverageCode.GetCourierCoverageCode(uid)
 	assert.NotNil(t, result)
 	assert.Equal(t, "UCMvWngocMqKbaC3AWQBF", result.CourierUID, "Courier UID is UCMvWngocMqKbaC3AWQBF")
 	assert.Equal(t, "VN", result.CountryCode, "Courier UID is VN")
@@ -107,7 +116,7 @@ func TestGetCourierCoverageCode(t *testing.T) {
 func TestDeleteCourierCoverageCode(t *testing.T) {
 	uid := "UCMvWngocMqKbaC3AWQBF"
 
-	courierCoverageCodeRepository.Mock.On("DeleteByUid", uid).Return(nil)
+	courierCoverageCodeRepository.Mock.On("DeleteByUid", mock.Anything).Return(nil)
 
 	message := svcCourierCoverageCode.DeleteCourierCoverageCode(uid)
 	assert.NotNil(t, message)
@@ -183,4 +192,175 @@ func TestImportCourierCoverageCode(t *testing.T) {
 	assert.Equal(t, "VN", result[0].CountryCode, "Courier UID is VN")
 	assert.Equal(t, "70000", result[0].PostalCode, "Courier UID is 70000")
 	assert.Equal(t, "Vietnam code", result[0].Description, "Description is Vietnam code")
+}
+
+func TestCreateCourierCoverageCodeFailedWithDuplicated(t *testing.T) {
+	var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
+	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
+
+	req := request.SaveCourierCoverageCodeRequest{
+		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
+		CountryCode: "VN",
+		PostalCode:  "70000",
+		Description: "Vietnam code",
+	}
+
+	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(errors.New("Found"))
+	result, msg := svcCourierCoverageCode.CreateCourierCoverageCode(req)
+
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Code, message.ErrDataExists.Code, "Duplicated coverage code")
+}
+
+func TestCreateCourierCoverageCodeFailedWithDuplicatedUniqueCode(t *testing.T) {
+	var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
+	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
+
+	req := request.SaveCourierCoverageCodeRequest{
+		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
+		CountryCode: "VN",
+		PostalCode:  "70000",
+		Description: "Vietnam code",
+	}
+
+	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(nil)
+	courierCoverageCodeRepository.Mock.On("CombinationUnique", mock.Anything).Return(0, errors.New("Found"))
+
+	result, msg := svcCourierCoverageCode.CreateCourierCoverageCode(req)
+
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Code, message.ErrCourierCoverageCodeUidExist.Code, "Duplicated coverage code with courier")
+}
+
+func TestUpdateCourierCoverageCodefailedWithNotFound(t *testing.T) {
+	var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
+	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
+
+	req := request.SaveCourierCoverageCodeRequest{
+		Uid:         "123",
+		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
+		CountryCode: "VN",
+		PostalCode:  "70000",
+		Description: "Vietnam code",
+	}
+	var courier entity.Courier
+	courier.UID = "UCMvWngocMqKbaC3AWQBF"
+	courier.ID = 555
+
+	courierCoverageCodeRepository.Mock.On("FindByUid", mock.Anything).Return(nil, errors.New("Not Found"))
+	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(errors.New("Found"))
+	result, msg := svcCourierCoverageCode.UpdateCourierCoverageCode(req)
+
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Code, message.ErrNoData.Code, "Not found courier coverage by uid")
+}
+
+func TestUpdateCourierCoverageCodefailedWithDuplicated(t *testing.T) {
+	var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
+	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
+
+	req := request.SaveCourierCoverageCodeRequest{
+		Uid:         "123",
+		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
+		CountryCode: "VN",
+		PostalCode:  "70000",
+		Description: "Vietnam code",
+	}
+
+	courierCoverageCode := entity.CourierCoverageCode{
+		CourierID:   555,
+		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
+		CountryCode: "VN",
+		PostalCode:  "70000",
+		Description: "Vietnam code",
+		Courier: &entity.Courier{
+			BaseIDModel: base.BaseIDModel{UID: "UCMvWngocMqKbaC3AWQBF"},
+		},
+	}
+	var courier entity.Courier
+	courier.UID = "UCMvWngocMqKbaC3AWQBF"
+	courier.ID = 555
+
+	courierCoverageCodeRepository.Mock.On("FindByUid", mock.Anything).Return(courierCoverageCode, nil)
+	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(courier)
+	courierCoverageCodeRepository.Mock.On("CombinationUnique", mock.Anything).Return(0, errors.New("Found"))
+	result, msg := svcCourierCoverageCode.UpdateCourierCoverageCode(req)
+
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Code, message.FailedMsg.Code, "Duplicated coverage code")
+}
+
+func TestGetCourierCoverageCodeFailed(t *testing.T) {
+	var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
+	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
+
+	courierCoverageCodeRepository.Mock.On("FindByUid", mock.Anything).Return(nil, errors.New("Not found"))
+	result, msg := svcCourierCoverageCode.GetCourierCoverageCode("123")
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Code, message.ErrNoData.Code, "Coverage not exists")
+}
+
+func TestDeleteCourierCoverageCodeFailed(t *testing.T) {
+	var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
+	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
+
+	courierCoverageCodeRepository.Mock.On("DeleteByUid", mock.Anything).Return(errors.New("Not found"))
+	msg := svcCourierCoverageCode.DeleteCourierCoverageCode("123")
+	assert.Equal(t, msg.Code, message.ErrCourierCoverageCodeUidNotExist.Code, "Coverage not exists")
+}
+
+func TestImportCourierCoverageCodeFailed(t *testing.T) {
+	req := request.ImportCourierCoverageCodeRequest{
+		Rows: []map[string]string{
+			{
+				"courier_uid":  "UCMvWngocMqKbaC3AWQBF",
+				"country_code": "VN",
+				"description":  "Vietnam code",
+				"code1":        "",
+				"code2":        "",
+				"code3":        "",
+				"code4":        "",
+				"code5":        "",
+				"code6":        "",
+			},
+		},
+	}
+	courierCoverageCodeRepository.Mock.On("Update", mock.Anything, mock.Anything).Return(&entity.CourierCoverageCode{}, nil)
+	result, msg := svcCourierCoverageCode.ImportCourierCoverageCode(req)
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Code, message.ErrImportData.Code)
+}
+
+func TestImportCourierCoverageCodeFailedWithNotFoundCourier(t *testing.T) {
+	var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
+	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
+
+	req := request.ImportCourierCoverageCodeRequest{
+		Rows: []map[string]string{
+			{
+				"courier_uid":  "UCMvWngocMqKbaC3AWQBF",
+				"country_code": "VN",
+				"description":  "Vietnam code",
+				"postal_code":  "any",
+				"code1":        "",
+				"code2":        "",
+				"code3":        "",
+				"code4":        "",
+				"code5":        "",
+				"code6":        "",
+			},
+		},
+	}
+	courierCoverageCodeRepository.Mock.On("Update", mock.Anything, mock.Anything).Return(&entity.CourierCoverageCode{}, nil)
+	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(errors.New("Found"))
+	result, msg := svcCourierCoverageCode.ImportCourierCoverageCode(req)
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Code, message.ErrDB.Code)
 }
