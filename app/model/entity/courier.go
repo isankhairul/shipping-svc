@@ -11,7 +11,7 @@ type Courier struct {
 
 	// Code of the Courier
 	// in: string
-	Code string `gorm:"unique,not null" json:"code"`
+	Code string `gorm:"not null;unique:true" json:"code"`
 
 	// Type of the Courier
 	// in: string
