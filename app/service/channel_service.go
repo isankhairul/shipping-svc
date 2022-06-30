@@ -121,9 +121,11 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 		ChannelCode: input.ChannelCode,
 		Description: input.Description,
 		Logo:        input.Logo,
-		Status:      input.Status,
+		Status:      1, //Default
 	}
-
+	if input.Status != nil {
+		channel.Status = *input.Status
+	}
 	resultInsert, err := s.channelRepo.CreateChannel(&channel)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
