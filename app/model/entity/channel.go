@@ -23,5 +23,5 @@ type Channel struct {
 
 	// Status of the Channel
 	// in: integer
-	Status int `gorm:"not null;default:1" json:"status"`
+	Status int `gorm:"not null" json:"status"`
 }

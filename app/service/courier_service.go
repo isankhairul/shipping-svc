@@ -225,7 +225,7 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 	}
 
 	//Set request to entity
-	CourierService := entity.CourierService{
+	courierService := entity.CourierService{
 		//General
 		CourierID:           courier.ID,
 		CourierUId:          input.CourierUId,
@@ -240,7 +240,7 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 		PrescriptionAllowed: input.PrescriptionAllowed,
 		Cancelable:          input.Cancelable,
 		TrackingAvailable:   input.TrackingAvailable,
-		Status:              input.Status,
+		Status:              1, //Default
 
 		//Miscellaneous
 		MaxWeight:        input.MaxWeight,
@@ -256,8 +256,10 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 		EndTime:          input.EndTime,
 		Repickup:         input.Repickup,
 	}
-
-	resultInsert, err := s.courierServiceRepo.CreateCourierService(&CourierService)
+	if input.Status != nil {
+		courierService.Status = *input.Status
+	}
+	resultInsert, err := s.courierServiceRepo.CreateCourierService(&courierService)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, message.ErrDB

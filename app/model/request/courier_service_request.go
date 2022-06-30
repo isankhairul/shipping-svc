@@ -64,7 +64,7 @@ type SaveCourierServiceRequest struct {
 
 	// Status of the Courier Service
 	// in: integer
-	Status int `json:"status"`
+	Status *int `json:"status"`
 
 	// Max Weight of the Courier Service
 	// in: float64
