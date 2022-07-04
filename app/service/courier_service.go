@@ -68,7 +68,7 @@ func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*e
 		CourierApiIntegration: input.CourierApiIntegration,
 		HidePurpose:           input.HidePurpose,
 		UseGeocoodinate:       input.UseGeocoodinate,
-		Status:                1,
+		Status:                input.Status,
 	}
 
 	result, err := s.courierRepo.CreateCourier(&Courier)

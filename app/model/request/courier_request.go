@@ -48,6 +48,11 @@ type SaveCourierRequest struct {
 	// Provide Airwaybill of the Courier
 	// in: integer
 	ProvideAirwaybill int `gorm:"not null;default:0" json:"provide_airwaybill"`
+
+	// Courier status
+	// in: int
+	// required: false
+	Status int `json:"status" binding:"omitempty"`
 }
 
 // swagger:parameters CourierByUIdParam
@@ -120,7 +125,7 @@ type UpdateCourierRequest struct {
 	// Code of the courier
 	// in: string
 	Code string `json:"code"`
-	
+
 	// type of courier
 	// in: string
 	CourierType string `json:"courier_type"`

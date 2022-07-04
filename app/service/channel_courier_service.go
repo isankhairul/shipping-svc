@@ -83,6 +83,7 @@ func (s *ChannelCourierServiceImpl) createChannelCourierInTx(input request.SaveC
 		}
 		_, err = s.channelCourierServices.CreateChannelCourierService(courier, channel, courierService, courierServiceUID.PriceInternal, courierServiceUID.Status)
 		if err != nil {
+			_ = level.Error(logger).Log(err)
 			return nil, message.ErrChannelCourierServiceCreateFailed
 		}
 	}
