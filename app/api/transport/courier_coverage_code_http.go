@@ -26,43 +26,42 @@ func CourierCoverageCodeHttpHandler(s service.CourierCoverageCodeService, logger
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("POST").Path("/courier/courier-coverage-code/").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path(util.PrefixBase + "/courier/courier-coverage-code/").Handler(httptransport.NewServer(
 		ep.Save,
 		decodeSaveCourierCoverageCode,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/courier/courier-coverage-code/").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/courier/courier-coverage-code/").Handler(httptransport.NewServer(
 		ep.List,
 		decodeListCourierCoverageCode,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
 		ep.Show,
 		decodeShowCourierCoverageCode,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path("/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path(util.PrefixBase + "/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
 		ep.Update,
 		decodeUpdateCourierCoverageCode,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("POST").Path("/courier/courier-coverage-code/import").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path(util.PrefixBase + "/courier/courier-coverage-code/import").Handler(httptransport.NewServer(
 		ep.Import,
 		decodeImportCourierCoverageCode,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
-	
 
-	pr.Methods("DELETE").Path("/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
+	pr.Methods("DELETE").Path(util.PrefixBase + "/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
 		ep.Delete,
 		decodeShowCourierCoverageCode,
 		encoder.EncodeResponseHTTP,

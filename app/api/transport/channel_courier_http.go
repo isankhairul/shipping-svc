@@ -8,6 +8,7 @@ import (
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/global"
+	"go-klikdokter/pkg/util"
 	"net/http"
 
 	httptransport "github.com/go-kit/kit/transport/http"
@@ -25,35 +26,35 @@ func ChannelCourierHttpHandler(s service.ChannelCourierService, logger log.Logge
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("GET").Path("/channel/channel-courier/{uid}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-courier/{uid}").Handler(httptransport.NewServer(
 		ep.GetChannelCourier,
 		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("POST").Path("/channel/channel-courier/").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path(util.PrefixBase + "/channel/channel-courier/").Handler(httptransport.NewServer(
 		ep.SaveChannelCourier,
 		decodeSaveChannelCourier,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path("/channel/channel-courier/{uid}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path(util.PrefixBase + "/channel/channel-courier/{uid}").Handler(httptransport.NewServer(
 		ep.UpdateChannelCourier,
 		decodeUpdateChannelCourier,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/channel/channel-courier/").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-courier/").Handler(httptransport.NewServer(
 		ep.ListChannelCouriers,
 		decodePaginationRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
-	
-	pr.Methods("DELETE").Path("/channel/channel-courier/{uid}").Handler(httptransport.NewServer(
+
+	pr.Methods("DELETE").Path(util.PrefixBase + "/channel/channel-courier/{uid}").Handler(httptransport.NewServer(
 		ep.DeleteChannelCourier,
 		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,

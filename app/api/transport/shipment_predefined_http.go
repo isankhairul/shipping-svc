@@ -8,6 +8,7 @@ import (
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/global"
+	"go-klikdokter/pkg/util"
 	"net/http"
 
 	"github.com/gorilla/schema"
@@ -26,14 +27,14 @@ func ShipmentPredefinedHandler(s service.ShipmentPredefinedService, logger log.L
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("PUT").Path("/other/shipment-predefined/{uid}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path(util.PrefixBase + "/other/shipment-predefined/{uid}").Handler(httptransport.NewServer(
 		ep.Update,
 		decodeUpdateShipmentPredefinedRequest,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/other/shipment-predefined").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/other/shipment-predefined").Handler(httptransport.NewServer(
 		ep.List,
 		decodeListShipmentPredefinedRequest,
 		encoder.EncodeResponseHTTP,

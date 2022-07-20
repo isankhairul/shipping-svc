@@ -8,6 +8,7 @@ import (
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/global"
+	"go-klikdokter/pkg/util"
 	"net/http"
 
 	"github.com/gorilla/schema"
@@ -26,35 +27,35 @@ func ChannelHttpHandler(s service.ChannelService, logger log.Logger) http.Handle
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("POST").Path("/channel/channel-app").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path(util.PrefixBase + "/channel/channel-app").Handler(httptransport.NewServer(
 		ep.Save,
 		decodeSaveChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/channel/channel-app").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-app").Handler(httptransport.NewServer(
 		ep.List,
 		decodeListChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/channel/channel-app/{id}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-app/{id}").Handler(httptransport.NewServer(
 		ep.Show,
 		decodeShowChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path("/channel/channel-app/{id}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path(util.PrefixBase + "/channel/channel-app/{id}").Handler(httptransport.NewServer(
 		ep.Update,
 		decodeUpdateChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("DELETE").Path("/channel/channel-app/{id}").Handler(httptransport.NewServer(
+	pr.Methods("DELETE").Path(util.PrefixBase + "/channel/channel-app/{id}").Handler(httptransport.NewServer(
 		ep.Delete,
 		decodeDeleteChannel,
 		encoder.EncodeResponseHTTP,

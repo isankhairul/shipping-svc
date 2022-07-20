@@ -1,9 +1,8 @@
-//  KD Boilerplate Go kit:
+//  Shipping Service:
 //   version: 1.0
 //   title: Boilerplate Go Kit Api
-//  Schemes: http
-//  Host: localhost:5600
-//  BasePath: /
+//  Schemes: http, https
+//  BasePath: /shipment-svc/api/v1
 //  Produces:
 //    - application/json
 //
@@ -15,6 +14,7 @@ import (
 	"go-klikdokter/app/api/initialization"
 	"go-klikdokter/helper/config"
 	"go-klikdokter/helper/consul"
+	"go-klikdokter/pkg/util"
 	"net/http"
 	"os"
 	"os/signal"
@@ -66,6 +66,9 @@ func main() {
 		logger = level.NewInjector(logger, level.InfoValue())
 		logger = log.With(logger, "ts", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
 	}
+
+	//Set Route
+	util.PrefixBase = viper.GetString("route.site")
 
 	// Init DB Connection
 	db, err := initialization.DbInit(logger)
