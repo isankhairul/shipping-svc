@@ -8,6 +8,7 @@ import (
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/global"
+	"go-klikdokter/pkg/util"
 	"net/http"
 
 	httptransport "github.com/go-kit/kit/transport/http"
@@ -25,35 +26,35 @@ func CourierHttpHandler(s service.CourierService, cc service.ChannelCourierServi
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("POST").Path("/courier/courier").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path(util.PrefixBase + "/courier/courier").Handler(httptransport.NewServer(
 		ep.Save,
 		decodeSaveCourier,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/courier/courier").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/courier/courier").Handler(httptransport.NewServer(
 		ep.List,
 		encoder.DecodePaginationRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/courier/courier/{id}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/courier/courier/{id}").Handler(httptransport.NewServer(
 		ep.Show,
 		decodeShowCourier,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path("/courier/courier/{id}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path(util.PrefixBase + "/courier/courier/{id}").Handler(httptransport.NewServer(
 		ep.Update,
 		decodeUpdateCourier,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("DELETE").Path("/courier/courier/{id}").Handler(httptransport.NewServer(
+	pr.Methods("DELETE").Path(util.PrefixBase + "/courier/courier/{id}").Handler(httptransport.NewServer(
 		ep.Delete,
 		decodeDeleteCourier,
 		encoder.EncodeResponseHTTP,
@@ -61,35 +62,35 @@ func CourierHttpHandler(s service.CourierService, cc service.ChannelCourierServi
 	))
 
 	//courier-services
-	pr.Methods("POST").Path("/courier/courier-services").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path(util.PrefixBase + "/courier/courier-services").Handler(httptransport.NewServer(
 		ep.SaveCourierSerivce,
 		decodeSaveCourierService,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/courier/courier-services").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/courier/courier-services").Handler(httptransport.NewServer(
 		ep.ListCourierSerivce,
 		decodeListCourierService,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path("/courier/courier-services/{id}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(util.PrefixBase + "/courier/courier-services/{id}").Handler(httptransport.NewServer(
 		ep.ShowCourierSerivce,
 		decodeShowCourierService,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path("/courier/courier-services/{id}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path(util.PrefixBase + "/courier/courier-services/{id}").Handler(httptransport.NewServer(
 		ep.UpdateCourierSerivce,
 		decodeUpdateCourierService,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("DELETE").Path("/courier/courier-services/{id}").Handler(httptransport.NewServer(
+	pr.Methods("DELETE").Path(util.PrefixBase + "/courier/courier-services/{id}").Handler(httptransport.NewServer(
 		ep.DeleteCourierSerivce,
 		decodeDeleteCourierService,
 		encoder.EncodeResponseHTTP,

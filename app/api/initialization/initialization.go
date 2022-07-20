@@ -7,6 +7,7 @@ import (
 	"go-klikdokter/app/registry"
 	"go-klikdokter/helper/config"
 	"go-klikdokter/helper/database"
+	"go-klikdokter/pkg/util"
 	"net/http"
 
 	"github.com/go-kit/log"
@@ -78,11 +79,11 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	// Routing path
 	mux := http.NewServeMux()
 	mux.Handle("/", swagHttp) //don't delete or change this!!
-	mux.Handle("/courier/", courierHttp)
-	mux.Handle("/other/", shipmentPredefinedHttp)
-	mux.Handle("/courier/courier-coverage-code/", courierCoverageCodeHttp)
-	mux.Handle("/channel/", channelHttp)
-	mux.Handle("/channel/channel-courier/", channelCourierHttp)
+	mux.Handle(util.PrefixBase+"/courier/", courierHttp)
+	mux.Handle(util.PrefixBase+"/other/", shipmentPredefinedHttp)
+	mux.Handle(util.PrefixBase+"/courier/courier-coverage-code/", courierCoverageCodeHttp)
+	mux.Handle(util.PrefixBase+"/channel/", channelHttp)
+	mux.Handle(util.PrefixBase+"/channel/channel-courier/", channelCourierHttp)
 
 	return mux
 }
