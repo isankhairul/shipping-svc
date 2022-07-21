@@ -96,6 +96,8 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 
 	if len(sort) > 0 {
 		query = query.Order(sort)
+	} else {
+		query = query.Order("updated_at DESC")
 	}
 
 	pagination.Limit = limit

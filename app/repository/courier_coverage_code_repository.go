@@ -98,6 +98,8 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 	}
 	if len(sort) > 0 {
 		query = query.Order(sort)
+	} else {
+		query = query.Order("courier_coverage_code.updated_at DESC")
 	}
 
 	pagination.Limit = limit
