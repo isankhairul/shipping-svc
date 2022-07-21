@@ -8,12 +8,10 @@ import (
 	"go-klikdokter/app/repository/repository_mock"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/message"
-	"os"
+	"go-klikdokter/pkg/util/datatype"
 	"testing"
 	"time"
 
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -24,23 +22,17 @@ var courierServiceRepository = &repository_mock.CourierServiceRepositoryMock{Moc
 var svc = service.NewCourierService(logger, baseRepository, courierRepository, courierServiceRepository)
 
 func init() {
-	{
-		logger = log.NewLogfmtLogger(os.Stderr)
-		logger = level.NewFilter(logger, level.AllowAll())
-		logger = level.NewInjector(logger, level.InfoValue())
-		logger = log.With(logger, "ts", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
-	}
-	//db.AutoMigrate(&entity.CourierService{})
 }
 
 func TestCreateCourierService(t *testing.T) {
+	status := 1
 	req := request.SaveCourierServiceRequest{
 		Cancelable:          1,
 		CodAvailable:        1,
 		CourierUId:          "gj2MZ9CBhcHSNVOLpUeqU",
 		CreatedAt:           time.Now(),
 		CreatedBy:           "Test",
-		EndTime:             time.Now(),
+		EndTime:             datatype.Time(""),
 		ETD_Max:             1,
 		ETD_Min:             1,
 		Insurance:           1,
@@ -59,8 +51,8 @@ func TestCreateCourierService(t *testing.T) {
 		ShippingDescription: "Test",
 		ShippingName:        "Test",
 		ShippingType:        "Test",
-		StartTime:           time.Now(),
-		Status:              1,
+		StartTime:           datatype.Time(""),
+		Status:              &status,
 		TrackingAvailable:   1,
 		UpdatedAt:           time.Now(),
 		UpdatedBy:           "Test",
@@ -156,13 +148,14 @@ func TestListCourierService(t *testing.T) {
 }
 
 func TestCreateCourierServiceFail(t *testing.T) {
+	status := 1
 	req := request.SaveCourierServiceRequest{
 		Cancelable:          1,
 		CodAvailable:        1,
 		CourierUId:          "gj2MZ9CBhcHSNVOLpUeqU",
 		CreatedAt:           time.Now(),
 		CreatedBy:           "Test",
-		EndTime:             time.Now(),
+		EndTime:             datatype.Time(""),
 		ETD_Max:             1,
 		ETD_Min:             1,
 		Insurance:           1,
@@ -181,8 +174,8 @@ func TestCreateCourierServiceFail(t *testing.T) {
 		ShippingDescription: "Test",
 		ShippingName:        "Test",
 		ShippingType:        "Test",
-		StartTime:           time.Now(),
-		Status:              1,
+		StartTime:           datatype.Time(""),
+		Status:              &status,
 		TrackingAvailable:   1,
 		UpdatedAt:           time.Now(),
 		UpdatedBy:           "Test",
@@ -212,7 +205,7 @@ func TestUpdateCourierServiceFail(t *testing.T) {
 		Cancelable:          1,
 		CodAvailable:        1,
 		CourierUId:          "gj2MZ9CBhcHSNVOLpUeqU",
-		EndTime:             time.Now(),
+		EndTime:             datatype.Time(""),
 		ETD_Max:             1,
 		ETD_Min:             1,
 		Insurance:           1,
@@ -231,7 +224,7 @@ func TestUpdateCourierServiceFail(t *testing.T) {
 		ShippingDescription: "Test",
 		ShippingName:        "Test",
 		ShippingType:        "Test",
-		StartTime:           time.Now(),
+		StartTime:           datatype.Time(""),
 		Status:              1,
 		TrackingAvailable:   1,
 	}

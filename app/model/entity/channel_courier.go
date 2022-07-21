@@ -28,11 +28,11 @@ type ChannelCourier struct {
 	// in: integer
 	Status int `gorm:"not null;default:1" json:"status"`
 
-	Courier *Courier `json:"courier" gorm:"foreignKey:courier_id"`
+	Courier *Courier `json:"-" gorm:"foreignKey:courier_id"`
 
-	Channel *Channel `json:"channel" gorm:"foreignKey:channel_id"`
+	Channel *Channel `json:"-" gorm:"foreignKey:channel_id"`
 
-	ChannelCourierServices []*ChannelCourierService `json:"channel_courier_services" gorm:"foreignKey:channel_id"`
+	ChannelCourierServices []*ChannelCourierService `json:"-" gorm:"foreignKey:channel_id"`
 }
 
 // swagger: model ChannelCourierServiceDTO
@@ -59,13 +59,13 @@ func ToChannelCourierServiceDTO(channelCourierService *ChannelCourierService, co
 
 // swagger: model ChannelCourierDTO
 type ChannelCourierDTO struct {
-	Uid                string               `json:"uid"`
-	ChannelName        string               `json:"channel_name"`
-	ChannelCode        string               `json:"channel_code"`
-	CourierName        string               ` json:"courier_name"`
-	PrioritySort       int                  `json:"priority_sort"`
-	HidePurpose        int                  `json:"hide_purpose"`
-	Status             int                  `json:"status"`
+	Uid                string                      `json:"uid"`
+	ChannelName        string                      `json:"channel_name"`
+	ChannelCode        string                      `json:"channel_code"`
+	CourierName        string                      ` json:"courier_name"`
+	PrioritySort       int                         `json:"priority_sort"`
+	HidePurpose        int                         `json:"hide_purpose"`
+	Status             int                         `json:"status"`
 	CourierServiceDTOs []*ChannelCourierServiceDTO `json:"courier_services"`
 }
 

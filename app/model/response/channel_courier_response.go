@@ -11,3 +11,9 @@ type ChannelCourierPaginationReponse struct {
 	TotalPage    int   `json:"total_page"`
 	Items        []*entity.ChannelCourierDTO
 }
+
+// swagger:response ChannelCourierDTO
+type ChannelCourierDTOResponse struct {
+	// in: body
+	Response entity.ChannelCourierDTO
+}

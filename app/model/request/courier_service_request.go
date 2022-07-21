@@ -2,6 +2,7 @@ package request
 
 import (
 	"go-klikdokter/helper/message"
+	"go-klikdokter/pkg/util/datatype"
 	"time"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
@@ -103,12 +104,12 @@ type SaveCourierServiceRequest struct {
 	InsuranceFee float64 `json:"insurance_fee"`
 
 	// Start Time of the Courier Service
-	// in: time
-	StartTime time.Time `json:"start_time"`
+	// example:"15:04:05+07"
+	StartTime datatype.Time `json:"start_time"`
 
 	// End Time of the Courier Service
-	// in: time
-	EndTime time.Time `json:"end_time"`
+	// example:"15:04:05+07"
+	EndTime datatype.Time `json:"end_time"`
 
 	// Repickup Fee of the Courier Service
 	// in: float64
@@ -149,7 +150,7 @@ type CourierServiceListRequest struct {
 	// in: int32
 	Page int `schema:"page" binding:"omitempty,numeric,min=1"`
 
-	// Sort fields, example: name asc, uom desc
+	// Sort fields
 	// in: string
 	Sort string `schema:"sort" binding:"omitempty"`
 
@@ -274,12 +275,14 @@ type UpdateCourierServiceRequest struct {
 	InsuranceFee float64 `json:"insurance_fee"`
 
 	// Start Time of the Courier Service
+	// example:"15:04:05+07"
 	// in: time
-	StartTime time.Time `json:"start_time"`
+	StartTime datatype.Time `json:"start_time"`
 
 	// End Time of the Courier Service
+	// example:"15:04:05+07"
 	// in: time
-	EndTime time.Time `json:"end_time"`
+	EndTime datatype.Time `json:"end_time"`
 
 	// Repickup Fee of the Courier Service
 	// in: float64

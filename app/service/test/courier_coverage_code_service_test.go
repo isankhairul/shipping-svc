@@ -8,11 +8,8 @@ import (
 	"go-klikdokter/app/repository/repository_mock"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/message"
-	"os"
 	"testing"
 
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -22,13 +19,6 @@ var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeReposito
 var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
 
 func init() {
-	{
-		logger = log.NewLogfmtLogger(os.Stderr)
-		logger = level.NewFilter(logger, level.AllowAll())
-		logger = level.NewInjector(logger, level.InfoValue())
-		logger = log.With(logger, "ts", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
-	}
-	//db.AutoMigrate(&entity.CourierCoverageCode{})
 }
 
 func TestCreateCourierCoverageCode(t *testing.T) {

@@ -225,6 +225,8 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 
 // swagger:route POST /courier/courier-coverage-code/import Courier-Coverage-Code ImportCourierCoverageCodeRequest
 // Import courier coverage code by CSV file
+// consumes:
+// - multipart/form-data
 //
 // responses:
 //  400: errorResponse

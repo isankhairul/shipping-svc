@@ -2,7 +2,7 @@ package entity
 
 import "go-klikdokter/app/model/base"
 
-// swagger:model Courier
+// swagger:model ShippmentPredefined
 type ShippmentPredefined struct {
 	base.BaseIDModel
 	// Name of the ShippmentPredefined
@@ -16,7 +16,7 @@ type ShippmentPredefined struct {
 	// Type of the Courier
 	// in: string
 	Title string `gorm:"not null,nvarchar(100)" json:"title"`
-	
+
 	// Note of the Courier
 	// in: string
 	Note string `gorm:"null,nvarchar(100)" json:"note"`
