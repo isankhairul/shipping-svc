@@ -28,9 +28,9 @@ type ChannelCourierService struct {
 	// in: integer
 	Status int `gorm:"not null;default:1" json:"status"`
 
-	Courier *Courier `json:"courier" gorm:"foreignKey:courier_id"`
+	Courier *Courier `json:"-" gorm:"foreignKey:courier_id"`
 
-	Channel *Channel `json:"channel" gorm:"foreignKey:channel_id"`
+	Channel *Channel `json:"-" gorm:"foreignKey:channel_id"`
 
-	CourierService *CourierService `json:"courier_service" gorm:"foreignKey:courier_service_id"`
+	CourierService *CourierService `json:"-" gorm:"foreignKey:courier_service_id"`
 }

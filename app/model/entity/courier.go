@@ -39,9 +39,9 @@ type Courier struct {
 
 	// Status of the Courier
 	// in: integer
-	Status int `gorm:"not null;default:1" json:"status"`
-	
-	CourierCoverageCode []*CourierCoverageCode`gorm:"foreignKey:courier_uid" json:"course_coverage_codes"`
+	Status *int `gorm:"not null;default:1" json:"status"`
 
-	CourierServices []*CourierService `json:"course_services" gorm:"foreignKey:courier_id"`
+	CourierCoverageCode []*CourierCoverageCode `gorm:"foreignKey:courier_uid" json:"-"`
+
+	CourierServices []*CourierService `json:"-" gorm:"foreignKey:courier_id"`
 }

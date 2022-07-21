@@ -75,13 +75,6 @@ definitions:
     x-go-package: go-klikdokter/app/model/entity
   ChannelCourier:
     properties:
-      channel:
-        $ref: '#/definitions/Channel'
-      channel_courier_services:
-        items:
-          $ref: '#/definitions/ChannelCourierService'
-        type: array
-        x-go-name: ChannelCourierServices
       channel_id:
         description: |-
           Id of the Channel
@@ -89,8 +82,6 @@ definitions:
         format: uint64
         type: integer
         x-go-name: ChannelID
-      courier:
-        $ref: '#/definitions/Courier'
       courier_id:
         description: |-
           Id of the Courier
@@ -138,10 +129,42 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/entity
+  ChannelCourierDTO:
+    description: 'swagger: model ChannelCourierDTO'
+    properties:
+      channel_code:
+        type: string
+        x-go-name: ChannelCode
+      channel_name:
+        type: string
+        x-go-name: ChannelName
+      courier_name:
+        type: string
+        x-go-name: CourierName
+      courier_services:
+        items:
+          $ref: '#/definitions/ChannelCourierServiceDTO'
+        type: array
+        x-go-name: CourierServiceDTOs
+      hide_purpose:
+        format: int64
+        type: integer
+        x-go-name: HidePurpose
+      priority_sort:
+        format: int64
+        type: integer
+        x-go-name: PrioritySort
+      status:
+        format: int64
+        type: integer
+        x-go-name: Status
+      uid:
+        type: string
+        x-go-name: Uid
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
   ChannelCourierService:
     properties:
-      channel:
-        $ref: '#/definitions/Channel'
       channel_id:
         description: |-
           Id of the Channel
@@ -149,8 +172,6 @@ definitions:
         format: uint64
         type: integer
         x-go-name: ChannelID
-      courier:
-        $ref: '#/definitions/Courier'
       courier_id:
         description: |-
           Id of the Courier
@@ -158,8 +179,6 @@ definitions:
         format: uint64
         type: integer
         x-go-name: CourierID
-      courier_service:
-        $ref: '#/definitions/CourierService'
       courier_service_id:
         description: |-
           Id of the Courier
@@ -200,14 +219,65 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/entity
+  ChannelCourierServiceDTO:
+    description: 'swagger: model ChannelCourierServiceDTO'
+    properties:
+      courier_service_uid:
+        type: string
+        x-go-name: CourierServiceUID
+      price_internal:
+        format: double
+        type: number
+        x-go-name: PriceInternal
+      shipping_code:
+        type: string
+        x-go-name: ShippingCode
+      shipping_name:
+        type: string
+        x-go-name: ShippingName
+      shipping_type:
+        type: string
+        x-go-name: ShippingType
+      status:
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
   Courier:
     properties:
       code:
         description: |-
-          Code of the ShippmentPredefined
+          Code of the Courier
           in: string
         type: string
         x-go-name: Code
+      courier_api_intergration:
+        description: |-
+          Courier Api Integration of the Courier. Need to set column becase snake-case cannot understand convetnion.
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: CourierApiIntegration
+      courier_name:
+        description: |-
+          Name of the Courier
+          in: string
+        type: string
+        x-go-name: CourierName
+      courier_type:
+        description: |-
+          Type of the Courier
+          in: string
+        type: string
+        x-go-name: CourierType
+      hide_purpose:
+        description: |-
+          Hide purpose of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: HidePurpose
       id:
         description: |-
           gorm.Model
@@ -219,39 +289,40 @@ definitions:
       is_deleted:
         type: boolean
         x-go-name: IsDeleted
-      note:
+      logo:
         description: |-
-          Note of the Courier
+          Logo of the Courier
           in: string
         type: string
-        x-go-name: Note
+        x-go-name: Logo
+      provide_airwaybill:
+        description: |-
+          Provide Airwaybill of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: ProvideAirwaybill
       status:
         description: |-
-          Status of the ShippmentPredefined
+          Status of the Courier
           in: integer
         format: int64
         type: integer
         x-go-name: Status
-      title:
-        description: |-
-          Type of the Courier
-          in: string
-        type: string
-        x-go-name: Title
-      type:
-        description: |-
-          Name of the ShippmentPredefined
-          in: string
-        type: string
-        x-go-name: Type
       uid:
         description: |-
           UID of the a model
           in: int64
         type: string
         x-go-name: UID
+      use_geocoodinate:
+        description: |-
+          Geo Coodinate of the Courier
+          in: string
+        format: int64
+        type: integer
+        x-go-name: UseGeocoodinate
     type: object
-    x-go-name: ShippmentPredefined
     x-go-package: go-klikdokter/app/model/entity
   CourierCoverageCode:
     properties:
@@ -357,6 +428,8 @@ definitions:
     x-go-package: go-klikdokter/app/model/entity
   CourierService:
     properties:
+      _:
+        $ref: '#/definitions/Courier'
       cancelable:
         description: |-
           Cancelable of the Courier Service
@@ -371,8 +444,6 @@ definitions:
         format: int64
         type: integer
         x-go-name: CodAvailable
-      courier:
-        $ref: '#/definitions/Courier'
       courier_uid:
         description: |-
           Courier UId of the Courier Service
@@ -380,12 +451,7 @@ definitions:
         type: string
         x-go-name: CourierUId
       end_time:
-        description: |-
-          End Time of the Courier Service
-          in: time
-        format: date-time
-        type: string
-        x-go-name: EndTime
+        $ref: '#/definitions/Time'
       etd_max:
         description: |-
           ETD Max of the Courier Service
@@ -518,12 +584,7 @@ definitions:
         type: string
         x-go-name: ShippingType
       start_time:
-        description: |-
-          Start Time of the Courier Service
-          in: time
-        format: date-time
-        type: string
-        x-go-name: StartTime
+        $ref: '#/definitions/Time'
       status:
         description: |-
           Status of the Courier Service
@@ -792,7 +853,7 @@ definitions:
         x-go-name: Status
     type: object
     x-go-package: go-klikdokter/app/model/request
-  SaveCourierRequest:
+  SaveCourierRequestBody:
     properties:
       code:
         description: |-
@@ -860,6 +921,7 @@ definitions:
         type: integer
         x-go-name: UseGeocoodinate
     type: object
+    x-go-name: SaveCourierRequest
     x-go-package: go-klikdokter/app/model/request
   SaveCourierServiceRequest:
     properties:
@@ -897,12 +959,7 @@ definitions:
         type: string
         x-go-name: CreatedBy
       end_time:
-        description: |-
-          End Time of the Courier Service
-          in: time
-        format: date-time
-        type: string
-        x-go-name: EndTime
+        $ref: '#/definitions/Time'
       etd_max:
         description: |-
           ETD Max of the Courier Service
@@ -1024,12 +1081,7 @@ definitions:
         type: string
         x-go-name: ShippingType
       start_time:
-        description: |-
-          Start Time of the Courier Service
-          in: time
-        format: date-time
-        type: string
-        x-go-name: StartTime
+        $ref: '#/definitions/Time'
       status:
         description: |-
           Status of the Courier Service
@@ -1059,6 +1111,58 @@ definitions:
         x-go-name: UpdatedBy
     type: object
     x-go-package: go-klikdokter/app/model/request
+  ShippmentPredefined:
+    properties:
+      code:
+        description: |-
+          Code of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Code
+      id:
+        description: |-
+          gorm.Model
+          Id of as primary key
+          in: int64
+        format: uint64
+        type: integer
+        x-go-name: ID
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      note:
+        description: |-
+          Note of the Courier
+          in: string
+        type: string
+        x-go-name: Note
+      status:
+        description: |-
+          Status of the ShippmentPredefined
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: Status
+      title:
+        description: |-
+          Type of the Courier
+          in: string
+        type: string
+        x-go-name: Title
+      type:
+        description: |-
+          Name of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Type
+      uid:
+        description: |-
+          UID of the a model
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
   SuccessResponse:
     properties:
       data:
@@ -1076,6 +1180,10 @@ definitions:
     type: object
     x-go-name: responseHttp
     x-go-package: go-klikdokter/app/model/base
+  Time:
+    type: string
+    x-go-package: go-klikdokter/pkg/util/datatype
+    example: "15:04:05+07"
   UnauthorizedResponse:
     type: object
     x-go-package: go-klikdokter/app/model/base/encoder
@@ -1315,7 +1423,9 @@ paths:
         in: query
         name: Page
         type: integer
-      - example: name asc, uom desc
+      - description: |-
+          Sort fields
+          in: string
         in: query
         name: Sort
         type: string
@@ -1488,12 +1598,16 @@ paths:
         name: page
         type: integer
         x-go-name: Page
-      - example: name asc, uom desc
+      - description: |-
+          Sort fields
+          in: string
         in: query
         name: sort
         type: string
         x-go-name: Sort
-      - example: name asc, uom desc
+      - description: |-
+          Sort fields
+          in: string
         in: query
         name: dir
         type: string
@@ -1529,9 +1643,7 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          description: ChannelCourier
-          schema:
-            $ref: '#/definitions/ChannelCourier'
+          $ref: '#/responses/ChannelCourierDTO'
         "401":
           description: errorResponse
           schema:
@@ -1642,7 +1754,9 @@ paths:
         name: page
         type: integer
         x-go-name: Page
-      - example: name asc, uom desc
+      - description: |-
+          Sort fields
+          in: string
         in: query
         name: sort
         type: string
@@ -1693,7 +1807,7 @@ paths:
       - in: body
         name: body
         schema:
-          $ref: '#/definitions/SaveCourierRequest'
+          $ref: '#/definitions/SaveCourierRequestBody'
         x-go-name: Body
       responses:
         "201":
@@ -1731,7 +1845,9 @@ paths:
         name: page
         type: integer
         x-go-name: Page
-      - example: name asc, uom desc
+      - description: |-
+          Sort fields
+          in: string
         in: query
         name: sort
         type: string
@@ -1894,6 +2010,8 @@ paths:
       - Courier-Coverage-Code
   /courier/courier-coverage-code/import:
     post:
+      consumes:
+      - multipart/form-data
       description: Import courier coverage code by CSV file
       operationId: ImportCourierCoverageCodeRequest
       parameters:
@@ -1935,7 +2053,9 @@ paths:
         in: query
         name: Page
         type: integer
-      - example: name asc, uom desc
+      - description: |-
+          Sort fields
+          in: string
         in: query
         name: Sort
         type: string
@@ -2156,7 +2276,9 @@ paths:
         in: query
         name: Page
         type: integer
-      - example: name asc, uom desc
+      - description: |-
+          Sort fields
+          in: string
         in: query
         name: Sort
         type: string
@@ -2226,6 +2348,10 @@ paths:
 produces:
 - application/json
 responses:
+  ChannelCourierDTO:
+    description: ""
+    schema:
+      $ref: '#/definitions/ChannelCourierDTO'
   ImportStatus:
     description: ""
 schemes:

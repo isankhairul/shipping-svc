@@ -16,7 +16,7 @@ type ListShipmentPredefinedRequest struct {
 	// in: int32
 	Page int `schema:"page" binding:"omitempty,numeric,min=1"`
 
-	// Sort fields, example: name asc, uom desc
+	// Sort fields
 	// in: string
 	Sort string `schema:"sort" binding:"omitempty"`
 

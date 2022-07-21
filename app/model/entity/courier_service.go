@@ -2,7 +2,7 @@ package entity
 
 import (
 	"go-klikdokter/app/model/base"
-	"time"
+	"go-klikdokter/pkg/util/datatype"
 )
 
 type CourierServiceDetailDTO struct {
@@ -12,7 +12,7 @@ type CourierServiceDetailDTO struct {
 	// in: string
 	CourierName string `gorm:"not null" json:"courier_name"`
 
-		// Courier UId of the Courier Service
+	// Courier UId of the Courier Service
 	// in: string
 	CourierType string `gorm:"not null" json:"courier_type"`
 
@@ -66,7 +66,7 @@ type CourierServiceDetailDTO struct {
 
 	// Status of the Courier Service
 	// in: integer
-	Status int `gorm:"not null;default:1" json:"status"`
+	Status *int `gorm:"not null;default:1" json:"status"`
 
 	// Max Weight of the Courier Service
 	// in: float64
@@ -105,19 +105,19 @@ type CourierServiceDetailDTO struct {
 	InsuranceFee float64 `gorm:"not null;default:0" json:"insurance_fee"`
 
 	// Start Time of the Courier Service
-	// in: time
-	StartTime time.Time `gorm:"not null" json:"start_time"`
+	// example:"15:04:05+07"
+	StartTime datatype.Time `gorm:"null" json:"start_time"`
 
 	// End Time of the Courier Service
-	// in: time
-	EndTime time.Time `gorm:"not null" json:"end_time"`
+	// example:"15:04:05+07"
+	EndTime datatype.Time `gorm:"null" json:"end_time"`
 
 	// Repickup Fee of the Courier Service
 	// in: float64
 	Repickup float64 `gorm:"not null;default:0" json:"repickup"`
 }
 
-// swagger:model Courier Service
+// swagger:model CourierService
 type CourierService struct {
 	base.BaseIDModel
 
@@ -175,7 +175,7 @@ type CourierService struct {
 
 	// Status of the Courier Service
 	// in: integer
-	Status int `gorm:"not null;default:1" json:"status"`
+	Status *int `gorm:"not null;default:1" json:"status"`
 
 	// Max Weight of the Courier Service
 	// in: float64
@@ -215,15 +215,15 @@ type CourierService struct {
 
 	// Start Time of the Courier Service
 	// in: time
-	StartTime time.Time `gorm:"not null" json:"start_time"`
+	StartTime datatype.Time `gorm:"null" json:"start_time"`
 
 	// End Time of the Courier Service
 	// in: time
-	EndTime time.Time `gorm:"not null" json:"end_time"`
+	EndTime datatype.Time `gorm:"null" json:"end_time"`
 
 	// Repickup Fee of the Courier Service
 	// in: float64
 	Repickup float64 `gorm:"not null;default:0" json:"repickup"`
 
-	Courier *Courier `json:"courier" gorm:"foreignKey:courier_id"`
+	Courier *Courier `json:"_" gorm:"foreignKey:courier_id"`
 }

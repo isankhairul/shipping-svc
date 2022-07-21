@@ -129,11 +129,11 @@ type ChannelCourierListRequest struct {
 	// in: int32
 	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
-	// Sort fields, example: name asc, uom desc
+	// Sort fields
 	// in: string
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 
-	// Sort fields, example: name asc, uom desc
+	// Sort fields
 	// in: string
 	Dir string `schema:"dir" binding:"omitempty" json:"dir"`
 }

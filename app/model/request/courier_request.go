@@ -12,6 +12,7 @@ type ReqCourierBody struct {
 	Body SaveCourierRequest `json:"body"`
 }
 
+// swagger:model SaveCourierRequestBody
 type SaveCourierRequest struct {
 	// Name of the courier
 	// in: string
@@ -81,7 +82,7 @@ type CourierListRequest struct {
 	// in: int32
 	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
-	// Sort fields, example: name asc, uom desc
+	// Sort fields
 	// in: string
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 

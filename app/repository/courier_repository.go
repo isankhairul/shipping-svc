@@ -43,6 +43,9 @@ func (r *courierRepo) FindByCode(code string) (*entity.Courier, error) {
 	var courier entity.Courier
 	err := r.base.GetDB().Where("code=?", code).First(&courier).Error
 	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return nil, nil
+		}
 		return nil, err
 	}
 

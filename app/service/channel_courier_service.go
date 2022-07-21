@@ -43,7 +43,7 @@ func NewChannelCourierService(
 //
 // responses:
 //  401: errorResponse
-//  200: ChannelCourier
+//  200: ChannelCourierDTO
 func (s *ChannelCourierServiceImpl) CreateChannelCourier(input request.SaveChannelCourierRequest) (*entity.ChannelCourierDTO, message.Message) {
 	ret, msg := s.createChannelCourierInTx(input)
 	return ret, msg
@@ -78,7 +78,8 @@ func (s *ChannelCourierServiceImpl) createChannelCourierInTx(input request.SaveC
 		if courierService == nil {
 			return nil, message.ErrNoDataCourierService
 		}
-		if err != nil || courierService.Status == 0 {
+
+		if err != nil || *(courierService.Status) == 0 {
 			return nil, message.ErrCourierServiceHasInvalidStatus
 		}
 		_, err = s.channelCourierServices.CreateChannelCourierService(courier, channel, courierService, courierServiceUID.PriceInternal, courierServiceUID.Status)
@@ -190,7 +191,8 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 		if courierService == nil {
 			return nil, message.ErrNoDataCourierService
 		}
-		if err != nil || courierService.Status == 0 {
+
+		if err != nil || *(courierService.Status) == 0 {
 			return nil, message.ErrCourierServiceHasInvalidStatus
 		}
 		_, err = s.channelCourierServices.CreateChannelCourierService(cur.Courier, cur.Channel, courierService,

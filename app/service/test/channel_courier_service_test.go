@@ -8,11 +8,8 @@ import (
 	"go-klikdokter/app/repository/repository_mock"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/message"
-	"os"
 	"testing"
 
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -23,12 +20,6 @@ var courierServiceRepo = &repository_mock.CourierServiceRepositoryMock{Mock: moc
 var channelCourierService = service.NewChannelCourierService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
 
 func init() {
-	{
-		logger = log.NewLogfmtLogger(os.Stderr)
-		logger = level.NewFilter(logger, level.AllowAll())
-		logger = level.NewInjector(logger, level.InfoValue())
-		logger = log.With(logger, "ts", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
-	}
 }
 
 func TestCreateChannelCourier(t *testing.T) {
@@ -57,7 +48,8 @@ func TestCreateChannelCourier(t *testing.T) {
 
 	//return nil when creating
 	channelCourierRepo.Mock.On("GetChannelCourierByIds", mock.Anything, mock.Anything).Return(nil)
-	courierServiceRepo.Mock.On("FindByUid", mock.Anything).Return(entity.CourierService{Status: 1})
+	status := 1
+	courierServiceRepo.Mock.On("FindByUid", mock.Anything).Return(entity.CourierService{Status: &status})
 	channelCourierServiceRepo.Mock.
 		On("CreateChannelCourierService", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 		Return(&entity.ChannelCourierService{Courier: courier, Channel: channel})
@@ -107,7 +99,9 @@ func TestUpdateChannelCourier(t *testing.T) {
 
 	//return nil when creating
 	channelCourierRepo.Mock.On("GetChannelCourierByIds", mock.Anything, mock.Anything).Return(nil)
-	courierServiceRepo.Mock.On("FindByUid", mock.Anything).Return(entity.CourierService{Status: 1})
+
+	status := 1
+	courierServiceRepo.Mock.On("FindByUid", mock.Anything).Return(entity.CourierService{Status: &status})
 	channelCourierServiceRepo.Mock.
 		On("CreateChannelCourierService", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 		Return(&entity.ChannelCourierService{Courier: courier, Channel: channel, PriceInternal: 7})
@@ -415,7 +409,9 @@ func TestCreateChannelCourierWithInvalidCourierServiceStatus(t *testing.T) {
 
 	//return nil when creating
 	channelCourierRepo.Mock.On("GetChannelCourierByIds", mock.Anything, mock.Anything).Return(nil)
-	courierServiceRepo.Mock.On("FindByUid", mock.Anything).Return(entity.CourierService{Status: 0})
+
+	status := 0
+	courierServiceRepo.Mock.On("FindByUid", mock.Anything).Return(entity.CourierService{Status: &status})
 	channelCourierServiceRepo.Mock.
 		On("CreateChannelCourierService", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 		Return(&entity.ChannelCourierService{Courier: courier, Channel: channel})
@@ -511,7 +507,9 @@ func TestUpdateChannelCourierFailedWithInvalidCourierServiceStatus(t *testing.T)
 	}
 	channelCourierRepo.Mock.On("UpdateChannelCourier", mock.Anything, mock.Anything).Return(&entity.ChannelCourier{})
 	channelCourierRepo.Mock.On("GetChannelCourierByUID", mock.Anything).Return(nil)
-	courierServiceRepo.Mock.On("FindByUid", mock.Anything).Return(entity.CourierService{Status: 0})
+
+	status := 0
+	courierServiceRepo.Mock.On("FindByUid", mock.Anything).Return(entity.CourierService{Status: &status})
 	result, msg := channelCourierService.UpdateChannelCourier(input)
 
 	assert.Nil(t, result)

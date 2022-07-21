@@ -8,22 +8,13 @@ import (
 	"go-klikdokter/app/repository/repository_mock"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/message"
-	"os"
 	"testing"
 
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
 func init() {
-	{
-		logger = log.NewLogfmtLogger(os.Stderr)
-		logger = level.NewFilter(logger, level.AllowAll())
-		logger = level.NewInjector(logger, level.InfoValue())
-		logger = log.With(logger, "ts", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
-	}
 }
 
 func TestUpdateShipmentPredefined(t *testing.T) {

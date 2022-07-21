@@ -54,6 +54,12 @@ func NewCourierService(
 func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*entity.Courier, message.Message) {
 	logger := log.With(s.logger, "CourierService", "CreateCourier")
 	courier, err := s.courierRepo.FindByCode(input.Code)
+
+	if err != nil {
+		_ = level.Error(logger).Log(err)
+		return nil, message.ErrDB
+	}
+
 	if courier != nil {
 		return nil, message.ErrDuplicatedCourier
 	}
@@ -68,7 +74,7 @@ func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*e
 		CourierApiIntegration: input.CourierApiIntegration,
 		HidePurpose:           input.HidePurpose,
 		UseGeocoodinate:       input.UseGeocoodinate,
-		Status:                input.Status,
+		Status:                &input.Status,
 	}
 
 	result, err := s.courierRepo.CreateCourier(&Courier)
@@ -225,6 +231,7 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 	}
 
 	//Set request to entity
+	defaultStatus := 1
 	courierService := entity.CourierService{
 		//General
 		CourierID:           courier.ID,
@@ -240,7 +247,7 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 		PrescriptionAllowed: input.PrescriptionAllowed,
 		Cancelable:          input.Cancelable,
 		TrackingAvailable:   input.TrackingAvailable,
-		Status:              1, //Default
+		Status:              &defaultStatus, //Default
 
 		//Miscellaneous
 		MaxWeight:        input.MaxWeight,
@@ -257,7 +264,7 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 		Repickup:         input.Repickup,
 	}
 	if input.Status != nil {
-		courierService.Status = *input.Status
+		courierService.Status = input.Status
 	}
 	resultInsert, err := s.courierServiceRepo.CreateCourierService(&courierService)
 	if err != nil {
