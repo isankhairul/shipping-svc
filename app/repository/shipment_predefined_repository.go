@@ -45,6 +45,8 @@ func (r *ShipmentPredefinedRepositoryImpl) GetAll(limit int, page int, sort stri
 
 	if len(sort) > 0 {
 		query = query.Order(sort)
+	} else {
+		query = query.Order("updated_at DESC")
 	}
 
 	var count int64

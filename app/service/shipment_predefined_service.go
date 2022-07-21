@@ -34,7 +34,7 @@ func NewShipmentPredefinedService(
 func (s *ShipmentPredefinedServiceImpl) CreateShipmentPredefined(input request.CreateShipmentPredefinedRequest) (*entity.ShippmentPredefined, message.Message) {
 	logger := log.With(s.logger, "ShipmentPredefinedService", "Create")
 	var count int64
-	_ = s.baseRepo.GetDB().Where(&entity.ShippmentPredefined{}).Count(&count)
+	_ = s.baseRepo.GetDB().Model(&entity.ShippmentPredefined{}).Count(&count)
 	if count > 0 {
 		return nil, message.ErrDataExists
 	}

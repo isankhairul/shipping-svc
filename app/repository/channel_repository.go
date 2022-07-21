@@ -70,6 +70,8 @@ func (r *channelRepo) FindAll(limit int, page int, sort string) ([]entity.Channe
 	query := r.base.GetDB()
 	if len(sort) > 0 {
 		query = query.Order(sort)
+	} else {
+		query = query.Order("updated_at DESC")
 	}
 	pagination.Limit = limit
 	pagination.Page = page
@@ -122,6 +124,8 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 
 	if len(sort) > 0 {
 		query = query.Order(sort)
+	} else {
+		query = query.Order("updated_at DESC")
 	}
 
 	pagination.Limit = limit

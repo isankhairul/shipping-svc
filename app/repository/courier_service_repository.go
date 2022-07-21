@@ -71,6 +71,8 @@ func (r *courierServiceRepo) FindAll(limit int, page int, sort string) ([]entity
 	query := r.base.GetDB()
 	if len(sort) > 0 {
 		query = query.Order(sort)
+	} else {
+		query = query.Order("updated_at DESC")
 	}
 	pagination.Limit = limit
 	pagination.Page = page
@@ -149,6 +151,8 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 
 	if len(sort) > 0 {
 		query = query.Order(sort)
+	} else {
+		query = query.Order("courier_service.updated_at DESC")
 	}
 
 	pagination.Limit = limit

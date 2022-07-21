@@ -140,6 +140,8 @@ func (r *ChannelCourierRepositoryImpl) FindByPagination(limit int, page int, sor
 
 	if len(sort) > 0 {
 		query = query.Order(sort)
+	} else {
+		query = query.Order("updated_at DESC")
 	}
 
 	pagination.Limit = limit
