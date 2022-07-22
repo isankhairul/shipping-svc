@@ -49,6 +49,14 @@ definitions:
         format: uint64
         type: integer
         x-go-name: ID
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
       is_deleted:
         type: boolean
         x-go-name: IsDeleted
@@ -286,6 +294,14 @@ definitions:
         format: uint64
         type: integer
         x-go-name: ID
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
       is_deleted:
         type: boolean
         x-go-name: IsDeleted
@@ -474,6 +490,14 @@ definitions:
         format: uint64
         type: integer
         x-go-name: ID
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
       insurance:
         description: |-
           Insurance of the Courier Service
@@ -652,6 +676,11 @@ definitions:
   InvalidRequestDataResponse:
     type: object
     x-go-package: go-klikdokter/app/model/base/encoder
+  JSONB:
+    items:
+      type: object
+    type: array
+    x-go-package: go-klikdokter/pkg/util/datatype
   MetaResponse:
     properties:
       code:
@@ -764,6 +793,14 @@ definitions:
           in: string
         type: string
         x-go-name: Description
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
       logo:
         description: |-
           Logo of Channel
@@ -887,6 +924,14 @@ definitions:
         format: int64
         type: integer
         x-go-name: HidePurpose
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
       logo:
         description: |-
           Logo of courier
@@ -974,6 +1019,14 @@ definitions:
         format: double
         type: number
         x-go-name: ETD_Min
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
       insurance:
         description: |-
           Insurance of the Courier Service
@@ -1244,6 +1297,14 @@ definitions:
           in: string
         type: string
         x-go-name: Description
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
       logo:
         description: |-
           Logo of Channel

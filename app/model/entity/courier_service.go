@@ -115,6 +115,15 @@ type CourierServiceDetailDTO struct {
 	// Repickup Fee of the Courier Service
 	// in: float64
 	Repickup float64 `gorm:"not null;default:0" json:"repickup"`
+
+	// Image UID
+	// in: string
+	ImageUID string `gorm:"size:50;null" json:"image_uid"`
+
+	// Image Path
+	// in: string
+	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
+	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
 }
 
 // swagger:model CourierService
@@ -224,6 +233,15 @@ type CourierService struct {
 	// Repickup Fee of the Courier Service
 	// in: float64
 	Repickup float64 `gorm:"not null;default:0" json:"repickup"`
+
+	// Image UID
+	// in: string
+	ImageUID string `gorm:"size:50;null" json:"image_uid"`
+
+	// Image Path
+	// in: string
+	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
+	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
 
 	Courier *Courier `json:"_" gorm:"foreignKey:courier_id"`
 }

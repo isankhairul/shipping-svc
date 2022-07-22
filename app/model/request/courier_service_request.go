@@ -130,6 +130,15 @@ type SaveCourierServiceRequest struct {
 	// Updated By Type of the Courier Service
 	// in: string
 	UpdatedBy string `json:"updated_by"`
+
+	// Image UID
+	// in: string
+	ImageUID string `gorm:"size:50;null" json:"image_uid"`
+
+	// Image Path
+	// in: string
+	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
+	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
 }
 
 // swagger:parameters courier service
@@ -287,6 +296,15 @@ type UpdateCourierServiceRequest struct {
 	// Repickup Fee of the Courier Service
 	// in: float64
 	Repickup float64 `json:"repickup"`
+
+	// Image UID
+	// in: string
+	ImageUID string `gorm:"size:50;null" json:"image_uid"`
+
+	// Image Path
+	// in: string
+	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
+	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
 }
 
 // swagger:parameters CourierServiceRequestGetByUid

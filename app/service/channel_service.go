@@ -122,6 +122,8 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 		Description: input.Description,
 		Logo:        input.Logo,
 		Status:      1, //Default
+		ImageUID:    input.ImageUID,
+		ImagePath:   input.ImagePath,
 	}
 	if input.Status != nil {
 		channel.Status = *input.Status
@@ -171,6 +173,8 @@ func (s *ChannelServiceImpl) UpdateChannel(input request.UpdateChannelRequest) m
 		"description":  input.Description,
 		"logo":         input.Logo,
 		"status":       input.Status,
+		"image_uid":    input.ImageUID,
+		"image_path":   input.ImagePath,
 	}
 
 	err = s.channelRepo.Update(uid, data)
