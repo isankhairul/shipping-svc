@@ -2,6 +2,7 @@ package request
 
 import (
 	"go-klikdokter/helper/message"
+	"go-klikdokter/pkg/util/datatype"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
 )
@@ -54,6 +55,15 @@ type SaveCourierRequest struct {
 	// in: int
 	// required: false
 	Status int `json:"status" binding:"omitempty"`
+
+	// Image UID
+	// in: string
+	ImageUID string `gorm:"size:50;null" json:"image_uid"`
+
+	// Image Path
+	// in: string
+	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
+	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
 }
 
 // swagger:parameters CourierByUIdParam
@@ -150,6 +160,15 @@ type UpdateCourierRequest struct {
 	// Provide Airwaybill of the Courier
 	// in: integer
 	ProvideAirwaybill int `json:"provide_airwaybill"`
+
+	// Image UID
+	// in: string
+	ImageUID string `gorm:"size:50;null" json:"image_uid"`
+
+	// Image Path
+	// in: string
+	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
+	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
 
 	// Courier status
 	// in: int

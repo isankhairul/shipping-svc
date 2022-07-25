@@ -1,6 +1,9 @@
 package entity
 
-import "go-klikdokter/app/model/base"
+import (
+	"go-klikdokter/app/model/base"
+	"go-klikdokter/pkg/util/datatype"
+)
 
 // swagger:model Courier
 type Courier struct {
@@ -44,4 +47,13 @@ type Courier struct {
 	CourierCoverageCode []*CourierCoverageCode `gorm:"foreignKey:courier_uid" json:"-"`
 
 	CourierServices []*CourierService `json:"-" gorm:"foreignKey:courier_id"`
+
+	// Image UID
+	// in: string
+	ImageUID string `gorm:"size:50;null" json:"image_uid"`
+
+	// Image Path
+	// in: string
+	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
+	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
 }

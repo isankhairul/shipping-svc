@@ -75,6 +75,8 @@ func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*e
 		HidePurpose:           input.HidePurpose,
 		UseGeocoodinate:       input.UseGeocoodinate,
 		Status:                &input.Status,
+		ImageUID:              input.ImageUID,
+		ImagePath:             input.ImagePath,
 	}
 
 	result, err := s.courierRepo.CreateCourier(&Courier)
@@ -171,6 +173,8 @@ func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCouri
 		"provide_airwaybill": input.ProvideAirwaybill,
 		"api_integration":    input.CourierApiIntegration,
 		"hide_purpose":       input.HidePurpose,
+		"image_uid":          input.ImageUID,
+		"image_path":         input.ImagePath,
 	}
 
 	err = s.courierRepo.Update(uid, data)
@@ -262,6 +266,8 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 		StartTime:        input.StartTime,
 		EndTime:          input.EndTime,
 		Repickup:         input.Repickup,
+		ImageUID:         input.ImageUID,
+		ImagePath:        input.ImagePath,
 	}
 	if input.Status != nil {
 		courierService.Status = input.Status
@@ -405,6 +411,8 @@ func (s *courierServiceImpl) UpdateCourierService(uid string, input request.Upda
 		"start_time":           input.StartTime,
 		"end_time":             input.EndTime,
 		"repickup":             input.Repickup,
+		"image_uid":            input.ImageUID,
+		"image_path":           input.ImagePath,
 	}
 
 	err = s.courierServiceRepo.Update(uid, data)
