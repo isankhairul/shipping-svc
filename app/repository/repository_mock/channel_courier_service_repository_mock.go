@@ -1,6 +1,7 @@
 package repository_mock
 
 import (
+	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 
 	"github.com/stretchr/testify/mock"
@@ -14,13 +15,12 @@ func (r *ChannelCourierServiceRepositoryMock) GetChannelCourierServicesByCourier
 	panic("Not implemented")
 }
 
-func (r *ChannelCourierServiceRepositoryMock) CreateChannelCourierService(courier *entity.Courier, channel *entity.Channel, cs *entity.CourierService, priceInternal float64, status int) (*entity.ChannelCourierService, error) {
-	arguments := r.Mock.Called("CreateChannelCourierService")
-	f := arguments.Get(0)
-	return f.(*entity.ChannelCourierService), nil
+func (r *ChannelCourierServiceRepositoryMock) CreateChannelCourierService(data *entity.ChannelCourierService) (*entity.ChannelCourierService, error) {
+	return data, nil
 }
+
 func (r *ChannelCourierServiceRepositoryMock) DeleteChannelCourierServiceByID(id uint64) error {
-	panic("Not implemented")
+	return nil
 }
 
 func (r *ChannelCourierServiceRepositoryMock) DeleteChannelCourierServicesByChannelID(channelID uint64, courierID uint64) error {
@@ -30,4 +30,31 @@ func (r *ChannelCourierServiceRepositoryMock) DeleteChannelCourierServicesByChan
 		return f.(error)
 	}
 	return nil
+}
+
+func (r *ChannelCourierServiceRepositoryMock) GetChannelCourierService(channelCourierID, courierServiceID uint64) (*entity.ChannelCourierService, error) {
+	arguments := r.Mock.Called(channelCourierID, courierServiceID)
+
+	if arguments.Get(0) == nil {
+		return nil, nil
+	}
+
+	return arguments.Get(0).(*entity.ChannelCourierService), nil
+}
+
+func (r *ChannelCourierServiceRepositoryMock) GetChannelCourierServiceByUID(uid string) (*entity.ChannelCourierService, error) {
+	arguments := r.Mock.Called(uid)
+
+	if arguments.Get(0) == nil {
+		return nil, nil
+	}
+
+	return arguments.Get(0).(*entity.ChannelCourierService), nil
+}
+func (r *ChannelCourierServiceRepositoryMock) UpdateChannelCourierService(uid string, updates map[string]interface{}) error {
+	return nil
+}
+func (r *ChannelCourierServiceRepositoryMock) FindByParams(limit, page int, sort string, filters map[string]interface{}) ([]entity.ChannelCourierService, *base.Pagination, error) {
+	arguments := r.Mock.Called(limit, page, sort, filters)
+	return arguments.Get(0).([]entity.ChannelCourierService), arguments.Get(1).(*base.Pagination), nil
 }

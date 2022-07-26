@@ -48,3 +48,12 @@ func RegisterShipmentPredefinedService(db *gorm.DB, logger log.Logger) service.S
 		logger, repo, rp.NewShipmentPredefinedRepository(repo),
 	)
 }
+
+func RegisterChannelCourierServiceService(db *gorm.DB, logger log.Logger) service.ChannelCourierServiceService {
+	repo := rp.NewBaseRepository(db)
+	return service.NewChannelCourierServiceService(
+		logger, repo,
+		rp.NewChannelCourierRepository(repo),
+		rp.NewChannelCourierServiceRepository(repo),
+		rp.NewCourierServiceRepository(repo))
+}

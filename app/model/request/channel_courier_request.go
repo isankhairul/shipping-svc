@@ -37,9 +37,6 @@ type SaveChannelCourierRequest struct {
 	// in: integer
 	// required: true
 	HidePurpose int `json:"hide_purpose" binding:"omitempty"`
-
-	// The channel courier services uids
-	CourierServiceUIDs []*CourierServiceDTO `json:"courier_service_uids"`
 }
 
 type CourierServiceDTO struct {
@@ -88,10 +85,6 @@ type UpdateChannelCourierRequest struct {
 	// in: integer
 	// required: true
 	HidePurpose int `json:"hide_purpose" binding:"omitempty"`
-
-	// The channel courier services uids
-	// in: array
-	CourierServiceUIDs []*CourierServiceDTO `json:"courier_service_uids"`
 }
 
 func (req SaveChannelCourierRequest) Validate() error {
@@ -107,19 +100,23 @@ type ChannelCourierListRequest struct {
 
 	// Channel name records
 	// in: string
-	ChannelName string `schema:"channel_name" binding:"omitempty" json:"channel_name"`
+	// collection format: multi
+	ChannelName []string `schema:"channel_name" binding:"omitempty" json:"channel_name"`
 
 	// Channel code records
 	// in: string
-	ChannelCode string `schema:"channel_code" binding:"omitempty" json:"channel_code"`
+	// collection format: multi
+	ChannelCode []string `schema:"channel_code" binding:"omitempty" json:"channel_code"`
 
 	// Courier name records
 	// in: string
-	CourierName string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
+	// collection format: multi
+	CourierName []string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
 
 	// Channel Courier status
 	// in: int
-	Status *int `binding:"omitempty" json:"status"`
+	// collection format: multi
+	Status []int `binding:"omitempty" json:"status"`
 
 	// Maximun records per page
 	// in: int32

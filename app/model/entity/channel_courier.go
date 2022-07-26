@@ -26,18 +26,20 @@ type ChannelCourier struct {
 
 	// Status of the ChannelCourier
 	// in: integer
-	Status int `gorm:"not null;default:1" json:"status"`
+	Status *int `gorm:"not null;default:1" json:"status"`
 
 	Courier *Courier `json:"-" gorm:"foreignKey:courier_id"`
 
 	Channel *Channel `json:"-" gorm:"foreignKey:channel_id"`
 
-	ChannelCourierServices []*ChannelCourierService `json:"-" gorm:"foreignKey:channel_id"`
+	ChannelCourierServices []*ChannelCourierService `json:"-"`
 }
 
 // swagger: model ChannelCourierServiceDTO
 type ChannelCourierServiceDTO struct {
 	CourierServiceUID string  `json:"courier_service_uid"`
+	CourierUID        string  `json:"courier_uid"`
+	ChannelUID        string  `json:"channel_uid"`
 	ShippingType      string  `json:"shipping_type"`
 	ShippingName      string  `json:"shipping_name"`
 	ShippingCode      string  `json:"shipping_code"`
@@ -52,7 +54,7 @@ func ToChannelCourierServiceDTO(channelCourierService *ChannelCourierService, co
 		ShippingName:      courierService.ShippingName,
 		ShippingCode:      courierService.ShippingCode,
 		PriceInternal:     channelCourierService.PriceInternal,
-		Status:            channelCourierService.Status,
+		Status:            *channelCourierService.Status,
 	}
 	return ret
 }
@@ -62,11 +64,11 @@ type ChannelCourierDTO struct {
 	Uid                string                      `json:"uid"`
 	ChannelName        string                      `json:"channel_name"`
 	ChannelCode        string                      `json:"channel_code"`
-	CourierName        string                      ` json:"courier_name"`
+	CourierName        string                      `json:"courier_name"`
 	PrioritySort       int                         `json:"priority_sort"`
 	HidePurpose        int                         `json:"hide_purpose"`
 	Status             int                         `json:"status"`
-	CourierServiceDTOs []*ChannelCourierServiceDTO `json:"courier_services"`
+	CourierServiceDTOs []*ChannelCourierServiceDTO `json:"-"`
 }
 
 func ToChannelCourierDTO(cur *ChannelCourier) *ChannelCourierDTO {
@@ -74,20 +76,17 @@ func ToChannelCourierDTO(cur *ChannelCourier) *ChannelCourierDTO {
 		Uid:          cur.UID,
 		PrioritySort: cur.PrioritySort,
 		HidePurpose:  cur.HidePurpose,
-		Status:       cur.Status,
+		Status:       *cur.Status,
 	}
+
 	if cur.Channel != nil {
 		ret.ChannelName = cur.Channel.ChannelName
 		ret.ChannelCode = cur.Channel.ChannelCode
 	}
+
 	if cur.Courier != nil {
 		ret.CourierName = cur.Courier.CourierName
 	}
-	if cur.ChannelCourierServices != nil {
-		ret.CourierServiceDTOs = make([]*ChannelCourierServiceDTO, len(cur.ChannelCourierServices))
-		for index, value := range cur.ChannelCourierServices {
-			ret.CourierServiceDTOs[index] = ToChannelCourierServiceDTO(value, value.CourierService)
-		}
-	}
+
 	return ret
 }

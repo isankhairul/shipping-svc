@@ -149,11 +149,6 @@ definitions:
       courier_name:
         type: string
         x-go-name: CourierName
-      courier_services:
-        items:
-          $ref: '#/definitions/ChannelCourierServiceDTO'
-        type: array
-        x-go-name: CourierServiceDTOs
       hide_purpose:
         format: int64
         type: integer
@@ -171,22 +166,43 @@ definitions:
         x-go-name: Uid
     type: object
     x-go-package: go-klikdokter/app/model/entity
+  ChannelCourierPaginationReponse:
+    properties:
+      Items:
+        items:
+          $ref: '#/definitions/ChannelCourierDTO'
+        type: array
+      limit:
+        format: int64
+        type: integer
+        x-go-name: Limit
+      page:
+        format: int64
+        type: integer
+        x-go-name: Page
+      records:
+        format: int64
+        type: integer
+        x-go-name: Records
+      total_page:
+        format: int64
+        type: integer
+        x-go-name: TotalPage
+      total_records:
+        format: int64
+        type: integer
+        x-go-name: TotalRecords
+    type: object
+    x-go-package: go-klikdokter/app/model/response
   ChannelCourierService:
     properties:
-      channel_id:
+      channel_courier_id:
         description: |-
-          Id of the Channel
+          Id of the Channel Courier
           in: integer
         format: uint64
         type: integer
-        x-go-name: ChannelID
-      courier_id:
-        description: |-
-          Id of the Courier
-          in: integer
-        format: uint64
-        type: integer
-        x-go-name: CourierID
+        x-go-name: ChannelCourierID
       courier_service_id:
         description: |-
           Id of the Courier
@@ -227,9 +243,17 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/entity
-  ChannelCourierServiceDTO:
-    description: 'swagger: model ChannelCourierServiceDTO'
+  ChannelCourierServiceDetail:
     properties:
+      channel_courier_uid:
+        type: string
+        x-go-name: ChannelCourierUID
+      channel_name:
+        type: string
+        x-go-name: ChannelName
+      courier_name:
+        type: string
+        x-go-name: CourierName
       courier_service_uid:
         type: string
         x-go-name: CourierServiceUID
@@ -237,6 +261,26 @@ definitions:
         format: double
         type: number
         x-go-name: PriceInternal
+      shipping_name:
+        type: string
+        x-go-name: ShippingName
+      status:
+        format: int64
+        type: integer
+        x-go-name: Status
+      uid:
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  ChannelCourierServiceItem:
+    properties:
+      channel_name:
+        type: string
+        x-go-name: ChannelName
+      courier_name:
+        type: string
+        x-go-name: CourierName
       shipping_code:
         type: string
         x-go-name: ShippingCode
@@ -250,8 +294,11 @@ definitions:
         format: int64
         type: integer
         x-go-name: Status
+      uid:
+        type: string
+        x-go-name: UID
     type: object
-    x-go-package: go-klikdokter/app/model/entity
+    x-go-package: go-klikdokter/app/model/response
   Courier:
     properties:
       code:
@@ -631,34 +678,6 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/entity
-  CourierServiceDTO:
-    properties:
-      courier_service_uid:
-        description: |-
-          Courier Service Uid
-          in: string
-        type: string
-        x-go-name: CourierServiceUid
-      price_internal:
-        description: |-
-          Priority Sort of ChannelCourier
-          in: number
-        format: double
-        type: number
-        x-go-name: PriceInternal
-      status:
-        description: |-
-          Courier status
-          in: number
-        format: int64
-        type: integer
-        x-go-name: Status
-    required:
-    - price_internal
-    - status
-    - courier_service_uid
-    type: object
-    x-go-package: go-klikdokter/app/model/request
   DataResponse:
     properties:
       record:
@@ -732,12 +751,6 @@ definitions:
           in: string
         type: string
         x-go-name: ChannelUID
-      courier_service_uids:
-        description: The channel courier services uids
-        items:
-          $ref: '#/definitions/CourierServiceDTO'
-        type: array
-        x-go-name: CourierServiceUIDs
       courier_uid:
         description: |-
           ID of the courier
@@ -771,6 +784,41 @@ definitions:
     - priority_sort
     - status
     - hide_purpose
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  SaveChannelCourierServiceRequest:
+    properties:
+      channel_courier_uid:
+        description: |-
+          UID of the channel courier
+          in: int
+        type: string
+        x-go-name: ChannelCourierUID
+      courier_service_uid:
+        description: |-
+          UID of the Courier Service
+          in: int
+        type: string
+        x-go-name: CourierServiceUID
+      price_internal:
+        description: |-
+          Priority Sort of ChannelCourier
+          in: number
+        format: double
+        type: number
+        x-go-name: PriceInternal
+      status:
+        description: |-
+          Courier status
+          in: number
+        format: int64
+        type: integer
+        x-go-name: Status
+    required:
+    - courier_service_uid
+    - channel_courier_uid
+    - price_internal
+    - status
     type: object
     x-go-package: go-klikdokter/app/model/request
   SaveChannelRequest:
@@ -1242,14 +1290,6 @@ definitions:
     x-go-package: go-klikdokter/app/model/base/encoder
   UpdateChannelCourierRequest:
     properties:
-      courier_service_uids:
-        description: |-
-          The channel courier services uids
-          in: array
-        items:
-          $ref: '#/definitions/CourierServiceDTO'
-        type: array
-        x-go-name: CourierServiceUIDs
       hide_purpose:
         description: |-
           Hide purpose of the Courier
@@ -1275,6 +1315,23 @@ definitions:
     - priority_sort
     - status
     - hide_purpose
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  UpdateChannelCourierService:
+    properties:
+      price_internal:
+        description: Priority Sort of ChannelCourier
+        format: double
+        type: number
+        x-go-name: PriceInternal
+      status:
+        description: Courier status
+        format: int64
+        type: integer
+        x-go-name: Status
+    required:
+    - price_internal
+    - status
     type: object
     x-go-package: go-klikdokter/app/model/request
   UpdateChannelRequest:
@@ -1354,6 +1411,14 @@ definitions:
         format: int64
         type: integer
         x-go-name: HidePurpose
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
       logo:
         description: |-
           Logo of courier
@@ -1609,39 +1674,195 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Channel-Apps
-  /channel/channel-courier:
+  /channel/channel-courier-service:
+    get:
+      description: Get List of Channel Courier Service
+      operationId: GetChannelCourierServiceList
+      parameters:
+      - collectionFormat: multi
+        description: Channel name
+        in: query
+        items:
+          type: string
+        name: channel_name
+        type: array
+        x-go-name: ChannelName
+      - collectionFormat: multi
+        description: Courier name
+        in: query
+        items:
+          type: string
+        name: courier_name
+        type: array
+        x-go-name: CourierName
+      - collectionFormat: multi
+        description: Channel Courier Service status
+        in: query
+        items:
+          format: int64
+          type: integer
+        name: status
+        type: array
+        x-go-name: Status
+      - collectionFormat: multi
+        description: Shipping name
+        in: query
+        items:
+          type: string
+        name: shipping_name
+        type: array
+        x-go-name: ShippingName
+      - collectionFormat: multi
+        description: Shipping code
+        in: query
+        items:
+          type: string
+        name: shipping_code
+        type: array
+        x-go-name: ShippingCode
+      - collectionFormat: multi
+        description: Shipping type
+        in: query
+        items:
+          type: string
+        name: shipping_type
+        type: array
+        x-go-name: ShippingType
+      - description: Maximun records per page
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: Page No
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: Sort fields and direction
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      responses:
+        "200":
+          $ref: '#/responses/ChannelCourierServiceList'
+      tags:
+      - Channel
+  /channel/channel-courier-service/:
+    post:
+      description: Create Channel Courier Service
+      operationId: CreateChannelCourierService
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveChannelCourierServiceRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          $ref: '#/responses/ChannelCourierServiceDetailResponse'
+      tags:
+      - Channel
+  /channel/channel-courier-service/{uid}:
+    delete:
+      description: Delete Courier Service
+      operationId: DeleteChannelCourierServiceByUID
+      parameters:
+      - description: 'name: uid'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel
+    get:
+      description: Get Detail of Channel Courier Service
+      operationId: GetChannelCourierServiceByUID
+      parameters:
+      - description: 'name: uid'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      responses:
+        "200":
+          $ref: '#/responses/ChannelCourierServiceDetailResponse'
+      tags:
+      - Channel
+    put:
+      description: Update a channel courier by uid
+      operationId: UpdateChannelCourierService
+      parameters:
+      - description: 'name: uid'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/UpdateChannelCourierService'
+        x-go-name: Body
+      responses:
+        "200":
+          $ref: '#/responses/ChannelCourierServiceDetailResponse'
+      tags:
+      - Channel
+  /channel/channel-courier/:
     get:
       description: List of Assignment Channel and Courier
       operationId: ChannelCourierListRequest
       parameters:
-      - description: |-
+      - collectionFormat: multi
+        description: |-
           Channel name records
           in: string
         in: query
+        items:
+          type: string
         name: channel_name
-        type: string
+        type: array
         x-go-name: ChannelName
-      - description: |-
+      - collectionFormat: multi
+        description: |-
           Channel code records
           in: string
         in: query
+        items:
+          type: string
         name: channel_code
-        type: string
+        type: array
         x-go-name: ChannelCode
-      - description: |-
+      - collectionFormat: multi
+        description: |-
           Courier name records
           in: string
         in: query
+        items:
+          type: string
         name: courier_name
-        type: string
+        type: array
         x-go-name: CourierName
-      - description: |-
+      - collectionFormat: multi
+        description: |-
           Channel Courier status
           in: int
-        format: int64
         in: query
+        items:
+          format: int64
+          type: integer
         name: status
-        type: integer
+        type: array
         x-go-name: Status
       - description: |-
           Maximun records per page
@@ -1692,7 +1913,6 @@ paths:
             $ref: '#/definitions/InternalServerErrorResponse'
       tags:
       - Channel
-  /channel/channel-courier/:
     post:
       description: Assign Courier to Channel
       operationId: SaveChannelCourierRequest
@@ -2413,6 +2633,16 @@ responses:
     description: ""
     schema:
       $ref: '#/definitions/ChannelCourierDTO'
+  ChannelCourierServiceDetailResponse:
+    description: ""
+    schema:
+      $ref: '#/definitions/ChannelCourierServiceDetail'
+  ChannelCourierServiceList:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/ChannelCourierServiceItem'
+      type: array
   ImportStatus:
     description: ""
 schemes:

@@ -71,23 +71,9 @@ func (s *ChannelCourierServiceImpl) createChannelCourierInTx(input request.SaveC
 		ChannelID:    channel.ID,
 		PrioritySort: input.PrioritySort,
 		HidePurpose:  input.HidePurpose,
-		Status:       input.Status,
+		Status:       &input.Status,
 	}
-	for _, courierServiceUID := range input.CourierServiceUIDs {
-		courierService, err := s.courierServices.FindByUid(&courierServiceUID.CourierServiceUid)
-		if courierService == nil {
-			return nil, message.ErrNoDataCourierService
-		}
 
-		if err != nil || *(courierService.Status) == 0 {
-			return nil, message.ErrCourierServiceHasInvalidStatus
-		}
-		_, err = s.channelCourierServices.CreateChannelCourierService(courier, channel, courierService, courierServiceUID.PriceInternal, courierServiceUID.Status)
-		if err != nil {
-			_ = level.Error(logger).Log(err)
-			return nil, message.ErrChannelCourierServiceCreateFailed
-		}
-	}
 	cc, err := s.channelCouriers.CreateChannelCourier(cc)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
@@ -122,7 +108,7 @@ func (s *ChannelCourierServiceImpl) GetChannelCourier(uid string) (*entity.Chann
 	return entity.ToChannelCourierDTO(cur), message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-courier Channel ChannelCourierListRequest
+// swagger:route GET /channel/channel-courier/ Channel ChannelCourierListRequest
 // List of Assignment Channel and Courier
 //
 // responses:
@@ -131,7 +117,7 @@ func (s *ChannelCourierServiceImpl) GetChannelCourier(uid string) (*entity.Chann
 // 	400: InvalidRequestDataResponse
 //  500: InternalServerErrorResponse
 func (s *ChannelCourierServiceImpl) ListChannelCouriers(input request.ChannelCourierListRequest) ([]*entity.ChannelCourierDTO, *base.Pagination, message.Message) {
-	logger := log.With(s.logger, "ChannelCourierService", "Get Detail of Channel Courier")
+	logger := log.With(s.logger, "ChannelCourierService", "ListChannelCouriers")
 
 	filter := map[string]interface{}{
 		"status":       input.Status,
@@ -186,34 +172,6 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 		return nil, message.ErrChannelCourierNotFound
 	}
 
-	for _, courierServiceUID := range input.CourierServiceUIDs {
-		courierService, err := s.courierServices.FindByUid(&courierServiceUID.CourierServiceUid)
-		if courierService == nil {
-			return nil, message.ErrNoDataCourierService
-		}
-
-		if err != nil || *(courierService.Status) == 0 {
-			return nil, message.ErrCourierServiceHasInvalidStatus
-		}
-		_, err = s.channelCourierServices.CreateChannelCourierService(cur.Courier, cur.Channel, courierService,
-			float64(courierServiceUID.PriceInternal), courierServiceUID.Status)
-		if err != nil {
-			_ = level.Error(logger).Log(err)
-			return nil, message.ErrChannelCourierServiceCreateFailed
-		}
-	}
-	//deleting old channelCourierServices
-	if cur.ChannelCourierServices != nil {
-		inputUIDs := mapInputUIDS(input.CourierServiceUIDs)
-		for _, ccs := range cur.ChannelCourierServices {
-			if !contains(&ccs.CourierService.UID, inputUIDs) {
-				err := s.channelCourierServices.DeleteChannelCourierServiceByID(ccs.ID)
-				if err != nil {
-					_ = level.Error(logger).Log(err)
-				}
-			}
-		}
-	}
 	cur, err = s.channelCouriers.GetChannelCourierByUID(input.Uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
