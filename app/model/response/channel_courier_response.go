@@ -2,7 +2,7 @@ package response
 
 import "go-klikdokter/app/model/entity"
 
-// swagger: model ChannelCourierPaginationReponse
+// swagger:model ChannelCourierPaginationReponse
 type ChannelCourierPaginationReponse struct {
 	Records      int64 `json:"records"`
 	TotalRecords int64 `json:"total_records"`

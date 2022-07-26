@@ -1,8 +1,12 @@
 package repository
 
 import (
+	"errors"
+	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+
+	"gorm.io/gorm"
 )
 
 type ChannelCourierRepositoryImpl struct {
@@ -79,15 +83,14 @@ func (r *ChannelCourierRepositoryImpl) GetChannelCourierByUID(uid string) (*enti
 
 	err := db.Preload("Courier").Preload("Channel").
 		Where(&entity.ChannelCourier{BaseIDModel: base.BaseIDModel{UID: uid}}).First(&cur).Error
+
 	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return nil, nil
+		}
 		return nil, err
 	}
-	var items []*entity.ChannelCourierService
-	err = db.Model(&entity.ChannelCourierService{}).Preload("CourierService").
-		Where(&entity.ChannelCourierService{ChannelID: cur.ChannelID, CourierID: cur.CourierID}).Find(&items).Error
-	if items != nil {
-		cur.ChannelCourierServices = items
-	}
+
 	return cur, nil
 }
 
@@ -105,20 +108,19 @@ func (r *ChannelCourierRepositoryImpl) FindByPagination(limit int, page int, sor
 	query := db.Model(&entity.ChannelCourier{}).
 		Preload("Channel").Preload("Courier").Joins("Courier").Joins("Channel")
 
-	if filters["channel_name"] != "" {
-		query = query.Where(&entity.ChannelCourier{Channel: &entity.Channel{ChannelName: filters["channel_name"].(string)}})
-	}
-
-	if filters["channel_code"] != "" {
-		query = query.Where(&entity.ChannelCourier{Channel: &entity.Channel{ChannelCode: filters["channel_code"].(string)}})
-	}
-
-	if filters["courier_name"] != "" {
-		query = query.Where(&entity.ChannelCourier{Courier: &entity.Courier{CourierName: filters["courier_name"].(string)}})
-	}
-
-	if filters["status"].(*int) != nil {
-		query = query.Where(&entity.ChannelCourier{Status: *filters["status"].(*int)})
+	for k, v := range filters {
+		switch k {
+		case "channel_code", "channel_name", "courier_name":
+			value := v.([]string)
+			if len(value) > 0 {
+				query = query.Where(fmt.Sprint(k, " IN ?"), value)
+			}
+		case "status":
+			value := v.([]int)
+			if len(value) > 0 {
+				query = query.Where("channel_courier.status IN ? ", value)
+			}
+		}
 	}
 
 	// sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {

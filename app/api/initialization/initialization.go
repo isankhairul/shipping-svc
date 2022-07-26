@@ -33,6 +33,9 @@ func DbInit(logger log.Logger) (*gorm.DB, error) {
 	_ = db.AutoMigrate(&entity.ChannelCourier{})
 	_ = db.AutoMigrate(&entity.ChannelCourierService{})
 
+	_ = db.Migrator().DropColumn(&entity.ChannelCourierService{}, "channel_id")
+	_ = db.Migrator().DropColumn(&entity.ChannelCourierService{}, "courier_id")
+
 	seedingPredefined(db, logger)
 
 	return db, nil
@@ -67,6 +70,7 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	channelSvc := registry.RegisterChannelService(db, logger)
 	shipmentPredefinedService := registry.RegisterShipmentPredefinedService(db, logger)
 	courierCoverageCodeSvc := registry.RegisterCourierCoverageCodeService(db, logger)
+	channelCourierServiceSvc := registry.RegisterChannelCourierServiceService(db, logger)
 
 	// Transport initialization
 	swagHttp := transport.SwaggerHttpHandler(log.With(logger, "SwaggerTransportLayer", "HTTP")) //don't delete or change this !!
@@ -75,6 +79,7 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	courierCoverageCodeHttp := transport.CourierCoverageCodeHttpHandler(courierCoverageCodeSvc, log.With(logger, "CourierCoverageCodeTransportLayer", "HTTP"))
 	shipmentPredefinedHttp := transport.ShipmentPredefinedHandler(shipmentPredefinedService, log.With(logger, "ShipmentPredefinedTransportLayer", "HTTP"))
 	channelHttp := transport.ChannelHttpHandler(channelSvc, log.With(logger, "ChannelTransportLayer", "HTTP"))
+	channelCourierServiceHttp := transport.ChannelCourierServiceHttpHandler(channelCourierServiceSvc, log.With(logger, "ChannelCourierServiceTransportLayer", "HTTP"))
 
 	// Routing path
 	mux := http.NewServeMux()
@@ -84,6 +89,7 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	mux.Handle(util.PrefixBase+"/courier/courier-coverage-code/", courierCoverageCodeHttp)
 	mux.Handle(util.PrefixBase+"/channel/", channelHttp)
 	mux.Handle(util.PrefixBase+"/channel/channel-courier/", channelCourierHttp)
+	mux.Handle(util.PrefixBase+"/channel/channel-courier-service/", channelCourierServiceHttp)
 
 	return mux
 }
