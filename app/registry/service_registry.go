@@ -22,6 +22,7 @@ func RegisterChannelService(db *gorm.DB, logger log.Logger) service.ChannelServi
 		logger,
 		rp.NewBaseRepository(db),
 		rp.NewChannelRepository(rp.NewBaseRepository(db)),
+		rp.NewShippingCourierStatusRepository(rp.NewBaseRepository(db)),
 	)
 }
 

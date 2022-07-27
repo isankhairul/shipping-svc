@@ -149,3 +149,33 @@ func (req SaveChannelRequest) Validate() error {
 		validation.Field(&req.Logo, validation.Required.Error(message.ErrReq.Message)),
 	)
 }
+
+// swagger:parameters GetChannelCourierStatus
+type GetChannelCourierStatusRequest struct {
+	// Channel name
+	// in: query
+	// collection format: multi
+	ChannelName []string `schema:"channel_name" binding:"omitempty" json:"channel_name"`
+
+	// Courier name
+	// in: query
+	// collection format: multi
+	CourierName []string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
+
+	// Status code
+	// in: query
+	// collection format: multi
+	StatusCode []string `schema:"status_code" binding:"omitempty" json:"status_code"`
+
+	// Maximun records per page
+	// in: query
+	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
+
+	// Page No
+	// in: query
+	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
+
+	// Sort fields and direction
+	// in: query
+	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
+}

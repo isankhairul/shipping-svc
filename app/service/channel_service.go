@@ -4,6 +4,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
+	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
 
@@ -13,6 +14,7 @@ import (
 
 type ChannelService interface {
 	GetList(input request.ChannelListRequest) ([]entity.Channel, *base.Pagination, message.Message)
+	GetListStatus(input request.GetChannelCourierStatusRequest) ([]response.GetChannelCourierStatusResponseItem, *base.Pagination, message.Message)
 	GetChannel(uid string) (*entity.Channel, message.Message)
 	CreateChannel(input request.SaveChannelRequest) (*entity.Channel, message.Message)
 	UpdateChannel(input request.UpdateChannelRequest) message.Message
@@ -20,17 +22,19 @@ type ChannelService interface {
 }
 
 type ChannelServiceImpl struct {
-	logger      log.Logger
-	baseRepo    repository.BaseRepository
-	channelRepo repository.ChannelRepository
+	logger                log.Logger
+	baseRepo              repository.BaseRepository
+	channelRepo           repository.ChannelRepository
+	shippingCourierStatus repository.ShippingCourierStatusRepository
 }
 
 func NewChannelService(
 	lg log.Logger,
 	br repository.BaseRepository,
 	pr repository.ChannelRepository,
+	scs repository.ShippingCourierStatusRepository,
 ) ChannelService {
-	return &ChannelServiceImpl{lg, br, pr}
+	return &ChannelServiceImpl{lg, br, pr, scs}
 }
 
 // swagger:route GET /channel/channel-app Channel-Apps Channels
@@ -207,4 +211,32 @@ func (s *ChannelServiceImpl) DeleteChannel(uid string) message.Message {
 	}
 
 	return message.SuccessMsg
+}
+
+// swagger:route GET /channel/channel-status-courier-status Channel-Apps GetChannelCourierStatus
+// Get Channel Courier Status List
+//
+// responses:
+//  200: GetChannelCourierStatusResponse
+func (s *ChannelServiceImpl) GetListStatus(input request.GetChannelCourierStatusRequest) ([]response.GetChannelCourierStatusResponseItem, *base.Pagination, message.Message) {
+	logger := log.With(s.logger, "ChannelService", "GetListStatus")
+
+	filters := map[string]interface{}{
+		"channel_name": input.ChannelName,
+		"courier_name": input.CourierName,
+		"status_code":  input.StatusCode,
+	}
+
+	result, paging, err := s.shippingCourierStatus.FindByParams(input.Limit, input.Page, input.Sort, filters)
+
+	if err != nil {
+		_ = level.Error(logger).Log(err.Error())
+		return []response.GetChannelCourierStatusResponseItem{}, nil, message.FailedMsg
+	}
+
+	if len(result) == 0 {
+		return []response.GetChannelCourierStatusResponseItem{}, nil, message.ErrNoData
+	}
+
+	return response.NewGetChannelCourierStatusResponse(result), paging, message.SuccessMsg
 }
