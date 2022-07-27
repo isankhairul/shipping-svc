@@ -62,6 +62,13 @@ func ChannelHttpHandler(s service.ChannelService, logger log.Logger) http.Handle
 		options...,
 	))
 
+	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-status-courier-status").Handler(httptransport.NewServer(
+		ep.ListStatus,
+		decodeListChannelStatus,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
 	return pr
 }
 
@@ -109,4 +116,18 @@ func decodeUpdateChannel(ctx context.Context, r *http.Request) (rqst interface{}
 func decodeDeleteChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	uid := mux.Vars(r)["id"]
 	return uid, nil
+}
+
+func decodeListChannelStatus(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var params request.GetChannelCourierStatusRequest
+
+	if err := r.ParseForm(); err != nil {
+		return nil, err
+	}
+
+	if err = schema.NewDecoder().Decode(&params, r.Form); err != nil {
+		return nil, err
+	}
+
+	return params, nil
 }

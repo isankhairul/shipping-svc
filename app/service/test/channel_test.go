@@ -15,7 +15,8 @@ import (
 )
 
 var channelRepository = &repository_mock.ChannelRepositoryMock{Mock: mock.Mock{}}
-var channelSvc = service.NewChannelService(logger, baseRepository, channelRepository)
+var shippingCourierStatusRepository = &repository_mock.ShippingCourierStatusRepositoryMock{Mock: mock.Mock{}}
+var channelSvc = service.NewChannelService(logger, baseRepository, channelRepository, shippingCourierStatusRepository)
 
 func init() {
 }
@@ -186,4 +187,22 @@ func TestGetChannelFail(t *testing.T) {
 	errCodeIsNotFound := 34005
 	assert.EqualError(t, errors.New(errIsNotFound), errTest.Message, "Channel is not found")
 	assert.Equal(t, errCodeIsNotFound, errTest.Code, "Channel is not found")
+}
+
+func TestGetListStatusSuccess(t *testing.T) {
+	shippingCourierStatusRepository.Mock.On("FindByParams", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return([]entity.ShippingCourierStatus{{}, {}}, &base.Pagination{}, nil).Once()
+	input := request.GetChannelCourierStatusRequest{}
+	result, _, msg := channelSvc.GetListStatus(input)
+
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 201000")
+	assert.Len(t, result, 2)
+}
+
+func TestGetListStatusNotFound(t *testing.T) {
+	shippingCourierStatusRepository.Mock.On("FindByParams", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return([]entity.ShippingCourierStatus{}, &base.Pagination{}, nil).Once()
+	input := request.GetChannelCourierStatusRequest{}
+	result, _, msg := channelSvc.GetListStatus(input)
+
+	assert.Equal(t, message.ErrNoData.Code, msg.Code, "Code must be 34005")
+	assert.Len(t, result, 0)
 }

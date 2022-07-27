@@ -689,6 +689,29 @@ definitions:
     type: object
     x-go-name: data
     x-go-package: go-klikdokter/app/model/base
+  GetChannelCourierStatusResponse:
+    properties:
+      channel_name:
+        description: Channel name
+        type: string
+        x-go-name: ChannelName
+      courier_name:
+        description: Courier name
+        type: string
+        x-go-name: CourierName
+      courier_status:
+        $ref: '#/definitions/JSONB'
+      status_code:
+        description: Status Code
+        type: string
+        x-go-name: StatusCode
+      status_title:
+        description: Status Title
+        type: string
+        x-go-name: StatusTitle
+    type: object
+    x-go-name: GetChannelCourierStatusResponseItem
+    x-go-package: go-klikdokter/app/model/response
   InternalServerErrorResponse:
     type: object
     x-go-package: go-klikdokter/app/model/base/encoder
@@ -2014,6 +2037,57 @@ paths:
             $ref: '#/definitions/errorResponse'
       tags:
       - Channel
+  /channel/channel-status-courier-status:
+    get:
+      description: Get Channel Courier Status List
+      operationId: GetChannelCourierStatus
+      parameters:
+      - collectionFormat: multi
+        description: Channel name
+        in: query
+        items:
+          type: string
+        name: channel_name
+        type: array
+        x-go-name: ChannelName
+      - collectionFormat: multi
+        description: Courier name
+        in: query
+        items:
+          type: string
+        name: courier_name
+        type: array
+        x-go-name: CourierName
+      - collectionFormat: multi
+        description: Status code
+        in: query
+        items:
+          type: string
+        name: status_code
+        type: array
+        x-go-name: StatusCode
+      - description: Maximun records per page
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: Page No
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: Sort fields and direction
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      responses:
+        "200":
+          $ref: '#/responses/GetChannelCourierStatusResponse'
+      tags:
+      - Channel-Apps
   /courier/courier:
     get:
       description: Get list of couriers
@@ -2642,6 +2716,12 @@ responses:
     schema:
       items:
         $ref: '#/definitions/ChannelCourierServiceItem'
+      type: array
+  GetChannelCourierStatusResponse:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/GetChannelCourierStatusResponse'
       type: array
   ImportStatus:
     description: ""
