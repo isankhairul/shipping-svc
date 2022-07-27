@@ -44,7 +44,7 @@ type Courier struct {
 	// in: integer
 	Status *int `gorm:"not null;default:1" json:"status"`
 
-	CourierCoverageCode []*CourierCoverageCode `gorm:"foreignKey:courier_uid" json:"-"`
+	CourierCoverageCode []*CourierCoverageCode `gorm:"foreignKey:courier_id" json:"-"`
 
 	CourierServices []*CourierService `json:"-" gorm:"foreignKey:courier_id"`
 

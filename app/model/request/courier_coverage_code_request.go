@@ -143,6 +143,8 @@ type ImportCourierCoverageCodeRequest struct {
 	// swagger:file
 	// require:true
 	File *bytes.Buffer `json:"file"`
+
+	FileName string `json:"-"`
 }
 
 func (req SaveCourierCoverageCodeRequest) Validate() error {

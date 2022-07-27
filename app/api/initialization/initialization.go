@@ -3,7 +3,6 @@ package initialization
 import (
 	"go-klikdokter/app/api/transport"
 	"go-klikdokter/app/model/entity"
-	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/registry"
 	"go-klikdokter/helper/config"
 	"go-klikdokter/helper/database"
@@ -35,34 +34,19 @@ func DbInit(logger log.Logger) (*gorm.DB, error) {
 	_ = db.AutoMigrate(&entity.ShippingStatus{})
 	_ = db.AutoMigrate(&entity.ShippingCourierStatus{})
 
-	_ = db.Migrator().DropColumn(&entity.ChannelCourierService{}, "channel_id")
-	_ = db.Migrator().DropColumn(&entity.ChannelCourierService{}, "courier_id")
+	if ok := db.Migrator().HasColumn(&entity.ChannelCourierService{}, "channel_id"); ok {
+		_ = db.Migrator().DropColumn(&entity.ChannelCourierService{}, "channel_id")
+	}
 
-	seedingPredefined(db, logger)
+	if ok := db.Migrator().HasColumn(&entity.ChannelCourierService{}, "courier_id"); ok {
+		_ = db.Migrator().DropColumn(&entity.ChannelCourierService{}, "courier_id")
+	}
+
+	if ok := db.Migrator().HasColumn(&entity.CourierCoverageCode{}, "courier_uid"); ok {
+		_ = db.Migrator().DropColumn(&entity.CourierCoverageCode{}, "courier_uid")
+	}
 
 	return db, nil
-}
-
-func seedingPredefined(db *gorm.DB, logger log.Logger) {
-	svc := registry.RegisterShipmentPredefinedService(db, logger)
-	req := request.CreateShipmentPredefinedRequest{Type: "courier_type", Code: "third_party", Title: "Third Party"}
-	_, _ = svc.CreateShipmentPredefined(req)
-	req1 := request.CreateShipmentPredefinedRequest{Type: "courier_type", Code: "merchant", Title: "Merchant Courier"}
-	_, _ = svc.CreateShipmentPredefined(req1)
-	req2 := request.CreateShipmentPredefinedRequest{Type: "courier_type", Code: "internal", Title: "Internal Courier"}
-	_, _ = svc.CreateShipmentPredefined(req2)
-	req3 := request.CreateShipmentPredefinedRequest{Type: "shipping_type", Code: "instant", Title: "Instant", Note: "Waktu Pengiriman 3 Jam"}
-	_, _ = svc.CreateShipmentPredefined(req3)
-	req4 := request.CreateShipmentPredefinedRequest{Type: "shipping_type", Code: "same_day", Title: "Same Day", Note: "Waktu Pengiriman 6-8 Jam"}
-	_, _ = svc.CreateShipmentPredefined(req4)
-	req5 := request.CreateShipmentPredefinedRequest{Type: "shipping_type", Code: "regular", Title: "Regular", Note: "Waktu Pengiriman (2-4 hari)"}
-	_, _ = svc.CreateShipmentPredefined(req5)
-	req6 := request.CreateShipmentPredefinedRequest{Type: "shipping_type", Code: "next_day", Title: "Next Day", Note: "Waktu Pengiriman (1 hari)"}
-	_, _ = svc.CreateShipmentPredefined(req6)
-	req7 := request.CreateShipmentPredefinedRequest{Type: "courier_code", Code: "shipper", Title: "Shipper", Note: ""}
-	_, _ = svc.CreateShipmentPredefined(req7)
-	req8 := request.CreateShipmentPredefinedRequest{Type: "courier_code", Code: "gojek", Title: "Gojek", Note: ""}
-	_, _ = svc.CreateShipmentPredefined(req8)
 }
 
 func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {

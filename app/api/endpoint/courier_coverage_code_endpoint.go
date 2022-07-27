@@ -6,6 +6,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
+	"go-klikdokter/helper/message"
 
 	"github.com/go-kit/kit/endpoint"
 )
@@ -81,14 +82,14 @@ func makeImportCourierCoverageCode(s service.CourierCoverageCodeService) endpoin
 	return func(ctx context.Context, rqst interface{}) (response interface{}, err error) {
 		req := rqst.(request.ImportCourierCoverageCodeRequest)
 		result, msg := s.ImportCourierCoverageCode(req)
-		if msg.Code == 4000 {
+
+		if msg.Code != message.SuccessMsg.Code {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
 
-		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
+		return *result, nil
 	}
 }
-
 
 func makeDeleteCourierCoverageCode(s service.CourierCoverageCodeService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {

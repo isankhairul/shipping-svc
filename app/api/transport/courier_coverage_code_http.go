@@ -3,6 +3,7 @@ package transport
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go-klikdokter/app/api/endpoint"
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
@@ -57,7 +58,7 @@ func CourierCoverageCodeHttpHandler(s service.CourierCoverageCodeService, logger
 	pr.Methods("POST").Path(util.PrefixBase + "/courier/courier-coverage-code/import").Handler(httptransport.NewServer(
 		ep.Import,
 		decodeImportCourierCoverageCode,
-		encoder.EncodeResponseHTTP,
+		encoder.EncodeResponseCSV,
 		options...,
 	))
 
@@ -115,16 +116,24 @@ func decodeUpdateCourierCoverageCode(ctx context.Context, r *http.Request) (rqst
 
 func decodeImportCourierCoverageCode(ctx context.Context, r *http.Request) (rsqt interface{}, err error) {
 	var req request.ImportCourierCoverageCodeRequest
-	file, _, err := r.FormFile("file")
+	file, header, err := r.FormFile("file")
 	if err != nil {
 		return nil, err
 	}
 	// Close the file at the end of the program
 	defer file.Close()
 	rows, err := util.ReadCsvFile(file)
+
 	if err != nil {
 		return nil, err
 	}
+
+	limit := 5000
+	if len(rows) > limit {
+		return nil, fmt.Errorf("The number of rows in your dataset is greater than the maximum allowed (%d)", limit)
+	}
+
 	req.Rows = rows
+	req.FileName = header.Filename
 	return req, nil
 }

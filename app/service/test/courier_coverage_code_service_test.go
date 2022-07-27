@@ -172,16 +172,26 @@ func TestImportCourierCoverageCode(t *testing.T) {
 				"code5":        "",
 				"code6":        "",
 			},
+			{
+				"courier_uid":  "UCMvWngocMqKbaC3AWQBF",
+				"country_code": "",
+				"postal_code":  "",
+				"description":  "Vietnam code",
+				"code1":        "",
+				"code2":        "",
+				"code3":        "",
+				"code4":        "",
+				"code5":        "",
+				"code6":        "",
+			},
 		},
 	}
 	courierCoverageCodeRepository.Mock.On("Update", mock.Anything, mock.Anything).Return(&entity.CourierCoverageCode{}, nil)
 	result, _ := svcCourierCoverageCode.ImportCourierCoverageCode(req)
+	data := result.Data.([][]string)
 	assert.NotNil(t, result)
-	assert.Equal(t, 1, len(result), "Count of result must be 1")
-	assert.Equal(t, "UCMvWngocMqKbaC3AWQBF", result[0].CourierUID, "Courier UID is UCMvWngocMqKbaC3AWQBF")
-	assert.Equal(t, "VN", result[0].CountryCode, "Courier UID is VN")
-	assert.Equal(t, "70000", result[0].PostalCode, "Courier UID is 70000")
-	assert.Equal(t, "Vietnam code", result[0].Description, "Description is Vietnam code")
+	assert.Equal(t, 3, len(data), "Count of result must be 3")
+	assert.Equal(t, "UCMvWngocMqKbaC3AWQBF", data[1][0], "Courier UID is UCMvWngocMqKbaC3AWQBF")
 }
 
 func TestCreateCourierCoverageCodeFailedWithDuplicated(t *testing.T) {
