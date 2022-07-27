@@ -63,3 +63,9 @@ func GetHttpResponse(resp interface{}) *responseHttp {
 	}
 	return nil
 }
+
+type ResponseFile struct {
+	Name string
+	Type string
+	Data interface{}
+}

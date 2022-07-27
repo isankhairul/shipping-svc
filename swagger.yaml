@@ -2374,19 +2374,11 @@ paths:
         name: file
         type: file
         x-go-name: File
+      produces:
+      - text/csv
       responses:
         "200":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        "400":
-          description: errorResponse
-          schema:
-            $ref: '#/definitions/errorResponse'
-        "500":
-          description: InternalServerErrorResponse
-          schema:
-            $ref: '#/definitions/InternalServerErrorResponse'
+          description: ""
       tags:
       - Courier-Coverage-Code
   /courier/courier-services:

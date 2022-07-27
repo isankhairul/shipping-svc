@@ -2,10 +2,10 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
-	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
 
@@ -21,7 +21,7 @@ type CourierCoverageCodeService interface {
 	GetCourierCoverageCode(uid string) (*entity.CourierCoverageCode, message.Message)
 	UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message)
 	DeleteCourierCoverageCode(uid string) message.Message
-	ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) ([]response.ImportStatus, message.Message)
+	ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) (*base.ResponseFile, message.Message)
 }
 
 type CourierCoverageCodeServiceImpl struct {
@@ -227,15 +227,34 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 // Import courier coverage code by CSV file
 // consumes:
 // - multipart/form-data
+// produces:
+// - text/csv
 //
 // responses:
-//  400: errorResponse
-//  500: InternalServerErrorResponse
-//  200: SuccessResponse
-func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) ([]response.ImportStatus, message.Message) {
+//  200:
+//    decription: OK
+func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) (*base.ResponseFile, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Import Courier Coverage Codes")
+	totalRows := len(input.Rows)
+	failedRows := 0
+	successRows := 0
 
-	var resp []response.ImportStatus
+	var resp = [][]string{
+		{
+			"courier_uid",
+			"country_code",
+			"postal_code",
+			"description",
+			"code1",
+			"code2",
+			"code3",
+			"code4",
+			"code5",
+			"code6",
+			"message",
+		},
+	}
+
 	for _, row := range input.Rows {
 		courierUid, courierUidOk := row["courier_uid"]
 		countryCode, countryCodeOk := row["country_code"]
@@ -252,22 +271,29 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 			return nil, message.ErrImportData
 		}
 
+		//ignore summary
+		if courierUid == "Summary" {
+			totalRows--
+			continue
+		}
+
 		// Check empty string
 		if courierUid == "" || countryCode == "" || postalCode == "" {
-			resp = append(resp, response.ImportStatus{
-				CourierUID:  courierUid,
-				CountryCode: countryCode,
-				PostalCode:  postalCode,
-				Description: description,
-				Code1:       code1,
-				Code2:       code2,
-				Code3:       code3,
-				Code4:       code4,
-				Code5:       code5,
-				Code6:       code6,
-				Message:     "Can not import missing Courier UID, Country Code, and Postal Code",
-				Status:      false,
-			})
+			resp = append(resp, []string{
+				courierUid,
+				countryCode,
+				postalCode,
+				description,
+				code1,
+				code2,
+				code3,
+				code4,
+				code5,
+				code6,
+				"Can not import missing Courier UID, Country Code, and Postal Code",
+			},
+			)
+			failedRows++
 			continue
 		}
 
@@ -276,20 +302,21 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 		err := s.courierCoverageCodeRepo.GetCourierUid(&courier, courierUid)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				resp = append(resp, response.ImportStatus{
-					CourierUID:  courierUid,
-					CountryCode: countryCode,
-					PostalCode:  postalCode,
-					Description: description,
-					Code1:       code1,
-					Code2:       code2,
-					Code3:       code3,
-					Code4:       code4,
-					Code5:       code5,
-					Code6:       code6,
-					Message:     "Not found Courier UID in Courier table",
-					Status:      false,
-				})
+				resp = append(resp, []string{
+					courierUid,
+					countryCode,
+					postalCode,
+					description,
+					code1,
+					code2,
+					code3,
+					code4,
+					code5,
+					code6,
+					"Not found Courier UID in Courier table",
+				},
+				)
+				failedRows++
 				continue
 			} else {
 				_ = level.Error(logger).Log(err)
@@ -318,26 +345,11 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 				Code5:       code5,
 				Code6:       code6,
 			}
-			result, err := s.courierCoverageCodeRepo.Create(&data)
+			_, err := s.courierCoverageCodeRepo.Create(&data)
 			if err != nil {
 				_ = level.Error(logger).Log(err)
 				return nil, message.ErrDB
 			}
-			resp = append(resp, response.ImportStatus{
-				UID:         result.UID,
-				CourierUID:  courierUid,
-				CountryCode: countryCode,
-				PostalCode:  postalCode,
-				Description: description,
-				Code1:       code1,
-				Code2:       code2,
-				Code3:       code3,
-				Code4:       code4,
-				Code5:       code5,
-				Code6:       code6,
-				Message:     "Created",
-				Status:      true,
-			})
 
 		} else {
 			data := map[string]interface{}{
@@ -357,22 +369,29 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 				_ = level.Error(logger).Log(err)
 				return nil, message.ErrDB
 			}
-			resp = append(resp, response.ImportStatus{
-				UID:         courierCoverageCode.UID,
-				CourierUID:  courierUid,
-				CountryCode: countryCode,
-				PostalCode:  postalCode,
-				Description: description,
-				Code1:       code1,
-				Code2:       code2,
-				Code3:       code3,
-				Code4:       code4,
-				Code5:       code5,
-				Code6:       code6,
-				Message:     "Updated",
-				Status:      true,
-			})
 		}
+		successRows++
 	}
-	return resp, message.SuccessMsg
+
+	//Add summary
+	resp = append(resp, []string{
+		"Summary",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		fmt.Sprint("Total: ", totalRows, " || Success : ", successRows, " || Failed : ", failedRows),
+	},
+	)
+
+	return &base.ResponseFile{
+		Name: input.FileName,
+		Type: "text/csv",
+		Data: resp,
+	}, message.SuccessMsg
 }

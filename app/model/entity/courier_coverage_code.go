@@ -15,7 +15,7 @@ type CourierCoverageCode struct {
 	// in: string
 	// require: false
 	// example: "ggkjhsdf6668885555"
-	CourierUID string `gorm:"not null" json:"courier_uid"`
+	CourierUID string `gorm:"-:all" json:"courier_uid"` //this field will be ignored by gorm
 
 	CourierName string `gorm:"-" json:"courier_name"`
 
