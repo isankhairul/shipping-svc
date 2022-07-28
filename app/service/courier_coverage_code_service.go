@@ -82,7 +82,7 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 		Code4:       input.Code4,
 		Code5:       input.Code5,
 		Code6:       input.Code6,
-		Status:      input.Status,
+		Status:      &input.Status,
 	}
 	result, err := s.courierCoverageCodeRepo.Create(&courierCoverageCode)
 	if err != nil {
