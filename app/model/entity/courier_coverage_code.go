@@ -66,7 +66,7 @@ type CourierCoverageCode struct {
 
 	// Status of the Courier
 	// in: integer
-	Status int `gorm:"not null;default:1" json:"status"`
+	Status *int `gorm:"not null;default:1" json:"status"`
 
 	Courier *Courier `json:"-" gorm:"foreignKey:courier_id"`
 }
