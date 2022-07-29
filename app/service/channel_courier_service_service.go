@@ -38,7 +38,7 @@ func NewChannelCourierServiceService(
 	return &channelCourierServiceServiceImpl{lg, br, ccr, channelCourierServices, courierServices}
 }
 
-// swagger:route POST /channel/channel-courier-service/ Channel CreateChannelCourierService
+// swagger:route POST /channel/channel-courier-service/ Channel-Courier-Service CreateChannelCourierService
 // Create Channel Courier Service
 //
 // responses:
@@ -102,7 +102,7 @@ func (s *channelCourierServiceServiceImpl) CreateChannelCourierService(input req
 	return response.NewChannelCourierServiceDetail(*channelCourierService), message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-courier-service Channel GetChannelCourierServiceList
+// swagger:route GET /channel/channel-courier-service/ Channel-Courier-Service GetChannelCourierServiceList
 // Get List of Channel Courier Service
 //
 // responses:
@@ -133,7 +133,7 @@ func (s *channelCourierServiceServiceImpl) ListChannelCouriersService(input requ
 	return response.NewChannelCourierServiceList(result), paging, message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-courier-service/{uid} Channel GetChannelCourierServiceByUID
+// swagger:route GET /channel/channel-courier-service/{uid} Channel-Courier-Service GetChannelCourierServiceByUID
 // Get Detail of Channel Courier Service
 //
 // responses:
@@ -155,7 +155,7 @@ func (s *channelCourierServiceServiceImpl) GetChannelCourierService(uid string) 
 	return response.NewChannelCourierServiceDetail(*result), message.SuccessMsg
 }
 
-// swagger:route PUT /channel/channel-courier-service/{uid} Channel UpdateChannelCourierService
+// swagger:route PUT /channel/channel-courier-service/{uid} Channel-Courier-Service UpdateChannelCourierService
 // Update a channel courier by uid
 //
 // responses:
@@ -187,7 +187,7 @@ func (s *channelCourierServiceServiceImpl) UpdateChannelCourierService(input req
 	return s.GetChannelCourierService(input.UID)
 }
 
-// swagger:route DELETE /channel/channel-courier-service/{uid} Channel DeleteChannelCourierServiceByUID
+// swagger:route DELETE /channel/channel-courier-service/{uid} Channel-Courier-Service DeleteChannelCourierServiceByUID
 // Delete Courier Service
 //
 // responses:
