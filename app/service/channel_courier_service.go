@@ -38,7 +38,7 @@ func NewChannelCourierService(
 	return &ChannelCourierServiceImpl{lg, br, ccr, channelCourierServices, courierServices}
 }
 
-// swagger:route POST /channel/channel-courier/ Channel SaveChannelCourierRequest
+// swagger:route POST /channel/channel-courier/ Channel-Courier-Service SaveChannelCourierRequest
 // Assign Courier to Channel
 //
 // responses:
@@ -86,7 +86,7 @@ func (s *ChannelCourierServiceImpl) createChannelCourierInTx(input request.SaveC
 	return entity.ToChannelCourierDTO(cc), message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-courier/{uid} Channel GetChannelCourierByUid
+// swagger:route GET /channel/channel-courier/{uid} Channel-Courier-Service GetChannelCourierByUid
 // Get Detail of Channel Courier
 //
 // responses:
@@ -108,7 +108,7 @@ func (s *ChannelCourierServiceImpl) GetChannelCourier(uid string) (*entity.Chann
 	return entity.ToChannelCourierDTO(cur), message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-courier/ Channel ChannelCourierListRequest
+// swagger:route GET /channel/channel-courier/ Channel-Courier-Service ChannelCourierListRequest
 // List of Assignment Channel and Courier
 //
 // responses:
@@ -143,7 +143,7 @@ func (s *ChannelCourierServiceImpl) ListChannelCouriers(input request.ChannelCou
 	return items, pagination, message.SuccessMsg
 }
 
-// swagger:route PUT /channel/channel-courier/{uid} Channel UpdateChannelCourierRequest
+// swagger:route PUT /channel/channel-courier/{uid} Channel-Courier-Service UpdateChannelCourierRequest
 // Update a channel courier by uid
 //
 // responses:
@@ -179,7 +179,7 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 	return entity.ToChannelCourierDTO(cur), message.SuccessMsg
 }
 
-// swagger:route DELETE /channel/channel-courier/{uid} Channel DeleteChannelCourierByUid
+// swagger:route DELETE /channel/channel-courier/{uid} Channel-Courier-Service DeleteChannelCourierByUid
 // Delete Channel Courier
 //
 // responses:

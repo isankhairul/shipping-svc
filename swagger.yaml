@@ -1697,7 +1697,7 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Channel-Apps
-  /channel/channel-courier-service:
+  /channel/channel-courier-service/:
     get:
       description: Get List of Channel Courier Service
       operationId: GetChannelCourierServiceList
@@ -1772,8 +1772,7 @@ paths:
         "200":
           $ref: '#/responses/ChannelCourierServiceList'
       tags:
-      - Channel
-  /channel/channel-courier-service/:
+      - Channel-Courier-Service
     post:
       description: Create Channel Courier Service
       operationId: CreateChannelCourierService
@@ -1787,7 +1786,7 @@ paths:
         "200":
           $ref: '#/responses/ChannelCourierServiceDetailResponse'
       tags:
-      - Channel
+      - Channel-Courier-Service
   /channel/channel-courier-service/{uid}:
     delete:
       description: Delete Courier Service
@@ -1805,7 +1804,7 @@ paths:
           schema:
             $ref: '#/definitions/SuccessResponse'
       tags:
-      - Channel
+      - Channel-Courier-Service
     get:
       description: Get Detail of Channel Courier Service
       operationId: GetChannelCourierServiceByUID
@@ -1820,7 +1819,7 @@ paths:
         "200":
           $ref: '#/responses/ChannelCourierServiceDetailResponse'
       tags:
-      - Channel
+      - Channel-Courier-Service
     put:
       description: Update a channel courier by uid
       operationId: UpdateChannelCourierService
@@ -1840,7 +1839,7 @@ paths:
         "200":
           $ref: '#/responses/ChannelCourierServiceDetailResponse'
       tags:
-      - Channel
+      - Channel-Courier-Service
   /channel/channel-courier/:
     get:
       description: List of Assignment Channel and Courier
@@ -1935,7 +1934,7 @@ paths:
           schema:
             $ref: '#/definitions/InternalServerErrorResponse'
       tags:
-      - Channel
+      - Channel-Courier-Service
     post:
       description: Assign Courier to Channel
       operationId: SaveChannelCourierRequest
@@ -1953,7 +1952,7 @@ paths:
           schema:
             $ref: '#/definitions/errorResponse'
       tags:
-      - Channel
+      - Channel-Courier-Service
   /channel/channel-courier/{uid}:
     delete:
       description: Delete Channel Courier
@@ -1983,7 +1982,7 @@ paths:
           schema:
             $ref: '#/definitions/InternalServerErrorResponse'
       tags:
-      - Channel
+      - Channel-Courier-Service
     get:
       description: Get Detail of Channel Courier
       operationId: GetChannelCourierByUid
@@ -2010,7 +2009,7 @@ paths:
           schema:
             $ref: '#/definitions/InternalServerErrorResponse'
       tags:
-      - Channel
+      - Channel-Courier-Service
     put:
       description: Update a channel courier by uid
       operationId: UpdateChannelCourierRequest
@@ -2036,7 +2035,7 @@ paths:
           schema:
             $ref: '#/definitions/errorResponse'
       tags:
-      - Channel
+      - Channel-Courier-Service
   /channel/channel-status-courier-status:
     get:
       description: Get Channel Courier Status List
