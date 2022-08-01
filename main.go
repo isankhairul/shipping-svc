@@ -114,10 +114,21 @@ func main() {
 
 func accessControl(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type")
+		if viper.Get("access-control.allow-origin") != nil {
+			w.Header().Set("Access-Control-Allow-Origin", viper.GetString("access-control.allow-origin"))
+		}
+		if viper.Get("access-control.allow-methods") != nil {
+			w.Header().Set("Access-Control-Allow-Methods", viper.GetString("access-control.allow-methods"))
+		}
+		if viper.Get("access-control.allow-credentials") != nil {
+			w.Header().Set("Access-Control-Allow-Credentials", viper.GetString("access-control.allow-credentials"))
+		}
+		if viper.Get("access-control.allow-headers") != nil {
+			w.Header().Set("Access-Control-Allow-Headers", viper.GetString("access-control.allow-headers"))
+		}
+		if viper.Get("access-control.request-headers") != nil {
+			w.Header().Set("Access-Control-Request-Headers", viper.GetString("access-control.request-headers"))
+		}
 
 		if r.Method == "OPTIONS" {
 			return
