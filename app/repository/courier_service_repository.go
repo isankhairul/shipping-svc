@@ -145,7 +145,7 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 
 	if filter["status"] != 0 {
 		//query = query.Where("status = ?", filter["status"])
-		status := filter["status"].(int)
+		status := filter["status"].(int32)
 		query = query.Where(&entity.CourierService{Status: &status})
 	}
 

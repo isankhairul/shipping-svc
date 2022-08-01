@@ -49,23 +49,23 @@ type SaveCourierServiceRequest struct {
 
 	// Cod Available of the Courier Service
 	// in: integer
-	CodAvailable int `json:"cod_available"`
+	CodAvailable int32 `json:"cod_available"`
 
 	// Prescription Allowed of the Courier Service
 	// in: integer
-	PrescriptionAllowed int `json:"prescription_allowed"`
+	PrescriptionAllowed int32 `json:"prescription_allowed"`
 
 	// Cancelable of the Courier Service
 	// in: integer
-	Cancelable int `json:"cancelable"`
+	Cancelable int32 `json:"cancelable"`
 
 	// Tracking Available of the Courier Service
 	// in: integer
-	TrackingAvailable int `json:"tracking_available"`
+	TrackingAvailable int32 `json:"tracking_available"`
 
 	// Status of the Courier Service
 	// in: integer
-	Status *int `json:"status"`
+	Status *int32 `json:"status"`
 
 	// Max Weight of the Courier Service
 	// in: float64
@@ -89,7 +89,7 @@ type SaveCourierServiceRequest struct {
 
 	// Insurance of the Courier Service
 	// in: integer
-	Insurance int `json:"insurance"`
+	Insurance int32 `json:"insurance"`
 
 	// Insurance Min of the Courier Service
 	// in: float64

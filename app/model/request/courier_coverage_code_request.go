@@ -116,7 +116,7 @@ type SaveCourierCoverageCodeRequest struct {
 
 	// Status of coverage code of the courỉe, use this on UPDATE function
 	// in: int32
-	Status int `json:"status"`
+	Status int32 `json:"status"`
 }
 
 // swagger:parameters DeleteCourierCoverageCodeByIDParam

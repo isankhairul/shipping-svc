@@ -34,18 +34,6 @@ func DbInit(logger log.Logger) (*gorm.DB, error) {
 	_ = db.AutoMigrate(&entity.ShippingStatus{})
 	_ = db.AutoMigrate(&entity.ShippingCourierStatus{})
 
-	if ok := db.Migrator().HasColumn(&entity.ChannelCourierService{}, "channel_id"); ok {
-		_ = db.Migrator().DropColumn(&entity.ChannelCourierService{}, "channel_id")
-	}
-
-	if ok := db.Migrator().HasColumn(&entity.ChannelCourierService{}, "courier_id"); ok {
-		_ = db.Migrator().DropColumn(&entity.ChannelCourierService{}, "courier_id")
-	}
-
-	if ok := db.Migrator().HasColumn(&entity.CourierCoverageCode{}, "courier_uid"); ok {
-		_ = db.Migrator().DropColumn(&entity.CourierCoverageCode{}, "courier_uid")
-	}
-
 	return db, nil
 }
 

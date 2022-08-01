@@ -43,7 +43,7 @@ func TestCreateChannelCourier(t *testing.T) {
 	//return nil when creating
 	channelCourierRepo.Mock.On("GetChannelCourierByIds", mock.Anything, mock.Anything).Return(nil)
 
-	status1 := 1
+	status1 := int32(1)
 	cc := &entity.ChannelCourier{
 		BaseIDModel: base.BaseIDModel{UID: "123"},
 		Courier:     courier, Channel: channel,
@@ -113,7 +113,7 @@ func TestListChannelCouriers(t *testing.T) {
 	courier2 := &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_2", ID: 2}, CourierName: "Courier 2"}
 	channel2 := &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_2", ID: 2}, ChannelName: "Channel 2"}
 
-	status1 := 1
+	status1 := int32(1)
 	items := []*entity.ChannelCourier{
 		{
 			Courier: courier, Channel: channel, PrioritySort: 4, Status: &status1,
@@ -152,7 +152,7 @@ func TestGetChannelCourier(t *testing.T) {
 	channelCourierRepo.Mock.On("FindCourierByUID", mock.Anything).Return(courier)
 	channelCourierRepo.Mock.On("FindChannelByUID", mock.Anything).Return(channel)
 
-	status1 := 1
+	status1 := int32(1)
 	cc := &entity.ChannelCourier{
 		BaseIDModel: base.BaseIDModel{UID: uid},
 		Courier:     courier, Channel: channel,

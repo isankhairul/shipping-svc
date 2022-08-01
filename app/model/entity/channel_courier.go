@@ -10,23 +10,23 @@ type ChannelCourier struct {
 
 	// Id of the Courier
 	// in: integer
-	CourierID uint64 `gorm:"not null" json:"courier_id"`
+	CourierID uint64 `gorm:"type:bigint;not null" json:"courier_id"`
 
 	// Id of the Channel
 	// in: integer
-	ChannelID uint64 `gorm:"not null" json:"channel_id"`
+	ChannelID uint64 `gorm:"type:bigint;not null" json:"channel_id"`
 
 	// PrioritySort of the ChannelCourier
 	// in: int
-	PrioritySort int `gorm:"not null;default:1" json:"priority_sort"`
+	PrioritySort int32 `gorm:"type:int;not null;default:0" json:"priority_sort"`
 
 	// Hide purpose of the ChannelCourier
 	// in: integer
-	HidePurpose int `gorm:"not null;default:0" json:"hide_purpose"`
+	HidePurpose int32 `gorm:"type:int;not null;default:0" json:"hide_purpose"`
 
 	// Status of the ChannelCourier
 	// in: integer
-	Status *int `gorm:"not null;default:1" json:"status"`
+	Status *int32 `gorm:"type:int;not null;default:1" json:"status"`
 
 	Courier *Courier `json:"-" gorm:"foreignKey:courier_id"`
 
@@ -44,7 +44,7 @@ type ChannelCourierServiceDTO struct {
 	ShippingName      string  `json:"shipping_name"`
 	ShippingCode      string  `json:"shipping_code"`
 	PriceInternal     float64 `json:"price_internal"`
-	Status            int     `json:"status"`
+	Status            int32   `json:"status"`
 }
 
 func ToChannelCourierServiceDTO(channelCourierService *ChannelCourierService, courierService *CourierService) *ChannelCourierServiceDTO {
@@ -65,9 +65,9 @@ type ChannelCourierDTO struct {
 	ChannelName        string                      `json:"channel_name"`
 	ChannelCode        string                      `json:"channel_code"`
 	CourierName        string                      `json:"courier_name"`
-	PrioritySort       int                         `json:"priority_sort"`
-	HidePurpose        int                         `json:"hide_purpose"`
-	Status             int                         `json:"status"`
+	PrioritySort       int32                       `json:"priority_sort"`
+	HidePurpose        int32                       `json:"hide_purpose"`
+	Status             int32                       `json:"status"`
 	CourierServiceDTOs []*ChannelCourierServiceDTO `json:"-"`
 }
 

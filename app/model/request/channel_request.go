@@ -28,7 +28,7 @@ type SaveChannelRequest struct {
 
 	// status of Channel
 	// in: int
-	Status *int `json:"status" binding:"omitempty"`
+	Status *int32 `json:"status" binding:"omitempty"`
 
 	// Logo of Channel
 	// in: string

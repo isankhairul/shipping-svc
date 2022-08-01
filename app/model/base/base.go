@@ -17,13 +17,13 @@ type BaseIDModel struct {
 
 	// UID of the a model
 	// in: int64
-	UID string `gorm:"uniqueIndex" json:"uid"`
+	UID string `gorm:"type:varchar(21);size:21;uniqueIndex" json:"uid"`
 
-	IsDeleted bool      `json:"is_deleted"`
-	CreatedBy string    `json:"-" gorm:"type:varchar"`
-	CreatedAt time.Time `json:"-"`
-	UpdatedBy string    `json:"-" gorm:"type:varchar"`
-	UpdatedAt time.Time `json:"-"`
+	IsDeleted bool      `json:"is_deleted" gorm:"type:boolean"`
+	CreatedBy string    `json:"-" gorm:"type:varchar(100);size:100"`
+	CreatedAt time.Time `json:"-" gorm:"type:timestamp"`
+	UpdatedBy string    `json:"-" gorm:"type:varchar(100);size:100"`
+	UpdatedAt time.Time `json:"-" gorm:"type:timestamp"`
 }
 
 func (base *BaseIDModel) BeforeCreate(tx *gorm.DB) error {

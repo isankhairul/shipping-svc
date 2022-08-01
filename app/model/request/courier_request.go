@@ -37,33 +37,33 @@ type SaveCourierRequest struct {
 
 	// Hide purpose of the Courier
 	// in: integer
-	HidePurpose int `gorm:"not null;default:0" json:"hide_purpose"`
+	HidePurpose int32 `json:"hide_purpose"`
 
 	// Courier Api Integration of the Courier
 	// in: integer
-	CourierApiIntegration int `gorm:"not null;default:1" json:"courier_api_intergration"`
+	CourierApiIntegration int32 `json:"courier_api_intergration"`
 
 	// Geo Coodinate of the Courier
 	// in: string
-	UseGeocoodinate int `gorm:"not null;default:0" json:"use_geocoodinate"`
+	UseGeocoodinate int32 `json:"use_geocoodinate"`
 
 	// Provide Airwaybill of the Courier
 	// in: integer
-	ProvideAirwaybill int `gorm:"not null;default:0" json:"provide_airwaybill"`
+	ProvideAirwaybill int32 `json:"provide_airwaybill"`
 
 	// Courier status
 	// in: int
 	// required: false
-	Status int `json:"status" binding:"omitempty"`
+	Status int32 `json:"status" binding:"omitempty"`
 
 	// Image UID
 	// in: string
-	ImageUID string `gorm:"size:50;null" json:"image_uid"`
+	ImageUID string `json:"image_uid"`
 
 	// Image Path
 	// in: string
 	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
-	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
+	ImagePath datatype.JSONB `json:"image_path"`
 }
 
 // swagger:parameters CourierByUIdParam

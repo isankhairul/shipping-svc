@@ -93,8 +93,8 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 		query = query.Where(entity.CourierCoverageCode{Description: filters["description"].(string)})
 	}
 
-	if filters["status"].(*int) != nil {
-		query = query.Where(entity.CourierCoverageCode{Status: filters["status"].(*int)})
+	if filters["status"].(*int32) != nil {
+		query = query.Where(entity.CourierCoverageCode{Status: filters["status"].(*int32)})
 	}
 	if len(sort) > 0 {
 		query = query.Order(sort)

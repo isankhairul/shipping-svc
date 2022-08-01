@@ -90,7 +90,7 @@ type UpdateShipmentPredefinedRequest struct {
 	Title string `json:"title" binding:"omitempty"`
 	// Status of the ShippmentPredefined
 	// in: integer
-	Status int `json:"status" binding:"omitempty"`
+	Status int32 `json:"status" binding:"omitempty"`
 }
 
 func (req UpdateShipmentPredefinedRequest) Validate() error {

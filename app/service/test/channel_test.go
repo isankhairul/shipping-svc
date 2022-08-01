@@ -22,7 +22,7 @@ func init() {
 }
 
 func TestCreateChannel(t *testing.T) {
-	status := 1
+	status := int32(1)
 	req := request.SaveChannelRequest{
 		ChannelName: "test",
 		ChannelCode: "channel code test",
@@ -51,7 +51,7 @@ func TestCreateChannel(t *testing.T) {
 	assert.Equal(t, "test", result.ChannelName, "ChannelName must be test")
 	assert.Equal(t, "channel code test", result.ChannelCode, "ChannelName must be channel code test")
 	assert.Equal(t, "description test", result.Description, "Description must be description test")
-	assert.Equal(t, 1, result.Status, "Status must be 1")
+	assert.Equal(t, int32(1), result.Status, "Status must be 1")
 	assert.Equal(t, "logo test", result.Logo, "Status must be logo test")
 
 }
@@ -118,7 +118,7 @@ func TestListChannel(t *testing.T) {
 }
 
 func TestCreateChannelFail(t *testing.T) {
-	status := 1
+	status := int32(1)
 	req := request.SaveChannelRequest{
 		ChannelName: "test",
 		ChannelCode: "string",

@@ -26,17 +26,17 @@ type SaveChannelCourierRequest struct {
 	// Priority Sort of ChannelCourier
 	// in: int
 	// required: true
-	PrioritySort int `json:"priority_sort" binding:"omitempty"`
+	PrioritySort int32 `json:"priority_sort" binding:"omitempty"`
 
 	// Courier status
 	// in: int
 	// required: true
-	Status int `json:"status" binding:"omitempty"`
+	Status int32 `json:"status" binding:"omitempty"`
 
 	// Hide purpose of the Courier
 	// in: integer
 	// required: true
-	HidePurpose int `json:"hide_purpose" binding:"omitempty"`
+	HidePurpose int32 `json:"hide_purpose" binding:"omitempty"`
 }
 
 type CourierServiceDTO struct {
@@ -74,17 +74,17 @@ type UpdateChannelCourierRequest struct {
 	// Priority Sort of ChannelCourier
 	// in: int
 	// required: true
-	PrioritySort int `json:"priority_sort" binding:"omitempty"`
+	PrioritySort int32 `json:"priority_sort" binding:"omitempty"`
 
 	// Courier status
 	// in: int
 	// required: true
-	Status int `json:"status" binding:"omitempty"`
+	Status int32 `json:"status" binding:"omitempty"`
 
 	// Hide purpose of the Courier
 	// in: integer
 	// required: true
-	HidePurpose int `json:"hide_purpose" binding:"omitempty"`
+	HidePurpose int32 `json:"hide_purpose" binding:"omitempty"`
 }
 
 func (req SaveChannelCourierRequest) Validate() error {
