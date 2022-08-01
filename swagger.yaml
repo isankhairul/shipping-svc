@@ -70,7 +70,7 @@ definitions:
         description: |-
           Status of the Channel
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       uid:
@@ -101,7 +101,7 @@ definitions:
         description: |-
           Hide purpose of the ChannelCourier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: HidePurpose
       id:
@@ -119,14 +119,14 @@ definitions:
         description: |-
           PrioritySort of the ChannelCourier
           in: int
-        format: int64
+        format: int32
         type: integer
         x-go-name: PrioritySort
       status:
         description: |-
           Status of the ChannelCourier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       uid:
@@ -150,15 +150,15 @@ definitions:
         type: string
         x-go-name: CourierName
       hide_purpose:
-        format: int64
+        format: int32
         type: integer
         x-go-name: HidePurpose
       priority_sort:
-        format: int64
+        format: int32
         type: integer
         x-go-name: PrioritySort
       status:
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       uid:
@@ -232,7 +232,7 @@ definitions:
         description: |-
           Status of the Courier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       uid:
@@ -265,7 +265,7 @@ definitions:
         type: string
         x-go-name: ShippingName
       status:
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       uid:
@@ -291,7 +291,7 @@ definitions:
         type: string
         x-go-name: ShippingType
       status:
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       uid:
@@ -311,7 +311,7 @@ definitions:
         description: |-
           Courier Api Integration of the Courier. Need to set column becase snake-case cannot understand convetnion.
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: CourierApiIntegration
       courier_name:
@@ -330,7 +330,7 @@ definitions:
         description: |-
           Hide purpose of the Courier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: HidePurpose
       id:
@@ -362,14 +362,14 @@ definitions:
         description: |-
           Provide Airwaybill of the Courier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: ProvideAirwaybill
       status:
         description: |-
           Status of the Courier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       uid:
@@ -382,7 +382,7 @@ definitions:
         description: |-
           Geo Coodinate of the Courier
           in: string
-        format: int64
+        format: int32
         type: integer
         x-go-name: UseGeocoodinate
     type: object
@@ -478,7 +478,7 @@ definitions:
         description: |-
           Status of the Courier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       uid:
@@ -491,20 +491,18 @@ definitions:
     x-go-package: go-klikdokter/app/model/entity
   CourierService:
     properties:
-      _:
-        $ref: '#/definitions/Courier'
       cancelable:
         description: |-
           Cancelable of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Cancelable
       cod_available:
         description: |-
           Cod Available of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: CodAvailable
       courier_uid:
@@ -549,7 +547,7 @@ definitions:
         description: |-
           Insurance of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Insurance
       insurance_fee:
@@ -620,7 +618,7 @@ definitions:
         description: |-
           Prescription Allowed of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: PrescriptionAllowed
       repickup:
@@ -660,14 +658,14 @@ definitions:
         description: |-
           Status of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       tracking_available:
         description: |-
           Tracking Available of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: TrackingAvailable
       uid:
@@ -784,21 +782,21 @@ definitions:
         description: |-
           Hide purpose of the Courier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: HidePurpose
       priority_sort:
         description: |-
           Priority Sort of ChannelCourier
           in: int
-        format: int64
+        format: int32
         type: integer
         x-go-name: PrioritySort
       status:
         description: |-
           Courier status
           in: int
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
     required:
@@ -834,7 +832,7 @@ definitions:
         description: |-
           Courier status
           in: number
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
     required:
@@ -882,7 +880,7 @@ definitions:
         description: |-
           status of Channel
           in: int
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
     type: object
@@ -956,7 +954,7 @@ definitions:
         description: |-
           Status of coverage code of the courỉe, use this on UPDATE function
           in: int32
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
     type: object
@@ -973,7 +971,7 @@ definitions:
         description: |-
           Courier Api Integration of the Courier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: CourierApiIntegration
       courier_name:
@@ -992,7 +990,7 @@ definitions:
         description: |-
           Hide purpose of the Courier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: HidePurpose
       image_path:
@@ -1013,14 +1011,14 @@ definitions:
         description: |-
           Provide Airwaybill of the Courier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: ProvideAirwaybill
       status:
         description: |-
           Courier status
           in: int
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       uid:
@@ -1033,7 +1031,7 @@ definitions:
         description: |-
           Geo Coodinate of the Courier
           in: string
-        format: int64
+        format: int32
         type: integer
         x-go-name: UseGeocoodinate
     type: object
@@ -1045,14 +1043,14 @@ definitions:
         description: |-
           Cancelable of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Cancelable
       cod_available:
         description: |-
           Cod Available of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: CodAvailable
       courier_uid:
@@ -1102,7 +1100,7 @@ definitions:
         description: |-
           Insurance of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Insurance
       insurance_fee:
@@ -1170,7 +1168,7 @@ definitions:
         description: |-
           Prescription Allowed of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: PrescriptionAllowed
       repickup:
@@ -1210,14 +1208,14 @@ definitions:
         description: |-
           Status of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       tracking_available:
         description: |-
           Tracking Available of the Courier Service
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: TrackingAvailable
       updated_at:
@@ -1264,7 +1262,7 @@ definitions:
         description: |-
           Status of the ShippmentPredefined
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       title:
@@ -1317,21 +1315,21 @@ definitions:
         description: |-
           Hide purpose of the Courier
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: HidePurpose
       priority_sort:
         description: |-
           Priority Sort of ChannelCourier
           in: int
-        format: int64
+        format: int32
         type: integer
         x-go-name: PrioritySort
       status:
         description: |-
           Courier status
           in: int
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
     required:
@@ -1495,7 +1493,7 @@ definitions:
         description: |-
           Status of the ShippmentPredefined
           in: integer
-        format: int64
+        format: int32
         type: integer
         x-go-name: Status
       title:
@@ -2206,26 +2204,29 @@ paths:
         name: sort
         type: string
         x-go-name: Sort
-      - description: |-
-          Courier Name
-          in: string
+      - collectionFormat: multi
+        description: Courier Name
         in: query
+        items:
+          type: string
         name: courier_name
-        type: string
+        type: array
         x-go-name: CourierName
-      - description: |-
-          Country Code
-          in: string
+      - collectionFormat: multi
+        description: Country Code
         in: query
+        items:
+          type: string
         name: country_code
-        type: string
+        type: array
         x-go-name: CountryCode
-      - description: |-
-          Postal Code
-          in: string
+      - collectionFormat: multi
+        description: Postal Code
         in: query
+        items:
+          type: string
         name: postal_code
-        type: string
+        type: array
         x-go-name: PostalCode
       - description: |-
           Description
@@ -2237,7 +2238,7 @@ paths:
       - description: |-
           Courier coverage code status
           in: int
-        format: int64
+        format: int32
         in: query
         name: status
         type: integer
