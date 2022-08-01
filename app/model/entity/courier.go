@@ -10,15 +10,15 @@ type Courier struct {
 	base.BaseIDModel
 	// Name of the Courier
 	// in: string
-	CourierName string `gorm:"not null" json:"courier_name"`
+	CourierName string `gorm:"type:varchar(100);size:100;not null" json:"courier_name"`
 
 	// Code of the Courier
 	// in: string
-	Code string `gorm:"not null;unique:true" json:"code"`
+	Code string `gorm:"type:varchar(50);size:50;not null;unique:true" json:"code"`
 
 	// Type of the Courier
 	// in: string
-	CourierType string `gorm:"not null" json:"courier_type"`
+	CourierType string `gorm:"type:varchar(50);size:50;not null" json:"courier_type"`
 
 	// Logo of the Courier
 	// in: string
@@ -26,23 +26,23 @@ type Courier struct {
 
 	// Hide purpose of the Courier
 	// in: integer
-	HidePurpose int `gorm:"not null;default:0" json:"hide_purpose"`
+	HidePurpose int32 `gorm:"type:int;not null;default:0" json:"hide_purpose"`
 
 	// Courier Api Integration of the Courier. Need to set column becase snake-case cannot understand convetnion.
 	// in: integer
-	CourierApiIntegration int `gorm:"not null;default:1;column:api_integration" json:"courier_api_intergration"`
+	CourierApiIntegration int32 `gorm:"type:int;not null;default:1;column:api_integration" json:"courier_api_intergration"`
 
 	// Geo Coodinate of the Courier
 	// in: string
-	UseGeocoodinate int `gorm:"not null;default:0" json:"use_geocoodinate"`
+	UseGeocoodinate int32 `gorm:"type:int;not null;default:0" json:"use_geocoodinate"`
 
 	// Provide Airwaybill of the Courier
 	// in: integer
-	ProvideAirwaybill int `gorm:"not null;default:0" json:"provide_airwaybill"`
+	ProvideAirwaybill int32 `gorm:"type:int;not null;default:0" json:"provide_airwaybill"`
 
 	// Status of the Courier
 	// in: integer
-	Status *int `gorm:"not null;default:1" json:"status"`
+	Status *int32 `gorm:"type:int;not null;default:1" json:"status"`
 
 	CourierCoverageCode []*CourierCoverageCode `gorm:"foreignKey:courier_id" json:"-"`
 
@@ -50,7 +50,7 @@ type Courier struct {
 
 	// Image UID
 	// in: string
-	ImageUID string `gorm:"size:50;null" json:"image_uid"`
+	ImageUID string `gorm:"type:varchar(50);size:50;null" json:"image_uid"`
 
 	// Image Path
 	// in: string

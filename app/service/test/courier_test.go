@@ -35,7 +35,7 @@ func TestCreateCourier(t *testing.T) {
 	assert.NotNil(t, result)
 	assert.Equal(t, "test name", result.CourierName, "CourierName must be test name")
 	assert.Equal(t, "test code", result.Code, "Code must be test code")
-	assert.Equal(t, 1, *(result.Status), "Status must be 1")
+	assert.Equal(t, int32(1), *(result.Status), "Status must be 1")
 	assert.Equal(t, "logo test", result.Logo, "Log  must be logo test")
 }
 

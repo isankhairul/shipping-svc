@@ -176,7 +176,7 @@ func TestListChannelCouriersServiceSuccess(t *testing.T) {
 		BaseIDModel: base.BaseIDModel{UID: "a"},
 	}
 
-	status1 := 1
+	status1 := int32(1)
 	ccs := entity.ChannelCourierService{
 		BaseIDModel:    base.BaseIDModel{UID: "a"},
 		ChannelCourier: &entity.ChannelCourier{BaseIDModel: base.BaseIDModel{UID: "b"}, Courier: courier, Channel: channel},
@@ -226,7 +226,7 @@ func TestGetChannelCourierServiceSuccess(t *testing.T) {
 		BaseIDModel: base.BaseIDModel{UID: "a"},
 	}
 
-	status1 := 1
+	status1 := int32(1)
 	ccs := entity.ChannelCourierService{
 		BaseIDModel:    base.BaseIDModel{UID: "a"},
 		ChannelCourier: &entity.ChannelCourier{BaseIDModel: base.BaseIDModel{UID: "b"}, Courier: courier, Channel: channel},
@@ -275,7 +275,7 @@ func TestUpdateChannelCourierServiceSuccess(t *testing.T) {
 		BaseIDModel: base.BaseIDModel{UID: "a"},
 	}
 
-	status1 := 1
+	status1 := int32(1)
 	ccs := entity.ChannelCourierService{
 		BaseIDModel:    base.BaseIDModel{UID: "a"},
 		ChannelCourier: &entity.ChannelCourier{BaseIDModel: base.BaseIDModel{UID: "b"}, Courier: courier, Channel: channel},
@@ -333,7 +333,7 @@ func TestDeleteChannelCourierServiceSuccess(t *testing.T) {
 		BaseIDModel: base.BaseIDModel{UID: "a"},
 	}
 
-	status1 := 1
+	status1 := int32(1)
 	ccs := entity.ChannelCourierService{
 		BaseIDModel:    base.BaseIDModel{UID: "a"},
 		ChannelCourier: &entity.ChannelCourier{BaseIDModel: base.BaseIDModel{UID: "b"}, Courier: courier, Channel: channel},

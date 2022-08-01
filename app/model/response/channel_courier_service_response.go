@@ -17,7 +17,7 @@ type ChannelCourierServiceDetail struct {
 	ChannelName       string  `json:"channel_name"`
 	ShippingName      string  `json:"shipping_name"`
 	PriceInternal     float64 `json:"price_internal"`
-	Status            int     `json:"status"`
+	Status            int32   `json:"status"`
 }
 
 func NewChannelCourierServiceDetail(input entity.ChannelCourierService) *ChannelCourierServiceDetail {
@@ -61,7 +61,7 @@ type ChannelCourierServiceItem struct {
 	ShippingName string `json:"shipping_name"`
 	ShippingCode string `json:"shipping_code"`
 	ShippingType string `json:"shipping_type"`
-	Status       int    `json:"status"`
+	Status       int32  `json:"status"`
 }
 
 func NewChannelCourierServiceItem(input entity.ChannelCourierService) *ChannelCourierServiceItem {

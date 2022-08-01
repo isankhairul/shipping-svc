@@ -30,7 +30,7 @@ type SaveChannelCourierServiceRequest struct {
 	// Courier status
 	// in: number
 	// required: true
-	Status int `json:"status" binding:"omitempty"`
+	Status int32 `json:"status" binding:"omitempty"`
 }
 
 func (req SaveChannelCourierServiceRequest) Validate() error {

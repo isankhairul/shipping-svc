@@ -25,7 +25,7 @@ func init() {
 }
 
 func TestCreateCourierService(t *testing.T) {
-	status := 1
+	status := int32(1)
 	req := request.SaveCourierServiceRequest{
 		Cancelable:          1,
 		CodAvailable:        1,
@@ -148,7 +148,7 @@ func TestListCourierService(t *testing.T) {
 }
 
 func TestCreateCourierServiceFail(t *testing.T) {
-	status := 1
+	status := int32(1)
 	req := request.SaveCourierServiceRequest{
 		Cancelable:          1,
 		CodAvailable:        1,

@@ -235,7 +235,7 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 	}
 
 	//Set request to entity
-	defaultStatus := 1
+	defaultStatus := int32(1)
 	courierService := entity.CourierService{
 		//General
 		CourierID:           courier.ID,

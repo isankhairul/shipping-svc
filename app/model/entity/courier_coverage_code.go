@@ -9,7 +9,7 @@ type CourierCoverageCode struct {
 	// Relation with CourierID
 	// in: Courier
 	// require: true
-	CourierID uint64 `gorm:"not null" json:"-"`
+	CourierID uint64 `gorm:"type:bigint;not null" json:"-"`
 
 	// Courier UID of the Courier
 	// in: string
@@ -66,7 +66,7 @@ type CourierCoverageCode struct {
 
 	// Status of the Courier
 	// in: integer
-	Status *int `gorm:"not null;default:1" json:"status"`
+	Status *int32 `gorm:"type:int;not null;default:1" json:"status"`
 
 	Courier *Courier `json:"-" gorm:"foreignKey:courier_id"`
 }
