@@ -28,3 +28,6 @@ access-control:
   allow-credentials: "true"
   allow-headers: "Origin, Content-Type, Authorization"
   request-headers: "Origin, Content-Type, Authorization"
+
+route:
+  site: "/shipment-svc/api/v1"
