@@ -80,14 +80,14 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 	db := r.base.GetDB()
 	query := db.Model(entity.CourierCoverageCode{}).Preload("Courier").Joins("Courier")
 
-	if filters["courier_name"] != "" {
-		query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id AND courier.courier_name = ?", filters["courier_name"].(string))
+	if len(filters["courier_name"].([]string)) != 0 {
+		query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id AND courier.courier_name IN ?", filters["courier_name"].([]string))
 	}
-	if filters["country_code"] != "" {
-		query = query.Where(entity.CourierCoverageCode{CountryCode: filters["country_code"].(string)})
+	if len(filters["country_code"].([]string)) != 0 {
+		query = query.Where("country_code IN ?", filters["country_code"].([]string))
 	}
-	if filters["postal_code"] != "" {
-		query = query.Where(entity.CourierCoverageCode{PostalCode: filters["postal_code"].(string)})
+	if len(filters["postal_code"].([]string)) != 0 {
+		query = query.Where("postal_code IN ? ", filters["postal_code"].([]string))
 	}
 	if filters["description"] != "" {
 		query = query.Where(entity.CourierCoverageCode{Description: filters["description"].(string)})

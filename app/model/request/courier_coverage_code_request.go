@@ -22,16 +22,19 @@ type CourierCoverageCodeListRequest struct {
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 
 	// Courier Name
-	// in: string
-	CourierName string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
+	// in: query
+	// collection format: multi
+	CourierName []string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
 
 	// Country Code
-	// in: string
-	CountryCode string `schema:"country_code" binding:"omitempty" json:"country_code"`
+	// in: query
+	// collection format: multi
+	CountryCode []string `schema:"country_code" binding:"omitempty" json:"country_code"`
 
 	// Postal Code
-	// in: string
-	PostalCode string `schema:"postal_code" binding:"omitempty" json:"postal_code"`
+	// in: query
+	// collection format: multi
+	PostalCode []string `schema:"postal_code" binding:"omitempty" json:"postal_code"`
 
 	// Description
 	// in: string
@@ -39,7 +42,7 @@ type CourierCoverageCodeListRequest struct {
 
 	// Courier coverage code status
 	// in: int
-	Status *int `json:"status" binding:"omitempty"`
+	Status *int32 `json:"status" binding:"omitempty"`
 }
 
 // swagger:parameters GetCourierCoverageCodeRequest DeleteCourierCoverageCodeRequest
