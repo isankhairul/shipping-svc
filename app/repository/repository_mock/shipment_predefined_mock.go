@@ -34,3 +34,17 @@ func (repository *ShipmentPredefinedMock) UpdateShipmentPredefined(dto entity.Sh
 	ret := arguments.Get(0).(entity.ShippmentPredefined)
 	return &ret, nil
 }
+
+func (repository *ShipmentPredefinedMock) GetListByType(Type string) ([]entity.ShippmentPredefined, error) {
+	arguments := repository.Mock.Called()
+
+	if len(arguments) > 1 && arguments.Get(1) != nil {
+		return []entity.ShippmentPredefined{}, arguments.Get(1).(error)
+	}
+
+	if arguments.Get(0) == nil {
+		return []entity.ShippmentPredefined{}, nil
+	}
+
+	return arguments.Get(0).([]entity.ShippmentPredefined), nil
+}

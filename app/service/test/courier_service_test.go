@@ -19,7 +19,8 @@ import (
 var baseRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
 var courierRepository = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
 var courierServiceRepository = &repository_mock.CourierServiceRepositoryMock{Mock: mock.Mock{}}
-var svc = service.NewCourierService(logger, baseRepository, courierRepository, courierServiceRepository)
+var shipmentPredefinedRepository = &repository_mock.ShipmentPredefinedMock{Mock: mock.Mock{}}
+var svc = service.NewCourierService(logger, baseRepository, courierRepository, courierServiceRepository, shipmentPredefinedRepository)
 
 func init() {
 }
@@ -285,4 +286,35 @@ func TestDeleteCourierServiceNotFound(t *testing.T) {
 	msg := svc.DeleteCourierService(uid)
 
 	assert.Equal(t, message.ErrCourierServiceNotFound.Code, msg.Code, "Code must be 201000")
+}
+
+func TestGetCourierShippingTypeSuccess(t *testing.T) {
+	shipmentPredefinedRepository.Mock.On("GetListByType").
+		Return([]entity.ShippmentPredefined{
+			{
+				BaseIDModel: base.BaseIDModel{UID: "111"},
+				Type:        "shiping_type",
+			},
+			{
+				BaseIDModel: base.BaseIDModel{UID: "222"},
+				Type:        "shiping_type",
+			},
+			{
+				BaseIDModel: base.BaseIDModel{UID: "333"},
+				Type:        "shiping_type",
+			},
+		}).Once()
+	result, msg := svc.GetCourierShippingType()
+
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code is wrong")
+	assert.Len(t, result, 3)
+}
+
+func TestGetCourierShippingTypeNotFound(t *testing.T) {
+	shipmentPredefinedRepository.Mock.On("GetListByType").
+		Return([]entity.ShippmentPredefined{}).Once()
+	result, msg := svc.GetCourierShippingType()
+
+	assert.Equal(t, message.ErrNoData.Code, msg.Code, "Code is wrong")
+	assert.Len(t, result, 0)
 }

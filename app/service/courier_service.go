@@ -5,6 +5,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
+	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
 
@@ -26,13 +27,15 @@ type CourierService interface {
 	UpdateCourierService(uid string, input request.UpdateCourierServiceRequest) (*entity.CourierService, message.Message)
 	GetCourierService(uid string) (*entity.CourierServiceDetailDTO, message.Message)
 	DeleteCourierService(uid string) message.Message
+	GetCourierShippingType() ([]response.ShippingTypeItem, message.Message)
 }
 
 type courierServiceImpl struct {
-	logger             log.Logger
-	baseRepo           repository.BaseRepository
-	courierRepo        repository.CourierRepository
-	courierServiceRepo repository.CourierServiceRepository
+	logger                 log.Logger
+	baseRepo               repository.BaseRepository
+	courierRepo            repository.CourierRepository
+	courierServiceRepo     repository.CourierServiceRepository
+	shipmentPredefinedRepo repository.ShipmentPredefinedRepository
 }
 
 func NewCourierService(
@@ -40,8 +43,9 @@ func NewCourierService(
 	br repository.BaseRepository,
 	pr repository.CourierRepository,
 	pcrp repository.CourierServiceRepository,
+	sprp repository.ShipmentPredefinedRepository,
 ) CourierService {
-	return &courierServiceImpl{lg, br, pr, pcrp}
+	return &courierServiceImpl{lg, br, pr, pcrp, sprp}
 }
 
 // swagger:route POST /courier/courier Couriers SaveCourierRequest
@@ -492,6 +496,28 @@ func (s *courierServiceImpl) DeleteCourierService(uid string) message.Message {
 	}
 
 	return message.SuccessMsg
+}
+
+// swagger:route GET /courier/shipping-type Couriers GetCourierShippingType
+// Get List of Shipping Type
+//
+// responses:
+//  200: ShippingTypeList
+func (s *courierServiceImpl) GetCourierShippingType() ([]response.ShippingTypeItem, message.Message) {
+	logger := log.With(s.logger, "CourierService", "GetCourierShippingType")
+
+	result, err := s.shipmentPredefinedRepo.GetListByType("shipping_type")
+
+	if err != nil {
+		_ = level.Error(logger).Log("error", err.Error())
+		return nil, message.ErrDB
+	}
+
+	if len(result) == 0 {
+		return nil, message.ErrNoData
+	}
+
+	return response.NewShippingTypeItemList(result), message.SuccessMsg
 }
 
 func convertToDTO(services []entity.CourierService) []*entity.CourierServiceDetailDTO {

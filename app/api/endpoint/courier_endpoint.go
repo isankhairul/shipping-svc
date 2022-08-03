@@ -17,6 +17,7 @@ type CourierEndpoint struct {
 	Update              endpoint.Endpoint
 	Delete              endpoint.Endpoint
 	ListChannelCouriers endpoint.Endpoint
+	ListShippingType    endpoint.Endpoint
 
 	//Courier-Serivce
 	SaveCourierSerivce   endpoint.Endpoint
@@ -34,6 +35,7 @@ func MakeCourierEndpoints(s service.CourierService, cc service.ChannelCourierSer
 		Delete:              makeDeleteCourier(s),
 		Update:              makeUpdateCourier(s),
 		ListChannelCouriers: ListChannelCouriers(cc),
+		ListShippingType:    makeListShippingType(s),
 
 		SaveCourierSerivce:   makeSaveCourierService(s),
 		ShowCourierSerivce:   makeShowCourierService(s),
@@ -133,6 +135,13 @@ func getListCourierServices(s service.CourierService) endpoint.Endpoint {
 		}
 
 		return base.SetHttpResponse(msg.Code, msg.Message, result, pagination), nil
+	}
+}
+
+func makeListShippingType(s service.CourierService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		result, msg := s.GetCourierShippingType()
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }
 
