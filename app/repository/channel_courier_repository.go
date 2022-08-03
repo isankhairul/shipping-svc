@@ -22,6 +22,7 @@ type ChannelCourierRepository interface {
 	UpdateChannelCourier(uid string, updates map[string]interface{}) error
 	FindCourierByUID(uid string) (*entity.Courier, error)
 	FindChannelByUID(uid string) (*entity.Channel, error)
+	IsHasChannelCourierService(channelCourierID uint64) bool
 }
 
 func NewChannelCourierRepository(br BaseRepository) ChannelCourierRepository {
@@ -99,6 +100,14 @@ func (r *ChannelCourierRepositoryImpl) DeleteChannelCourierByID(id uint64) error
 	db := r.base.GetDB()
 	err := db.Model(&entity.ChannelCourier{}).Where(&entity.ChannelCourier{BaseIDModel: base.BaseIDModel{ID: id}}).Delete(&cur).Error
 	return err
+}
+
+func (r *ChannelCourierRepositoryImpl) IsHasChannelCourierService(channelCourierID uint64) bool {
+	var count int64
+	r.base.GetDB().Model(&entity.ChannelCourierService{}).
+		Where(&entity.ChannelCourierService{ChannelCourierID: channelCourierID}).Count(&count)
+
+	return count > 0
 }
 
 func (r *ChannelCourierRepositoryImpl) FindByPagination(limit int, page int, sort string, filters map[string]interface{}) ([]*entity.ChannelCourier, *base.Pagination, error) {

@@ -22,6 +22,7 @@ type ChannelRepository interface {
 	Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
 	Delete(uid string) error
 	Update(uid string, input map[string]interface{}) error
+	IsChannelHasChild(channelID uint64) *entity.ChannelHasChildFlag
 }
 
 func NewChannelRepository(br BaseRepository) ChannelRepository {
@@ -34,6 +35,9 @@ func (r *channelRepo) FindByUid(uid *string) (*entity.Channel, error) {
 		Where("uid=?", uid).
 		First(&channel).Error
 	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -165,4 +169,18 @@ func (r *channelRepo) Update(uid string, input map[string]interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func (r *channelRepo) IsChannelHasChild(channelID uint64) *entity.ChannelHasChildFlag {
+	db := r.base.GetDB()
+	var channelCourier int64
+	var shippingStatus int64
+
+	db.Model(&entity.ChannelCourier{}).Where(&entity.ChannelCourier{ChannelID: channelID}).Count(&channelCourier)
+	db.Model(&entity.ShippingStatus{}).Where(&entity.ShippingStatus{ChannelID: channelID}).Count(&shippingStatus)
+
+	return &entity.ChannelHasChildFlag{
+		ChannelCourier: channelCourier > 0,
+		ShippingStatus: shippingStatus > 0,
+	}
 }

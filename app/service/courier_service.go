@@ -195,10 +195,34 @@ func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCouri
 func (s *courierServiceImpl) DeleteCourier(uid string) message.Message {
 	logger := log.With(s.logger, "CourierService", "DeleteCourier")
 
+	courier, _ := s.courierRepo.FindByUid(&uid)
+
+	if courier == nil {
+		return message.ErrCourierNotFound
+	}
+
+	hasChild := s.courierRepo.IsCourierHasChild(courier.ID)
+
+	if hasChild.CourierService {
+		return message.ErrCourierHasChildCourierService
+	}
+
+	if hasChild.CourierCoverageCode {
+		return message.ErrCourierHasChildCourierCoverage
+	}
+
+	if hasChild.ChannelCourier {
+		return message.ErrCourierHasChildChannelCourier
+	}
+
+	if hasChild.ShippingCourierStatus {
+		return message.ErrCourierHasChildShippingStatus
+	}
+
 	err := s.courierRepo.Delete(uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		return message.ErrCourierNotFound
+		return message.ErrDB
 	}
 
 	return message.SuccessMsg
@@ -452,8 +476,13 @@ func (s *courierServiceImpl) DeleteCourierService(uid string) message.Message {
 		}
 		return message.FailedMsg
 	}
+
 	if courierService == nil {
-		return message.ErrNoData
+		return message.ErrCourierServiceNotFound
+	}
+
+	if isAssigned := s.courierServiceRepo.IsCourierServiceAssigned(courierService.ID); isAssigned {
+		return message.ErrCourierServiceHasAssigned
 	}
 
 	err = s.courierServiceRepo.Delete(uid)

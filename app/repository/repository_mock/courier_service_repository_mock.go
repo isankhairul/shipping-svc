@@ -64,3 +64,13 @@ func (repository *CourierServiceRepositoryMock) CheckExistsByCourierIdShippingCo
 func (repository *CourierServiceRepositoryMock) CheckExistsByUIdCourierIdShippingCode(uid string, courierUId string, shippingCode string) (bool, error) {
 	return true, nil
 }
+
+func (repository *CourierServiceRepositoryMock) IsCourierServiceAssigned(courierServiceID uint64) bool {
+	arguments := repository.Mock.Called()
+
+	if arguments.Get(0) == nil {
+		return false
+	}
+
+	return arguments.Get(0).(bool)
+}

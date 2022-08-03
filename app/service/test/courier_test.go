@@ -55,8 +55,13 @@ func TestGetCourier(t *testing.T) {
 }
 
 func TestDeleteCourier(t *testing.T) {
+	courier := entity.Courier{
+		Code: "code test",
+	}
 	uid := "BnOI8D7p9rR7tI1R9rySw"
 	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
+	courierRepo.Mock.On("FindByUid", &uid).Return(courier)
+	courierRepo.Mock.On("IsCourierHasChild", courier.ID).Return(&entity.CourierHasChildFlag{})
 	courierRepo.Mock.On("Delete", mock.Anything).Return(nil)
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository)
 	msg := courierService.DeleteCourier(uid)
@@ -122,11 +127,90 @@ func TestGetCourierFail(t *testing.T) {
 }
 
 func TestDeleteCourierFail(t *testing.T) {
+	courier := entity.Courier{
+		Code: "code test",
+	}
 	uid := "BnOI8D7p9rR7tI1R9rySw"
 	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
-	courierRepo.Mock.On("Delete", mock.Anything).Return(errors.New("Not found"))
+	courierRepo.Mock.On("FindByUid", &uid).Return(courier)
+	courierRepo.Mock.On("IsCourierHasChild", courier.ID).Return(&entity.CourierHasChildFlag{})
+	courierRepo.Mock.On("Delete", mock.Anything).Return(errors.New("db"))
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository)
 	msg := courierService.DeleteCourier(uid)
 
-	assert.Equal(t, msg.Code, message.ErrCourierNotFound.Code, "Not found")
+	assert.Equal(t, msg.Code, message.ErrDB.Code, "message should be err db")
+}
+
+func TestDeleteCourierHasChildCourierService(t *testing.T) {
+	courier := entity.Courier{
+		BaseIDModel:     base.BaseIDModel{ID: 1},
+		Code:            "code test",
+		CourierServices: []*entity.CourierService{{}, {}},
+	}
+	uid := "BnOI8D7p9rR7tI1R9rySw"
+	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
+	courierRepo.Mock.On("FindByUid", &uid).Return(courier)
+	courierRepo.Mock.On("IsCourierHasChild", courier.ID).Return(&entity.CourierHasChildFlag{CourierService: true})
+	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository)
+	msg := courierService.DeleteCourier(uid)
+
+	assert.Equal(t, msg.Code, message.ErrCourierHasChildCourierService.Code, "message should be courier has child")
+}
+
+func TestDeleteCourierHasChildCourierCoverageCode(t *testing.T) {
+	courier := entity.Courier{
+		BaseIDModel:     base.BaseIDModel{ID: 1},
+		Code:            "code test",
+		CourierServices: []*entity.CourierService{{}, {}},
+	}
+	uid := "BnOI8D7p9rR7tI1R9rySw"
+	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
+	courierRepo.Mock.On("FindByUid", &uid).Return(courier)
+	courierRepo.Mock.On("IsCourierHasChild", courier.ID).Return(&entity.CourierHasChildFlag{CourierCoverageCode: true})
+	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository)
+	msg := courierService.DeleteCourier(uid)
+
+	assert.Equal(t, msg.Code, message.ErrCourierHasChildCourierCoverage.Code, "message should be courier has child")
+}
+
+func TestDeleteCourierHasChildChannelCourier(t *testing.T) {
+	courier := entity.Courier{
+		BaseIDModel:     base.BaseIDModel{ID: 1},
+		Code:            "code test",
+		CourierServices: []*entity.CourierService{{}, {}},
+	}
+	uid := "BnOI8D7p9rR7tI1R9rySw"
+	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
+	courierRepo.Mock.On("FindByUid", &uid).Return(courier)
+	courierRepo.Mock.On("IsCourierHasChild", courier.ID).Return(&entity.CourierHasChildFlag{ChannelCourier: true})
+	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository)
+	msg := courierService.DeleteCourier(uid)
+
+	assert.Equal(t, msg.Code, message.ErrCourierHasChildChannelCourier.Code, "message should be courier has child")
+}
+
+func TestDeleteCourierHasChildShippingCourierStatus(t *testing.T) {
+	courier := entity.Courier{
+		BaseIDModel:     base.BaseIDModel{ID: 1},
+		Code:            "code test",
+		CourierServices: []*entity.CourierService{{}, {}},
+	}
+	uid := "BnOI8D7p9rR7tI1R9rySw"
+	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
+	courierRepo.Mock.On("FindByUid", &uid).Return(courier)
+	courierRepo.Mock.On("IsCourierHasChild", courier.ID).Return(&entity.CourierHasChildFlag{ShippingCourierStatus: true})
+	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository)
+	msg := courierService.DeleteCourier(uid)
+
+	assert.Equal(t, msg.Code, message.ErrCourierHasChildShippingStatus.Code, "message should be courier has child")
+}
+
+func TestDeleteCourierNotFound(t *testing.T) {
+	uid := "BnOI8D7p9rR7tI1R9rySw"
+	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
+	courierRepo.Mock.On("FindByUid", &uid).Return(nil)
+	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository)
+	msg := courierService.DeleteCourier(uid)
+
+	assert.Equal(t, msg.Code, message.ErrCourierNotFound.Code, "message should be not found")
 }

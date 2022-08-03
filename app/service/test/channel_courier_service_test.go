@@ -186,8 +186,8 @@ func TestDeleteChannelCourier(t *testing.T) {
 	cc.ID = 123
 
 	channelCourierRepo.Mock.On("GetChannelCourierByUID", "123").Return(cc)
-	channelCourierServiceRepo.Mock.On("DeleteChannelCourierServicesByChannelID", mock.Anything).Return(nil)
 	channelCourierRepo.Mock.On("DeleteChannelCourierByID", cc.ID).Return(nil)
+	channelCourierRepo.Mock.On("IsHasChannelCourierService").Return(false).Once()
 	msg := channelCourierService.DeleteChannelCourier("123")
 
 	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 201000")
@@ -316,6 +316,29 @@ func TestGetChannelCourierWithChannelCourierDbError(t *testing.T) {
 	assert.Equal(t, message.ErrDB.Code, msg.Code, "Database issue")
 }
 
+func TestDeleteChannelCourierHasChannelCourierService(t *testing.T) {
+	var channelCourierRepo = &repository_mock.ChannelCourierRepositoryMock{Mock: mock.Mock{}}
+	var channelCourierServiceRepo = &repository_mock.ChannelCourierServiceRepositoryMock{Mock: mock.Mock{}}
+	var courierServiceRepo = &repository_mock.CourierServiceRepositoryMock{Mock: mock.Mock{}}
+	var channelCourierService = service.NewChannelCourierService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
+
+	courier := &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_1"}, CourierName: "Courier 1"}
+	channel := &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_1"}, ChannelName: "Channel 1"}
+	cc := &entity.ChannelCourier{
+		BaseIDModel: base.BaseIDModel{UID: "123"},
+		Courier:     courier,
+		Channel:     channel,
+	}
+	cc.ID = 123
+
+	channelCourierRepo.Mock.On("GetChannelCourierByUID", "123").Return(cc)
+	channelCourierRepo.Mock.On("DeleteChannelCourierByID", cc.ID).Return(nil)
+	channelCourierRepo.Mock.On("IsHasChannelCourierService").Return(true).Once()
+	msg := channelCourierService.DeleteChannelCourier("123")
+
+	assert.Equal(t, message.ErrChannelCourierHasChild.Code, msg.Code, "Code is wrong")
+}
+
 func TestDeleteChannelCourierFailedWithChannelCourierNotFound(t *testing.T) {
 	var channelCourierRepo = &repository_mock.ChannelCourierRepositoryMock{Mock: mock.Mock{}}
 	var channelCourierServiceRepo = &repository_mock.ChannelCourierServiceRepositoryMock{Mock: mock.Mock{}}
@@ -329,19 +352,4 @@ func TestDeleteChannelCourierFailedWithChannelCourierNotFound(t *testing.T) {
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrChannelCourierNotFound.Message, msg.Message, "ErrUnableToDeleteChannelCourier")
 	assert.Equal(t, message.ErrChannelCourierNotFound.Code, msg.Code, "ErrUnableToDeleteChannelCourier")
-}
-
-func TestDeleteChannelCourierFailedWithChannelCourierServiceIssue(t *testing.T) {
-	var channelCourierRepo = &repository_mock.ChannelCourierRepositoryMock{Mock: mock.Mock{}}
-	var channelCourierServiceRepo = &repository_mock.ChannelCourierServiceRepositoryMock{Mock: mock.Mock{}}
-	var courierServiceRepo = &repository_mock.CourierServiceRepositoryMock{Mock: mock.Mock{}}
-	var channelCourierService = service.NewChannelCourierService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
-
-	channelCourierRepo.Mock.On("GetChannelCourierByUID", mock.Anything).Return(&entity.ChannelCourier{})
-	channelCourierServiceRepo.Mock.On("DeleteChannelCourierServicesByChannelID", mock.Anything).Return(errors.New("Unable to delete channel courier service"))
-	msg := channelCourierService.DeleteChannelCourier("123")
-
-	assert.NotNil(t, msg)
-	assert.Equal(t, message.ErrUnableToDeleteChannelCourier.Message, msg.Message, "ErrUnableToDeleteChannelCourier")
-	assert.Equal(t, message.ErrUnableToDeleteChannelCourier.Code, msg.Code, "ErrUnableToDeleteChannelCourier")
 }

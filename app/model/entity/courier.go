@@ -57,3 +57,10 @@ type Courier struct {
 	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
 	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
 }
+
+type CourierHasChildFlag struct {
+	CourierService        bool
+	CourierCoverageCode   bool
+	ChannelCourier        bool
+	ShippingCourierStatus bool
+}

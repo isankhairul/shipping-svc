@@ -62,3 +62,12 @@ func (repository *CourierRepositoryMock) Update(uid string, input map[string]int
 func (repository *CourierRepositoryMock) Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB {
 	return nil
 }
+
+func (repository *CourierRepositoryMock) IsCourierHasChild(courierID uint64) *entity.CourierHasChildFlag {
+	arguments := repository.Mock.Called(courierID)
+	arg := arguments.Get(0)
+	if arg != nil {
+		return arg.(*entity.CourierHasChildFlag)
+	}
+	return nil
+}

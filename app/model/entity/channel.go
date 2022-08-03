@@ -37,3 +37,8 @@ type Channel struct {
 	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
 	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
 }
+
+type ChannelHasChildFlag struct {
+	ChannelCourier bool
+	ShippingStatus bool
+}

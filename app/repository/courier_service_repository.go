@@ -23,6 +23,7 @@ type CourierServiceRepository interface {
 	Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
 	Delete(uid string) error
 	Update(uid string, input map[string]interface{}) error
+	IsCourierServiceAssigned(courierServiceID uint64) bool
 }
 
 func NewCourierServiceRepository(br BaseRepository) CourierServiceRepository {
@@ -192,4 +193,13 @@ func (r *courierServiceRepo) Update(uid string, input map[string]interface{}) er
 		return err
 	}
 	return nil
+}
+
+func (r *courierServiceRepo) IsCourierServiceAssigned(courierServiceID uint64) bool {
+	var count int64
+	r.base.GetDB().Model(&entity.ChannelCourierService{}).
+		Where(&entity.ChannelCourierService{CourierServiceID: courierServiceID}).
+		Count(&count)
+
+	return count > 0
 }

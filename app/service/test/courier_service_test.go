@@ -88,12 +88,14 @@ func TestGetCourierService(t *testing.T) {
 
 func TestDeleteCourierService(t *testing.T) {
 	CourierService := entity.CourierService{
+		BaseIDModel:  base.BaseIDModel{ID: 1},
 		CourierUId:   "gj2MZ9CBhcHSNVOLpUeqU",
 		ShippingCode: "string",
 	}
 
 	uid := "gj2MZ9CBhcHSNVOLpUeqU"
 	courierServiceRepository.Mock.On("FindByUid", &uid).Return(CourierService)
+	courierServiceRepository.Mock.On("IsCourierServiceAssigned").Return(false).Once()
 	msg := svc.DeleteCourierService(uid)
 
 	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 201000")
@@ -261,4 +263,26 @@ func TestGetCourierServiceFail(t *testing.T) {
 	errCodeIsNotFound := 34005
 	assert.EqualError(t, errors.New(errIsNotFound), errTest.Message, "Courier Service is not found")
 	assert.Equal(t, errCodeIsNotFound, errTest.Code, "Courier Service is not found")
+}
+
+func TestDeleteCourierServiceHasAssigned(t *testing.T) {
+	CourierService := entity.CourierService{
+		CourierUId:   "gj2MZ9CBhcHSNVOLpUeqU",
+		ShippingCode: "string",
+	}
+
+	uid := "gj2MZ9CBhcHSNVOLpUeqU"
+	courierServiceRepository.Mock.On("FindByUid", &uid).Return(CourierService)
+	courierServiceRepository.Mock.On("IsCourierServiceAssigned").Return(true).Once()
+	msg := svc.DeleteCourierService(uid)
+
+	assert.Equal(t, message.ErrCourierServiceHasAssigned.Code, msg.Code, "Code must be 201000")
+}
+
+func TestDeleteCourierServiceNotFound(t *testing.T) {
+	uid := "gj2MZ9CBhcHSNVOLpUeq"
+	courierServiceRepository.Mock.On("FindByUid", &uid).Return(nil)
+	msg := svc.DeleteCourierService(uid)
+
+	assert.Equal(t, message.ErrCourierServiceNotFound.Code, msg.Code, "Code must be 201000")
 }

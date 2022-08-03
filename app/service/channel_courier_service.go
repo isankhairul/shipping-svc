@@ -192,10 +192,15 @@ func (s *ChannelCourierServiceImpl) DeleteChannelCourier(uid string) message.Mes
 	if err != nil {
 		return message.ErrChannelCourierNotFound
 	}
-	err = s.channelCourierServices.DeleteChannelCourierServicesByChannelID(channelCourier.ChannelID, channelCourier.CourierID)
-	if err != nil {
-		return message.ErrUnableToDeleteChannelCourier
+
+	if channelCourier == nil {
+		return message.ErrChannelCourierNotFound
 	}
+
+	if hasChannelCourierService := s.channelCouriers.IsHasChannelCourierService(channelCourier.ID); hasChannelCourierService {
+		return message.ErrChannelCourierHasChild
+	}
+
 	err = s.channelCouriers.DeleteChannelCourierByID(channelCourier.ID)
 	if err != nil {
 		return message.ErrUnableToDeleteChannelCourier

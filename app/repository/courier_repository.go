@@ -21,6 +21,7 @@ type CourierRepository interface {
 	Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
 	Delete(uid string) error
 	Update(uid string, input map[string]interface{}) error
+	IsCourierHasChild(courierID uint64) *entity.CourierHasChildFlag
 }
 
 func NewCourierRepository(br BaseRepository) CourierRepository {
@@ -33,6 +34,9 @@ func (r *courierRepo) FindByUid(uid *string) (*entity.Courier, error) {
 		Where(&entity.Courier{BaseIDModel: base.BaseIDModel{UID: *uid}}).
 		First(&courier).Error
 	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -144,4 +148,24 @@ func (r *courierRepo) Update(uid string, input map[string]interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func (r *courierRepo) IsCourierHasChild(courierID uint64) *entity.CourierHasChildFlag {
+	db := r.base.GetDB()
+	var courierService int64
+	var courierCoverage int64
+	var channelCourier int64
+	var shippingStatus int64
+
+	db.Model(&entity.CourierService{}).Where(&entity.CourierService{CourierID: courierID}).Count(&courierService)
+	db.Model(&entity.CourierCoverageCode{}).Where(&entity.CourierCoverageCode{CourierID: courierID}).Count(&courierCoverage)
+	db.Model(&entity.ChannelCourier{}).Where(&entity.ChannelCourier{CourierID: courierID}).Count(&channelCourier)
+	db.Model(&entity.ShippingCourierStatus{}).Where(&entity.ShippingCourierStatus{CourierID: courierID}).Count(&shippingStatus)
+
+	return &entity.CourierHasChildFlag{
+		CourierService:        courierService > 0,
+		CourierCoverageCode:   courierCoverage > 0,
+		ChannelCourier:        channelCourier > 0,
+		ShippingCourierStatus: shippingStatus > 0,
+	}
 }
