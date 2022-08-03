@@ -198,10 +198,24 @@ func (s *ChannelServiceImpl) UpdateChannel(input request.UpdateChannelRequest) m
 //  200: SuccessResponse
 func (s *ChannelServiceImpl) DeleteChannel(uid string) message.Message {
 	logger := log.With(s.logger, "ChannelService", "DeleteChannel")
-	_, err := s.channelRepo.FindByUid(&uid)
+	channel, err := s.channelRepo.FindByUid(&uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return message.FailedMsg
+	}
+
+	if channel == nil {
+		return message.ErrChannelNotFound
+	}
+
+	hasChild := s.channelRepo.IsChannelHasChild(channel.ID)
+
+	if hasChild.ChannelCourier {
+		return message.ErrChannelHasCourierAssigned
+	}
+
+	if hasChild.ShippingStatus {
+		return message.ErrChannelHasChildShippingStatus
 	}
 
 	err = s.channelRepo.Delete(uid)

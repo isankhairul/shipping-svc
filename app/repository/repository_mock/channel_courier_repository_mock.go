@@ -80,3 +80,12 @@ func (r *ChannelCourierRepositoryMock) FindChannelByUID(uid string) (*entity.Cha
 	}
 	return arguments.Get(0).(*entity.Channel), nil
 }
+
+func (r *ChannelCourierRepositoryMock) IsHasChannelCourierService(channelCourierID uint64) bool {
+	arguments := r.Mock.Called()
+
+	if arguments.Get(0) == nil {
+		return false
+	}
+	return arguments.Get(0).(bool)
+}

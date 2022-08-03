@@ -51,3 +51,12 @@ func (repository *ChannelRepositoryMock) Paginate(value interface{}, pagination 
 func (repository *ChannelRepositoryMock) CheckExistsByUIdChannelCode(uid, channelCode string) (bool, error) {
 	return false, nil
 }
+
+func (repository *ChannelRepositoryMock) IsChannelHasChild(channelID uint64) *entity.ChannelHasChildFlag {
+	arguments := repository.Mock.Called()
+	arg := arguments.Get(0)
+	if arg != nil {
+		return arg.(*entity.ChannelHasChildFlag)
+	}
+	return nil
+}

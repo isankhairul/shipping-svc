@@ -74,6 +74,7 @@ func TestDeleteChannel(t *testing.T) {
 
 	uid := "BnOI8D7p9rR7tI1R9rySw"
 	channelRepository.Mock.On("FindByUid", &uid).Return(channel)
+	channelRepository.Mock.On("IsChannelHasChild").Return(&entity.ChannelHasChildFlag{}).Once()
 	msg := channelSvc.DeleteChannel(uid)
 	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 201000")
 	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Message must be Null")
@@ -205,4 +206,31 @@ func TestGetListStatusNotFound(t *testing.T) {
 
 	assert.Equal(t, message.ErrNoData.Code, msg.Code, "Code must be 34005")
 	assert.Len(t, result, 0)
+}
+
+func TestDeleteChannelHasCourierAssigned(t *testing.T) {
+	channel := entity.Channel{}
+
+	uid := "BnOI8D7p9rR7tI1R9rySw"
+	channelRepository.Mock.On("FindByUid", &uid).Return(channel)
+	channelRepository.Mock.On("IsChannelHasChild").Return(&entity.ChannelHasChildFlag{ChannelCourier: true}).Once()
+	msg := channelSvc.DeleteChannel(uid)
+	assert.Equal(t, message.ErrChannelHasCourierAssigned.Code, msg.Code, "Code is wrong")
+}
+
+func TestDeleteChannelHasShippingStatus(t *testing.T) {
+	channel := entity.Channel{}
+
+	uid := "BnOI8D7p9rR7tI1R9rySw"
+	channelRepository.Mock.On("FindByUid", &uid).Return(channel)
+	channelRepository.Mock.On("IsChannelHasChild").Return(&entity.ChannelHasChildFlag{ShippingStatus: true}).Once()
+	msg := channelSvc.DeleteChannel(uid)
+	assert.Equal(t, message.ErrChannelHasChildShippingStatus.Code, msg.Code, "Code is wrong")
+}
+
+func TestDeleteChannelNotFound(t *testing.T) {
+	uid := "BnOI8D7p9rR7tI1R9ryS"
+	channelRepository.Mock.On("FindByUid", &uid).Return(nil)
+	msg := channelSvc.DeleteChannel(uid)
+	assert.Equal(t, message.ErrChannelNotFound.Code, msg.Code, "Code is wrong")
 }

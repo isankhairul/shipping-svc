@@ -57,3 +57,14 @@ var ErrPageNotFound = Message{Code: 39404, Message: "Halaman Tidak ditemukan"}
 var SuccessMsg = Message{Code: 201000, Message: "Success"}
 var FailedMsg = Message{Code: 0000, Message: "Failed"}
 var ErrReqParam = Message{Code: 4000, Message: "Invalid Request Parameter(s)"}
+
+var (
+	ErrCourierHasChildCourierService  = Message{Code: 209002, Message: "Can not delete Courier that has one or more Courier Service(s)"}
+	ErrCourierHasChildCourierCoverage = Message{Code: 209003, Message: "Can not delete Courier that has one or more Courier Coverage(s)"}
+	ErrCourierHasChildChannelCourier  = Message{Code: 209004, Message: "Can not delete Courier that has already assigned to Channel"}
+	ErrCourierHasChildShippingStatus  = Message{Code: 209005, Message: "Can not delete Courier that has one or more Shipping Status"}
+	ErrCourierServiceHasAssigned      = Message{Code: 209006, Message: "Can not delete Courier Service that has already assigned to Channel"}
+	ErrChannelHasCourierAssigned      = Message{Code: 209007, Message: "Can not delete Channel that has already assigned to Courier"}
+	ErrChannelHasChildShippingStatus  = Message{Code: 209008, Message: "Can not delete Channel that has one or more Shipping Status"}
+	ErrChannelCourierHasChild         = Message{Code: 209009, Message: "Can not delete Channel Courier that has one or more Channel Courier Service(s)"}
+)
