@@ -1233,6 +1233,22 @@ definitions:
         x-go-name: UpdatedBy
     type: object
     x-go-package: go-klikdokter/app/model/request
+  ShippingTypeItem:
+    properties:
+      name:
+        example: Same Day Delivery
+        type: string
+        x-go-name: Name
+      shipping_type_code:
+        example: same_day
+        type: string
+        x-go-name: ShippingTypeCode
+      uid:
+        example: pqC8LqdgT2KKdcmn2bHnR
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/response
   ShippmentPredefined:
     properties:
       code:
@@ -2604,6 +2620,15 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Couriers
+  /courier/shipping-type:
+    get:
+      description: Get List of Shipping Type
+      operationId: GetCourierShippingType
+      responses:
+        "200":
+          $ref: '#/responses/ShippingTypeList'
+      tags:
+      - Couriers
   /other/shipment-predefined:
     get:
       description: Get predefined
@@ -2717,6 +2742,12 @@ responses:
       type: array
   ImportStatus:
     description: ""
+  ShippingTypeList:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/ShippingTypeItem'
+      type: array
 schemes:
 - http
 - https

@@ -96,6 +96,13 @@ func CourierHttpHandler(s service.CourierService, cc service.ChannelCourierServi
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
+
+	pr.Methods("GET").Path(util.PrefixBase + "/courier/shipping-type").Handler(httptransport.NewServer(
+		ep.ListShippingType,
+		decodeShowCourierService,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
 	return pr
 }
 

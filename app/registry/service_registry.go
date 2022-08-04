@@ -14,6 +14,7 @@ func RegisterCourierService(db *gorm.DB, logger log.Logger) service.CourierServi
 		rp.NewBaseRepository(db),
 		rp.NewCourierRepository(rp.NewBaseRepository(db)),
 		rp.NewCourierServiceRepository(rp.NewBaseRepository(db)),
+		rp.NewShipmentPredefinedRepository(rp.NewBaseRepository(db)),
 	)
 }
 

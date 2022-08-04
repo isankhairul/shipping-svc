@@ -11,6 +11,7 @@ import (
 
 type ShipmentPredefinedRepository interface {
 	GetAll(limit int, page int, sort string, filter map[string]interface{}) ([]*entity.ShippmentPredefined, *base.Pagination, error)
+	GetListByType(Type string) ([]entity.ShippmentPredefined, error)
 	UpdateShipmentPredefined(dto entity.ShippmentPredefined) (*entity.ShippmentPredefined, error)
 	GetShipmentPredefinedByUid(uid string) (*entity.ShippmentPredefined, error)
 }
@@ -107,4 +108,23 @@ func (r *ShipmentPredefinedRepositoryImpl) UpdateShipmentPredefined(dto entity.S
 		return nil, err
 	}
 	return r.GetShipmentPredefinedByUid(dto.UID)
+}
+
+func (r *ShipmentPredefinedRepositoryImpl) GetListByType(Type string) ([]entity.ShippmentPredefined, error) {
+	var result []entity.ShippmentPredefined
+
+	err := r.base.GetDB().Model(&entity.ShippmentPredefined{}).
+		Where(&entity.ShippmentPredefined{Type: Type}).
+		Order("id desc").
+		Find(&result).
+		Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return result, nil
 }
