@@ -3,6 +3,7 @@ package repository_mock
 import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/app/model/response"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -57,4 +58,9 @@ func (r *ChannelCourierServiceRepositoryMock) UpdateChannelCourierService(uid st
 func (r *ChannelCourierServiceRepositoryMock) FindByParams(limit, page int, sort string, filters map[string]interface{}) ([]entity.ChannelCourierService, *base.Pagination, error) {
 	arguments := r.Mock.Called(limit, page, sort, filters)
 	return arguments.Get(0).([]entity.ChannelCourierService), arguments.Get(1).(*base.Pagination), nil
+}
+
+func (r *ChannelCourierServiceRepositoryMock) GetChannelCourierListByChannelUID(channel_uid string, limit int, page int, sort, dir string, filter map[string][]string) ([]response.CourierServiceByChannelResponse, *base.Pagination, error) {
+	arguments := r.Mock.Called()
+	return arguments.Get(0).([]response.CourierServiceByChannelResponse), arguments.Get(1).(*base.Pagination), nil
 }

@@ -5,6 +5,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
+	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository/repository_mock"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/message"
@@ -14,11 +15,11 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// var channelCourierRepo = &repository_mock.ChannelCourierRepositoryMock{Mock: mock.Mock{}}
-// var channelCourierServiceRepo = &repository_mock.ChannelCourierServiceRepositoryMock{Mock: mock.Mock{}}
-// var courierServiceRepo = &repository_mock.CourierServiceRepositoryMock{Mock: mock.Mock{}}
+var channelCourierRepo = &repository_mock.ChannelCourierRepositoryMock{Mock: mock.Mock{}}
+var channelCourierServiceRepo = &repository_mock.ChannelCourierServiceRepositoryMock{Mock: mock.Mock{}}
+var courierServiceRepo = &repository_mock.CourierServiceRepositoryMock{Mock: mock.Mock{}}
 
-//var channelCourierService = service.NewChannelCourierService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
+var channelCourierService = service.NewChannelCourierService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
 
 func init() {
 }
@@ -352,4 +353,22 @@ func TestDeleteChannelCourierFailedWithChannelCourierNotFound(t *testing.T) {
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrChannelCourierNotFound.Message, msg.Message, "ErrUnableToDeleteChannelCourier")
 	assert.Equal(t, message.ErrChannelCourierNotFound.Code, msg.Code, "ErrUnableToDeleteChannelCourier")
+}
+
+func TestGetChannelCourierListByChannelUIDSuccess(t *testing.T) {
+	channelCourierServiceRepo.Mock.On("GetChannelCourierListByChannelUID").Return([]response.CourierServiceByChannelResponse{{}, {}}, &base.Pagination{}, nil).Once()
+	result, _, msg := channelCourierService.GetChannelCourierListByChannelUID(request.GetChannelCourierListRequest{})
+
+	assert.NotNil(t, result)
+	assert.Len(t, result, 2)
+	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Code is wrong")
+}
+
+func TestGetChannelCourierListByChannelUIDNotFound(t *testing.T) {
+	channelCourierServiceRepo.Mock.On("GetChannelCourierListByChannelUID").Return([]response.CourierServiceByChannelResponse{}, &base.Pagination{}, nil).Once()
+	result, _, msg := channelCourierService.GetChannelCourierListByChannelUID(request.GetChannelCourierListRequest{})
+
+	assert.Nil(t, result)
+	assert.Len(t, result, 0)
+	assert.Equal(t, message.ErrNoData.Message, msg.Message, "Code is wrong")
 }

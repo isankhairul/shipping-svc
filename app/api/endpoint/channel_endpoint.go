@@ -11,22 +11,24 @@ import (
 )
 
 type ChannelEndpoint struct {
-	Save       endpoint.Endpoint
-	Show       endpoint.Endpoint
-	List       endpoint.Endpoint
-	Update     endpoint.Endpoint
-	Delete     endpoint.Endpoint
-	ListStatus endpoint.Endpoint
+	Save               endpoint.Endpoint
+	Show               endpoint.Endpoint
+	List               endpoint.Endpoint
+	Update             endpoint.Endpoint
+	Delete             endpoint.Endpoint
+	ListStatus         endpoint.Endpoint
+	ChannelCourierList endpoint.Endpoint
 }
 
-func MakeChannelEndpoints(s service.ChannelService) ChannelEndpoint {
+func MakeChannelEndpoints(s service.ChannelService, ccs service.ChannelCourierService) ChannelEndpoint {
 	return ChannelEndpoint{
-		Save:       makeSaveChannel(s),
-		Show:       makeShowChannel(s),
-		List:       getListChannels(s),
-		Delete:     makeDeleteChannel(s),
-		Update:     makeUpdateChannel(s),
-		ListStatus: makeGetListChannelStatus(s),
+		Save:               makeSaveChannel(s),
+		Show:               makeShowChannel(s),
+		List:               getListChannels(s),
+		Delete:             makeDeleteChannel(s),
+		Update:             makeUpdateChannel(s),
+		ListStatus:         makeGetListChannelStatus(s),
+		ChannelCourierList: makeGetChannelCourierList(ccs),
 	}
 }
 
@@ -92,6 +94,15 @@ func makeGetListChannelStatus(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
 		req := rqst.(request.GetChannelCourierStatusRequest)
 		result, pagination, msg := s.GetListStatus(req)
+
+		return base.SetHttpResponse(msg.Code, msg.Message, result, pagination), nil
+	}
+}
+
+func makeGetChannelCourierList(s service.ChannelCourierService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		req := rqst.(request.GetChannelCourierListRequest)
+		result, pagination, msg := s.GetChannelCourierListByChannelUID(req)
 
 		return base.SetHttpResponse(msg.Code, msg.Message, result, pagination), nil
 	}
