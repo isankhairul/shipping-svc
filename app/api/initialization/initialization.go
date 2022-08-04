@@ -52,7 +52,7 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	channelCourierHttp := transport.ChannelCourierHttpHandler(channelCourierSvc, log.With(logger, "ChannelCourierTransportLayer", "HTTP"))
 	courierCoverageCodeHttp := transport.CourierCoverageCodeHttpHandler(courierCoverageCodeSvc, log.With(logger, "CourierCoverageCodeTransportLayer", "HTTP"))
 	shipmentPredefinedHttp := transport.ShipmentPredefinedHandler(shipmentPredefinedService, log.With(logger, "ShipmentPredefinedTransportLayer", "HTTP"))
-	channelHttp := transport.ChannelHttpHandler(channelSvc, log.With(logger, "ChannelTransportLayer", "HTTP"))
+	channelHttp := transport.ChannelHttpHandler(channelSvc, channelCourierSvc, log.With(logger, "ChannelTransportLayer", "HTTP"))
 	channelCourierServiceHttp := transport.ChannelCourierServiceHttpHandler(channelCourierServiceSvc, log.With(logger, "ChannelCourierServiceTransportLayer", "HTTP"))
 
 	// Routing path

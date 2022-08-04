@@ -18,10 +18,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func ChannelHttpHandler(s service.ChannelService, logger log.Logger) http.Handler {
+func ChannelHttpHandler(s service.ChannelService, ccs service.ChannelCourierService, logger log.Logger) http.Handler {
 	pr := mux.NewRouter()
 
-	ep := endpoint.MakeChannelEndpoints(s)
+	ep := endpoint.MakeChannelEndpoints(s, ccs)
 	options := []httptransport.ServerOption{
 		httptransport.ServerErrorLogger(logger),
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
@@ -65,6 +65,13 @@ func ChannelHttpHandler(s service.ChannelService, logger log.Logger) http.Handle
 	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-status-courier-status").Handler(httptransport.NewServer(
 		ep.ListStatus,
 		decodeListChannelStatus,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
+	pr.Methods("GET").Path(util.PrefixBase + "/channel/{channel-uid}/courier-list").Handler(httptransport.NewServer(
+		ep.ChannelCourierList,
+		decodeChannelCourierList,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
@@ -128,6 +135,22 @@ func decodeListChannelStatus(ctx context.Context, r *http.Request) (rqst interfa
 	if err = schema.NewDecoder().Decode(&params, r.Form); err != nil {
 		return nil, err
 	}
+
+	return params, nil
+}
+
+func decodeChannelCourierList(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var params request.GetChannelCourierListRequest
+
+	if err := r.ParseForm(); err != nil {
+		return nil, err
+	}
+
+	if err = schema.NewDecoder().Decode(&params, r.Form); err != nil {
+		return nil, err
+	}
+	params.ChannelUID = mux.Vars(r)["channel-uid"]
+	params.SetFilterMap()
 
 	return params, nil
 }

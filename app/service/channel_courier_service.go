@@ -4,6 +4,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
+	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
 	"strings"
@@ -18,6 +19,7 @@ type ChannelCourierService interface {
 	GetChannelCourier(uid string) (*entity.ChannelCourierDTO, message.Message)
 	UpdateChannelCourier(input request.UpdateChannelCourierRequest) (*entity.ChannelCourierDTO, message.Message)
 	DeleteChannelCourier(uid string) message.Message
+	GetChannelCourierListByChannelUID(input request.GetChannelCourierListRequest) ([]response.CourierServiceByChannelResponse, *base.Pagination, message.Message)
 }
 
 type ChannelCourierServiceImpl struct {
@@ -224,4 +226,25 @@ func mapInputUIDS(courierServiceUIDs []*request.CourierServiceDTO) []*string {
 		items = append(items, &value.CourierServiceUid)
 	}
 	return items
+}
+
+// swagger:route GET /channel/{channel-uid}/courier-list Channel-Courier-Service GetChannelCourierList
+// Get List of Courier and Courier Services By Channel
+//
+// responses:
+//  200: CourierByChannel
+func (s *ChannelCourierServiceImpl) GetChannelCourierListByChannelUID(input request.GetChannelCourierListRequest) ([]response.CourierServiceByChannelResponse, *base.Pagination, message.Message) {
+	logger := log.With(s.logger, "ChannelCourierService", "GetChannelCourierList")
+
+	result, pagination, err := s.channelCourierServices.GetChannelCourierListByChannelUID(input.ChannelUID, input.Limit, input.Page, input.Sort, input.Dir, input.FilterMap)
+	if err != nil {
+		_ = level.Error(logger).Log(err)
+		return nil, nil, message.FailedMsg
+	}
+
+	if len(result) == 0 {
+		return nil, nil, message.ErrNoData
+	}
+
+	return result, pagination, message.SuccessMsg
 }

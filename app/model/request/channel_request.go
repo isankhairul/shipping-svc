@@ -1,6 +1,7 @@
 package request
 
 import (
+	"encoding/json"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
 
@@ -178,4 +179,36 @@ type GetChannelCourierStatusRequest struct {
 	// Sort fields and direction
 	// in: query
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
+}
+
+// swagger:parameters GetChannelCourierList
+type GetChannelCourierListRequest struct {
+	//in: path
+	ChannelUID string `schema:"channel-uid" json:"channel-uid"`
+
+	// Maximun records per page
+	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
+
+	// Page No
+	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
+
+	// Filter fields
+	Filter string `schema:"filter" binding:"omitempty" json:"filter"`
+
+	// Sort fields
+	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
+
+	// sort direction
+	// enum: asc,desc
+	Dir string `schema:"dir" binding:"omitempty" json:"dir"`
+
+	FilterMap map[string][]string `json:"-"`
+}
+
+func (m *GetChannelCourierListRequest) SetFilterMap() {
+	filters := map[string][]string{}
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &filters)
+		m.FilterMap = filters
+	}
 }

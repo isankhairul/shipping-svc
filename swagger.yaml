@@ -387,6 +387,34 @@ definitions:
         x-go-name: UseGeocoodinate
     type: object
     x-go-package: go-klikdokter/app/model/entity
+  CourierByChannelResponse:
+    properties:
+      courier_code:
+        example: shipper
+        type: string
+        x-go-name: CourierCode
+      courier_name:
+        example: Shipper
+        type: string
+        x-go-name: CourierName
+      courier_type_code:
+        example: third_party
+        type: string
+        x-go-name: CourierTypeCode
+      courier_type_name:
+        example: Third Party Courier
+        type: string
+        x-go-name: CourierTypeName
+      courier_uid:
+        example: aabb7778888dddeeeee
+        type: string
+        x-go-name: CourierUID
+      image_logo:
+        example: https://kd-test/logo/shipper.logo
+        type: string
+        x-go-name: ImageLogo
+    type: object
+    x-go-package: go-klikdokter/app/model/response
   CourierCoverageCode:
     properties:
       code1:
@@ -676,6 +704,51 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/entity
+  CourierServiceByChannel:
+    properties:
+      courier:
+        $ref: '#/definitions/CourierByChannelResponse'
+      courier_service_uid:
+        example: ssssbb7778888dddzzzzz
+        type: string
+        x-go-name: CourierServiceUID
+      etd_max:
+        example: 48
+        format: double
+        type: number
+        x-go-name: ETDMax
+      etd_min:
+        example: 24
+        format: double
+        type: number
+        x-go-name: ETDMin
+      image_logo:
+        example: https://kd-test/logo/shipper.logo
+        type: string
+        x-go-name: ImageLogo
+      shipping_code:
+        example: shipper
+        type: string
+        x-go-name: ShippingCode
+      shipping_description:
+        example: Shipper adalah paket reguler yang ditawarkan Shipper
+        type: string
+        x-go-name: ShippingDescription
+      shipping_name:
+        example: Shipper
+        type: string
+        x-go-name: ShippingName
+      shipping_type_code:
+        example: regular
+        type: string
+        x-go-name: ShippingTypeCode
+      shipping_type_name:
+        example: Regular Delivery
+        type: string
+        x-go-name: ShippingTypeName
+    type: object
+    x-go-name: CourierServiceByChannelResponse
+    x-go-package: go-klikdokter/app/model/response
   DataResponse:
     properties:
       record:
@@ -1567,6 +1640,51 @@ info:
   title: 'Shipping Service:'
   version: "1.0"
 paths:
+  /channel/{channel-uid}/courier-list:
+    get:
+      description: Get List of Courier and Courier Services By Channel
+      operationId: GetChannelCourierList
+      parameters:
+      - in: path
+        name: channel-uid
+        required: true
+        type: string
+        x-go-name: ChannelUID
+      - description: Maximun records per page
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: Page No
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: Filter fields
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: Sort fields
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      - description: sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: dir
+        type: string
+        x-go-name: Dir
+      responses:
+        "200":
+          $ref: '#/responses/CourierByChannel'
+      tags:
+      - Channel-Courier-Service
   /channel/channel-app:
     get:
       description: List of Channel Apps
@@ -2733,6 +2851,12 @@ responses:
     schema:
       items:
         $ref: '#/definitions/ChannelCourierServiceItem'
+      type: array
+  CourierByChannel:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/CourierServiceByChannel'
       type: array
   GetChannelCourierStatusResponse:
     description: ""

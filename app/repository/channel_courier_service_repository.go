@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/app/model/response"
 	"strings"
 
 	"gorm.io/gorm"
@@ -23,6 +24,7 @@ type ChannelCourierServiceRepository interface {
 	DeleteChannelCourierServiceByID(id uint64) error
 	DeleteChannelCourierServicesByChannelID(channelID uint64, courierID uint64) error
 	FindByParams(limit, page int, sort string, filters map[string]interface{}) ([]entity.ChannelCourierService, *base.Pagination, error)
+	GetChannelCourierListByChannelUID(channel_uid string, limit int, page int, sort, dir string, filter map[string][]string) ([]response.CourierServiceByChannelResponse, *base.Pagination, error)
 }
 
 func NewChannelCourierServiceRepository(br BaseRepository) ChannelCourierServiceRepository {
@@ -190,4 +192,91 @@ func (r *ChannelCourierServiceRepositoryImpl) Paginate(value interface{}, pagina
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Offset(pagination.GetOffset()).Limit(pagination.GetLimit())
 	}
+}
+
+func (r *ChannelCourierServiceRepositoryImpl) GetChannelCourierListByChannelUID(channel_uid string, limit int, page int, sort, dir string, filter map[string][]string) ([]response.CourierServiceByChannelResponse, *base.Pagination, error) {
+	db := r.base.GetDB()
+	var courierService []response.CourierServiceByChannelResponse
+	var pagination base.Pagination
+	query := db.Model(&entity.ChannelCourierService{}).
+		Select(
+			"cs.uid AS courier_service_uid",
+			"cs.shipping_code AS shipping_code",
+			"cs.shipping_name AS shipping_name",
+			"cs.shipping_description AS shipping_description",
+			"cs.logo AS image_logo",
+			"cs.etd_min AS etd_min",
+			"cs.etd_max AS etd_max",
+			"cs.shipping_type AS shipping_type_code",
+			"st.title AS shipping_type_name",
+			"c.uid AS courier_uid",
+			"c.code AS courier_code",
+			"c.courier_name AS courier_name",
+			"c.courier_type AS courier_type_code",
+			"ct.title AS courier_type_name",
+			"c.logo AS courier_image",
+		).
+		Joins("INNER JOIN channel_courier cc ON cc.id = channel_courier_service.channel_courier_id").
+		Joins("INNER JOIN courier_service cs ON cs.id = channel_courier_service.courier_service_id").
+		Joins("INNER JOIN channel ch ON ch.id = cc.channel_id").
+		Joins("INNER JOIN courier c ON cc.courier_id = c.id").
+		Joins("LEFT JOIN shippment_predefined ct ON ct.code = c.courier_type AND ct.type = 'courier_type'").
+		Joins("LEFT JOIN shippment_predefined st ON st.code = cs.shipping_type AND st.type = 'shipping_type'").
+		Where("ch.uid = ?", channel_uid)
+
+	for k, v := range filter {
+		if len(v) > 0 {
+			if strings.EqualFold(k, "courier_type_code") {
+				query = query.Where("ct.code IN ?", v)
+
+			} else if strings.EqualFold(k, "courier_code") {
+				query = query.Where("c.code IN ?", v)
+
+			} else if strings.EqualFold(k, "courier_name") {
+				query = query.Where("c.courier_name IN ?", v)
+
+			} else if strings.EqualFold(k, "shipping_type_code") {
+				query = query.Where("st.code IN ?", v)
+
+			} else if strings.EqualFold(k, "shipping_name") {
+				query = query.Where("cs.shipping_name IN ?", v)
+
+			}
+		}
+	}
+
+	if len(sort) == 0 {
+		sort = "cs.id"
+	}
+
+	if strings.EqualFold(dir, "desc") {
+		sort += " desc"
+	}
+
+	query = query.Order(sort)
+	pagination.Limit = limit
+	pagination.Page = page
+	err := query.Scopes(r.Paginate([]entity.ChannelCourierService{}, &pagination, query, int64(len([]entity.ChannelCourierService{})))).
+		Find(&courierService).
+		Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil, nil
+		}
+		return nil, nil, err
+	}
+
+	for i := range courierService {
+		courierService[i].Courier = response.CourierByChannelResponse{
+			CourierUID:      courierService[i].CourierUID,
+			CourierCode:     courierService[i].CourierCode,
+			CourierName:     courierService[i].CourierName,
+			CourierTypeCode: courierService[i].CourierTypeCode,
+			CourierTypeName: courierService[i].CourierTypeName,
+			ImageLogo:       courierService[i].CourierImage,
+		}
+	}
+
+	return courierService, &pagination, nil
 }
