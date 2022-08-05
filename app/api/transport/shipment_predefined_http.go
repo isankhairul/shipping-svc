@@ -7,7 +7,6 @@ import (
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
-	"go-klikdokter/helper/global"
 	"go-klikdokter/pkg/util"
 	"net/http"
 
@@ -56,7 +55,7 @@ func decodeUpdateShipmentPredefinedRequest(ctx context.Context, r *http.Request)
 		return nil, err
 	}
 	//add this to htmlescape body post
-	global.HtmlEscape(&req)
+	//global.HtmlEscape(&req)
 
 	req.Uid = mux.Vars(r)["uid"]
 	return req, nil
