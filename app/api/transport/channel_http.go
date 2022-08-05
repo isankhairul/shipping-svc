@@ -7,7 +7,6 @@ import (
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
-	"go-klikdokter/helper/global"
 	"go-klikdokter/pkg/util"
 	"net/http"
 
@@ -85,7 +84,7 @@ func decodeSaveChannel(ctx context.Context, r *http.Request) (rqst interface{}, 
 		return nil, err
 	}
 	//add this to htmlescape body post
-	global.HtmlEscape(&req)
+	//global.HtmlEscape(&req)
 
 	return req, nil
 }
@@ -115,7 +114,7 @@ func decodeUpdateChannel(ctx context.Context, r *http.Request) (rqst interface{}
 		return nil, err
 	}
 	//add this to htmlescape body post
-	global.HtmlEscape(&req)
+	//global.HtmlEscape(&req)
 	req.Uid = mux.Vars(r)["id"]
 	return req, nil
 }

@@ -7,7 +7,6 @@ import (
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
-	"go-klikdokter/helper/global"
 	"go-klikdokter/pkg/util"
 	"net/http"
 
@@ -82,7 +81,7 @@ func decodeSaveChannelCourierServices(ctx context.Context, r *http.Request) (rqs
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
-	global.HtmlEscape(&req)
+	//global.HtmlEscape(&req)
 
 	return req, nil
 }
