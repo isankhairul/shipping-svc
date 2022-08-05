@@ -4,6 +4,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
+	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
 
@@ -15,6 +16,7 @@ type ShipmentPredefinedService interface {
 	GetAll(input request.ListShipmentPredefinedRequest) ([]*entity.ShippmentPredefined, *base.Pagination, message.Message)
 	UpdateShipmentPredefined(input request.UpdateShipmentPredefinedRequest) (*entity.ShippmentPredefined, message.Message)
 	CreateShipmentPredefined(input request.CreateShipmentPredefinedRequest) (*entity.ShippmentPredefined, message.Message)
+	GetByUID(uid string) (*response.ShippmentPredefined, message.Message)
 }
 
 type ShipmentPredefinedServiceImpl struct {
@@ -106,4 +108,35 @@ func (s *ShipmentPredefinedServiceImpl) GetAll(input request.ListShipmentPredefi
 		return nil, pagination, message.ErrNoData
 	}
 	return items, pagination, message.SuccessMsg
+}
+
+// swagger:route GET /other/shipment-predefined/{uid} Courier-Predefined GetShipmentPredefinedByUID
+// Get shipment predefined by UID
+//
+// responses:
+//  200: GetShippmentPredefined
+func (s *ShipmentPredefinedServiceImpl) GetByUID(uid string) (*response.ShippmentPredefined, message.Message) {
+	logger := log.With(s.logger, "ShipmentPredefinedService", "GetByUID")
+
+	var result *entity.ShippmentPredefined
+
+	result, err := s.predefines.GetShipmentPredefinedByUid(uid)
+
+	if err != nil {
+		_ = level.Error(logger).Log("error", err.Error())
+		return nil, message.ErrShipmentPredefinedNotFound
+	}
+
+	if result == nil {
+		return nil, message.ErrShipmentPredefinedNotFound
+	}
+
+	return &response.ShippmentPredefined{
+		UID:    result.UID,
+		Type:   result.Type,
+		Code:   result.Code,
+		Title:  result.Title,
+		Note:   result.Note,
+		Status: result.Status,
+	}, message.SuccessMsg
 }

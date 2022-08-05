@@ -127,3 +127,28 @@ func TestUpdateShipmentPredefinedFailNotFound(t *testing.T) {
 	assert.Nil(t, result)
 	assert.Equal(t, msg.Message, message.ErrShipmentPredefinedNotFound.Message, "Not found")
 }
+
+func TestGetByUID(t *testing.T) {
+
+	var baseshipmentPredefinedRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var shipmentPredefinedRepository = &repository_mock.ShipmentPredefinedMock{Mock: mock.Mock{}}
+	var shipmentPredefinedService = service.NewShipmentPredefinedService(logger, baseshipmentPredefinedRepository, shipmentPredefinedRepository)
+
+	shipmentPredefinedRepository.Mock.On("GetShipmentPredefinedByUid", mock.Anything).Return(entity.ShippmentPredefined{BaseIDModel: base.BaseIDModel{UID: "111"}})
+	result, msg := shipmentPredefinedService.GetByUID("111")
+	assert.NotNil(t, result)
+	assert.Equal(t, msg.Message, message.SuccessMsg.Message, "Code is wrong")
+	assert.Equal(t, result.UID, "111", "UID is wrong")
+}
+
+func TestGetByUIDNotFound(t *testing.T) {
+
+	var baseshipmentPredefinedRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
+	var shipmentPredefinedRepository = &repository_mock.ShipmentPredefinedMock{Mock: mock.Mock{}}
+	var shipmentPredefinedService = service.NewShipmentPredefinedService(logger, baseshipmentPredefinedRepository, shipmentPredefinedRepository)
+
+	shipmentPredefinedRepository.Mock.On("GetShipmentPredefinedByUid", mock.Anything).Return(nil)
+	result, msg := shipmentPredefinedService.GetByUID("111")
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Message, message.ErrShipmentPredefinedNotFound.Message, "Code is wrong")
+}

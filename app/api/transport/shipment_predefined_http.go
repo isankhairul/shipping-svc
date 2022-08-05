@@ -27,6 +27,13 @@ func ShipmentPredefinedHandler(s service.ShipmentPredefinedService, logger log.L
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
+	pr.Methods("GET").Path(util.PrefixBase + "/other/shipment-predefined/{uid}").Handler(httptransport.NewServer(
+		ep.Show,
+		decodeShipmentPredefinedUIDPath,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
 	pr.Methods("PUT").Path(util.PrefixBase + "/other/shipment-predefined/{uid}").Handler(httptransport.NewServer(
 		ep.Update,
 		decodeUpdateShipmentPredefinedRequest,
@@ -67,4 +74,8 @@ func decodeListShipmentPredefinedRequest(ctx context.Context, r *http.Request) (
 	}
 
 	return params, nil
+}
+
+func decodeShipmentPredefinedUIDPath(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	return mux.Vars(r)["uid"], nil
 }

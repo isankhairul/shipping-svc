@@ -64,6 +64,7 @@ type ChannelCourierDTO struct {
 	Uid                string                      `json:"uid"`
 	ChannelName        string                      `json:"channel_name"`
 	ChannelCode        string                      `json:"channel_code"`
+	CourierUID         string                      `json:"courier_uid"`
 	CourierName        string                      `json:"courier_name"`
 	PrioritySort       int32                       `json:"priority_sort"`
 	HidePurpose        int32                       `json:"hide_purpose"`
@@ -86,6 +87,7 @@ func ToChannelCourierDTO(cur *ChannelCourier) *ChannelCourierDTO {
 
 	if cur.Courier != nil {
 		ret.CourierName = cur.Courier.CourierName
+		ret.CourierUID = cur.Courier.UID
 	}
 
 	return ret
