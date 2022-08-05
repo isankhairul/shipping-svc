@@ -14,14 +14,15 @@ type ShipmentPredefinedMock struct {
 func (repository *ShipmentPredefinedMock) GetShipmentPredefinedByUid(uid string) (*entity.ShippmentPredefined, error) {
 	arguments := repository.Mock.Called(uid)
 	ret := arguments.Get(0)
-	var s entity.ShippmentPredefined
+	//var s entity.ShippmentPredefined
 	if ret != nil {
-		s = ret.(entity.ShippmentPredefined)
+		s := ret.(entity.ShippmentPredefined)
+		return &s, nil
 	}
 	if len(arguments) > 1 {
 		return nil, arguments.Get(1).(error)
 	}
-	return &s, nil
+	return nil, nil
 }
 func (repository *ShipmentPredefinedMock) GetAll(limit int, page int, sort string, filter map[string]interface{}) ([]*entity.ShippmentPredefined, *base.Pagination, error) {
 	arguments := repository.Mock.Called(limit, page, sort)

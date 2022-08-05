@@ -149,6 +149,9 @@ definitions:
       courier_name:
         type: string
         x-go-name: CourierName
+      courier_uid:
+        type: string
+        x-go-name: CourierUID
       hide_purpose:
         format: int32
         type: integer
@@ -1374,6 +1377,29 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/entity
+  ShippmentPredefinedDetail:
+    properties:
+      Title:
+        type: string
+      code:
+        type: string
+        x-go-name: Code
+      note:
+        type: string
+        x-go-name: Note
+      status:
+        format: int32
+        type: integer
+        x-go-name: Status
+      type:
+        type: string
+        x-go-name: Type
+      uid:
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-name: ShippmentPredefined
+    x-go-package: go-klikdokter/app/model/response
   SuccessResponse:
     properties:
       data:
@@ -2809,6 +2835,20 @@ paths:
       tags:
       - Courier-Predefined
   /other/shipment-predefined/{uid}:
+    get:
+      description: Get shipment predefined by UID
+      operationId: GetShipmentPredefinedByUID
+      parameters:
+      - in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      responses:
+        "200":
+          $ref: '#/responses/GetShippmentPredefined'
+      tags:
+      - Courier-Predefined
     put:
       description: Update a shipment predefined
       operationId: UpdateShipmentPredefinedRequest
@@ -2864,6 +2904,10 @@ responses:
       items:
         $ref: '#/definitions/GetChannelCourierStatusResponse'
       type: array
+  GetShippmentPredefined:
+    description: ""
+    schema:
+      $ref: '#/definitions/ShippmentPredefinedDetail'
   ImportStatus:
     description: ""
   ShippingTypeList:

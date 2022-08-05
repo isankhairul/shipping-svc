@@ -99,3 +99,10 @@ func (req UpdateShipmentPredefinedRequest) Validate() error {
 		validation.Field(&req.Code, validation.Required.Error(message.ErrReq.Message)),
 	)
 }
+
+// swagger:parameters GetShipmentPredefinedByUID
+type ShipmentPredefinedByUIDRequest struct {
+	// in: path
+	// required: true
+	UID string `json:"uid"`
+}
