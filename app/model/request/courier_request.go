@@ -1,6 +1,7 @@
 package request
 
 import (
+	"encoding/json"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
 
@@ -84,6 +85,10 @@ type DeleteCourierByUIdParam struct {
 
 // swagger:parameters CourierListRequest
 type CourierListRequest struct {
+	//Filter : {"courier_type":"value","courier_name":"value","courier_code":"value","Status":1}
+	// in: query
+	Filter string `json:"filter"`
+
 	// Maximun records per page
 	// in: int32
 	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
@@ -96,21 +101,20 @@ type CourierListRequest struct {
 	// in: string
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 
-	// Courier type
-	// in: string
-	CourierType string `schema:"courier_type" binding:"omitempty" json:"courier_type"`
+	Filters CourierListFilter `json:"-"`
+}
 
-	// Courier name
-	// in: string
-	CourierName string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
+type CourierListFilter struct {
+	CourierType string `json:"courier_type"`
+	CourierName string `json:"courier_name"`
+	CourierCode string `json:"courier_code"`
+	Status      *int   `json:"status"`
+}
 
-	// Courier code
-	// in: string
-	CourierCode string `schema:"courier_code" binding:"omitempty" json:"courier_code"`
-
-	// Courier status
-	// in: int
-	Status *int `binding:"omitempty"`
+func (m *CourierListRequest) GetFilter() {
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
 }
 
 // swagger:parameters UpdateCourierRequest

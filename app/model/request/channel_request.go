@@ -55,29 +55,44 @@ type GetChannelRequest struct {
 
 // swagger:parameters Channels
 type ChannelListRequest struct {
+	// Filter : {"channel_code":"value","channel_name":"value","status":1}
+	// in: query
+	Filter string `json:"filter"`
+
 	// Maximun records per page
 	// in: int32
-	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100"`
+	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
 
 	// Page No
 	// in: int32
-	Page int `schema:"page" binding:"omitempty,numeric,min=1"`
+	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
 	// Sort fields
 	// in: string
-	Sort string `schema:"sort" binding:"omitempty"`
+	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
+
+	Filters ChannelListFilter `json:"-"`
+}
+
+type ChannelListFilter struct {
 
 	// Channel Code
 	// in: string
-	ChannelCode string `schema:"ChannelCode" binding:"omitempty"`
+	ChannelCode string `json:"channel_code"`
 
 	// Channel Name
 	// in: string
-	ChannelName string `schema:"ChannelName" binding:"omitempty"`
+	ChannelName string `json:"channel_name"`
 
 	// Channel Status
 	// in: int
-	Status int `schema:"Status" binding:"omitempty"`
+	Status int `json:"status"`
+}
+
+func (m *ChannelListRequest) GetFilter() {
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
 }
 
 // swagger:parameters UpdateChannelRequest
@@ -153,32 +168,35 @@ func (req SaveChannelRequest) Validate() error {
 
 // swagger:parameters GetChannelCourierStatus
 type GetChannelCourierStatusRequest struct {
-	// Channel name
+	// Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"status_code":["value","value"]}
 	// in: query
-	// collection format: multi
-	ChannelName []string `schema:"channel_name" binding:"omitempty" json:"channel_name"`
-
-	// Courier name
-	// in: query
-	// collection format: multi
-	CourierName []string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
-
-	// Status code
-	// in: query
-	// collection format: multi
-	StatusCode []string `schema:"status_code" binding:"omitempty" json:"status_code"`
+	Filter string `json:"filter"`
 
 	// Maximun records per page
-	// in: query
+	// in: int32
 	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
 
 	// Page No
-	// in: query
+	// in: int32
 	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
-	// Sort fields and direction
-	// in: query
+	// Sort fields
+	// in: string
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
+
+	Filters GetChannelCourierStatusFilter `json:"-"`
+}
+
+type GetChannelCourierStatusFilter struct {
+	ChannelName []string `json:"channel_name"`
+	CourierName []string `json:"courier_name"`
+	StatusCode  []string `json:"status_code"`
+}
+
+func (m *GetChannelCourierStatusRequest) GetFilter() {
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
 }
 
 // swagger:parameters GetChannelCourierList

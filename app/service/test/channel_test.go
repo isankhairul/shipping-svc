@@ -82,10 +82,12 @@ func TestDeleteChannel(t *testing.T) {
 
 func TestListChannel(t *testing.T) {
 	req := request.ChannelListRequest{
-		Page:        1,
-		Sort:        "",
-		ChannelCode: "",
-		Limit:       10,
+		Page: 1,
+		Sort: "",
+		Filters: request.ChannelListFilter{
+			ChannelCode: "",
+		},
+		Limit: 10,
 	}
 
 	channel := []entity.Channel{

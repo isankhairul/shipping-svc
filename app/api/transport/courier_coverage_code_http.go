@@ -98,6 +98,8 @@ func decodeListCourierCoverageCode(ctx context.Context, r *http.Request) (rqst i
 		return nil, err
 	}
 
+	params.GetFilter()
+
 	return params, nil
 }
 

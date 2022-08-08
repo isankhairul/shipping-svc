@@ -105,6 +105,8 @@ func decodeListChannel(ctx context.Context, r *http.Request) (rqst interface{}, 
 		return nil, err
 	}
 
+	params.GetFilter()
+
 	return params, nil
 }
 
@@ -134,6 +136,8 @@ func decodeListChannelStatus(ctx context.Context, r *http.Request) (rqst interfa
 	if err = schema.NewDecoder().Decode(&params, r.Form); err != nil {
 		return nil, err
 	}
+
+	params.GetFilter()
 
 	return params, nil
 }

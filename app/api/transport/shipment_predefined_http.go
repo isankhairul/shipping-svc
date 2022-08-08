@@ -72,6 +72,8 @@ func decodeListShipmentPredefinedRequest(ctx context.Context, r *http.Request) (
 		return nil, err
 	}
 
+	params.GetFilter()
+
 	return params, nil
 }
 

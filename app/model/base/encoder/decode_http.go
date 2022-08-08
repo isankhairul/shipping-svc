@@ -23,6 +23,8 @@ func DecodePaginationRequestHTTP(ctx context.Context, r *http.Request) (rqst int
 	if err = schema.NewDecoder().Decode(&params, r.Form); err != nil {
 		return nil, err
 	}
+
+	params.GetFilter()
 	return params, nil
 
 }

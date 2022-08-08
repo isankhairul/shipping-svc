@@ -54,9 +54,9 @@ func (s *ChannelServiceImpl) GetList(input request.ChannelListRequest) ([]entity
 		input.Page = 1
 	}
 	filter := map[string]interface{}{
-		"channel_code": input.ChannelCode,
-		"channel_name": input.ChannelName,
-		"status":       input.Status,
+		"channel_code": input.Filters.ChannelCode,
+		"channel_name": input.Filters.ChannelName,
+		"status":       input.Filters.Status,
 	}
 	result, pagination, err := s.channelRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
 	if err != nil {
@@ -236,9 +236,9 @@ func (s *ChannelServiceImpl) GetListStatus(input request.GetChannelCourierStatus
 	logger := log.With(s.logger, "ChannelService", "GetListStatus")
 
 	filters := map[string]interface{}{
-		"channel_name": input.ChannelName,
-		"courier_name": input.CourierName,
-		"status_code":  input.StatusCode,
+		"channel_name": input.Filters.ChannelName,
+		"courier_name": input.Filters.CourierName,
+		"status_code":  input.Filters.StatusCode,
 	}
 
 	result, paging, err := s.shippingCourierStatus.FindByParams(input.Limit, input.Page, input.Sort, filters)

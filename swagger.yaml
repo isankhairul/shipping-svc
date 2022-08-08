@@ -1379,8 +1379,6 @@ definitions:
     x-go-package: go-klikdokter/app/model/entity
   ShippmentPredefinedDetail:
     properties:
-      Title:
-        type: string
       code:
         type: string
         x-go-name: Code
@@ -1391,6 +1389,9 @@ definitions:
         format: int32
         type: integer
         x-go-name: Status
+      title:
+        type: string
+        x-go-name: Title
       type:
         type: string
         x-go-name: Type
@@ -1716,45 +1717,34 @@ paths:
       description: List of Channel Apps
       operationId: Channels
       parameters:
+      - description: 'Filter : {"channel_code":"value","channel_name":"value","status":1}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
       - description: |-
           Maximun records per page
           in: int32
         format: int64
         in: query
-        name: Limit
+        name: limit
         type: integer
+        x-go-name: Limit
       - description: |-
           Page No
           in: int32
         format: int64
         in: query
-        name: Page
+        name: page
         type: integer
+        x-go-name: Page
       - description: |-
           Sort fields
           in: string
         in: query
-        name: Sort
+        name: sort
         type: string
-      - description: |-
-          Channel Code
-          in: string
-        in: query
-        name: ChannelCode
-        type: string
-      - description: |-
-          Channel Name
-          in: string
-        in: query
-        name: ChannelName
-        type: string
-      - description: |-
-          Channel Status
-          in: int
-        format: int64
-        in: query
-        name: Status
-        type: integer
+        x-go-name: Sort
       responses:
         "201":
           description: SuccessResponse
@@ -1860,55 +1850,11 @@ paths:
       description: Get List of Channel Courier Service
       operationId: GetChannelCourierServiceList
       parameters:
-      - collectionFormat: multi
-        description: Channel name
+      - description: 'Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"shipping_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"status":[0,1]}'
         in: query
-        items:
-          type: string
-        name: channel_name
-        type: array
-        x-go-name: ChannelName
-      - collectionFormat: multi
-        description: Courier name
-        in: query
-        items:
-          type: string
-        name: courier_name
-        type: array
-        x-go-name: CourierName
-      - collectionFormat: multi
-        description: Channel Courier Service status
-        in: query
-        items:
-          format: int64
-          type: integer
-        name: status
-        type: array
-        x-go-name: Status
-      - collectionFormat: multi
-        description: Shipping name
-        in: query
-        items:
-          type: string
-        name: shipping_name
-        type: array
-        x-go-name: ShippingName
-      - collectionFormat: multi
-        description: Shipping code
-        in: query
-        items:
-          type: string
-        name: shipping_code
-        type: array
-        x-go-name: ShippingCode
-      - collectionFormat: multi
-        description: Shipping type
-        in: query
-        items:
-          type: string
-        name: shipping_type
-        type: array
-        x-go-name: ShippingType
+        name: filter
+        type: string
+        x-go-name: Filter
       - description: Maximun records per page
         format: int64
         in: query
@@ -2003,47 +1949,11 @@ paths:
       description: List of Assignment Channel and Courier
       operationId: ChannelCourierListRequest
       parameters:
-      - collectionFormat: multi
-        description: |-
-          Channel name records
-          in: string
+      - description: 'Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"channel_code":["value","value"],"status":[0,1]}'
         in: query
-        items:
-          type: string
-        name: channel_name
-        type: array
-        x-go-name: ChannelName
-      - collectionFormat: multi
-        description: |-
-          Channel code records
-          in: string
-        in: query
-        items:
-          type: string
-        name: channel_code
-        type: array
-        x-go-name: ChannelCode
-      - collectionFormat: multi
-        description: |-
-          Courier name records
-          in: string
-        in: query
-        items:
-          type: string
-        name: courier_name
-        type: array
-        x-go-name: CourierName
-      - collectionFormat: multi
-        description: |-
-          Channel Courier status
-          in: int
-        in: query
-        items:
-          format: int64
-          type: integer
-        name: status
-        type: array
-        x-go-name: Status
+        name: filter
+        type: string
+        x-go-name: Filter
       - description: |-
           Maximun records per page
           in: int32
@@ -2199,57 +2109,11 @@ paths:
       description: Get Channel Courier Status List
       operationId: GetChannelCourierStatus
       parameters:
-      - collectionFormat: multi
-        description: Channel name
+      - description: 'Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"status_code":["value","value"]}'
         in: query
-        items:
-          type: string
-        name: channel_name
-        type: array
-        x-go-name: ChannelName
-      - collectionFormat: multi
-        description: Courier name
-        in: query
-        items:
-          type: string
-        name: courier_name
-        type: array
-        x-go-name: CourierName
-      - collectionFormat: multi
-        description: Status code
-        in: query
-        items:
-          type: string
-        name: status_code
-        type: array
-        x-go-name: StatusCode
-      - description: Maximun records per page
-        format: int64
-        in: query
-        name: limit
-        type: integer
-        x-go-name: Limit
-      - description: Page No
-        format: int64
-        in: query
-        name: page
-        type: integer
-        x-go-name: Page
-      - description: Sort fields and direction
-        in: query
-        name: sort
+        name: filter
         type: string
-        x-go-name: Sort
-      responses:
-        "200":
-          $ref: '#/responses/GetChannelCourierStatusResponse'
-      tags:
-      - Channel-Apps
-  /courier/courier:
-    get:
-      description: Get list of couriers
-      operationId: CourierListRequest
-      parameters:
+        x-go-name: Filter
       - description: |-
           Maximun records per page
           in: int32
@@ -2273,34 +2137,44 @@ paths:
         name: sort
         type: string
         x-go-name: Sort
-      - description: |-
-          Courier type
-          in: string
+      responses:
+        "200":
+          $ref: '#/responses/GetChannelCourierStatusResponse'
+      tags:
+      - Channel-Apps
+  /courier/courier:
+    get:
+      description: Get list of couriers
+      operationId: CourierListRequest
+      parameters:
+      - description: 'Filter : {"courier_type":"value","courier_name":"value","courier_code":"value","Status":1}'
         in: query
-        name: courier_type
+        name: filter
         type: string
-        x-go-name: CourierType
+        x-go-name: Filter
       - description: |-
-          Courier name
-          in: string
-        in: query
-        name: courier_name
-        type: string
-        x-go-name: CourierName
-      - description: |-
-          Courier code
-          in: string
-        in: query
-        name: courier_code
-        type: string
-        x-go-name: CourierCode
-      - description: |-
-          Courier status
-          in: int
+          Maximun records per page
+          in: int32
         format: int64
         in: query
-        name: Status
+        name: limit
         type: integer
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: |-
+          Sort fields
+          in: string
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
       responses:
         "200":
           description: PaginationResponse
@@ -2341,8 +2215,13 @@ paths:
       description: List couriers coverage code
       operationId: CourierCoverageCodeListRequest
       parameters:
+      - description: 'Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":"value","status":1}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
       - description: |-
-          Maximum records per page
+          Maximun records per page
           in: int32
         format: int64
         in: query
@@ -2364,45 +2243,6 @@ paths:
         name: sort
         type: string
         x-go-name: Sort
-      - collectionFormat: multi
-        description: Courier Name
-        in: query
-        items:
-          type: string
-        name: courier_name
-        type: array
-        x-go-name: CourierName
-      - collectionFormat: multi
-        description: Country Code
-        in: query
-        items:
-          type: string
-        name: country_code
-        type: array
-        x-go-name: CountryCode
-      - collectionFormat: multi
-        description: Postal Code
-        in: query
-        items:
-          type: string
-        name: postal_code
-        type: array
-        x-go-name: PostalCode
-      - description: |-
-          Description
-          in: string
-        in: query
-        name: description
-        type: string
-        x-go-name: Description
-      - description: |-
-          Courier coverage code status
-          in: int
-        format: int32
-        in: query
-        name: status
-        type: integer
-        x-go-name: Status
       responses:
         "200":
           description: PaginationResponse
@@ -2546,51 +2386,34 @@ paths:
       description: List of Courier Services
       operationId: CourierServiceListRequest
       parameters:
+      - description: 'Filter : {"courier_uid":"value","shipping_code":"value","shipping_name":"value","status":1}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
       - description: |-
           Maximun records per page
           in: int32
         format: int64
         in: query
-        name: Limit
+        name: limit
         type: integer
+        x-go-name: Limit
       - description: |-
           Page No
           in: int32
         format: int64
         in: query
-        name: Page
+        name: page
         type: integer
+        x-go-name: Page
       - description: |-
           Sort fields
           in: string
         in: query
-        name: Sort
+        name: sort
         type: string
-      - description: |-
-          CourierUID
-          in: string
-        in: query
-        name: CourierUID
-        type: string
-      - description: |-
-          ShippingCode
-          in: string
-        in: query
-        name: ShippingCode
-        type: string
-      - description: |-
-          ShippingName
-          in: string
-        in: query
-        name: ShippingName
-        type: string
-      - description: |-
-          Status
-          in: int
-        format: int64
-        in: query
-        name: Status
-        type: integer
+        x-go-name: Sort
       responses:
         "201":
           description: SuccessResponse
@@ -2778,51 +2601,34 @@ paths:
       description: Get predefined
       operationId: ListShipmentPredefinedRequest
       parameters:
+      - description: 'Filter : {"type":"value","code":"value","title":"value","status":1}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
       - description: |-
           Maximun records per page
           in: int32
         format: int64
         in: query
-        name: Limit
+        name: limit
         type: integer
+        x-go-name: Limit
       - description: |-
           Page No
           in: int32
         format: int64
         in: query
-        name: Page
+        name: page
         type: integer
+        x-go-name: Page
       - description: |-
           Sort fields
           in: string
         in: query
-        name: Sort
+        name: sort
         type: string
-      - description: |-
-          Type
-          in: string
-        in: query
-        name: Type
-        type: string
-      - description: |-
-          Code
-          in: string
-        in: query
-        name: Code
-        type: string
-      - description: |-
-          Title
-          in: string
-        in: query
-        name: Title
-        type: string
-      - description: |-
-          Courier status
-          in: int
-        format: int64
-        in: query
-        name: Status
-        type: integer
+        x-go-name: Sort
       responses:
         "200":
           description: SuccessResponse

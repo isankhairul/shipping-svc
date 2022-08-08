@@ -1,6 +1,7 @@
 package request
 
 import (
+	"encoding/json"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
 	"time"
@@ -151,33 +152,36 @@ type GetCourierServiceRequest struct {
 
 // swagger:parameters CourierServiceListRequest
 type CourierServiceListRequest struct {
+	//Filter : {"courier_uid":"value","shipping_code":"value","shipping_name":"value","status":1}
+	// in: query
+	Filter string `json:"filter"`
+
 	// Maximun records per page
 	// in: int32
-	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100"`
+	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
 
 	// Page No
 	// in: int32
-	Page int `schema:"page" binding:"omitempty,numeric,min=1"`
+	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
 	// Sort fields
 	// in: string
-	Sort string `schema:"sort" binding:"omitempty"`
+	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 
-	// CourierUID
-	// in: string
-	CourierUID string `schema:"CourierUID" binding:"omitempty"`
+	Filters CourierServiceListFilter `json:"-"`
+}
 
-	// ShippingCode
-	// in: string
-	ShippingCode string `schema:"ShippingCode" binding:"omitempty"`
+type CourierServiceListFilter struct {
+	CourierUID   string `json:"courier_uid"`
+	ShippingCode string `json:"shipping_code"`
+	ShippingName string `json:"shipping_name"`
+	Status       *int32 `json:"status"`
+}
 
-	// ShippingName
-	// in: string
-	ShippingName string `schema:"ShippingName" binding:"omitempty"`
-
-	// Status
-	// in: int
-	Status int `schema:"Status" binding:"omitempty"`
+func (m *CourierServiceListRequest) GetFilter() {
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
 }
 
 // swagger:parameters UpdateCourierServiceRequest

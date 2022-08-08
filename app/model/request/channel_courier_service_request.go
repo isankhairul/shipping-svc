@@ -1,6 +1,7 @@
 package request
 
 import (
+	"encoding/json"
 	"go-klikdokter/helper/message"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
@@ -62,35 +63,9 @@ type UpdateChannelCourierService struct {
 
 // swagger:parameters GetChannelCourierServiceList
 type ChannelCourierServiceListRequest struct {
-
-	// Channel name
+	//Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"shipping_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"status":[0,1]}
 	// in: query
-	// collection format: multi
-	ChannelName []string `schema:"channel_name" binding:"omitempty" json:"channel_name"`
-
-	// Courier name
-	// in: query
-	// collection format: multi
-	CourierName []string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
-
-	// Channel Courier Service status
-	// in: query
-	// collection format: multi
-	Status []int `binding:"omitempty" json:"status"`
-
-	// Shipping name
-	// in: query
-	// collection format: multi
-	ShippingName []string `schema:"shipping_name" binding:"omitempty" json:"shipping_name"`
-
-	// Shipping code
-	// in: query
-	// collection format: multi
-	ShippingCode []string `schema:"shipping_code" binding:"omitempty" json:"shipping_code"`
-
-	// Shipping type
-	// collection format: multi
-	ShippingType []string `schema:"shipping_type" binding:"omitempty" json:"shipping_type"`
+	Filter string `json:"filter"`
 
 	// Maximun records per page
 	// in: query
@@ -103,6 +78,8 @@ type ChannelCourierServiceListRequest struct {
 	// Sort fields and direction
 	// in: query
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
+
+	Filters ChannelCourierServiceFilter `json:"-"`
 }
 
 // swagger:parameters GetChannelCourierServiceByUID DeleteChannelCourierServiceByUID
@@ -115,4 +92,19 @@ type ChannelCourierServiceByUIDPath struct {
 	// in: path
 	// required: true
 	UID string `json:"uid"`
+}
+
+func (m *ChannelCourierServiceListRequest) GetFilter() {
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
+}
+
+type ChannelCourierServiceFilter struct {
+	ChannelName  []string `json:"channel_name"`
+	CourierName  []string `json:"courier_name"`
+	Status       []int    `json:"status"`
+	ShippingName []string `json:"shipping_name"`
+	ShippingCode []string `json:"shipping_code"`
+	ShippingType []string `json:"shipping_type"`
 }

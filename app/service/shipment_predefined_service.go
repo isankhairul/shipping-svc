@@ -97,10 +97,10 @@ func (s *ShipmentPredefinedServiceImpl) GetAll(input request.ListShipmentPredefi
 		input.Page = 1
 	}
 	filters := map[string]interface{}{
-		"code":   input.Code,
-		"title":  input.Title,
-		"type":   input.Type,
-		"status": input.Status,
+		"code":   input.Filters.Code,
+		"title":  input.Filters.Title,
+		"type":   input.Filters.Type,
+		"status": input.Filters.Status,
 	}
 	items, pagination, err := s.predefines.GetAll(input.Limit, input.Page, input.Sort, filters)
 	if err != nil {

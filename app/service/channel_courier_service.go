@@ -122,10 +122,10 @@ func (s *ChannelCourierServiceImpl) ListChannelCouriers(input request.ChannelCou
 	logger := log.With(s.logger, "ChannelCourierService", "ListChannelCouriers")
 
 	filter := map[string]interface{}{
-		"status":       input.Status,
-		"courier_name": input.CourierName,
-		"channel_name": input.ChannelName,
-		"channel_code": input.ChannelCode,
+		"status":       input.Filters.Status,
+		"courier_name": input.Filters.CourierName,
+		"channel_name": input.Filters.ChannelName,
+		"channel_code": input.Filters.ChannelCode,
 	}
 
 	result, pagination, err := s.channelCouriers.FindByPagination(input.Limit, input.Page, input.Sort, filter)
