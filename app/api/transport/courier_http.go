@@ -195,6 +195,8 @@ func decodeListCourierService(ctx context.Context, r *http.Request) (rqst interf
 		return nil, err
 	}
 
+	params.GetFilter()
+
 	return params, nil
 }
 

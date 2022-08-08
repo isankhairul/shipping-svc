@@ -160,12 +160,14 @@ func TestListChannelCouriersServiceSuccess(t *testing.T) {
 	var channelCourierServiceService = service.NewChannelCourierServiceService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
 
 	input := request.ChannelCourierServiceListRequest{
-		ChannelName:  []string{},
-		CourierName:  []string{},
-		Status:       []int{},
-		ShippingName: []string{},
-		ShippingCode: []string{},
-		ShippingType: []string{},
+		Filters: request.ChannelCourierServiceFilter{
+			ChannelName:  []string{},
+			CourierName:  []string{},
+			Status:       []int{},
+			ShippingName: []string{},
+			ShippingCode: []string{},
+			ShippingType: []string{},
+		},
 	}
 
 	courier := &entity.Courier{
@@ -197,12 +199,14 @@ func TestListChannelCouriersServiceNotFound(t *testing.T) {
 	var channelCourierServiceService = service.NewChannelCourierServiceService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
 
 	input := request.ChannelCourierServiceListRequest{
-		ChannelName:  []string{},
-		CourierName:  []string{},
-		Status:       []int{},
-		ShippingName: []string{},
-		ShippingCode: []string{},
-		ShippingType: []string{},
+		Filters: request.ChannelCourierServiceFilter{
+			ChannelName:  []string{},
+			CourierName:  []string{},
+			Status:       []int{},
+			ShippingName: []string{},
+			ShippingCode: []string{},
+			ShippingType: []string{},
+		},
 	}
 
 	channelCourierServiceRepo.Mock.On("FindByParams", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return([]entity.ChannelCourierService{}, &base.Pagination{}, nil)

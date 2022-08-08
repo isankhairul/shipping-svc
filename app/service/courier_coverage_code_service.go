@@ -105,11 +105,11 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Codes")
 
 	filter := map[string]interface{}{
-		"courier_name": input.CourierName,
-		"country_code": input.CountryCode,
-		"postal_code":  input.PostalCode,
-		"description":  input.Description,
-		"status":       input.Status,
+		"courier_name": input.Filters.CourierName,
+		"country_code": input.Filters.CountryCode,
+		"postal_code":  input.Filters.PostalCode,
+		"description":  input.Filters.Description,
+		"status":       input.Filters.Status,
 	}
 
 	result, pagination, err := s.courierCoverageCodeRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)

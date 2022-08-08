@@ -1,6 +1,7 @@
 package request
 
 import (
+	"encoding/json"
 	"go-klikdokter/helper/message"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
@@ -97,26 +98,8 @@ func (req SaveChannelCourierRequest) Validate() error {
 
 // swagger:parameters ChannelCourierListRequest
 type ChannelCourierListRequest struct {
-
-	// Channel name records
-	// in: string
-	// collection format: multi
-	ChannelName []string `schema:"channel_name" binding:"omitempty" json:"channel_name"`
-
-	// Channel code records
-	// in: string
-	// collection format: multi
-	ChannelCode []string `schema:"channel_code" binding:"omitempty" json:"channel_code"`
-
-	// Courier name records
-	// in: string
-	// collection format: multi
-	CourierName []string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
-
-	// Channel Courier status
-	// in: int
-	// collection format: multi
-	Status []int `binding:"omitempty" json:"status"`
+	//Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"channel_code":["value","value"],"status":[0,1]}
+	Filter string `schema:"filter" json:"filter,inline"`
 
 	// Maximun records per page
 	// in: int32
@@ -133,6 +116,21 @@ type ChannelCourierListRequest struct {
 	// Sort fields
 	// in: string
 	Dir string `schema:"dir" binding:"omitempty" json:"dir"`
+
+	Filters ChannelCourierListFilter `json:"-"`
+}
+
+type ChannelCourierListFilter struct {
+	ChannelName []string `json:"channel_name"`
+	ChannelCode []string `json:"channel_code"`
+	CourierName []string `json:"courier_name"`
+	Status      []int    `json:"status"`
+}
+
+func (m *ChannelCourierListRequest) GetFilter() {
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
 }
 
 // swagger:parameters GetChannelCourierByUid

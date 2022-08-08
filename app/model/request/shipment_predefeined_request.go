@@ -1,6 +1,7 @@
 package request
 
 import (
+	"encoding/json"
 	"go-klikdokter/helper/message"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
@@ -8,33 +9,36 @@ import (
 
 // swagger:parameters ListShipmentPredefinedRequest
 type ListShipmentPredefinedRequest struct {
+	// Filter : {"type":"value","code":"value","title":"value","status":1}
+	// in: query
+	Filter string `json:"filter"`
+
 	// Maximun records per page
 	// in: int32
-	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100"`
+	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
 
 	// Page No
 	// in: int32
-	Page int `schema:"page" binding:"omitempty,numeric,min=1"`
+	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
 	// Sort fields
 	// in: string
-	Sort string `schema:"sort" binding:"omitempty"`
+	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 
-	// Type
-	// in: string
-	Type string `schema:"type" binding:"omitempty"`
+	Filters ListShipmentPredefinedFilter `json:"-"`
+}
 
-	// Code
-	// in: string
-	Code string `schema:"code" binding:"omitempty"`
+type ListShipmentPredefinedFilter struct {
+	Type   string `json:"type" binding:"omitempty"`
+	Code   string `json:"code" binding:"omitempty"`
+	Title  string `json:"title" binding:"omitempty"`
+	Status *int   `binding:"omitempty"`
+}
 
-	// Title
-	// in: string
-	Title string `schema:"title" binding:"omitempty"`
-
-	// Courier status
-	// in: int
-	Status *int `binding:"omitempty"`
+func (m *ListShipmentPredefinedRequest) GetFilter() {
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
 }
 
 // swagger:parameters UpdateShipmentPredefinedRequest

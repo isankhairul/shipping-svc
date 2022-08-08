@@ -8,7 +8,7 @@ type ShippmentPredefined struct {
 
 	Code string `json:"code"`
 
-	Title string `son:"title"`
+	Title string `json:"title"`
 
 	Note string `json:"note"`
 

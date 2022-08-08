@@ -105,10 +105,10 @@ func TestDeleteCourierService(t *testing.T) {
 
 func TestListCourierService(t *testing.T) {
 	req := request.CourierServiceListRequest{
-		Page:       1,
-		Sort:       "",
-		CourierUID: "",
-		Limit:      10,
+		Page:    1,
+		Sort:    "",
+		Filters: request.CourierServiceListFilter{CourierUID: ""},
+		Limit:   10,
 	}
 
 	CourierService := []entity.CourierService{
@@ -130,7 +130,7 @@ func TestListCourierService(t *testing.T) {
 		"courier_uid":   "",
 		"shipping_code": "",
 		"shipping_name": "",
-		"status":        0,
+		"status":        req.Filters.Status,
 	}
 
 	paginationResult := base.Pagination{

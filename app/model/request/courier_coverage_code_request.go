@@ -2,6 +2,7 @@ package request
 
 import (
 	"bytes"
+	"encoding/json"
 	"go-klikdokter/helper/message"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
@@ -9,7 +10,11 @@ import (
 
 // swagger:parameters CourierCoverageCodeListRequest
 type CourierCoverageCodeListRequest struct {
-	// Maximum records per page
+	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":"value","status":1}
+	// in: query
+	Filter string `json:"filter"`
+
+	// Maximun records per page
 	// in: int32
 	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
 
@@ -21,28 +26,21 @@ type CourierCoverageCodeListRequest struct {
 	// in: string
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 
-	// Courier Name
-	// in: query
-	// collection format: multi
-	CourierName []string `schema:"courier_name" binding:"omitempty" json:"courier_name"`
+	Filters CourierCoverageCodeListFilter `json:"-"`
+}
 
-	// Country Code
-	// in: query
-	// collection format: multi
-	CountryCode []string `schema:"country_code" binding:"omitempty" json:"country_code"`
+type CourierCoverageCodeListFilter struct {
+	CourierName []string `json:"courier_name"`
+	CountryCode []string `json:"country_code"`
+	PostalCode  []string `json:"postal_code"`
+	Description string   `json:"description"`
+	Status      *int32   `json:"status"`
+}
 
-	// Postal Code
-	// in: query
-	// collection format: multi
-	PostalCode []string `schema:"postal_code" binding:"omitempty" json:"postal_code"`
-
-	// Description
-	// in: string
-	Description string `schema:"description" binding:"omitempty" json:"description"`
-
-	// Courier coverage code status
-	// in: int
-	Status *int32 `json:"status" binding:"omitempty"`
+func (m *CourierCoverageCodeListRequest) GetFilter() {
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
 }
 
 // swagger:parameters GetCourierCoverageCodeRequest DeleteCourierCoverageCodeRequest
