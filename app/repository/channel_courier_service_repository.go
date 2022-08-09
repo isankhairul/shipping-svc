@@ -103,6 +103,11 @@ func (r *ChannelCourierServiceRepositoryImpl) FindByParams(limit, page int, sort
 			if len(value) > 0 {
 				query = query.Where("channel_courier_service.status IN ? ", value)
 			}
+		case "courier_uid":
+			value := v.([]string)
+			if len(value) > 0 {
+				query = query.Where("co.uid IN ?", value)
+			}
 		}
 	}
 

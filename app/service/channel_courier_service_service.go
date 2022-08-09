@@ -116,6 +116,7 @@ func (s *channelCourierServiceServiceImpl) ListChannelCouriersService(input requ
 		"shipping_type": input.Filters.ShippingType,
 		"courier_name":  input.Filters.CourierName,
 		"channel_name":  input.Filters.ChannelName,
+		"courier_uid":   input.Filters.CourierUID,
 	}
 
 	result, paging, err := s.channelCourierServices.FindByParams(input.Limit, input.Page, input.Sort, filters)
