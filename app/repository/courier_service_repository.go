@@ -132,22 +132,29 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 
 	query := r.base.GetDB().Model(&entity.CourierService{}).Preload("Courier").Joins("Courier")
 
-	if filter["courier_uid"] != "" {
-		query = query.Where("courier_uid = ?", filter["courier_uid"])
+	if len(filter["courier_uid"].([]string)) != 0 {
+		query = query.Where("courier_uid IN ?", filter["courier_uid"])
+	}
+
+	if len(filter["courier_type"].([]string)) != 0 {
+		query = query.Where("courier_type IN ?", filter["courier_type"])
 	}
 
 	if filter["shipping_code"] != "" {
-		query = query.Where("shipping_code = ?", filter["shipping_code"])
+		query = query.Where("shipping_code ILIKE ?", "%"+filter["shipping_code"].(string)+"%")
 	}
 
 	if filter["shipping_name"] != "" {
-		query = query.Where("shipping_name = ?", filter["shipping_name"])
+		query = query.Where("shipping_name ILIKE ?", "%"+filter["shipping_name"].(string)+"%")
 	}
 
-	if filter["status"] != nil {
+	if len(filter["shipping_type_code"].([]string)) != 0 {
+		query = query.Where("shipping_type IN ?", filter["shipping_type_code"])
+	}
+
+	if len(filter["status"].([]int32)) != 0 {
 		//query = query.Where("status = ?", filter["status"])
-		status := filter["status"].(*int32)
-		query = query.Where(&entity.CourierService{Status: status})
+		query = query.Where("courier_service.status IN ?", filter["status"])
 	}
 
 	if len(sort) > 0 {

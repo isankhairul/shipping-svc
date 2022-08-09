@@ -107,7 +107,7 @@ func TestListCourierService(t *testing.T) {
 	req := request.CourierServiceListRequest{
 		Page:    1,
 		Sort:    "",
-		Filters: request.CourierServiceListFilter{CourierUID: ""},
+		Filters: request.CourierServiceListFilter{CourierUID: []string{}},
 		Limit:   10,
 	}
 
@@ -127,10 +127,12 @@ func TestListCourierService(t *testing.T) {
 	}
 
 	filter := map[string]interface{}{
-		"courier_uid":   "",
-		"shipping_code": "",
-		"shipping_name": "",
-		"status":        req.Filters.Status,
+		"courier_uid":        req.Filters.CourierUID,
+		"courier_type":       req.Filters.CourierType,
+		"shipping_code":      req.Filters.ShippingCode,
+		"shipping_name":      req.Filters.ShippingName,
+		"shipping_type_code": req.Filters.ShippingTypeCode,
+		"status":             req.Filters.Status,
 	}
 
 	paginationResult := base.Pagination{
