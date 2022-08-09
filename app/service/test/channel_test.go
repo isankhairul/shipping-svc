@@ -100,7 +100,7 @@ func TestListChannel(t *testing.T) {
 	filter := map[string]interface{}{
 		"channel_code": "",
 		"channel_name": "",
-		"status":       0,
+		"status":       req.Filters.Status,
 	}
 
 	paginationResult := base.Pagination{
