@@ -86,16 +86,16 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 		query = query.Where("LOWER(code) LIKE ?", "%"+strings.ToLower(filter["courier_code"].(string))+"%")
 	}
 
-	if filter["courier_type"] != "" {
-		query = query.Where("LOWER(courier_type) LIKE ?", "%"+strings.ToLower(filter["courier_type"].(string))+"%")
+	if len(filter["courier_type"].([]string)) != 0 {
+		query = query.Where("courier_type IN ?", filter["courier_type"])
 	}
 
 	if filter["courier_name"] != "" {
 		query = query.Where("LOWER(courier_name) LIKE ?", "%"+strings.ToLower(filter["courier_name"].(string))+"%")
 	}
 
-	if filter["status"].(*int) != nil {
-		query = query.Where("status = ?", *filter["status"].(*int))
+	if len(filter["status"].([]int)) != 0 {
+		query = query.Where("status IN ?", filter["status"])
 	}
 
 	if len(sort) > 0 {

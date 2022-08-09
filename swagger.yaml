@@ -2147,7 +2147,7 @@ paths:
       description: Get list of couriers
       operationId: CourierListRequest
       parameters:
-      - description: 'Filter : {"courier_type":"value","courier_name":"value","courier_code":"value","Status":1}'
+      - description: 'Filter : {"courier_type":["value","value"],"courier_name":"value","courier_code":"value","status":[0,1]}'
         in: query
         name: filter
         type: string
