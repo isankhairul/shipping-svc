@@ -57,6 +57,7 @@ type ChannelCourierServiceList struct {
 type ChannelCourierServiceItem struct {
 	UID          string `json:"uid"`
 	ChannelName  string `json:"channel_name"`
+	CourierUID   string `json:"courier_uid"`
 	CourierName  string `json:"courier_name"`
 	ShippingName string `json:"shipping_name"`
 	ShippingCode string `json:"shipping_code"`
@@ -76,6 +77,7 @@ func NewChannelCourierServiceItem(input entity.ChannelCourierService) *ChannelCo
 
 	if input.ChannelCourier != nil && input.ChannelCourier.Courier != nil {
 		response.CourierName = input.ChannelCourier.Courier.CourierName
+		response.CourierUID = input.ChannelCourier.Courier.UID
 	}
 
 	if input.CourierService != nil {

@@ -284,6 +284,9 @@ definitions:
       courier_name:
         type: string
         x-go-name: CourierName
+      courier_uid:
+        type: string
+        x-go-name: CourierUID
       shipping_code:
         type: string
         x-go-name: ShippingCode
@@ -1850,7 +1853,7 @@ paths:
       description: Get List of Channel Courier Service
       operationId: GetChannelCourierServiceList
       parameters:
-      - description: 'Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"shipping_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"status":[0,1]}'
+      - description: 'Filter : {"channel_name":["value","value"],"courier_uid":["value","value"],"courier_name":["value","value"],"shipping_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"status":[0,1]}'
         in: query
         name: filter
         type: string
