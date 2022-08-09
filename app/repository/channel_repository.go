@@ -118,14 +118,18 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 	var pagination base.Pagination
 
 	query := r.base.GetDB()
-	if filter["channel_code"] != "" {
-		query = query.Where("LOWER(channel_code) LIKE ?", fmt.Sprint("%", strings.ToLower(filter["channel_code"].(string)), "%"))
-	}
-	if filter["channel_name"] != "" {
-		query = query.Where("LOWER(channel_name) LIKE ?", fmt.Sprint("%", strings.ToLower(filter["channel_name"].(string)), "%"))
-	}
-	if len(filter["status"].([]int)) != 0 {
-		query = query.Where("status IN ?", filter["status"])
+
+	for k, v := range filter {
+		if k == "channel_code" && v != "" {
+			query = query.Where("LOWER(channel_code) LIKE ?", fmt.Sprint("%", strings.ToLower(v.(string)), "%"))
+
+		} else if k == "channel_name" && v != "" {
+			query = query.Where("LOWER(channel_name) LIKE ?", fmt.Sprint("%", strings.ToLower(v.(string)), "%"))
+
+		} else if k == "status" && len(v.([]int)) != 0 {
+			query = query.Where("status IN ?", v)
+
+		}
 	}
 
 	if len(sort) > 0 {
