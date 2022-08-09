@@ -2,9 +2,11 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"math"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -117,13 +119,13 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 
 	query := r.base.GetDB()
 	if filter["channel_code"] != "" {
-		query = query.Where("channel_code = ?", filter["channel_code"])
+		query = query.Where("LOWER(channel_code) LIKE ?", fmt.Sprint("%", strings.ToLower(filter["channel_code"].(string)), "%"))
 	}
 	if filter["channel_name"] != "" {
-		query = query.Where("channel_name = ?", filter["channel_name"])
+		query = query.Where("LOWER(channel_name) LIKE ?", fmt.Sprint("%", strings.ToLower(filter["channel_name"].(string)), "%"))
 	}
-	if filter["status"] != 0 {
-		query = query.Where("status = ?", filter["status"])
+	if len(filter["status"].([]int)) != 0 {
+		query = query.Where("status IN ?", filter["status"])
 	}
 
 	if len(sort) > 0 {
