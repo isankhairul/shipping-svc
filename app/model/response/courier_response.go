@@ -1,6 +1,9 @@
 package response
 
-import "go-klikdokter/app/model/entity"
+import (
+	"go-klikdokter/app/model/entity"
+	"go-klikdokter/pkg/util/datatype"
+)
 
 // swagger:model ShippingTypeItem
 type ShippingTypeItem struct {
@@ -56,8 +59,8 @@ type CourierByChannelResponse struct {
 	//example:Third Party Courier
 	CourierTypeName string `json:"courier_type_name"`
 
-	//example:https://kd-test/logo/shipper.logo
-	ImageLogo string `json:"image_logo" gorm:"courier_image"`
+	//example:[{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
+	ImageLogo datatype.JSONB `json:"image_logo" gorm:"courier_image"`
 }
 
 //swagger:model CourierServiceByChannel
@@ -74,8 +77,8 @@ type CourierServiceByChannelResponse struct {
 	//example:Shipper adalah paket reguler yang ditawarkan Shipper
 	ShippingDescription string `json:"shipping_description"`
 
-	//example:https://kd-test/logo/shipper.logo
-	ImageLogo string `json:"image_logo"`
+	//example:[{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
+	ImageLogo datatype.JSONB `json:"image_logo"`
 
 	//example:regular
 	ShippingTypeCode string `json:"shipping_type_code"`
@@ -91,12 +94,12 @@ type CourierServiceByChannelResponse struct {
 
 	Courier CourierByChannelResponse `json:"courier" gorm:"-:all"`
 
-	CourierUID      string `json:"-"`
-	CourierCode     string `json:"-"`
-	CourierName     string `json:"-"`
-	CourierTypeCode string `json:"-"`
-	CourierTypeName string `json:"-"`
-	CourierImage    string `json:"-"`
+	CourierUID      string         `json:"-"`
+	CourierCode     string         `json:"-"`
+	CourierName     string         `json:"-"`
+	CourierTypeCode string         `json:"-"`
+	CourierTypeName string         `json:"-"`
+	CourierImage    datatype.JSONB `json:"-"`
 }
 
 //swagger:response CourierByChannel

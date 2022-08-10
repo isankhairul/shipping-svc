@@ -6,6 +6,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/response"
+	"reflect"
 	"strings"
 
 	"gorm.io/gorm"
@@ -24,7 +25,7 @@ type ChannelCourierServiceRepository interface {
 	DeleteChannelCourierServiceByID(id uint64) error
 	DeleteChannelCourierServicesByChannelID(channelID uint64, courierID uint64) error
 	FindByParams(limit, page int, sort string, filters map[string]interface{}) ([]entity.ChannelCourierService, *base.Pagination, error)
-	GetChannelCourierListByChannelUID(channel_uid string, limit int, page int, sort, dir string, filter map[string][]string) ([]response.CourierServiceByChannelResponse, *base.Pagination, error)
+	GetChannelCourierListByChannelUID(channel_uid string, limit int, page int, sort, dir string, filter map[string]interface{}) ([]response.CourierServiceByChannelResponse, *base.Pagination, error)
 }
 
 func NewChannelCourierServiceRepository(br BaseRepository) ChannelCourierServiceRepository {
@@ -199,7 +200,7 @@ func (r *ChannelCourierServiceRepositoryImpl) Paginate(value interface{}, pagina
 	}
 }
 
-func (r *ChannelCourierServiceRepositoryImpl) GetChannelCourierListByChannelUID(channel_uid string, limit int, page int, sort, dir string, filter map[string][]string) ([]response.CourierServiceByChannelResponse, *base.Pagination, error) {
+func (r *ChannelCourierServiceRepositoryImpl) GetChannelCourierListByChannelUID(channel_uid string, limit int, page int, sort, dir string, filter map[string]interface{}) ([]response.CourierServiceByChannelResponse, *base.Pagination, error) {
 	db := r.base.GetDB()
 	var courierService []response.CourierServiceByChannelResponse
 	var pagination base.Pagination
@@ -209,7 +210,7 @@ func (r *ChannelCourierServiceRepositoryImpl) GetChannelCourierListByChannelUID(
 			"cs.shipping_code AS shipping_code",
 			"cs.shipping_name AS shipping_name",
 			"cs.shipping_description AS shipping_description",
-			"cs.logo AS image_logo",
+			"cs.image_path AS image_logo",
 			"cs.etd_min AS etd_min",
 			"cs.etd_max AS etd_max",
 			"cs.shipping_type AS shipping_type_code",
@@ -219,7 +220,7 @@ func (r *ChannelCourierServiceRepositoryImpl) GetChannelCourierListByChannelUID(
 			"c.courier_name AS courier_name",
 			"c.courier_type AS courier_type_code",
 			"ct.title AS courier_type_name",
-			"c.logo AS courier_image",
+			"c.image_path AS courier_image",
 		).
 		Joins("INNER JOIN channel_courier cc ON cc.id = channel_courier_service.channel_courier_id").
 		Joins("INNER JOIN courier_service cs ON cs.id = channel_courier_service.courier_service_id").
@@ -230,23 +231,31 @@ func (r *ChannelCourierServiceRepositoryImpl) GetChannelCourierListByChannelUID(
 		Where("ch.uid = ?", channel_uid)
 
 	for k, v := range filter {
-		if len(v) > 0 {
-			if strings.EqualFold(k, "courier_type_code") {
-				query = query.Where("ct.code IN ?", v)
 
-			} else if strings.EqualFold(k, "courier_code") {
-				query = query.Where("c.code IN ?", v)
-
-			} else if strings.EqualFold(k, "courier_name") {
-				query = query.Where("c.courier_name IN ?", v)
-
-			} else if strings.EqualFold(k, "shipping_type_code") {
-				query = query.Where("st.code IN ?", v)
-
-			} else if strings.EqualFold(k, "shipping_name") {
-				query = query.Where("cs.shipping_name IN ?", v)
-
+		if reflect.ValueOf(v).Kind() == reflect.Slice {
+			if reflect.ValueOf(v).Len() == 0 {
+				continue
 			}
+		}
+
+		if strings.EqualFold(k, "courier_type_code") {
+			query = query.Where("ct.code IN ?", v)
+
+		} else if strings.EqualFold(k, "courier_code") {
+			query = query.Where("c.code IN ?", v)
+
+		} else if strings.EqualFold(k, "courier_name") {
+			query = query.Where("c.courier_name IN ?", v)
+
+		} else if strings.EqualFold(k, "shipping_type_code") {
+			query = query.Where("st.code IN ?", v)
+
+		} else if strings.EqualFold(k, "shipping_name") {
+			query = query.Where("cs.shipping_name IN ?", v)
+
+		} else if strings.EqualFold(k, "status") {
+			query = query.Where("channel_courier_service.status IN ?", v)
+
 		}
 	}
 
