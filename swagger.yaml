@@ -416,9 +416,7 @@ definitions:
         type: string
         x-go-name: CourierUID
       image_logo:
-        example: https://kd-test/logo/shipper.logo
-        type: string
-        x-go-name: ImageLogo
+        $ref: '#/definitions/JSONB'
     type: object
     x-go-package: go-klikdokter/app/model/response
   CourierCoverageCode:
@@ -729,9 +727,7 @@ definitions:
         type: number
         x-go-name: ETDMin
       image_logo:
-        example: https://kd-test/logo/shipper.logo
-        type: string
-        x-go-name: ImageLogo
+        $ref: '#/definitions/JSONB'
       shipping_code:
         example: shipper
         type: string
@@ -1692,7 +1688,8 @@ paths:
         name: page
         type: integer
         x-go-name: Page
-      - description: Filter fields
+      - description: 'Filter: {"courier_type_code": ["third_party"],"courier_code":["shipper"],"courier_name":["Gojek"],"shipping_type_code":["instant","reguler"],"shipping_name":["Same
+          Day"],"status":[0,1]}'
         in: query
         name: filter
         type: string

@@ -210,7 +210,7 @@ type GetChannelCourierListRequest struct {
 	// Page No
 	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
-	// Filter fields
+	// Filter: {"courier_type_code": ["third_party"],"courier_code":["shipper"],"courier_name":["Gojek"],"shipping_type_code":["instant","reguler"],"shipping_name":["Same Day"],"status":[0,1]}
 	Filter string `schema:"filter" binding:"omitempty" json:"filter"`
 
 	// Sort fields
@@ -220,11 +220,11 @@ type GetChannelCourierListRequest struct {
 	// enum: asc,desc
 	Dir string `schema:"dir" binding:"omitempty" json:"dir"`
 
-	FilterMap map[string][]string `json:"-"`
+	FilterMap map[string]interface{} `json:"-"`
 }
 
 func (m *GetChannelCourierListRequest) SetFilterMap() {
-	filters := map[string][]string{}
+	filters := map[string]interface{}{}
 	if len(m.Filter) > 0 {
 		_ = json.Unmarshal([]byte(m.Filter), &filters)
 		m.FilterMap = filters
