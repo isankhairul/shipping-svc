@@ -80,22 +80,36 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 	db := r.base.GetDB()
 	query := db.Model(entity.CourierCoverageCode{}).Preload("Courier").Joins("Courier")
 
-	if len(filters["courier_name"].([]string)) != 0 {
-		query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id AND courier.courier_name IN ?", filters["courier_name"].([]string))
-	}
-	if len(filters["country_code"].([]string)) != 0 {
-		query = query.Where("country_code IN ?", filters["country_code"].([]string))
-	}
-	if len(filters["postal_code"].([]string)) != 0 {
-		query = query.Where("postal_code IN ? ", filters["postal_code"].([]string))
-	}
-	if filters["description"] != "" {
-		query = query.Where(entity.CourierCoverageCode{Description: filters["description"].(string)})
+	for k, v := range filters {
+		switch k {
+		case "courier_name":
+			value, ok := v.([]string)
+			if ok && len(value) > 0 {
+				query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id").
+					Where("courier.courier_name IN ?", v)
+
+			}
+		case "country_code", "postal_code":
+			value, ok := v.([]string)
+			if ok && len(value) > 0 {
+				query = query.Where(k+" IN ?", value)
+
+			}
+		case "description", "":
+			value, ok := v.([]string)
+			if ok && len(value) > 0 {
+				query = query.Where(like(k, value))
+
+			}
+		case "status":
+			value, ok := v.([]int)
+			if ok && len(value) > 0 {
+				query = query.Where("courier_coverage_code.status IN ?", value)
+
+			}
+		}
 	}
 
-	if filters["status"].(*int32) != nil {
-		query = query.Where(entity.CourierCoverageCode{Status: filters["status"].(*int32)})
-	}
 	if len(sort) > 0 {
 		query = query.Order(sort)
 	} else {
