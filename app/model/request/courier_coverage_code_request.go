@@ -10,7 +10,7 @@ import (
 
 // swagger:parameters CourierCoverageCodeListRequest
 type CourierCoverageCodeListRequest struct {
-	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":"value","status":1}
+	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":["value","value"],"status":[0,1]}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -33,8 +33,8 @@ type CourierCoverageCodeListFilter struct {
 	CourierName []string `json:"courier_name"`
 	CountryCode []string `json:"country_code"`
 	PostalCode  []string `json:"postal_code"`
-	Description string   `json:"description"`
-	Status      *int32   `json:"status"`
+	Description []string `json:"description"`
+	Status      []int    `json:"status"`
 }
 
 func (m *CourierCoverageCodeListRequest) GetFilter() {
