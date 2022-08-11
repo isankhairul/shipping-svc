@@ -4,7 +4,6 @@ import (
 	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
-	"strings"
 
 	"gorm.io/gorm"
 )
@@ -31,17 +30,27 @@ func (r *ShipmentPredefinedRepositoryImpl) GetAll(limit int, page int, sort stri
 
 	query := r.base.GetDB().Model(&entity.ShippmentPredefined{})
 
-	if filter["type"] != "" {
-		query = query.Where("LOWER(type) LIKE ?", "%"+strings.ToLower(filter["type"].(string))+"%")
-	}
-	if filter["title"] != "" {
-		query = query.Where("LOWER(title) LIKE ?", "%"+strings.ToLower(filter["title"].(string))+"%")
-	}
-	if filter["code"] != "" {
-		query = query.Where("LOWER(code) LIKE ?", "%"+strings.ToLower(filter["code"].(string))+"%")
-	}
-	if filter["status"].(*int) != nil {
-		query = query.Where("status = ?", *filter["status"].(*int))
+	for k, v := range filter {
+		switch k {
+		case "note", "title", "code":
+			value, ok := v.([]string)
+			if ok && len(value) > 0 {
+				query = query.Where(like(k, value))
+
+			}
+		case "type":
+			value, ok := v.([]string)
+			if ok && len(value) > 0 {
+				query = query.Where(k+" IN ?", value)
+
+			}
+		case "status":
+			value, ok := v.([]int)
+			if ok && len(value) > 0 {
+				query = query.Where("status IN ?", value)
+
+			}
+		}
 	}
 
 	if len(sort) > 0 {

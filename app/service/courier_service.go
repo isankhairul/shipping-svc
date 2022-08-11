@@ -134,7 +134,7 @@ func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]entity
 	filter := map[string]interface{}{
 		"status":       input.Filters.Status,
 		"courier_type": input.Filters.CourierType,
-		"courier_code": input.Filters.CourierCode,
+		"code":         input.Filters.CourierCode,
 		"courier_name": input.Filters.CourierName,
 	}
 
@@ -350,12 +350,12 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 		input.Page = 1
 	}
 	filter := map[string]interface{}{
-		"courier_uid":        input.Filters.CourierUID,
-		"courier_type":       input.Filters.CourierType,
-		"shipping_code":      input.Filters.ShippingCode,
-		"shipping_name":      input.Filters.ShippingName,
-		"shipping_type_code": input.Filters.ShippingTypeCode,
-		"status":             input.Filters.Status,
+		"courier_uid":   input.Filters.CourierUID,
+		"courier_type":  input.Filters.CourierType,
+		"shipping_code": input.Filters.ShippingCode,
+		"shipping_name": input.Filters.ShippingName,
+		"shipping_type": input.Filters.ShippingTypeCode,
+		"status":        input.Filters.Status,
 	}
 	result, pagination, err := s.courierServiceRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
 	if err != nil {

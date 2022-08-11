@@ -9,7 +9,7 @@ import (
 
 // swagger:parameters ListShipmentPredefinedRequest
 type ListShipmentPredefinedRequest struct {
-	// Filter : {"type":"value","code":"value","title":"value","status":1}
+	// Filter : {"type":["value","value"],"code":["value","value"],"title":["value","value"],"description":["value","value"],"status":[0,1]}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -29,10 +29,11 @@ type ListShipmentPredefinedRequest struct {
 }
 
 type ListShipmentPredefinedFilter struct {
-	Type   string `json:"type" binding:"omitempty"`
-	Code   string `json:"code" binding:"omitempty"`
-	Title  string `json:"title" binding:"omitempty"`
-	Status *int   `binding:"omitempty"`
+	Type        []string `json:"type" binding:"omitempty"`
+	Code        []string `json:"code" binding:"omitempty"`
+	Title       []string `json:"title" binding:"omitempty"`
+	Description []string `json:"description" binding:"omitempty"`
+	Status      []int    `binding:"omitempty"`
 }
 
 func (m *ListShipmentPredefinedRequest) GetFilter() {

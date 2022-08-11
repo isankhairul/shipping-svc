@@ -1717,7 +1717,7 @@ paths:
       description: List of Channel Apps
       operationId: Channels
       parameters:
-      - description: 'Filter : {"channel_code":"value","channel_name":"value","status":[0,1]}'
+      - description: 'Filter : {"channel_code":["value","value"],"channel_name":["value","value"],"status":[0,1]}'
         in: query
         name: filter
         type: string
@@ -2147,7 +2147,7 @@ paths:
       description: Get list of couriers
       operationId: CourierListRequest
       parameters:
-      - description: 'Filter : {"courier_type":["value","value"],"courier_name":"value","courier_code":"value","status":[0,1]}'
+      - description: 'Filter : {"courier_type":["value","value"],"courier_name":["value","value"],"courier_code":["value","value"],"status":[0,1]}'
         in: query
         name: filter
         type: string
@@ -2386,7 +2386,7 @@ paths:
       description: List of Courier Services
       operationId: CourierServiceListRequest
       parameters:
-      - description: 'Filter : {"courier_uid":["value","value"],"courier_type":["value","value"],"shipping_code":"value","shipping_name":"value","shipping_type_code":["value","value"],"status":[0,1]}'
+      - description: 'Filter : {"courier_uid":["value","value"],"courier_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"shipping_type_code":["value","value"],"status":[0,1]}'
         in: query
         name: filter
         type: string
@@ -2601,7 +2601,7 @@ paths:
       description: Get predefined
       operationId: ListShipmentPredefinedRequest
       parameters:
-      - description: 'Filter : {"type":"value","code":"value","title":"value","status":1}'
+      - description: 'Filter : {"type":["value","value"],"code":["value","value"],"title":["value","value"],"description":["value","value"],"status":[0,1]}'
         in: query
         name: filter
         type: string

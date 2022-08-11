@@ -85,7 +85,7 @@ func TestListChannel(t *testing.T) {
 		Page: 1,
 		Sort: "",
 		Filters: request.ChannelListFilter{
-			ChannelCode: "",
+			ChannelCode: []string{},
 		},
 		Limit: 10,
 	}
@@ -98,8 +98,8 @@ func TestListChannel(t *testing.T) {
 	}
 
 	filter := map[string]interface{}{
-		"channel_code": "",
-		"channel_name": "",
+		"channel_code": req.Filters.ChannelCode,
+		"channel_name": req.Filters.ChannelName,
 		"status":       req.Filters.Status,
 	}
 
