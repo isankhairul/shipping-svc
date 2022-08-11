@@ -4,7 +4,6 @@ import (
 	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
-	"strings"
 
 	"gorm.io/gorm"
 )
@@ -82,20 +81,28 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 
 	query := r.base.GetDB()
 
-	if filter["courier_code"] != "" {
-		query = query.Where("LOWER(code) LIKE ?", "%"+strings.ToLower(filter["courier_code"].(string))+"%")
-	}
+	for k, v := range filter {
+		switch k {
+		case "code", "courier_name":
+			value, ok := v.([]string)
+			if ok && len(value) > 0 {
+				query = query.Where(like(k, value))
 
-	if len(filter["courier_type"].([]string)) != 0 {
-		query = query.Where("courier_type IN ?", filter["courier_type"])
-	}
+			}
+		case "courier_type":
+			value, ok := v.([]string)
+			if ok && len(value) > 0 {
+				query = query.Where("courier_type IN ?", value)
 
-	if filter["courier_name"] != "" {
-		query = query.Where("LOWER(courier_name) LIKE ?", "%"+strings.ToLower(filter["courier_name"].(string))+"%")
-	}
+			}
+		case "status":
+			value, ok := v.([]int)
+			if ok && len(value) > 0 {
+				query = query.Where("status IN ?", value)
 
-	if len(filter["status"].([]int)) != 0 {
-		query = query.Where("status IN ?", filter["status"])
+			}
+
+		}
 	}
 
 	if len(sort) > 0 {

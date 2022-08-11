@@ -152,7 +152,7 @@ type GetCourierServiceRequest struct {
 
 // swagger:parameters CourierServiceListRequest
 type CourierServiceListRequest struct {
-	//Filter : {"courier_uid":["value","value"],"courier_type":["value","value"],"shipping_code":"value","shipping_name":"value","shipping_type_code":["value","value"],"status":[0,1]}
+	//Filter : {"courier_uid":["value","value"],"courier_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"shipping_type_code":["value","value"],"status":[0,1]}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -174,10 +174,10 @@ type CourierServiceListRequest struct {
 type CourierServiceListFilter struct {
 	CourierUID       []string `json:"courier_uid"`
 	CourierType      []string `json:"courier_type"`
-	ShippingCode     string   `json:"shipping_code"`
-	ShippingName     string   `json:"shipping_name"`
+	ShippingCode     []string `json:"shipping_code"`
+	ShippingName     []string `json:"shipping_name"`
 	ShippingTypeCode []string `json:"shipping_type_code"`
-	Status           []int32  `json:"status"`
+	Status           []int    `json:"status"`
 }
 
 func (m *CourierServiceListRequest) GetFilter() {

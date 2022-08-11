@@ -55,7 +55,7 @@ type GetChannelRequest struct {
 
 // swagger:parameters Channels
 type ChannelListRequest struct {
-	// Filter : {"channel_code":"value","channel_name":"value","status":[0,1]}
+	// Filter : {"channel_code":["value","value"],"channel_name":["value","value"],"status":[0,1]}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -78,11 +78,11 @@ type ChannelListFilter struct {
 
 	// Channel Code
 	// in: string
-	ChannelCode string `json:"channel_code"`
+	ChannelCode []string `json:"channel_code"`
 
 	// Channel Name
 	// in: string
-	ChannelName string `json:"channel_name"`
+	ChannelName []string `json:"channel_name"`
 
 	// Channel Status
 	// in: int

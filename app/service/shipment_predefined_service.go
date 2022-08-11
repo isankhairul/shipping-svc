@@ -101,6 +101,7 @@ func (s *ShipmentPredefinedServiceImpl) GetAll(input request.ListShipmentPredefi
 		"title":  input.Filters.Title,
 		"type":   input.Filters.Type,
 		"status": input.Filters.Status,
+		"note":   input.Filters.Description,
 	}
 	items, pagination, err := s.predefines.GetAll(input.Limit, input.Page, input.Sort, filters)
 	if err != nil {

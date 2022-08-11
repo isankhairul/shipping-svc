@@ -85,7 +85,7 @@ type DeleteCourierByUIdParam struct {
 
 // swagger:parameters CourierListRequest
 type CourierListRequest struct {
-	// Filter : {"courier_type":["value","value"],"courier_name":"value","courier_code":"value","status":[0,1]}
+	// Filter : {"courier_type":["value","value"],"courier_name":["value","value"],"courier_code":["value","value"],"status":[0,1]}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -106,8 +106,8 @@ type CourierListRequest struct {
 
 type CourierListFilter struct {
 	CourierType []string `json:"courier_type"`
-	CourierName string   `json:"courier_name"`
-	CourierCode string   `json:"courier_code"`
+	CourierName []string `json:"courier_name"`
+	CourierCode []string `json:"courier_code"`
 	Status      []int    `json:"status"`
 }
 

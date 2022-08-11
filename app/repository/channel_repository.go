@@ -120,14 +120,19 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 	query := r.base.GetDB()
 
 	for k, v := range filter {
-		if k == "channel_code" && v != "" {
-			query = query.Where("LOWER(channel_code) LIKE ?", fmt.Sprint("%", strings.ToLower(v.(string)), "%"))
+		switch k {
+		case "channel_code", "channel_name":
+			value, ok := v.([]string)
+			if ok && len(value) > 0 {
+				query = query.Where(like(k, value))
 
-		} else if k == "channel_name" && v != "" {
-			query = query.Where("LOWER(channel_name) LIKE ?", fmt.Sprint("%", strings.ToLower(v.(string)), "%"))
+			}
+		case "status":
+			value, ok := v.([]int)
+			if ok && len(value) > 0 {
+				query = query.Where("status IN ?", value)
 
-		} else if k == "status" && len(v.([]int)) != 0 {
-			query = query.Where("status IN ?", v)
+			}
 
 		}
 	}
@@ -189,4 +194,12 @@ func (r *channelRepo) IsChannelHasChild(channelID uint64) *entity.ChannelHasChil
 		ChannelCourier: channelCourier > 0,
 		ShippingStatus: shippingStatus > 0,
 	}
+}
+
+func like(column string, value []string) string {
+	var condition string
+	for _, v := range value {
+		condition += fmt.Sprintf(" %s ILIKE '%%%s%%' OR", column, v)
+	}
+	return strings.TrimRight(condition, " OR")
 }
