@@ -558,6 +558,8 @@ func ToCourierServiceDetailDTO(cs *entity.CourierService) *entity.CourierService
 		StartTime:           cs.StartTime,
 		EndTime:             cs.EndTime,
 		Repickup:            cs.Repickup,
+		ImageUID:            cs.ImageUID,
+		ImagePath:           cs.ImagePath,
 	}
 	if cs.Courier != nil {
 		ret.CourierName = cs.Courier.CourierName
