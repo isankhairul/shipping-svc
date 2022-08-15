@@ -2188,7 +2188,9 @@ paths:
       description: List couriers coverage code
       operationId: CourierCoverageCodeListRequest
       parameters:
-      - description: 'Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":["value","value"],"status":[0,1]}'
+      - description: |-
+          Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":["value","value"]
+          ,"status":[0,1], "code1":["value","value"], "code2":["value","value"], "code3":["value","value"], "code4":["value","value"], "code5":["value","value"], "code6":["value","value"]}
         in: query
         name: filter
         type: string

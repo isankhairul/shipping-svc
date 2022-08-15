@@ -4,6 +4,7 @@ import (
 	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/helper/global"
 	"math"
 
 	"gorm.io/gorm"
@@ -86,8 +87,7 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 			value, ok := v.([]string)
 			if ok && len(value) > 0 {
 				query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id").
-					Where("courier.courier_name IN ?", v)
-
+					Where(global.AddLike("courier.courier_name", value))
 			}
 		case "country_code", "postal_code":
 			value, ok := v.([]string)
@@ -98,7 +98,7 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 		case "description", "":
 			value, ok := v.([]string)
 			if ok && len(value) > 0 {
-				query = query.Where(like(k, value))
+				query = query.Where(global.AddLike("courier_coverage_code.description", value))
 
 			}
 		case "status":
@@ -107,7 +107,16 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 				query = query.Where("courier_coverage_code.status IN ?", value)
 
 			}
+		default:
+			if string(k[0:4]) == "code" { //filtering for field code1, code2, .... code6
+				value, ok := v.([]string)
+				if ok && len(value) > 0 {
+					query = query.Where(global.AddLike(k, value))
+
+				}
+			}
 		}
+
 	}
 
 	if len(sort) > 0 {

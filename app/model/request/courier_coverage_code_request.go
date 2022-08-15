@@ -10,7 +10,8 @@ import (
 
 // swagger:parameters CourierCoverageCodeListRequest
 type CourierCoverageCodeListRequest struct {
-	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":["value","value"],"status":[0,1]}
+	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":["value","value"]
+	//,"status":[0,1], "code1":["value","value"], "code2":["value","value"], "code3":["value","value"], "code4":["value","value"], "code5":["value","value"], "code6":["value","value"]}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -24,8 +25,7 @@ type CourierCoverageCodeListRequest struct {
 
 	// Sort fields
 	// in: string
-	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
-
+	Sort    string                        `schema:"sort" binding:"omitempty" json:"sort"`
 	Filters CourierCoverageCodeListFilter `json:"-"`
 }
 
@@ -35,6 +35,12 @@ type CourierCoverageCodeListFilter struct {
 	PostalCode  []string `json:"postal_code"`
 	Description []string `json:"description"`
 	Status      []int    `json:"status"`
+	Code1       []string `json:"code1"`
+	Code2       []string `json:"code2"`
+	Code3       []string `json:"code3"`
+	Code4       []string `json:"code4"`
+	Code5       []string `json:"code5"`
+	Code6       []string `json:"code6"`
 }
 
 func (m *CourierCoverageCodeListRequest) GetFilter() {

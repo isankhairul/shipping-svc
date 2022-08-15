@@ -162,21 +162,18 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 		"priority_sort": input.PrioritySort,
 	}
 
-	var cur, err = s.channelCouriers.GetChannelCourierByUID(input.Uid)
+	cur, err := s.channelCouriers.GetChannelCourierByUID(input.Uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, message.ErrChannelCourierNotFound
 	}
+
 	result := s.channelCouriers.UpdateChannelCourier(input.Uid, data)
 	if result != nil {
 		_ = level.Error(logger).Log(message.ErrNoData)
 		return nil, message.ErrChannelCourierNotFound
 	}
 
-	cur, err = s.channelCouriers.GetChannelCourierByUID(input.Uid)
-	if err != nil {
-		_ = level.Error(logger).Log(err)
-	}
 	return entity.ToChannelCourierDTO(cur), message.SuccessMsg
 }
 

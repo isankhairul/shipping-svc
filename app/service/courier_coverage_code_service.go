@@ -8,6 +8,7 @@ import (
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
+	"strings"
 
 	"gorm.io/gorm"
 
@@ -110,9 +111,20 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 		"postal_code":  input.Filters.PostalCode,
 		"description":  input.Filters.Description,
 		"status":       input.Filters.Status,
+		"code1":        input.Filters.Code1,
+		"code2":        input.Filters.Code2,
+		"code3":        input.Filters.Code3,
+		"code4":        input.Filters.Code4,
+		"code5":        input.Filters.Code5,
+		"code6":        input.Filters.Code6,
 	}
 
-	result, pagination, err := s.courierCoverageCodeRepo.FindByParams(input.Limit, input.Page, input.Sort, filter)
+	converted_filter_lower := make(map[string]interface{}, len(filter))
+	for k, v := range filter {
+		converted_filter_lower[strings.ToLower(k)] = v
+	}
+
+	result, pagination, err := s.courierCoverageCodeRepo.FindByParams(input.Limit, input.Page, input.Sort, converted_filter_lower)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, nil, message.FailedMsg
