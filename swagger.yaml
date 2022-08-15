@@ -785,15 +785,10 @@ definitions:
     type: object
     x-go-name: GetChannelCourierStatusResponseItem
     x-go-package: go-klikdokter/app/model/response
-  InternalServerErrorResponse:
-    type: object
-    x-go-package: go-klikdokter/app/model/base/encoder
-  InvalidRequestDataResponse:
-    type: object
-    x-go-package: go-klikdokter/app/model/base/encoder
   JSONB:
     items:
-      type: object
+      format: uint8
+      type: integer
     type: array
     x-go-package: go-klikdokter/pkg/util/datatype
   MetaResponse:
@@ -1420,10 +1415,6 @@ definitions:
   Time:
     type: string
     x-go-package: go-klikdokter/pkg/util/datatype
-    example: "15:04:05+07"
-  UnauthorizedResponse:
-    type: object
-    x-go-package: go-klikdokter/app/model/base/encoder
   UpdateChannelCourierRequest:
     properties:
       hide_purpose:
@@ -1990,17 +1981,11 @@ paths:
           schema:
             $ref: '#/definitions/PaginationResponse'
         "400":
-          description: InvalidRequestDataResponse
-          schema:
-            $ref: '#/definitions/InvalidRequestDataResponse'
+          $ref: '#/responses/InvalidRequestDataResponse'
         "401":
-          description: UnauthorizedResponse
-          schema:
-            $ref: '#/definitions/UnauthorizedResponse'
+          $ref: '#/responses/UnauthorizedResponse'
         "500":
-          description: InternalServerErrorResponse
-          schema:
-            $ref: '#/definitions/InternalServerErrorResponse'
+          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Channel-Courier-Service
     post:
@@ -2038,17 +2023,11 @@ paths:
           schema:
             $ref: '#/definitions/SuccessResponse'
         "400":
-          description: InvalidRequestDataResponse
-          schema:
-            $ref: '#/definitions/InvalidRequestDataResponse'
+          $ref: '#/responses/InvalidRequestDataResponse'
         "401":
-          description: UnauthorizedResponse
-          schema:
-            $ref: '#/definitions/UnauthorizedResponse'
+          $ref: '#/responses/UnauthorizedResponse'
         "500":
-          description: InternalServerErrorResponse
-          schema:
-            $ref: '#/definitions/InternalServerErrorResponse'
+          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Channel-Courier-Service
     get:
@@ -2065,17 +2044,11 @@ paths:
         "200":
           $ref: '#/responses/ChannelCourierDTO'
         "400":
-          description: InvalidRequestDataResponse
-          schema:
-            $ref: '#/definitions/InvalidRequestDataResponse'
+          $ref: '#/responses/InvalidRequestDataResponse'
         "401":
-          description: UnauthorizedResponse
-          schema:
-            $ref: '#/definitions/UnauthorizedResponse'
+          $ref: '#/responses/UnauthorizedResponse'
         "500":
-          description: InternalServerErrorResponse
-          schema:
-            $ref: '#/definitions/InternalServerErrorResponse'
+          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Channel-Courier-Service
     put:
@@ -2253,9 +2226,7 @@ paths:
           schema:
             $ref: '#/definitions/errorResponse'
         "500":
-          description: InternalServerErrorResponse
-          schema:
-            $ref: '#/definitions/InternalServerErrorResponse'
+          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
     post:
@@ -2277,9 +2248,7 @@ paths:
           schema:
             $ref: '#/definitions/errorResponse'
         "500":
-          description: InternalServerErrorResponse
-          schema:
-            $ref: '#/definitions/InternalServerErrorResponse'
+          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
   /courier/courier-coverage-code/{uid}:
@@ -2303,9 +2272,7 @@ paths:
           schema:
             $ref: '#/definitions/errorResponse'
         "500":
-          description: InternalServerErrorResponse
-          schema:
-            $ref: '#/definitions/InternalServerErrorResponse'
+          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
     get:
@@ -2328,9 +2295,7 @@ paths:
           schema:
             $ref: '#/definitions/errorResponse'
         "500":
-          description: InternalServerErrorResponse
-          schema:
-            $ref: '#/definitions/InternalServerErrorResponse'
+          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
     put:
@@ -2358,9 +2323,7 @@ paths:
           schema:
             $ref: '#/definitions/errorResponse'
         "500":
-          description: InternalServerErrorResponse
-          schema:
-            $ref: '#/definitions/InternalServerErrorResponse'
+          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
   /courier/courier-coverage-code/import:
@@ -2535,9 +2498,7 @@ paths:
           schema:
             $ref: '#/definitions/errorResponse'
         "500":
-          description: InternalServerErrorResponse
-          schema:
-            $ref: '#/definitions/InternalServerErrorResponse'
+          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Couriers
     get:

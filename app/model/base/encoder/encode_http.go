@@ -15,6 +15,7 @@ type errorer interface {
 	error() error
 }
 
+/*
 // swagger:model InternalServerErrorResponse
 type InternalServerErrorResponse struct {
 	base errorResponse
@@ -29,6 +30,7 @@ type InvalidRequestDataResponse struct {
 type UnauthorizedResponse struct {
 	base errorResponse
 }
+*/
 
 // swagger:model errorResponse
 type errorResponse struct {

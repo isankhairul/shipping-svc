@@ -102,20 +102,15 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 	logger := log.With(s.logger, "ChannelService", "CreateChannel")
 	//Check exits `channel_code`
 	//Set default value
-	defaultLimit := 10
-	defaultPage := 1
-	defaultSort := ""
-	filter := map[string]interface{}{
-		"channel_code": input.ChannelCode,
-	}
+	uid := "0" //set UID 0 as a default to check duplicate channel code
 
-	result, _, err := s.channelRepo.FindByParams(defaultLimit, defaultPage, defaultSort, filter)
+	isExists, err := s.channelRepo.CheckExistsByUIdChannelCode(uid, input.ChannelCode)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, message.FailedMsg
 	}
-	if len(result) != 0 {
-		_ = level.Error(logger).Log(err)
+	if isExists {
+		_ = level.Error(logger).Log(message.ErrNoData)
 		return nil, message.ErrDataChannelExists
 	}
 
