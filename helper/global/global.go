@@ -1,8 +1,10 @@
 package global
 
 import (
+	"fmt"
 	"html"
 	"reflect"
+	"strings"
 )
 
 func HtmlEscape(req interface{}) {
@@ -17,4 +19,12 @@ func HtmlEscape(req interface{}) {
 		str := field.Interface().(string)
 		field.SetString(html.EscapeString(str))
 	}
+}
+
+func AddLike(column string, value []string) string {
+	var condition string
+	for _, v := range value {
+		condition += fmt.Sprintf(" LOWER(%s) ILIKE '%%%s%%' OR", column, v)
+	}
+	return strings.TrimRight(condition, " OR")
 }
