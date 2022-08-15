@@ -1,16 +1,14 @@
 package service
 
 import (
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
-	"strings"
-
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 )
 
 type ChannelCourierService interface {
@@ -163,7 +161,8 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 		"status":        input.Status,
 		"priority_sort": input.PrioritySort,
 	}
-	cur, err := s.channelCouriers.GetChannelCourierByUID(input.Uid)
+
+	var cur, err = s.channelCouriers.GetChannelCourierByUID(input.Uid)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, message.ErrChannelCourierNotFound
@@ -210,7 +209,7 @@ func (s *ChannelCourierServiceImpl) DeleteChannelCourier(uid string) message.Mes
 	return message.SuccessMsg
 }
 
-func contains(cur *string, items []*string) bool {
+/*func contains(cur *string, items []*string) bool {
 	for _, value := range items {
 		if strings.Compare(*cur, *value) == 0 {
 			return true
@@ -226,7 +225,7 @@ func mapInputUIDS(courierServiceUIDs []*request.CourierServiceDTO) []*string {
 		items = append(items, &value.CourierServiceUid)
 	}
 	return items
-}
+}*/
 
 // swagger:route GET /channel/{channel-uid}/courier-list Channel-Courier-Service GetChannelCourierList
 // Get List of Courier and Courier Services By Channel
