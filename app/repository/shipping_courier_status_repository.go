@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/helper/global"
 	"strings"
 
 	"gorm.io/gorm"
@@ -45,6 +46,17 @@ func (r *shippingCourierStatusRepositoryImpl) FindByParams(limit int, page int, 
 			value := v.([]string)
 			if len(value) > 0 {
 				query = query.Where("\"ShippingStatus\".status_code IN ?", value)
+			}
+		case "status_name":
+			value, ok := v.([]string)
+			if ok && len(value) > 0 {
+				query = query.Where(global.AddLike(k, value))
+
+			}
+		case "status_courier":
+			value := v.([]string)
+			if len(value) > 0 {
+				query = query.Where(global.AddLike("(shipping_courier_status.status_courier->'status')::text", value))
 			}
 		}
 
