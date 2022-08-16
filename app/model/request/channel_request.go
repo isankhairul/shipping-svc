@@ -168,7 +168,7 @@ func (req SaveChannelRequest) Validate() error {
 
 // swagger:parameters GetChannelCourierStatus
 type GetChannelCourierStatusRequest struct {
-	// Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"status_code":["value","value"]}
+	// Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"status_code":["value","value"], "status_code":["value","value"], "courier_status":["value","value"]}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -188,9 +188,11 @@ type GetChannelCourierStatusRequest struct {
 }
 
 type GetChannelCourierStatusFilter struct {
-	ChannelName []string `json:"channel_name"`
-	CourierName []string `json:"courier_name"`
-	StatusCode  []string `json:"status_code"`
+	ChannelName   []string `json:"channel_name"`
+	CourierName   []string `json:"courier_name"`
+	StatusCode    []string `json:"status_code"`
+	StatusTitle   []string `json:"status_title"`
+	CourierStatus []string `json:"courier_status"`
 }
 
 func (m *GetChannelCourierStatusRequest) GetFilter() {

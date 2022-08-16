@@ -231,9 +231,11 @@ func (s *ChannelServiceImpl) GetListStatus(input request.GetChannelCourierStatus
 	logger := log.With(s.logger, "ChannelService", "GetListStatus")
 
 	filters := map[string]interface{}{
-		"channel_name": input.Filters.ChannelName,
-		"courier_name": input.Filters.CourierName,
-		"status_code":  input.Filters.StatusCode,
+		"channel_name":   input.Filters.ChannelName,
+		"courier_name":   input.Filters.CourierName,
+		"status_code":    input.Filters.StatusCode,
+		"status_name":    input.Filters.StatusTitle,
+		"status_courier": input.Filters.CourierStatus,
 	}
 
 	result, paging, err := s.shippingCourierStatus.FindByParams(input.Limit, input.Page, input.Sort, filters)
