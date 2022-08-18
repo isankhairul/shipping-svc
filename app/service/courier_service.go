@@ -16,7 +16,7 @@ import (
 
 type CourierService interface {
 	CreateCourier(input request.SaveCourierRequest) (*entity.Courier, message.Message)
-	GetList(input request.CourierListRequest) ([]entity.Courier, *base.Pagination, message.Message)
+	GetList(input request.CourierListRequest) ([]response.CourierListResponse, *base.Pagination, message.Message)
 	UpdateCourier(uid string, input request.UpdateCourierRequest) (*entity.Courier, message.Message)
 	GetCourier(uid string) (*entity.Courier, message.Message)
 	DeleteCourier(uid string) message.Message
@@ -120,7 +120,7 @@ func (s *courierServiceImpl) GetCourier(uid string) (*entity.Courier, message.Me
 // responses:
 //  401: errorResponse
 //  200: PaginationResponse
-func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]entity.Courier, *base.Pagination, message.Message) {
+func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]response.CourierListResponse, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierService", "GetList")
 
 	//Set default value

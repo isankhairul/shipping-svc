@@ -4,7 +4,7 @@ import (
 	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
-
+	"go-klikdokter/app/model/response"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +13,7 @@ type courierRepo struct {
 }
 
 type CourierRepository interface {
-	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Courier, *base.Pagination, error)
+	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]response.CourierListResponse, *base.Pagination, error)
 	FindByUid(uid *string) (*entity.Courier, error)
 	FindByCode(code string) (*entity.Courier, error)
 	CreateCourier(courier *entity.Courier) (*entity.Courier, error)
@@ -75,18 +75,29 @@ func (r *courierRepo) Paginate(value interface{}, pagination *base.Pagination, d
 	}
 }
 
-func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Courier, *base.Pagination, error) {
-	var couriers []entity.Courier
+func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]response.CourierListResponse, *base.Pagination, error) {
+	var couriers []*entity.Courier
 	var pagination base.Pagination
+	var respCourier []response.CourierListResponse
 
-	query := r.base.GetDB()
+	query := r.base.GetDB().
+		Model(&entity.Courier{}).
+		Select("courier.*, sp.title as courier_type_name").
+		Joins("left join shippment_predefined as sp on courier.courier_type = sp.code").
+		Where("sp.type = 'courier_type'")
 
 	for k, v := range filter {
 		switch k {
-		case "code", "courier_name":
+		case "courier_name":
 			value, ok := v.([]string)
 			if ok && len(value) > 0 {
 				query = query.Where(like(k, value))
+
+			}
+		case "code":
+			value, ok := v.([]string)
+			if ok && len(value) > 0 {
+				query = query.Where(like("courier.code", value))
 
 			}
 		case "courier_type":
@@ -98,7 +109,7 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 		case "status":
 			value, ok := v.([]int)
 			if ok && len(value) > 0 {
-				query = query.Where("status IN ?", value)
+				query = query.Where("courier.status IN ?", value)
 
 			}
 
@@ -106,7 +117,9 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 	}
 
 	if len(sort) > 0 {
-		query = query.Order(sort)
+		m := map[string]string{"courier_code": "courier.code", "courier_type_name": "courier.courier_type_name"}
+		sortValue := m[sort]
+		query = query.Order(sortValue)
 	} else {
 		query = query.Order("updated_at DESC")
 	}
@@ -114,7 +127,7 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 	pagination.Limit = limit
 	pagination.Page = page
 	err := query.Scopes(r.Paginate(couriers, &pagination, query, int64(len(couriers)))).
-		Find(&couriers).
+		Find(&respCourier).
 		Error
 
 	if err != nil {
@@ -124,7 +137,7 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 		return nil, nil, err
 	}
 
-	return couriers, &pagination, nil
+	return respCourier, &pagination, nil
 }
 
 func (r *courierRepo) Delete(uid string) error {

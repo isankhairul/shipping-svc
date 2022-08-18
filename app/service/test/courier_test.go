@@ -1,10 +1,12 @@
 package test
 
 import (
-	"errors"
+	//"errors"
+	"github.com/pkg/errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
+	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository/repository_mock"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/message"
@@ -76,7 +78,7 @@ func TestListCouriers(t *testing.T) {
 		Limit: 10,
 	}
 
-	couriers := []entity.Courier{
+	couriers := []response.CourierListResponse{
 		{
 			Code:        "test code",
 			CourierName: "test name",
@@ -93,18 +95,18 @@ func TestListCouriers(t *testing.T) {
 	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
 	courierRepo.Mock.On("FindByParams", 10, 1, "", mock.Anything).Return(couriers, &paginationResult)
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository, shipmentPredefinedRepository)
-	couriers, pagination, msg := courierService.GetList(req)
+	courierResponse, pagination, msg := courierService.GetList(req)
 
 	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 201000")
 	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Message must be null")
-	assert.Equal(t, 1, len(couriers), "Count of couriers must be 1")
+	assert.Equal(t, 1, len(courierResponse), "Count of couriers must be 1")
 	assert.Equal(t, int64(120), pagination.Records, "Total record pagination must be 120")
 
 }
 
 func TestUpdateCourierFailNotFoundCourier(t *testing.T) {
 	uid := "BnOI8D7p9rR7tI1R9rySw"
-	err := errors.New("Courier found")
+	err := errors.Wrap(errors.New("Courier found"), "courier")
 	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository, shipmentPredefinedRepository)
 	courierRepo.Mock.On("FindByUid", mock.Anything).Return(nil, err)
