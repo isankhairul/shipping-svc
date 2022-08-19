@@ -107,3 +107,33 @@ type CourierByChannelResponseList struct {
 	//in: body
 	Response []CourierServiceByChannelResponse `json:"response"`
 }
+
+//swagger:response CourierList
+//type CourierListResponse struct {
+//	//in: body
+//	Response []CourierList `json:"response"`
+//}
+type CourierListResponse struct {
+	Id              int32  `json:"id"`
+	UID             string `json:"uid"`
+	Code            string `json:"code"`
+	CourierName     string `json:"courier_name"`
+	CourierType     string `json:"courier_type"`
+	CourierTypeName string `json:"courier_type_name"`
+	Status          int32  `json:"status"`
+}
+
+//swagger:model CourierServiceListResponse
+type CourierServiceListResponse struct {
+	Id               int32  `json:"id"`
+	UID              string `json:"uid"`
+	CourierUID       string `json:"courier_uid"`
+	CourierName      string `json:"courier_name"`
+	CourierType      string `json:"courier_type"`
+	CourierTypeName  string `json:"courier_type_name"`
+	ShippingCode     string `json:"shipping_code"`
+	ShippingName     string `json:"shipping_name"`
+	ShippingType     string `json:"shipping_type"`
+	ShippingTypeName string `json:"shipping_type_name"`
+	Status           int32  `json:"status"`
+}

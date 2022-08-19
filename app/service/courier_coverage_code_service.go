@@ -46,7 +46,6 @@ func NewCourierCoverageCodeService(
 //  400: errorResponse
 //  500: InternalServerErrorResponse
 //  201: CourierCoverageCode
-
 func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Create Courier Coverage Code")
 
@@ -101,7 +100,6 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 // responses:
 //  200: PaginationResponse
 //  400: errorResponse
-//  500: InternalServerErrorResponse
 func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCodeListRequest) ([]*entity.CourierCoverageCode, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Codes")
 

@@ -5,6 +5,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
+	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository/repository_mock"
 	"go-klikdokter/app/service"
 	"go-klikdokter/helper/message"
@@ -111,7 +112,7 @@ func TestListCourierService(t *testing.T) {
 		Limit:   10,
 	}
 
-	CourierService := []entity.CourierService{
+	/*	CourierService := []entity.CourierService{
 		{
 			CourierUId:   "gj2MZ9CBhcHSNVOLpUeqU",
 			ShippingCode: "string",
@@ -122,6 +123,21 @@ func TestListCourierService(t *testing.T) {
 		},
 		{
 			CourierUId:   "gj2MZ9CBhcHSNVOLpUeqU",
+			ShippingCode: "string3",
+		},
+	}*/
+
+	CourierService := []response.CourierServiceListResponse{
+		{
+			CourierUID:   "gj2MZ9CBhcHSNVOLpUeqU",
+			ShippingCode: "string",
+		},
+		{
+			CourierUID:   "gj2MZ9CBhcHSNVOLpUeqU",
+			ShippingCode: "string2",
+		},
+		{
+			CourierUID:   "gj2MZ9CBhcHSNVOLpUeqU",
 			ShippingCode: "string3",
 		},
 	}
