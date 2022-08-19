@@ -4,6 +4,7 @@ import (
 	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/app/model/response"
 	"math"
 
 	"gorm.io/gorm"
@@ -17,7 +18,7 @@ type CourierServiceRepository interface {
 	FindAll(limit int, page int, sort string) ([]entity.CourierService, *base.Pagination, error)
 	CheckExistsByCourierIdShippingCode(courierUId string, shippingCode string) (bool, error)
 	CheckExistsByUIdCourierIdShippingCode(uid string, courierUId string, shippingCode string) (bool, error)
-	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.CourierService, *base.Pagination, error)
+	FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]response.CourierServiceListResponse, *base.Pagination, error)
 	FindByUid(uid *string) (*entity.CourierService, error)
 	CreateCourierService(courierservice *entity.CourierService) (*entity.CourierService, error)
 	Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB
@@ -126,11 +127,21 @@ func (r *courierServiceRepo) CheckExistsByUIdCourierIdShippingCode(uid string, c
 	return exists, nil
 }
 
-func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.CourierService, *base.Pagination, error) {
+func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]response.CourierServiceListResponse, *base.Pagination, error) {
 	var couriers []entity.CourierService
 	var pagination base.Pagination
+	var couriersResponse []response.CourierServiceListResponse
 
-	query := r.base.GetDB().Model(&entity.CourierService{}).Preload("Courier").Joins("Courier")
+	//query := r.base.GetDB().Model(&entity.CourierService{}).Preload("Courier").Joins("Courier")
+
+	query := r.base.GetDB().Model(&entity.CourierService{}).
+		Select("courier_service.*, \"Courier\".courier_name, \"Courier\".courier_type,sp1.title as courier_type_name, sp2.title as shipping_type_name").
+		//Preload("Courier").
+		Joins("Courier").
+		Joins("LEFT JOIN shippment_predefined sp1 ON sp1.code  = \"Courier\".courier_type ").
+		Joins("LEFT JOIN shippment_predefined sp2 ON sp2.code  = courier_service.shipping_type ").
+		Where("sp1.type = 'courier_type'").
+		Where("sp2.type = 'shipping_type'")
 
 	for k, v := range filter {
 		switch k {
@@ -165,7 +176,7 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 	pagination.Limit = limit
 	pagination.Page = page
 	err := query.Scopes(r.Paginate(couriers, &pagination, query, int64(len(couriers)))).
-		Find(&couriers).
+		Find(&couriersResponse).
 		Error
 
 	if err != nil {
@@ -175,7 +186,7 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 		return nil, nil, err
 	}
 
-	return couriers, &pagination, nil
+	return couriersResponse, &pagination, nil
 }
 
 func (r *courierServiceRepo) Delete(uid string) error {

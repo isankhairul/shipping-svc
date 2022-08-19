@@ -23,7 +23,8 @@ type CourierService interface {
 
 	//Courier-Service
 	CreateCourierService(input request.SaveCourierServiceRequest) (*entity.CourierService, message.Message)
-	GetListCourierService(input request.CourierServiceListRequest) ([]*entity.CourierServiceDetailDTO, *base.Pagination, message.Message)
+	//GetListCourierService(input request.CourierServiceListRequest) ([]*entity.CourierServiceDetailDTO, *base.Pagination, message.Message)
+	GetListCourierService(input request.CourierServiceListRequest) ([]response.CourierServiceListResponse, *base.Pagination, message.Message)
 	UpdateCourierService(uid string, input request.UpdateCourierServiceRequest) (*entity.CourierService, message.Message)
 	GetCourierService(uid string) (*entity.CourierServiceDetailDTO, message.Message)
 	DeleteCourierService(uid string) message.Message
@@ -119,7 +120,7 @@ func (s *courierServiceImpl) GetCourier(uid string) (*entity.Courier, message.Me
 //
 // responses:
 //  401: errorResponse
-//  200: PaginationResponse
+//  200: SuccessResponse
 func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]response.CourierListResponse, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierService", "GetList")
 
@@ -339,7 +340,7 @@ func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierServi
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
-func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceListRequest) ([]*entity.CourierServiceDetailDTO, *base.Pagination, message.Message) {
+func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceListRequest) ([]response.CourierServiceListResponse, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierServiceService", "GetList")
 
 	//Set default value
@@ -368,7 +369,8 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 		return nil, nil, message.ErrNoDataCourierService
 	}
 
-	return convertToDTO(result), pagination, message.SuccessMsg
+	//return convertToDTO(result), pagination, message.SuccessMsg
+	return result, pagination, message.SuccessMsg
 }
 
 // swagger:route PUT /courier/courier-services/{uid} Courier-Services UpdateCourierServiceRequest
