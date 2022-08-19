@@ -3,6 +3,7 @@ package repository_mock
 import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/app/model/response"
 
 	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
@@ -12,10 +13,10 @@ type CourierRepositoryMock struct {
 	Mock mock.Mock
 }
 
-func (repository *CourierRepositoryMock) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]entity.Courier, *base.Pagination, error) {
+func (repository *CourierRepositoryMock) FindByParams(limit int, page int, sort string, filter map[string]interface{}) ([]response.CourierListResponse, *base.Pagination, error) {
 	arguments := repository.Mock.Called(limit, page, sort, filter)
 
-	return arguments.Get(0).([]entity.Courier), arguments.Get(1).(*base.Pagination), nil
+	return arguments.Get(0).([]response.CourierListResponse), arguments.Get(1).(*base.Pagination), nil
 }
 
 func (repository *CourierRepositoryMock) FindByCode(code string) (*entity.Courier, error) {
