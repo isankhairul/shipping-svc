@@ -22,4 +22,5 @@ require (
 	gorm.io/driver/postgres v1.2.2
 	gorm.io/driver/sqlite v1.2.4
 	gorm.io/gorm v1.22.3
+	github.com/pkg/errors v0.9.1
 )
