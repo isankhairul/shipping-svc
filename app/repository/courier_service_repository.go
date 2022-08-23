@@ -168,6 +168,10 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 	}
 
 	if len(sort) > 0 {
+		if sort == "shipping_type_code" {
+			sort = "shipping_type"
+		}
+
 		query = query.Order(sort)
 	} else {
 		query = query.Order("courier_service.updated_at DESC")
