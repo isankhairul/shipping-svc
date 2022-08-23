@@ -6,6 +6,7 @@ import (
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/response"
 	"math"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -168,11 +169,13 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 	}
 
 	if len(sort) > 0 {
-		if sort == "shipping_type_code" {
-			sort = "shipping_type"
+		if strings.Contains(sort, "shipping_type_code") {
+			m := map[string]string{"shipping_type_code": "shipping_type", "shipping_type_code asc": "shipping_type asc", "shipping_type_code desc": "shipping_type desc"}
+			sortValue := m[strings.ToLower(sort)]
+			query = query.Order(sortValue)
+		} else {
+			query = query.Order(sort)
 		}
-
-		query = query.Order(sort)
 	} else {
 		query = query.Order("courier_service.updated_at DESC")
 	}
