@@ -524,13 +524,13 @@ func (s *courierServiceImpl) GetCourierShippingType() ([]response.ShippingTypeIt
 	return response.NewShippingTypeItemList(result), message.SuccessMsg
 }
 
-func convertToDTO(services []entity.CourierService) []*entity.CourierServiceDetailDTO {
+/* func convertToDTO(services []entity.CourierService) []*entity.CourierServiceDetailDTO {
 	items := make([]*entity.CourierServiceDetailDTO, len(services))
 	for index, value := range services {
 		items[index] = ToCourierServiceDetailDTO(&value)
 	}
 	return items
-}
+}*///temporary comment this
 
 func ToCourierServiceDetailDTO(cs *entity.CourierService) *entity.CourierServiceDetailDTO {
 	ret := &entity.CourierServiceDetailDTO{
