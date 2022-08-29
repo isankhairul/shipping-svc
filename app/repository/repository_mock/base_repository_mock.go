@@ -14,13 +14,19 @@ func (b *BaseRepositoryMock) GetDB() *gorm.DB {
 }
 
 func (b *BaseRepositoryMock) BeginTx() {
-
+	/*
+		implemented
+	*/
 }
 
 func (b *BaseRepositoryMock) CommitTx() {
-
+	/*
+		implemented
+	*/
 }
 
 func (b *BaseRepositoryMock) RollbackTx() {
-
+	/*
+		implemented
+	*/
 }

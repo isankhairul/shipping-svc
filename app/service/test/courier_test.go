@@ -2,7 +2,6 @@ package test
 
 import (
 	//"errors"
-	"github.com/pkg/errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
@@ -12,20 +11,30 @@ import (
 	"go-klikdokter/helper/message"
 	"testing"
 
+	"github.com/pkg/errors"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-func init() {
+// func init() {
+// }
+var courierstatus int32 = 1
+var courierTest = entity.Courier{
+	CourierName: "test name",
+	Code:        "test code",
+	CourierType: "1",
+	Logo:        "logo test",
+	Status:      &courierstatus,
 }
 
 func TestCreateCourier(t *testing.T) {
 	req := request.SaveCourierRequest{
-		CourierName: "test name",
-		Code:        "test code",
-		CourierType: "1",
-		Logo:        "logo test",
-		Status:      1,
+		CourierName: courierTest.CourierName,
+		Code:        courierTest.Code,
+		CourierType: courierTest.CourierType,
+		Logo:        courierTest.Logo,
+		Status:      *courierTest.Status,
 	}
 	courier := entity.Courier{}
 	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
@@ -35,15 +44,13 @@ func TestCreateCourier(t *testing.T) {
 	result, _ := courierService.CreateCourier(req)
 
 	assert.NotNil(t, result)
-	assert.Equal(t, "test name", result.CourierName, "CourierName must be test name")
-	assert.Equal(t, "test code", result.Code, "Code must be test code")
-	assert.Equal(t, int32(1), *(result.Status), "Status must be 1")
-	assert.Equal(t, "logo test", result.Logo, "Log  must be logo test")
+	assert.Equal(t, courierTest.CourierName, result.CourierName, courierNameIsNotCorrect)
+	assert.Equal(t, courierTest.Code, result.Code, courierNameIsNotCorrect)
 }
 
 func TestGetCourier(t *testing.T) {
 	courier := entity.Courier{
-		Code: "code test",
+		Code: courierTest.Code,
 	}
 
 	uid := "BnOI8D7p9rR7tI1R9rySw"
@@ -52,13 +59,13 @@ func TestGetCourier(t *testing.T) {
 	var courierService = service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository, shipmentPredefinedRepository)
 	result, _ := courierService.GetCourier(uid)
 
-	assert.NotNil(t, result, "Cannot nil")
-	assert.Equal(t, "code test", result.Code, "Code must be code test")
+	assert.NotNil(t, result)
+	assert.Equal(t, courierTest.Code, result.Code, codeIsNotCorrect)
 }
 
 func TestDeleteCourier(t *testing.T) {
 	courier := entity.Courier{
-		Code: "code test",
+		Code: courierTest.Code,
 	}
 	uid := "BnOI8D7p9rR7tI1R9rySw"
 	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
@@ -67,7 +74,7 @@ func TestDeleteCourier(t *testing.T) {
 	courierRepo.Mock.On("Delete", mock.Anything).Return(nil)
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository, shipmentPredefinedRepository)
 	msg := courierService.DeleteCourier(uid)
-	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 201000")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, codeIsNotCorrect)
 	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Message must be Null")
 }
 
@@ -80,8 +87,8 @@ func TestListCouriers(t *testing.T) {
 
 	couriers := []response.CourierListResponse{
 		{
-			Code:        "test code",
-			CourierName: "test name",
+			Code:        courierTest.Code,
+			CourierName: courierTest.CourierName,
 		},
 	}
 
@@ -97,8 +104,7 @@ func TestListCouriers(t *testing.T) {
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository, shipmentPredefinedRepository)
 	courierResponse, pagination, msg := courierService.GetList(req)
 
-	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 201000")
-	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Message must be null")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, codeIsNotCorrect)
 	assert.Equal(t, 1, len(courierResponse), "Count of couriers must be 1")
 	assert.Equal(t, int64(120), pagination.Records, "Total record pagination must be 120")
 
@@ -113,8 +119,8 @@ func TestUpdateCourierFailNotFoundCourier(t *testing.T) {
 
 	result, msg := courierService.UpdateCourier(uid, request.UpdateCourierRequest{})
 
-	assert.Nil(t, result, "Cannot nil")
-	assert.Equal(t, msg.Code, message.ErrCourierNotFound.Code, "Code must be equal")
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Code, message.ErrCourierNotFound.Code, codeIsNotCorrect)
 }
 
 func TestGetCourierFail(t *testing.T) {
@@ -124,13 +130,13 @@ func TestGetCourierFail(t *testing.T) {
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository, shipmentPredefinedRepository)
 	result, msg := courierService.GetCourier(uid)
 
-	assert.Nil(t, result, "Cannot nil")
-	assert.Equal(t, msg.Code, message.ErrCourierNotFound.Code, "Not found")
+	assert.Nil(t, result)
+	assert.Equal(t, msg.Code, message.ErrCourierNotFound.Code, codeIsNotCorrect)
 }
 
 func TestDeleteCourierFail(t *testing.T) {
 	courier := entity.Courier{
-		Code: "code test",
+		Code: courierTest.Code,
 	}
 	uid := "BnOI8D7p9rR7tI1R9rySw"
 	var courierRepo = &repository_mock.CourierRepositoryMock{Mock: mock.Mock{}}
@@ -146,7 +152,7 @@ func TestDeleteCourierFail(t *testing.T) {
 func TestDeleteCourierHasChildCourierService(t *testing.T) {
 	courier := entity.Courier{
 		BaseIDModel:     base.BaseIDModel{ID: 1},
-		Code:            "code test",
+		Code:            courierTest.Code,
 		CourierServices: []*entity.CourierService{{}, {}},
 	}
 	uid := "BnOI8D7p9rR7tI1R9rySw"
@@ -156,13 +162,13 @@ func TestDeleteCourierHasChildCourierService(t *testing.T) {
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository, shipmentPredefinedRepository)
 	msg := courierService.DeleteCourier(uid)
 
-	assert.Equal(t, msg.Code, message.ErrCourierHasChildCourierService.Code, "message should be courier has child")
+	assert.Equal(t, msg.Code, message.ErrCourierHasChildCourierService.Code, codeIsNotCorrect)
 }
 
 func TestDeleteCourierHasChildCourierCoverageCode(t *testing.T) {
 	courier := entity.Courier{
 		BaseIDModel:     base.BaseIDModel{ID: 1},
-		Code:            "code test",
+		Code:            courierTest.Code,
 		CourierServices: []*entity.CourierService{{}, {}},
 	}
 	uid := "BnOI8D7p9rR7tI1R9rySw"
@@ -172,13 +178,13 @@ func TestDeleteCourierHasChildCourierCoverageCode(t *testing.T) {
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository, shipmentPredefinedRepository)
 	msg := courierService.DeleteCourier(uid)
 
-	assert.Equal(t, msg.Code, message.ErrCourierHasChildCourierCoverage.Code, "message should be courier has child")
+	assert.Equal(t, msg.Code, message.ErrCourierHasChildCourierCoverage.Code, codeIsNotCorrect)
 }
 
 func TestDeleteCourierHasChildChannelCourier(t *testing.T) {
 	courier := entity.Courier{
 		BaseIDModel:     base.BaseIDModel{ID: 1},
-		Code:            "code test",
+		Code:            courierTest.Code,
 		CourierServices: []*entity.CourierService{{}, {}},
 	}
 	uid := "BnOI8D7p9rR7tI1R9rySw"
@@ -188,13 +194,13 @@ func TestDeleteCourierHasChildChannelCourier(t *testing.T) {
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository, shipmentPredefinedRepository)
 	msg := courierService.DeleteCourier(uid)
 
-	assert.Equal(t, msg.Code, message.ErrCourierHasChildChannelCourier.Code, "message should be courier has child")
+	assert.Equal(t, msg.Code, message.ErrCourierHasChildChannelCourier.Code, codeIsNotCorrect)
 }
 
 func TestDeleteCourierHasChildShippingCourierStatus(t *testing.T) {
 	courier := entity.Courier{
 		BaseIDModel:     base.BaseIDModel{ID: 1},
-		Code:            "code test",
+		Code:            courierTest.Code,
 		CourierServices: []*entity.CourierService{{}, {}},
 	}
 	uid := "BnOI8D7p9rR7tI1R9rySw"
@@ -204,7 +210,7 @@ func TestDeleteCourierHasChildShippingCourierStatus(t *testing.T) {
 	courierService := service.NewCourierService(logger, baseRepository, courierRepo, courierServiceRepository, shipmentPredefinedRepository)
 	msg := courierService.DeleteCourier(uid)
 
-	assert.Equal(t, msg.Code, message.ErrCourierHasChildShippingStatus.Code, "message should be courier has child")
+	assert.Equal(t, msg.Code, message.ErrCourierHasChildShippingStatus.Code, codeIsNotCorrect)
 }
 
 func TestDeleteCourierNotFound(t *testing.T) {

@@ -14,7 +14,7 @@ import (
 	"go-klikdokter/app/api/initialization"
 	"go-klikdokter/helper/config"
 	"go-klikdokter/helper/consul"
-	"go-klikdokter/pkg/util"
+	"go-klikdokter/helper/global"
 	"net/http"
 	"os"
 	"os/signal"
@@ -68,7 +68,7 @@ func main() {
 	}
 
 	//Set Route
-	util.PrefixBase = viper.GetString("route.site")
+	global.PrefixBase = viper.GetString("route.site")
 
 	// Init DB Connection
 	db, err := initialization.DbInit(logger)
@@ -79,7 +79,7 @@ func main() {
 	_ = logger.Log("message", "Connection Db Success")
 
 	//Consul initialization
-	registar := consul.ConsulRegisterService(config.GetConfigString(viper.GetString("server.service-name")), config.GetConfigInt(viper.GetString("server.port")), logger)
+	registar := consul.ConsulRegisterService(config.GetConfigString(viper.GetString("server.service-name")), config.GetConfigInt(viper.GetString(global.ServerPort)), logger)
 	registar.Register()
 	defer registar.Deregister()
 
@@ -100,8 +100,8 @@ func main() {
 	// }()
 
 	go func() {
-		_ = logger.Log("transport", "HTTP", "addr", config.GetConfigInt(viper.GetString("server.port")))
-		errs <- http.ListenAndServe(fmt.Sprintf(":%d", config.GetConfigInt(viper.GetString("server.port"))), nil)
+		_ = logger.Log("transport", "HTTP", "addr", config.GetConfigInt(viper.GetString(global.ServerPort)))
+		errs <- http.ListenAndServe(fmt.Sprintf(":%d", config.GetConfigInt(viper.GetString(global.ServerPort))), nil)
 	}()
 	go func() {
 		c := make(chan os.Signal, 1)

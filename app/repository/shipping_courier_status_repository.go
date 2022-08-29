@@ -5,6 +5,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/helper/global"
+	"go-klikdokter/pkg/util"
 	"strings"
 
 	"gorm.io/gorm"
@@ -36,52 +37,40 @@ func (r *shippingCourierStatusRepositoryImpl) FindByParams(limit int, page int, 
 		Joins("Courier")
 
 	for k, v := range filters {
-		switch k {
-		case "channel_name", "courier_name":
-			value := v.([]string)
-			if len(value) > 0 {
-				query = query.Where(fmt.Sprint(k, " IN ?"), value)
-			}
-		case "status_code":
-			value := v.([]string)
-			if len(value) > 0 {
-				query = query.Where("\"ShippingStatus\".status_code IN ?", value)
-			}
-		case "status_name":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where(global.AddLike(k, value))
 
-			}
-		case "status_courier":
-			value := v.([]string)
-			if len(value) > 0 {
-				query = query.Where(global.AddLike("(shipping_courier_status.status_courier->'status')::text", value))
+		if util.IsSliceAndNotEmpty(v) {
+
+			switch k {
+			case "channel_name", "courier_name":
+				query = query.Where(fmt.Sprint(k, " IN ?"), v.([]string))
+
+			case "status_code":
+				query = query.Where("\"ShippingStatus\".status_code IN ?", v.([]string))
+
+			case "status_name":
+				query = query.Where(global.AddLike(k, v.([]string)))
+
+			case "status_courier":
+				query = query.Where(global.AddLike("(shipping_courier_status.status_courier->'status')::text", v.([]string)))
+
 			}
 		}
+	}
+
+	sort = strings.ReplaceAll(sort, "status_title", "status_name")
+	sort = strings.ReplaceAll(sort, "courier_status", "status_courier")
+
+	if len(sort) == 0 {
+		sort = "shipping_courier_status.updated_at DESC"
 
 	}
 
-	var totalRecords int64
-	err := query.Count(&totalRecords).Error
-	if err != nil {
-		return nil, nil, err
-	}
-
-	pagination.SetTotalRecords(totalRecords)
-
-	if len(sort) > 0 {
-		sort = strings.ReplaceAll(sort, "status_title", "status_name")
-		sort = strings.ReplaceAll(sort, "courier_status", "status_courier")
-		query = query.Order(sort)
-	} else {
-		query = query.Order("shipping_courier_status.updated_at DESC")
-	}
+	query = query.Order(sort)
 
 	pagination.Limit = limit
 	pagination.Page = page
 
-	err = query.Offset(pagination.GetOffset()).Limit((pagination.GetLimit())).Find(&result).Error
+	err := query.Offset(pagination.GetOffset()).Limit((pagination.GetLimit())).Find(&result).Error
 	if err != nil {
 		return nil, nil, err
 	}

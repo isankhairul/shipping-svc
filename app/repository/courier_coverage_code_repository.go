@@ -5,6 +5,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/helper/global"
+	"go-klikdokter/pkg/util"
 	"math"
 
 	"gorm.io/gorm"
@@ -82,71 +83,53 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 	query := db.Model(entity.CourierCoverageCode{}).Preload("Courier").Joins("Courier")
 
 	for k, v := range filters {
-		switch k {
-		case "courier_name":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
+
+		if util.IsSliceAndNotEmpty(v) {
+
+			switch k {
+			case "courier_name":
 				query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id").
-					Where(global.AddLike("courier.courier_name", value))
-			}
-		case "country_code", "postal_code":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where(k+" IN ?", value)
+					Where(global.AddLike("courier.courier_name", v.([]string)))
 
-			}
-		case "description", "":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where(global.AddLike("courier_coverage_code.description", value))
+			case "country_code", "postal_code":
+				query = query.Where(k+" IN ?", v.([]string))
 
-			}
-		case "status":
-			value, ok := v.([]int)
-			if ok && len(value) > 0 {
-				query = query.Where("courier_coverage_code.status IN ?", value)
+			case "description", "":
+				query = query.Where(global.AddLike("courier_coverage_code.description", v.([]string)))
 
-			}
-		default:
-			if string(k[0:4]) == "code" { //filtering for field code1, code2, .... code6
-				value, ok := v.([]string)
-				if ok && len(value) > 0 {
-					query = query.Where(global.AddLike(k, value))
+			case "status":
+				query = query.Where("courier_coverage_code.status IN ?", v)
 
+			default:
+				if string(k[0:4]) == "code" { //filtering for field code1, code2, .... code6
+					query = query.Where(global.AddLike(k, v.([]string)))
 				}
 			}
 		}
-
 	}
 
-	if len(sort) > 0 {
-		query = query.Order(sort)
-	} else {
-		query = query.Order("courier_coverage_code.updated_at DESC")
+	if len(sort) == 0 {
+		sort = "courier_coverage_code.updated_at DESC"
 	}
 
+	query = query.Order(sort)
 	pagination.Limit = limit
 	pagination.Page = page
+	err := query.Scopes(r.Paginate(&items, &pagination, query, int64(len(items)))).
+		Find(&items).
+		Error
 
-	var totalRecords int64
-	err := query.Count(&totalRecords).Error
 	if err != nil {
 		return nil, nil, err
 	}
 
-	pagination.TotalRecords = totalRecords
-	pagination.TotalPage = int(math.Ceil(float64(totalRecords) / float64(pagination.GetLimit())))
-	// err = query.Scopes(r.Paginate(&pagination)).Find(&items).Error
-	err = query.Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Find(&items).Error
-	if err != nil {
-		return nil, nil, err
-	}
 	for _, item := range items {
 		if item.Courier != nil {
 			item.CourierName = item.Courier.CourierName
 			item.CourierUID = item.Courier.UID
 		}
 	}
+
 	return items, &pagination, nil
 }
 

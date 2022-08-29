@@ -6,7 +6,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/response"
-	"reflect"
+	"go-klikdokter/pkg/util"
 	"strings"
 
 	"gorm.io/gorm"
@@ -25,7 +25,7 @@ type ChannelCourierServiceRepository interface {
 	DeleteChannelCourierServiceByID(id uint64) error
 	DeleteChannelCourierServicesByChannelID(channelID uint64, courierID uint64) error
 	FindByParams(limit, page int, sort string, filters map[string]interface{}) ([]entity.ChannelCourierService, *base.Pagination, error)
-	GetChannelCourierListByChannelUID(channel_uid string, limit int, page int, sort, dir string, filter map[string]interface{}) ([]response.CourierServiceByChannelResponse, *base.Pagination, error)
+	GetChannelCourierListByChannelUID(channelUID string, limit int, page int, sort, dir string, filter map[string]interface{}) ([]response.CourierServiceByChannelResponse, *base.Pagination, error)
 }
 
 func NewChannelCourierServiceRepository(br BaseRepository) ChannelCourierServiceRepository {
@@ -93,46 +93,29 @@ func (r *ChannelCourierServiceRepositoryImpl) FindByParams(limit, page int, sort
 		Joins("CourierService")
 
 	for k, v := range filters {
-		switch k {
-		case "shipping_name", "shipping_code", "shipping_type", "channel_name", "courier_name":
-			value := v.([]string)
-			if len(value) > 0 {
-				query = query.Where(fmt.Sprint(k, " IN ?"), value)
-			}
-		case "status":
-			value := v.([]int)
-			if len(value) > 0 {
-				query = query.Where("channel_courier_service.status IN ? ", value)
-			}
-		case "courier_uid":
-			value := v.([]string)
-			if len(value) > 0 {
-				query = query.Where("co.uid IN ?", value)
-			}
+		k = strings.ReplaceAll(k, "courier_uid", "co.uid")
+		k = strings.ReplaceAll(k, "status", "channel_courier_service.status")
+
+		if util.IsSliceAndNotEmpty(v) {
+			query = query.Where(fmt.Sprint(k, " IN ?"), v)
 		}
 	}
 
-	var totalRecords int64
-	err := query.Count(&totalRecords).Error
-	if err != nil {
-		return nil, nil, err
+	sort = strings.ReplaceAll(strings.ToLower(sort), "status", "channel_courier_service.status")
+
+	if len(sort) == 0 {
+		sort = "channel_courier_service.updated_at DESC"
 	}
 
-	pagination.SetTotalRecords(totalRecords)
-
-	if len(sort) > 0 {
-		if strings.Contains(strings.ToLower(sort), "status") {
-			sort = strings.ReplaceAll(sort, "status", "channel_courier_service.status")
-		}
-		query = query.Order(sort)
-	} else {
-		query = query.Order("channel_courier_service.updated_at DESC")
-	}
+	query = query.Order(sort)
 
 	pagination.Limit = limit
 	pagination.Page = page
 
-	err = query.Offset(pagination.GetOffset()).Limit((pagination.GetLimit())).Find(&result).Error
+	err := query.Scopes(r.Paginate(result, &pagination, query, int64(len(result)))).
+		Find(&result).
+		Error
+
 	if err != nil {
 		return nil, nil, err
 	}
@@ -200,7 +183,7 @@ func (r *ChannelCourierServiceRepositoryImpl) Paginate(value interface{}, pagina
 	}
 }
 
-func (r *ChannelCourierServiceRepositoryImpl) GetChannelCourierListByChannelUID(channel_uid string, limit int, page int, sort, dir string, filter map[string]interface{}) ([]response.CourierServiceByChannelResponse, *base.Pagination, error) {
+func (r *ChannelCourierServiceRepositoryImpl) GetChannelCourierListByChannelUID(channelUID string, limit int, page int, sort, dir string, filter map[string]interface{}) ([]response.CourierServiceByChannelResponse, *base.Pagination, error) {
 	db := r.base.GetDB()
 	var courierService []response.CourierServiceByChannelResponse
 	var pagination base.Pagination
@@ -228,34 +211,20 @@ func (r *ChannelCourierServiceRepositoryImpl) GetChannelCourierListByChannelUID(
 		Joins("INNER JOIN courier c ON cc.courier_id = c.id").
 		Joins("LEFT JOIN shippment_predefined ct ON ct.code = c.courier_type AND ct.type = 'courier_type'").
 		Joins("LEFT JOIN shippment_predefined st ON st.code = cs.shipping_type AND st.type = 'shipping_type'").
-		Where("ch.uid = ?", channel_uid)
+		Where("ch.uid = ?", channelUID)
 
 	for k, v := range filter {
 
-		if reflect.ValueOf(v).Kind() == reflect.Slice {
-			if reflect.ValueOf(v).Len() == 0 {
-				continue
-			}
-		}
+		if util.IsSliceAndNotEmpty(v) {
 
-		if strings.EqualFold(k, "courier_type_code") {
-			query = query.Where("ct.code IN ?", v)
+			k = strings.ReplaceAll(k, "courier_type_code", "ct.code")
+			k = strings.ReplaceAll(k, "courier_code", "c.code")
+			k = strings.ReplaceAll(k, "courier_name", "c.courier_name")
+			k = strings.ReplaceAll(k, "shipping_type_code", "st.code")
+			k = strings.ReplaceAll(k, "shipping_name", "cs.shipping_name")
+			k = strings.ReplaceAll(k, "status", "channel_courier_service.status")
 
-		} else if strings.EqualFold(k, "courier_code") {
-			query = query.Where("c.code IN ?", v)
-
-		} else if strings.EqualFold(k, "courier_name") {
-			query = query.Where("c.courier_name IN ?", v)
-
-		} else if strings.EqualFold(k, "shipping_type_code") {
-			query = query.Where("st.code IN ?", v)
-
-		} else if strings.EqualFold(k, "shipping_name") {
-			query = query.Where("cs.shipping_name IN ?", v)
-
-		} else if strings.EqualFold(k, "status") {
-			query = query.Where("channel_courier_service.status IN ?", v)
-
+			query = query.Where(fmt.Sprint(k, " IN ?"), v)
 		}
 	}
 

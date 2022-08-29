@@ -4,6 +4,7 @@ import (
 	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/pkg/util"
 
 	"gorm.io/gorm"
 )
@@ -23,6 +24,16 @@ func NewShipmentPredefinedRepository(br BaseRepository) ShipmentPredefinedReposi
 	return &ShipmentPredefinedRepositoryImpl{br}
 }
 
+func (r *ShipmentPredefinedRepositoryImpl) Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB {
+	var totalRecords int64
+	db.Model(value).Count(&totalRecords)
+	pagination.SetTotalRecords(totalRecords)
+
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Offset(pagination.GetOffset()).Limit(pagination.GetLimit())
+	}
+}
+
 // GetAll implements ShipmentPredefinedRepository
 func (r *ShipmentPredefinedRepositoryImpl) GetAll(limit int, page int, sort string, filter map[string]interface{}) ([]*entity.ShippmentPredefined, *base.Pagination, error) {
 	var items []*entity.ShippmentPredefined
@@ -31,43 +42,34 @@ func (r *ShipmentPredefinedRepositoryImpl) GetAll(limit int, page int, sort stri
 	query := r.base.GetDB().Model(&entity.ShippmentPredefined{})
 
 	for k, v := range filter {
-		switch k {
-		case "note", "title", "code":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where(like(k, value))
 
-			}
-		case "type":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where(k+" IN ?", value)
+		if util.IsSliceAndNotEmpty(v) {
 
-			}
-		case "status":
-			value, ok := v.([]int)
-			if ok && len(value) > 0 {
-				query = query.Where("status IN ?", value)
+			switch k {
+			case "note", "title", "code":
+				query = query.Where(like(k, v.([]string)))
+
+			case "type":
+				query = query.Where(k+" IN ?", v.([]string))
+
+			case "status":
+				query = query.Where("status IN ?", v)
 
 			}
 		}
 	}
 
-	if len(sort) > 0 {
-		query = query.Order(sort)
-	} else {
-		query = query.Order("updated_at DESC")
+	if len(sort) == 0 {
+		sort = "updated_at DESC"
 	}
 
-	var count int64
+	query = query.Order(sort)
+
 	pagination.Limit = limit
 	pagination.Page = page
-	err := query.Count(&count).Error
-	if err != nil {
-		return nil, nil, err
-	}
-	pagination.SetTotalRecords(count)
-	err = query.Limit(pagination.Limit).Offset(pagination.GetOffset()).Find(&items).Error
+	err := query.Scopes(r.Paginate(items, &pagination, query, int64(len(items)))).
+		Find(&items).
+		Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

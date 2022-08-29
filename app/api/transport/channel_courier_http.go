@@ -3,11 +3,12 @@ package transport
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go-klikdokter/app/api/endpoint"
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
-	"go-klikdokter/pkg/util"
+	"go-klikdokter/helper/global"
 	"net/http"
 
 	httptransport "github.com/go-kit/kit/transport/http"
@@ -25,35 +26,35 @@ func ChannelCourierHttpHandler(s service.ChannelCourierService, logger log.Logge
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-courier/{uid}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourier, global.PathUID)).Handler(httptransport.NewServer(
 		ep.GetChannelCourier,
 		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("POST").Path(util.PrefixBase + "/channel/channel-courier/").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourier)).Handler(httptransport.NewServer(
 		ep.SaveChannelCourier,
 		decodeSaveChannelCourier,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path(util.PrefixBase + "/channel/channel-courier/{uid}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourier, global.PathUID)).Handler(httptransport.NewServer(
 		ep.UpdateChannelCourier,
 		decodeUpdateChannelCourier,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-courier/").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourier)).Handler(httptransport.NewServer(
 		ep.ListChannelCouriers,
 		decodePaginationRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("DELETE").Path(util.PrefixBase + "/channel/channel-courier/{uid}").Handler(httptransport.NewServer(
+	pr.Methods("DELETE").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourier, global.PathUID)).Handler(httptransport.NewServer(
 		ep.DeleteChannelCourier,
 		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,
@@ -94,6 +95,6 @@ func decodeUpdateChannelCourier(ctx context.Context, r *http.Request) (rqst inte
 	}
 	//add this to htmlescape body post
 	//global.HtmlEscape(&req)
-	req.Uid = mux.Vars(r)["uid"]
+	req.Uid = mux.Vars(r)[pathUID]
 	return req, nil
 }
