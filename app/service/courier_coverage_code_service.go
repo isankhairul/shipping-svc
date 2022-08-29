@@ -117,12 +117,12 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 		"code6":        input.Filters.Code6,
 	}
 
-	converted_filter_lower := make(map[string]interface{}, len(filter))
+	convertedFilterLower := make(map[string]interface{}, len(filter))
 	for k, v := range filter {
-		converted_filter_lower[strings.ToLower(k)] = v
+		convertedFilterLower[strings.ToLower(k)] = v
 	}
 
-	result, pagination, err := s.courierCoverageCodeRepo.FindByParams(input.Limit, input.Page, input.Sort, converted_filter_lower)
+	result, pagination, err := s.courierCoverageCodeRepo.FindByParams(input.Limit, input.Page, input.Sort, convertedFilterLower)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
 		return nil, nil, message.FailedMsg

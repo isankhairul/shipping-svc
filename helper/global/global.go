@@ -7,6 +7,41 @@ import (
 	"strings"
 )
 
+var (
+	//set in main.go
+	PrefixBase = ""
+
+	//Handler Prefix
+	PrefixChannel               = "/channel/"
+	PrefixCourier               = "/courier/"
+	PrefixCourierCoverageCode   = "/courier/courier-coverage-code/"
+	PrefixChannelCourier        = "/channel/channel-courier/"
+	PrefixChannelCourierService = "/channel/channel-courier-service/"
+	PrefixShipping              = "/shipping/"
+	PrefixOther                 = "/other/"
+
+	//Path
+	PathUID    = "{uid}"
+	PathImport = "import"
+
+	PathChannelApp    = "channel-app"
+	PathChannelAppUID = "channel-app/{uid}"
+
+	PathCourier    = "courier"
+	PathCourierUID = "courier/{uid}"
+
+	PathCourierService    = "courier-services"
+	PathCourierServiceUID = "courier-services/{uid}"
+
+	PathShipmentPredefined    = "shipment-predefined"
+	PathShipmentPredefinedUID = "shipment-predefined/{uid}"
+
+	PathChannelCourierStatus = "channel-status-courier-status"
+	PathUIDCourierList       = "{uid}/courier-list"
+
+	ServerPort = "server.port"
+)
+
 func HtmlEscape(req interface{}) {
 	value := reflect.ValueOf(req).Elem()
 

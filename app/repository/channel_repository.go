@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/pkg/util"
 	"math"
 	"strings"
 
@@ -120,28 +121,23 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 	query := r.base.GetDB()
 
 	for k, v := range filter {
-		switch k {
-		case "channel_code", "channel_name":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where(like(k, value))
+		if util.IsSliceAndNotEmpty(v) {
+			switch k {
+			case "channel_code", "channel_name":
+				query = query.Where(like(k, v.([]string)))
+
+			case "status":
+				query = query.Where("status IN ?", v)
 
 			}
-		case "status":
-			value, ok := v.([]int)
-			if ok && len(value) > 0 {
-				query = query.Where("status IN ?", value)
-
-			}
-
 		}
 	}
 
-	if len(sort) > 0 {
-		query = query.Order(sort)
-	} else {
-		query = query.Order("updated_at DESC")
+	if len(sort) == 0 {
+		sort = "updated_at DESC"
 	}
+
+	query = query.Order(sort)
 
 	pagination.Limit = limit
 	pagination.Page = page

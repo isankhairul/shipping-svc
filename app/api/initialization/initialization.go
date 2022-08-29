@@ -1,12 +1,13 @@
 package initialization
 
 import (
+	"fmt"
 	"go-klikdokter/app/api/transport"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/registry"
 	"go-klikdokter/helper/config"
 	"go-klikdokter/helper/database"
-	"go-klikdokter/pkg/util"
+	"go-klikdokter/helper/global"
 	"net/http"
 
 	"github.com/go-kit/log"
@@ -58,12 +59,12 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	// Routing path
 	mux := http.NewServeMux()
 	mux.Handle("/", swagHttp) //don't delete or change this!!
-	mux.Handle(util.PrefixBase+"/courier/", courierHttp)
-	mux.Handle(util.PrefixBase+"/other/", shipmentPredefinedHttp)
-	mux.Handle(util.PrefixBase+"/courier/courier-coverage-code/", courierCoverageCodeHttp)
-	mux.Handle(util.PrefixBase+"/channel/", channelHttp)
-	mux.Handle(util.PrefixBase+"/channel/channel-courier/", channelCourierHttp)
-	mux.Handle(util.PrefixBase+"/channel/channel-courier-service/", channelCourierServiceHttp)
+	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixCourier), courierHttp)
+	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixOther), shipmentPredefinedHttp)
+	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixCourierCoverageCode), courierCoverageCodeHttp)
+	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixChannel), channelHttp)
+	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourier), channelCourierHttp)
+	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourierService), channelCourierServiceHttp)
 
 	return mux
 }

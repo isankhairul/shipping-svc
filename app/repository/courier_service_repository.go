@@ -5,6 +5,7 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/response"
+	"go-klikdokter/pkg/util"
 	"math"
 	"strings"
 
@@ -145,40 +146,33 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 		Where("sp2.type = 'shipping_type'")
 
 	for k, v := range filter {
-		switch k {
-		case "shipping_code", "shipping_name":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where(like(k, value))
+
+		if util.IsSliceAndNotEmpty(v) {
+
+			switch k {
+			case "shipping_code", "shipping_name":
+				query = query.Where(like(k, v.([]string)))
+
+			case "courier_uid", "courier_type", "shipping_type":
+				query = query.Where(k+" IN ?", v.([]string))
+
+			case "status":
+				query = query.Where("courier_service.status IN ?", v)
 
 			}
-		case "courier_uid", "courier_type", "shipping_type":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where(k+" IN ?", value)
-
-			}
-		case "status":
-			value, ok := v.([]int)
-			if ok && len(value) > 0 {
-				query = query.Where("courier_service.status IN ?", value)
-
-			}
-
 		}
 	}
 
-	if len(sort) > 0 {
-		if strings.Contains(sort, "shipping_type_code") {
-			m := map[string]string{"shipping_type_code": "shipping_type", "shipping_type_code asc": "shipping_type asc", "shipping_type_code desc": "shipping_type desc"}
-			sortValue := m[strings.ToLower(sort)]
-			query = query.Order(sortValue)
-		} else {
-			query = query.Order(sort)
-		}
-	} else {
-		query = query.Order("courier_service.updated_at DESC")
+	if strings.Contains(sort, "shipping_type_code") {
+		m := map[string]string{"shipping_type_code": "shipping_type", "shipping_type_code asc": "shipping_type asc", "shipping_type_code desc": "shipping_type desc"}
+		sort = m[strings.ToLower(sort)]
 	}
+
+	if len(sort) == 0 {
+		sort = "courier_service.updated_at DESC"
+	}
+
+	query = query.Order(sort)
 
 	pagination.Limit = limit
 	pagination.Page = page

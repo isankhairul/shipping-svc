@@ -8,6 +8,7 @@ import (
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
+	"go-klikdokter/helper/global"
 	"go-klikdokter/pkg/util"
 	"net/http"
 
@@ -26,44 +27,44 @@ func CourierCoverageCodeHttpHandler(s service.CourierCoverageCodeService, logger
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("POST").Path(util.PrefixBase + "/courier/courier-coverage-code/").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixCourierCoverageCode)).Handler(httptransport.NewServer(
 		ep.Save,
 		decodeSaveCourierCoverageCode,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path(util.PrefixBase + "/courier/courier-coverage-code/").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixCourierCoverageCode)).Handler(httptransport.NewServer(
 		ep.List,
 		decodeListCourierCoverageCode,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path(util.PrefixBase + "/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixCourierCoverageCode, global.PathUID)).Handler(httptransport.NewServer(
 		ep.Show,
-		decodeShowCourierCoverageCode,
+		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path(util.PrefixBase + "/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path(fmt.Sprint(global.PrefixBase, global.PrefixCourierCoverageCode, global.PathUID)).Handler(httptransport.NewServer(
 		ep.Update,
 		decodeUpdateCourierCoverageCode,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("POST").Path(util.PrefixBase + "/courier/courier-coverage-code/import").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixCourierCoverageCode, global.PathImport)).Handler(httptransport.NewServer(
 		ep.Import,
 		decodeImportCourierCoverageCode,
 		encoder.EncodeResponseCSV,
 		options...,
 	))
 
-	pr.Methods("DELETE").Path(util.PrefixBase + "/courier/courier-coverage-code/{id}").Handler(httptransport.NewServer(
+	pr.Methods("DELETE").Path(fmt.Sprint(global.PrefixBase, global.PrefixCourierCoverageCode, global.PathUID)).Handler(httptransport.NewServer(
 		ep.Delete,
-		decodeShowCourierCoverageCode,
+		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
@@ -80,11 +81,6 @@ func decodeSaveCourierCoverageCode(ctx context.Context, r *http.Request) (rqst i
 	//global.HtmlEscape(&req)
 
 	return req, nil
-}
-
-func decodeShowCourierCoverageCode(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	uid := mux.Vars(r)["id"]
-	return uid, nil
 }
 
 func decodeListCourierCoverageCode(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
@@ -111,7 +107,7 @@ func decodeUpdateCourierCoverageCode(ctx context.Context, r *http.Request) (rqst
 	//add this to htmlescape body post
 	//global.HtmlEscape(&req)
 
-	req.Uid = mux.Vars(r)["id"]
+	req.Uid = mux.Vars(r)[pathUID]
 	return req, nil
 }
 

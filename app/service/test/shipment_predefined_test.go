@@ -14,7 +14,17 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func init() {
+// func init() {
+// }
+var shipmentPredefinedSample = entity.ShippmentPredefined{
+	BaseIDModel: base.BaseIDModel{
+		UID: "UCMvWngocMqKbaC3AWQBF",
+	},
+	Type:   "type 1",
+	Code:   "code 1",
+	Title:  "title 1",
+	Note:   "note 1",
+	Status: 0,
 }
 
 func TestUpdateShipmentPredefined(t *testing.T) {
@@ -23,30 +33,24 @@ func TestUpdateShipmentPredefined(t *testing.T) {
 	var shipmentPredefinedRepository = &repository_mock.ShipmentPredefinedMock{Mock: mock.Mock{}}
 	var shipmentPredefinedService = service.NewShipmentPredefinedService(logger, baseshipmentPredefinedRepository, shipmentPredefinedRepository)
 
-	item := entity.ShippmentPredefined{
-		Type:   "type",
-		Code:   "code",
-		Title:  "title",
-		Note:   "note",
-		Status: 0,
-	}
+	item := shipmentPredefinedSample
 	req := request.UpdateShipmentPredefinedRequest{
-		Uid:    "UCMvWngocMqKbaC3AWQBF",
-		Type:   "type 1",
-		Code:   "code 1",
-		Title:  "title 1",
-		Note:   "note 1",
-		Status: 0,
+		Uid:    shipmentPredefinedSample.UID,
+		Type:   shipmentPredefinedSample.Type,
+		Code:   shipmentPredefinedSample.Code,
+		Title:  shipmentPredefinedSample.Title,
+		Note:   shipmentPredefinedSample.Note,
+		Status: shipmentPredefinedSample.Status,
 	}
 
 	shipmentPredefinedRepository.Mock.On("GetShipmentPredefinedByUid", mock.Anything).Return(item)
 	shipmentPredefinedRepository.Mock.On("UpdateShipmentPredefined", mock.Anything).Return(item)
 	result, _ := shipmentPredefinedService.UpdateShipmentPredefined(req)
 	assert.NotNil(t, result)
-	assert.Equal(t, "type", result.Type, "Type is type")
-	assert.Equal(t, "code", result.Code, "Code is code")
-	assert.Equal(t, "title", result.Title, "Title is title")
-	assert.Equal(t, "note", result.Note, "Note is note")
+	assert.Equal(t, shipmentPredefinedSample.Type, result.Type, "Type is type")
+	assert.Equal(t, shipmentPredefinedSample.Code, result.Code, "Code is code")
+	assert.Equal(t, shipmentPredefinedSample.Title, result.Title, "Title is title")
+	assert.Equal(t, shipmentPredefinedSample.Note, result.Note, "Note is note")
 }
 
 func TestGetAll(t *testing.T) {
@@ -69,10 +73,10 @@ func TestGetAll(t *testing.T) {
 			Status: 0,
 		},
 		{
-			Type:   "type 1",
-			Code:   "code 1",
-			Title:  "title 1",
-			Note:   "note 1",
+			Type:   shipmentPredefinedSample.Type,
+			Code:   shipmentPredefinedSample.Code,
+			Title:  shipmentPredefinedSample.Title,
+			Note:   shipmentPredefinedSample.Note,
 			Status: 0,
 		},
 		{
@@ -114,10 +118,10 @@ func TestUpdateShipmentPredefinedFailNotFound(t *testing.T) {
 
 	req := request.UpdateShipmentPredefinedRequest{
 		Uid:    "UCMvWngocMqKbaC3AWQBF",
-		Type:   "type 1",
-		Code:   "code 1",
-		Title:  "title 1",
-		Note:   "note 1",
+		Type:   shipmentPredefinedSample.Type,
+		Code:   shipmentPredefinedSample.Code,
+		Title:  shipmentPredefinedSample.Title,
+		Note:   shipmentPredefinedSample.Note,
 		Status: 0,
 	}
 

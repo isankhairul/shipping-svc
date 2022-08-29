@@ -13,14 +13,13 @@ var (
 func DateRangeValidation(dateStart, dateEnd string) (validDate, validRange bool) {
 	validDate = true
 	validRange = false
-	loc, _ := time.LoadLocation("Asia/Jakarta")
 
-	dateStartT, err := time.ParseInLocation(LayoutDateOnly, dateStart, loc)
+	dateStartT, err := time.ParseInLocation(LayoutDateOnly, dateStart, Loc)
 	if err != nil {
 		validDate = false
 	}
 
-	dateEndT, err := time.ParseInLocation(LayoutDateOnly, dateEnd, loc)
+	dateEndT, err := time.ParseInLocation(LayoutDateOnly, dateEnd, Loc)
 	if err != nil {
 		validDate = false
 	}
@@ -32,11 +31,10 @@ func DateRangeValidation(dateStart, dateEnd string) (validDate, validRange bool)
 	return validDate, validRange
 }
 
-func DateValidationYYYY_MM_DD(date string) (validDate bool) {
+func DateValidationYYYYMMDD(date string) (validDate bool) {
 	validDate = true
-	loc, _ := time.LoadLocation("Asia/Jakarta")
 
-	_, err := time.ParseInLocation(LayoutDateOnly, date, loc)
+	_, err := time.ParseInLocation(LayoutDateOnly, date, Loc)
 	if err != nil {
 		validDate = false
 	}

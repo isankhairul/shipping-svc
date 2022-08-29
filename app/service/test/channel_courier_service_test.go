@@ -21,8 +21,11 @@ var courierServiceRepo = &repository_mock.CourierServiceRepositoryMock{Mock: moc
 
 var channelCourierService = service.NewChannelCourierService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
 
-func init() {
-}
+// func init() {
+// }
+
+var courier1 = &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_1"}, CourierName: "Courier 1"}
+var channel1 = &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_1"}, ChannelName: "Channel 1"}
 
 func TestCreateChannelCourier(t *testing.T) {
 	var channelCourierRepo = &repository_mock.ChannelCourierRepositoryMock{Mock: mock.Mock{}}
@@ -36,8 +39,8 @@ func TestCreateChannelCourier(t *testing.T) {
 		PrioritySort: 10,
 		Status:       1,
 	}
-	courier := &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_1"}, CourierName: "Courier 1"}
-	channel := &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_1"}, ChannelName: "Channel 1"}
+	courier := courier1
+	channel := channel1
 	channelCourierRepo.Mock.On("FindCourierByUID", mock.Anything).Return(courier)
 	channelCourierRepo.Mock.On("FindChannelByUID", mock.Anything).Return(channel)
 
@@ -55,10 +58,10 @@ func TestCreateChannelCourier(t *testing.T) {
 	result, msg := channelCourierService.CreateChannelCourier(input)
 
 	assert.NotNil(t, result)
-	assert.Equal(t, 201000, msg.Code, "Status code should be 200")
-	assert.Equal(t, "123", result.Uid, "Uid should be 123")
-	assert.Equal(t, "Courier 1", result.CourierName, "CourierName must be test name")
-	assert.Equal(t, "Channel 1", result.ChannelName, "CourierName must be test name")
+	assert.Equal(t, 201000, msg.Code, codeIsNotCorrect)
+	assert.Equal(t, "123", result.Uid, uidIsNotCorrect)
+	assert.Equal(t, courier1.CourierName, result.CourierName, courierNameIsNotCorrect)
+	assert.Equal(t, channel1.ChannelName, result.ChannelName, channelNameIsNotCorrect)
 }
 
 func TestUpdateChannelCourier(t *testing.T) {
@@ -72,8 +75,8 @@ func TestUpdateChannelCourier(t *testing.T) {
 		Status:       1,
 	}
 	input.Uid = "123"
-	courier := &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_1", ID: 1}, CourierName: "Courier 1"}
-	channel := &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_1", ID: 1}, ChannelName: "Channel 1"}
+	courier := courier1
+	channel := channel1
 	channelCourierRepo.Mock.On("FindCourierByUID", mock.Anything).Return(courier)
 	channelCourierRepo.Mock.On("FindChannelByUID", mock.Anything).Return(channel)
 
@@ -90,10 +93,10 @@ func TestUpdateChannelCourier(t *testing.T) {
 	result, msg := channelCourierService.UpdateChannelCourier(input)
 
 	assert.NotNil(t, result)
-	assert.Equal(t, 201000, msg.Code, "Status code should be 200")
-	assert.Equal(t, "123", result.Uid, "Uid should be 123")
-	assert.Equal(t, "Courier 1", result.CourierName, "CourierName must be test name")
-	assert.Equal(t, "Channel 1", result.ChannelName, "CourierName must be test name")
+	assert.Equal(t, 201000, msg.Code, codeIsNotCorrect)
+	assert.Equal(t, "123", result.Uid, uidIsNotCorrect)
+	assert.Equal(t, courier1.CourierName, result.CourierName, courierNameIsNotCorrect)
+	assert.Equal(t, channel1.ChannelName, result.ChannelName, channelNameIsNotCorrect)
 }
 
 func TestListChannelCouriers(t *testing.T) {
@@ -108,8 +111,8 @@ func TestListChannelCouriers(t *testing.T) {
 		Limit: 10,
 	}
 
-	courier := &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_1", ID: 1}, CourierName: "Courier 1"}
-	channel := &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_1", ID: 1}, ChannelName: "Channel 1"}
+	courier := courier1
+	channel := channel1
 
 	courier2 := &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_2", ID: 2}, CourierName: "Courier 2"}
 	channel2 := &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_2", ID: 2}, ChannelName: "Channel 2"}
@@ -148,8 +151,8 @@ func TestGetChannelCourier(t *testing.T) {
 	var channelCourierService = service.NewChannelCourierService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
 
 	uid := "123"
-	courier := &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_1"}, CourierName: "Courier 1"}
-	channel := &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_1"}, ChannelName: "Channel 1"}
+	courier := courier1
+	channel := channel1
 	channelCourierRepo.Mock.On("FindCourierByUID", mock.Anything).Return(courier)
 	channelCourierRepo.Mock.On("FindChannelByUID", mock.Anything).Return(channel)
 
@@ -164,10 +167,10 @@ func TestGetChannelCourier(t *testing.T) {
 	result, msg := channelCourierService.GetChannelCourier(uid)
 
 	assert.NotNil(t, result)
-	assert.Equal(t, 201000, msg.Code, "Status code should be 200")
-	assert.Equal(t, "123", result.Uid, "Uid should be 123")
-	assert.Equal(t, "Courier 1", result.CourierName, "CourierName must be test name")
-	assert.Equal(t, "Channel 1", result.ChannelName, "CourierName must be test name")
+	assert.Equal(t, 201000, msg.Code, codeIsNotCorrect)
+	assert.Equal(t, "123", result.Uid, uidIsNotCorrect)
+	assert.Equal(t, courier1.CourierName, result.CourierName, courierNameIsNotCorrect)
+	assert.Equal(t, channel1.ChannelName, result.ChannelName, channelNameIsNotCorrect)
 
 }
 
@@ -177,8 +180,8 @@ func TestDeleteChannelCourier(t *testing.T) {
 	var courierServiceRepo = &repository_mock.CourierServiceRepositoryMock{Mock: mock.Mock{}}
 	var channelCourierService = service.NewChannelCourierService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
 
-	courier := &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_1"}, CourierName: "Courier 1"}
-	channel := &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_1"}, ChannelName: "Channel 1"}
+	courier := courier1
+	channel := channel1
 	cc := &entity.ChannelCourier{
 		BaseIDModel: base.BaseIDModel{UID: "123"},
 		Courier:     courier,
@@ -213,8 +216,7 @@ func TestCreateChannelCourierFailedWithInvalidCourier(t *testing.T) {
 	result, msg := channelCourierService.CreateChannelCourier(input)
 
 	assert.Nil(t, result)
-	assert.Equal(t, message.ErrCourierNotFound.Message, msg.Message, "Courier not found")
-	assert.Equal(t, message.ErrCourierNotFound.Code, msg.Code, "Courier not found")
+	assert.Equal(t, message.ErrCourierNotFound.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestCreateChannelCourierFailedWithInvalidChannel(t *testing.T) {
@@ -233,8 +235,7 @@ func TestCreateChannelCourierFailedWithInvalidChannel(t *testing.T) {
 	result, msg := channelCourierService.CreateChannelCourier(input)
 
 	assert.Nil(t, result)
-	assert.Equal(t, message.ErrCourierNotFound.Message, msg.Message, "Courier not found")
-	assert.Equal(t, message.ErrCourierNotFound.Code, msg.Code, "Courier not found")
+	assert.Equal(t, message.ErrCourierNotFound.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestCreateChannelCourierFailedWithDuplicatedChannelCourier(t *testing.T) {
@@ -249,8 +250,8 @@ func TestCreateChannelCourierFailedWithDuplicatedChannelCourier(t *testing.T) {
 		PrioritySort: 10,
 		Status:       1,
 	}
-	courier := &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_1"}, CourierName: "Courier 1"}
-	channel := &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_1"}, ChannelName: "Channel 1"}
+	courier := courier1
+	channel := channel1
 	channelCourierRepo.Mock.On("FindCourierByUID", mock.Anything).Return(courier)
 	channelCourierRepo.Mock.On("FindChannelByUID", mock.Anything).Return(channel)
 
@@ -283,8 +284,7 @@ func TestUpdateChannelCourierFailedWithChannelCourierNotFound(t *testing.T) {
 	result, msg := channelCourierService.UpdateChannelCourier(input)
 
 	assert.Nil(t, result)
-	assert.Equal(t, message.ErrChannelCourierNotFound.Message, msg.Message, "Channel Courier not found")
-	assert.Equal(t, message.ErrChannelCourierNotFound.Code, msg.Code, "Channel Courier not found")
+	assert.Equal(t, message.ErrChannelCourierNotFound.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestGetChannelCourierWithChannelCourierNotFound(t *testing.T) {
@@ -313,8 +313,7 @@ func TestGetChannelCourierWithChannelCourierDbError(t *testing.T) {
 	result, msg := channelCourierService.GetChannelCourier("123")
 
 	assert.Nil(t, result)
-	assert.Equal(t, message.ErrDB.Message, msg.Message, "Database issue")
-	assert.Equal(t, message.ErrDB.Code, msg.Code, "Database issue")
+	assert.Equal(t, message.ErrDB.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestDeleteChannelCourierHasChannelCourierService(t *testing.T) {
@@ -323,8 +322,8 @@ func TestDeleteChannelCourierHasChannelCourierService(t *testing.T) {
 	var courierServiceRepo = &repository_mock.CourierServiceRepositoryMock{Mock: mock.Mock{}}
 	var channelCourierService = service.NewChannelCourierService(logger, baseRepository, channelCourierRepo, channelCourierServiceRepo, courierServiceRepo)
 
-	courier := &entity.Courier{BaseIDModel: base.BaseIDModel{UID: "courier_1"}, CourierName: "Courier 1"}
-	channel := &entity.Channel{BaseIDModel: base.BaseIDModel{UID: "channel_1"}, ChannelName: "Channel 1"}
+	courier := courier1
+	channel := channel1
 	cc := &entity.ChannelCourier{
 		BaseIDModel: base.BaseIDModel{UID: "123"},
 		Courier:     courier,
@@ -337,7 +336,7 @@ func TestDeleteChannelCourierHasChannelCourierService(t *testing.T) {
 	channelCourierRepo.Mock.On("IsHasChannelCourierService").Return(true).Once()
 	msg := channelCourierService.DeleteChannelCourier("123")
 
-	assert.Equal(t, message.ErrChannelCourierHasChild.Code, msg.Code, "Code is wrong")
+	assert.Equal(t, message.ErrChannelCourierHasChild.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestDeleteChannelCourierFailedWithChannelCourierNotFound(t *testing.T) {
@@ -361,7 +360,7 @@ func TestGetChannelCourierListByChannelUIDSuccess(t *testing.T) {
 
 	assert.NotNil(t, result)
 	assert.Len(t, result, 2)
-	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Code is wrong")
+	assert.Equal(t, message.SuccessMsg.Message, msg.Message, codeIsNotCorrect)
 }
 
 func TestGetChannelCourierListByChannelUIDNotFound(t *testing.T) {
@@ -370,5 +369,5 @@ func TestGetChannelCourierListByChannelUIDNotFound(t *testing.T) {
 
 	assert.Nil(t, result)
 	assert.Len(t, result, 0)
-	assert.Equal(t, message.ErrNoData.Message, msg.Message, "Code is wrong")
+	assert.Equal(t, message.ErrNoData.Message, msg.Message, codeIsNotCorrect)
 }

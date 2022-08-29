@@ -23,8 +23,8 @@ var courierServiceRepository = &repository_mock.CourierServiceRepositoryMock{Moc
 var shipmentPredefinedRepository = &repository_mock.ShipmentPredefinedMock{Mock: mock.Mock{}}
 var svc = service.NewCourierService(logger, baseRepository, courierRepository, courierServiceRepository, shipmentPredefinedRepository)
 
-func init() {
-}
+// func init() {
+// }
 
 func TestCreateCourierService(t *testing.T) {
 	status := int32(1)
@@ -100,7 +100,7 @@ func TestDeleteCourierService(t *testing.T) {
 	courierServiceRepository.Mock.On("IsCourierServiceAssigned").Return(false).Once()
 	msg := svc.DeleteCourierService(uid)
 
-	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 201000")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, codeIsNotCorrect)
 	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Message must be Null")
 }
 
@@ -161,7 +161,7 @@ func TestListCourierService(t *testing.T) {
 	courierServiceRepository.Mock.On("FindByParams", 10, 1, "", filter).Return(CourierService, &paginationResult)
 	CourierServices, pagination, msg := svc.GetListCourierService(req)
 
-	assert.Equal(t, message.SuccessMsg.Code, msg.Code, "Code must be 201000")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, codeIsNotCorrect)
 	assert.Equal(t, message.SuccessMsg.Message, msg.Message, "Message must be null")
 	assert.Equal(t, 3, len(CourierServices), "Count of CourierServices must be 3")
 	assert.Equal(t, int64(120), pagination.Records, "Total record pagination must be 120")
@@ -214,10 +214,7 @@ func TestCreateCourierServiceFail(t *testing.T) {
 	courierServiceRepository.Mock.On("CreateCourierService", &req).Return(courierService)
 	_, err := svc.CreateCourierService(req)
 
-	errIsExists := "Data courier_id/shipping_code already exists"
-	errCodeIsExists := 34001
-	assert.EqualError(t, errors.New(errIsExists), err.Message, "CourierUId and ShippingCode must be unique for each Courier")
-	assert.Equal(t, errCodeIsExists, err.Code, "CourierUId and ShippingCode must be unique for each Courier")
+	assert.Equal(t, message.ErrDataCourierServiceExists.Code, err.Code, codeIsNotCorrect)
 }
 
 func TestUpdateCourierServiceFail(t *testing.T) {
@@ -263,10 +260,7 @@ func TestUpdateCourierServiceFail(t *testing.T) {
 	courierServiceRepository.Mock.On("UpdateCourierService", &req).Return(courierService)
 	_, err := svc.UpdateCourierService(req.Uid, req)
 
-	errIsExists := "Data courier_id/shipping_code already exists"
-	errCodeIsExists := 34001
-	assert.EqualError(t, errors.New(errIsExists), err.Message, "CourierUId and ShippingCode must be unique for each Courier")
-	assert.Equal(t, errCodeIsExists, err.Code, "CourierUId and ShippingCode must be unique for each Courier")
+	assert.Equal(t, message.ErrDataCourierServiceExists.Code, err.Code, codeIsNotCorrect)
 }
 
 func TestGetCourierServiceFail(t *testing.T) {
@@ -295,7 +289,7 @@ func TestDeleteCourierServiceHasAssigned(t *testing.T) {
 	courierServiceRepository.Mock.On("IsCourierServiceAssigned").Return(true).Once()
 	msg := svc.DeleteCourierService(uid)
 
-	assert.Equal(t, message.ErrCourierServiceHasAssigned.Code, msg.Code, "Code must be 201000")
+	assert.Equal(t, message.ErrCourierServiceHasAssigned.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestDeleteCourierServiceNotFound(t *testing.T) {
@@ -303,7 +297,7 @@ func TestDeleteCourierServiceNotFound(t *testing.T) {
 	courierServiceRepository.Mock.On("FindByUid", &uid).Return(nil)
 	msg := svc.DeleteCourierService(uid)
 
-	assert.Equal(t, message.ErrCourierServiceNotFound.Code, msg.Code, "Code must be 201000")
+	assert.Equal(t, message.ErrCourierServiceNotFound.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestGetCourierShippingTypeSuccess(t *testing.T) {

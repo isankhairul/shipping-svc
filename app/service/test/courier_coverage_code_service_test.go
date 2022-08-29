@@ -18,7 +18,14 @@ var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock
 var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
 var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
 
-func init() {
+// func init() {
+// }
+
+var vn = entity.CourierCoverageCode{
+	CourierUID:  "UCMvWngocMqKbaC3AWQBF",
+	CountryCode: "VN",
+	PostalCode:  "70000",
+	Description: "Vietnam code",
 }
 
 func TestCreateCourierCoverageCode(t *testing.T) {
@@ -27,10 +34,10 @@ func TestCreateCourierCoverageCode(t *testing.T) {
 	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
 
 	req := request.SaveCourierCoverageCodeRequest{
-		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-		CountryCode: "VN",
-		PostalCode:  "70000",
-		Description: "Vietnam code",
+		CourierUID:  vn.CourierUID,
+		CountryCode: vn.CountryCode,
+		PostalCode:  vn.PostalCode,
+		Description: vn.Description,
 	}
 
 	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(nil)
@@ -38,29 +45,22 @@ func TestCreateCourierCoverageCode(t *testing.T) {
 
 	result, _ := svcCourierCoverageCode.CreateCourierCoverageCode(req)
 	assert.NotNil(t, result)
-	assert.Equal(t, "UCMvWngocMqKbaC3AWQBF", result.CourierUID, "Courier UID is UCMvWngocMqKbaC3AWQBF")
-	assert.Equal(t, "VN", result.CountryCode, "Courier UID is VN")
-	assert.Equal(t, "70000", result.PostalCode, "Courier UID is 70000")
-	assert.Equal(t, "Vietnam code", result.Description, "Description is Vietnam code")
+	assert.Equal(t, vn.CourierUID, result.CourierUID, courierUIDIsNotCorrect)
+	assert.Equal(t, vn.CountryCode, result.CountryCode, uidIsNotCorrect)
 }
 
 func TestUpdateCourierCoverageCode(t *testing.T) {
-	courierCoverageCode := entity.CourierCoverageCode{
-		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-		CountryCode: "VN",
-		PostalCode:  "70000",
-		Description: "Vietnam code",
-	}
+	courierCoverageCode := vn
 
 	req := request.SaveCourierCoverageCodeRequest{
 		Uid:         "123",
-		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-		CountryCode: "VN",
-		PostalCode:  "70000",
-		Description: "Vietnam code",
+		CourierUID:  vn.CourierUID,
+		CountryCode: vn.CountryCode,
+		PostalCode:  vn.PostalCode,
+		Description: vn.Description,
 	}
 	var courier entity.Courier
-	courier.UID = "UCMvWngocMqKbaC3AWQBF"
+	courier.UID = vn.UID
 	courier.ID = 555
 
 	courierCoverageCodeRepository.Mock.On("FindByUid", req.Uid).Return(courierCoverageCode)
@@ -70,41 +70,27 @@ func TestUpdateCourierCoverageCode(t *testing.T) {
 
 	result, _ := svcCourierCoverageCode.UpdateCourierCoverageCode(req)
 	assert.NotNil(t, result)
-	assert.Equal(t, "UCMvWngocMqKbaC3AWQBF", result.CourierUID, "Courier UID is UCMvWngocMqKbaC3AWQBF")
-	assert.Equal(t, "VN", result.CountryCode, "Courier UID is VN")
-	assert.Equal(t, "70000", result.PostalCode, "Courier UID is 70000")
-	assert.Equal(t, "Vietnam code", result.Description, "Description is Vietnam code")
+	assert.Equal(t, vn.CourierUID, result.CourierUID, courierUIDIsNotCorrect)
+	assert.Equal(t, vn.CountryCode, result.CountryCode, uidIsNotCorrect)
 }
 
 func TestGetCourierCoverageCode(t *testing.T) {
-	courierCoverageCode := entity.CourierCoverageCode{
-		CourierID:   555,
-		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-		CountryCode: "VN",
-		PostalCode:  "70000",
-		Description: "Vietnam code",
-		Courier: &entity.Courier{
-			BaseIDModel: base.BaseIDModel{UID: "UCMvWngocMqKbaC3AWQBF"},
-		},
-	}
 	var courier entity.Courier
-	courier.UID = "UCMvWngocMqKbaC3AWQBF"
+	courier.UID = vn.UID
 	courier.ID = 555
 	uid := "123"
 
-	courierCoverageCodeRepository.Mock.On("FindByUid", uid).Return(courierCoverageCode)
+	courierCoverageCodeRepository.Mock.On("FindByUid", uid).Return(vn)
 	// courierCoverageCodeRepository.Mock.On("GetCourierId", mock.Anything, mock.Anything).Return(courier)
 
 	result, _ := svcCourierCoverageCode.GetCourierCoverageCode(uid)
 	assert.NotNil(t, result)
-	assert.Equal(t, "UCMvWngocMqKbaC3AWQBF", result.CourierUID, "Courier UID is UCMvWngocMqKbaC3AWQBF")
-	assert.Equal(t, "VN", result.CountryCode, "Courier UID is VN")
-	assert.Equal(t, "70000", result.PostalCode, "Courier UID is 70000")
-	assert.Equal(t, "Vietnam code", result.Description, "Description is Vietnam code")
+	assert.Equal(t, vn.CourierUID, result.CourierUID, courierUIDIsNotCorrect)
+	assert.Equal(t, vn.CountryCode, result.CountryCode, uidIsNotCorrect)
 }
 
 func TestDeleteCourierCoverageCode(t *testing.T) {
-	uid := "UCMvWngocMqKbaC3AWQBF"
+	uid := vn.UID
 
 	courierCoverageCodeRepository.Mock.On("DeleteByUid", mock.Anything).Return(nil)
 
@@ -122,10 +108,10 @@ func TestListCourierCoverageCode(t *testing.T) {
 
 	courierCoverageCode := []*entity.CourierCoverageCode{
 		{
-			CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-			CountryCode: "VN",
-			PostalCode:  "70000",
-			Description: "Vietnam code",
+			CourierUID:  vn.CourierUID,
+			CountryCode: vn.CountryCode,
+			PostalCode:  vn.PostalCode,
+			Description: vn.Description,
 		},
 		{
 			CourierUID:  "UCMvWngocMqKbaC3AWQBF2",
@@ -161,10 +147,10 @@ func TestImportCourierCoverageCode(t *testing.T) {
 	req := request.ImportCourierCoverageCodeRequest{
 		Rows: []map[string]string{
 			{
-				"courier_uid":  "UCMvWngocMqKbaC3AWQBF",
-				"country_code": "VN",
-				"postal_code":  "70000",
-				"description":  "Vietnam code",
+				"courier_uid":  vn.CourierUID,
+				"country_code": vn.CountryCode,
+				"postal_code":  vn.PostalCode,
+				"description":  vn.Description,
 				"code1":        "",
 				"code2":        "",
 				"code3":        "",
@@ -176,7 +162,7 @@ func TestImportCourierCoverageCode(t *testing.T) {
 				"courier_uid":  "UCMvWngocMqKbaC3AWQBF",
 				"country_code": "",
 				"postal_code":  "",
-				"description":  "Vietnam code",
+				"description":  vn.Description,
 				"code1":        "",
 				"code2":        "",
 				"code3":        "",
@@ -191,7 +177,7 @@ func TestImportCourierCoverageCode(t *testing.T) {
 	data := result.Data.([][]string)
 	assert.NotNil(t, result)
 	assert.Equal(t, 3, len(data), "Count of result must be 3")
-	assert.Equal(t, "UCMvWngocMqKbaC3AWQBF", data[1][0], "Courier UID is UCMvWngocMqKbaC3AWQBF")
+	assert.Equal(t, vn.CourierUID, data[1][0], courierUIDIsNotCorrect)
 }
 
 func TestCreateCourierCoverageCodeFailedWithDuplicated(t *testing.T) {
@@ -200,10 +186,10 @@ func TestCreateCourierCoverageCodeFailedWithDuplicated(t *testing.T) {
 	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
 
 	req := request.SaveCourierCoverageCodeRequest{
-		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-		CountryCode: "VN",
-		PostalCode:  "70000",
-		Description: "Vietnam code",
+		CourierUID:  vn.CourierUID,
+		CountryCode: vn.CountryCode,
+		PostalCode:  vn.PostalCode,
+		Description: vn.Description,
 	}
 
 	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(errors.New("Found"))
@@ -219,10 +205,10 @@ func TestCreateCourierCoverageCodeFailedWithDuplicatedUniqueCode(t *testing.T) {
 	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
 
 	req := request.SaveCourierCoverageCodeRequest{
-		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-		CountryCode: "VN",
-		PostalCode:  "70000",
-		Description: "Vietnam code",
+		CourierUID:  vn.CourierUID,
+		CountryCode: vn.CountryCode,
+		PostalCode:  vn.PostalCode,
+		Description: vn.Description,
 	}
 
 	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(nil)
@@ -241,10 +227,10 @@ func TestUpdateCourierCoverageCodefailedWithNotFound(t *testing.T) {
 
 	req := request.SaveCourierCoverageCodeRequest{
 		Uid:         "123",
-		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-		CountryCode: "VN",
-		PostalCode:  "70000",
-		Description: "Vietnam code",
+		CourierUID:  vn.CourierUID,
+		CountryCode: vn.CountryCode,
+		PostalCode:  vn.PostalCode,
+		Description: vn.Description,
 	}
 	var courier entity.Courier
 	courier.UID = "UCMvWngocMqKbaC3AWQBF"
@@ -265,18 +251,18 @@ func TestUpdateCourierCoverageCodefailedWithDuplicated(t *testing.T) {
 
 	req := request.SaveCourierCoverageCodeRequest{
 		Uid:         "123",
-		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-		CountryCode: "VN",
-		PostalCode:  "70000",
-		Description: "Vietnam code",
+		CourierUID:  vn.CourierUID,
+		CountryCode: vn.CountryCode,
+		PostalCode:  vn.PostalCode,
+		Description: vn.Description,
 	}
 
 	courierCoverageCode := entity.CourierCoverageCode{
 		CourierID:   555,
-		CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-		CountryCode: "VN",
-		PostalCode:  "70000",
-		Description: "Vietnam code",
+		CourierUID:  vn.CourierUID,
+		CountryCode: vn.CountryCode,
+		PostalCode:  vn.PostalCode,
+		Description: vn.Description,
 		Courier: &entity.Courier{
 			BaseIDModel: base.BaseIDModel{UID: "UCMvWngocMqKbaC3AWQBF"},
 		},
@@ -319,9 +305,9 @@ func TestImportCourierCoverageCodeFailed(t *testing.T) {
 	req := request.ImportCourierCoverageCodeRequest{
 		Rows: []map[string]string{
 			{
-				"courier_uid":  "UCMvWngocMqKbaC3AWQBF",
-				"country_code": "VN",
-				"description":  "Vietnam code",
+				"courier_uid":  vn.CourierUID,
+				"country_code": vn.CountryCode,
+				"description":  vn.Description,
 				"code1":        "",
 				"code2":        "",
 				"code3":        "",
@@ -345,9 +331,9 @@ func TestImportCourierCoverageCodeFailedWithNotFoundCourier(t *testing.T) {
 	req := request.ImportCourierCoverageCodeRequest{
 		Rows: []map[string]string{
 			{
-				"courier_uid":  "UCMvWngocMqKbaC3AWQBF",
-				"country_code": "VN",
-				"description":  "Vietnam code",
+				"courier_uid":  vn.CourierUID,
+				"country_code": vn.CountryCode,
+				"description":  vn.Description,
 				"postal_code":  "any",
 				"code1":        "",
 				"code2":        "",

@@ -3,11 +3,12 @@ package transport
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go-klikdokter/app/api/endpoint"
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
-	"go-klikdokter/pkg/util"
+	"go-klikdokter/helper/global"
 	"net/http"
 
 	"github.com/gorilla/schema"
@@ -26,21 +27,21 @@ func ShipmentPredefinedHandler(s service.ShipmentPredefinedService, logger log.L
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("GET").Path(util.PrefixBase + "/other/shipment-predefined/{uid}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixOther, global.PathShipmentPredefinedUID)).Handler(httptransport.NewServer(
 		ep.Show,
-		decodeShipmentPredefinedUIDPath,
+		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path(util.PrefixBase + "/other/shipment-predefined/{uid}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path(fmt.Sprint(global.PrefixBase, global.PrefixOther, global.PathShipmentPredefinedUID)).Handler(httptransport.NewServer(
 		ep.Update,
 		decodeUpdateShipmentPredefinedRequest,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path(util.PrefixBase + "/other/shipment-predefined").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixOther, global.PathShipmentPredefined)).Handler(httptransport.NewServer(
 		ep.List,
 		decodeListShipmentPredefinedRequest,
 		encoder.EncodeResponseHTTP,
@@ -57,7 +58,7 @@ func decodeUpdateShipmentPredefinedRequest(ctx context.Context, r *http.Request)
 	//add this to htmlescape body post
 	//global.HtmlEscape(&req)
 
-	req.Uid = mux.Vars(r)["uid"]
+	req.Uid = mux.Vars(r)[pathUID]
 	return req, nil
 }
 
@@ -75,8 +76,4 @@ func decodeListShipmentPredefinedRequest(ctx context.Context, r *http.Request) (
 	params.GetFilter()
 
 	return params, nil
-}
-
-func decodeShipmentPredefinedUIDPath(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	return mux.Vars(r)["uid"], nil
 }

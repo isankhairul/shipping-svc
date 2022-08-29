@@ -15,6 +15,11 @@ type errorer interface {
 	error() error
 }
 
+const (
+	contentType        = "Content-Type"
+	contentDisposition = "Content-Disposition"
+)
+
 /*
 // swagger:model InternalServerErrorResponse
 type InternalServerErrorResponse struct {
@@ -57,7 +62,7 @@ func EncodeResponseHTTP(ctx context.Context, w http.ResponseWriter, resp interfa
 		EncodeError(ctx, err.error(), w)
 		return nil
 	}
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set(contentType, "application/json; charset=utf-8")
 
 	result := base.GetHttpResponse(resp)
 	code := result.Meta.Code
@@ -79,7 +84,7 @@ func EncodeResponseHTTP(ctx context.Context, w http.ResponseWriter, resp interfa
 
 //Encode error, for HTTP
 func EncodeError(_ context.Context, err error, w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set(contentType, "application/json; charset=utf-8")
 	result := &errorResponse{}
 	result.Meta.Code = message.ErrReq.Code
 	result.Meta.Message = err.Error()
@@ -91,8 +96,8 @@ func EncodeResponseCSV(ctx context.Context, w http.ResponseWriter, resp interfac
 	result, ok := resp.(base.ResponseFile)
 
 	if ok {
-		w.Header().Set("Content-Type", "text/csv")
-		w.Header().Set("Content-Disposition", "attachment;filename="+result.Name)
+		w.Header().Set(contentType, "text/csv")
+		w.Header().Set(contentDisposition, "attachment;filename="+result.Name)
 
 		b := &bytes.Buffer{}
 		wr := csv.NewWriter(b)

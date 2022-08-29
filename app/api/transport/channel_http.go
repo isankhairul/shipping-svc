@@ -3,11 +3,12 @@ package transport
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go-klikdokter/app/api/endpoint"
 	"go-klikdokter/app/model/base/encoder"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
-	"go-klikdokter/pkg/util"
+	"go-klikdokter/helper/global"
 	"net/http"
 
 	"github.com/gorilla/schema"
@@ -15,6 +16,10 @@ import (
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
+)
+
+const (
+	pathUID = "uid"
 )
 
 func ChannelHttpHandler(s service.ChannelService, ccs service.ChannelCourierService, logger log.Logger) http.Handler {
@@ -26,49 +31,49 @@ func ChannelHttpHandler(s service.ChannelService, ccs service.ChannelCourierServ
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
 	}
 
-	pr.Methods("POST").Path(util.PrefixBase + "/channel/channel-app").Handler(httptransport.NewServer(
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannel, global.PathChannelApp)).Handler(httptransport.NewServer(
 		ep.Save,
 		decodeSaveChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-app").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannel, global.PathChannelApp)).Handler(httptransport.NewServer(
 		ep.List,
 		decodeListChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-app/{id}").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannel, global.PathChannelAppUID)).Handler(httptransport.NewServer(
 		ep.Show,
-		decodeShowChannel,
+		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("PUT").Path(util.PrefixBase + "/channel/channel-app/{id}").Handler(httptransport.NewServer(
+	pr.Methods("PUT").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannel, global.PathChannelAppUID)).Handler(httptransport.NewServer(
 		ep.Update,
 		decodeUpdateChannel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("DELETE").Path(util.PrefixBase + "/channel/channel-app/{id}").Handler(httptransport.NewServer(
+	pr.Methods("DELETE").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannel, global.PathChannelAppUID)).Handler(httptransport.NewServer(
 		ep.Delete,
-		decodeDeleteChannel,
+		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path(util.PrefixBase + "/channel/channel-status-courier-status").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannel, global.PathChannelCourierStatus)).Handler(httptransport.NewServer(
 		ep.ListStatus,
 		decodeListChannelStatus,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
 
-	pr.Methods("GET").Path(util.PrefixBase + "/channel/{channel-uid}/courier-list").Handler(httptransport.NewServer(
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannel, global.PathUIDCourierList)).Handler(httptransport.NewServer(
 		ep.ChannelCourierList,
 		decodeChannelCourierList,
 		encoder.EncodeResponseHTTP,
@@ -87,11 +92,6 @@ func decodeSaveChannel(ctx context.Context, r *http.Request) (rqst interface{}, 
 	//global.HtmlEscape(&req)
 
 	return req, nil
-}
-
-func decodeShowChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	uid := mux.Vars(r)["id"]
-	return uid, nil
 }
 
 func decodeListChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
@@ -117,13 +117,8 @@ func decodeUpdateChannel(ctx context.Context, r *http.Request) (rqst interface{}
 	}
 	//add this to htmlescape body post
 	//global.HtmlEscape(&req)
-	req.Uid = mux.Vars(r)["id"]
+	req.Uid = mux.Vars(r)[pathUID]
 	return req, nil
-}
-
-func decodeDeleteChannel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
-	uid := mux.Vars(r)["id"]
-	return uid, nil
 }
 
 func decodeListChannelStatus(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
@@ -152,7 +147,7 @@ func decodeChannelCourierList(ctx context.Context, r *http.Request) (rqst interf
 	if err = schema.NewDecoder().Decode(&params, r.Form); err != nil {
 		return nil, err
 	}
-	params.ChannelUID = mux.Vars(r)["channel-uid"]
+	params.ChannelUID = mux.Vars(r)[pathUID]
 	params.SetFilterMap()
 
 	return params, nil

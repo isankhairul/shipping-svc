@@ -6,14 +6,15 @@ import (
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/repository/repository_mock"
 	"go-klikdokter/app/service"
+	"go-klikdokter/helper/message"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-func init() {
-}
+// func init() {
+// }
 
 func TestCreateChannelCourierServiceSuccess(t *testing.T) {
 	var channelCourierRepo = &repository_mock.ChannelCourierRepositoryMock{Mock: mock.Mock{}}
@@ -39,9 +40,9 @@ func TestCreateChannelCourierServiceSuccess(t *testing.T) {
 	result, msg := channelCourierServiceService.CreateChannelCourierService(input)
 
 	assert.NotNil(t, result)
-	assert.Equal(t, 201000, msg.Code, "Status code should be 200")
-	assert.Equal(t, "Courier_1", result.CourierName, "CourierName must be test name")
-	assert.Equal(t, "Channel_1", result.ChannelName, "CourierName must be test name")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, codeIsNotCorrect)
+	assert.Equal(t, "Courier_1", result.CourierName, courierNameIsNotCorrect)
+	assert.Equal(t, "Channel_1", result.ChannelName, channelNameIsNotCorrect)
 }
 
 func TestCreateChannelCourierServiceCourierNotMatch(t *testing.T) {
@@ -68,7 +69,7 @@ func TestCreateChannelCourierServiceCourierNotMatch(t *testing.T) {
 	result, msg := channelCourierServiceService.CreateChannelCourierService(input)
 
 	assert.Nil(t, result)
-	assert.Equal(t, 34402, msg.Code, "Status code should be 34402")
+	assert.Equal(t, 34402, msg.Code, codeIsNotCorrect)
 }
 
 func TestCreateChannelCourierServiceFailedChannelCourierServiceExist(t *testing.T) {
@@ -105,8 +106,8 @@ func TestCreateChannelCourierServiceFailedChannelCourierServiceExist(t *testing.
 
 	assert.NotNil(t, result)
 	assert.Equal(t, 34001, msg.Code, "Status code should be 34001")
-	assert.Equal(t, "Courier_1", result.CourierName, "CourierName must be test name")
-	assert.Equal(t, "Channel_1", result.ChannelName, "CourierName must be test name")
+	assert.Equal(t, "Courier_1", result.CourierName, courierNameIsNotCorrect)
+	assert.Equal(t, "Channel_1", result.ChannelName, channelNameIsNotCorrect)
 }
 
 func TestCreateChannelCourierServiceFailedChannelCourierNotFound(t *testing.T) {
@@ -129,7 +130,7 @@ func TestCreateChannelCourierServiceFailedChannelCourierNotFound(t *testing.T) {
 	result, msg := channelCourierServiceService.CreateChannelCourierService(input)
 
 	assert.Nil(t, result)
-	assert.Equal(t, 34402, msg.Code, "Status code should be 34402")
+	assert.Equal(t, 34402, msg.Code, codeIsNotCorrect)
 }
 
 func TestCreateChannelCourierServiceFailedCourierServiceNotFound(t *testing.T) {
@@ -189,7 +190,7 @@ func TestListChannelCouriersServiceSuccess(t *testing.T) {
 	result, _, msg := channelCourierServiceService.ListChannelCouriersService(input)
 
 	assert.NotNil(t, result)
-	assert.Equal(t, 201000, msg.Code, "Status code should be 200")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestListChannelCouriersServiceNotFound(t *testing.T) {
@@ -213,7 +214,7 @@ func TestListChannelCouriersServiceNotFound(t *testing.T) {
 	result, _, msg := channelCourierServiceService.ListChannelCouriersService(input)
 
 	assert.Nil(t, result)
-	assert.Equal(t, 34005, msg.Code, "Status code should be 34005")
+	assert.Equal(t, 34005, msg.Code, codeIsNotCorrect)
 }
 
 func TestGetChannelCourierServiceSuccess(t *testing.T) {
@@ -241,7 +242,7 @@ func TestGetChannelCourierServiceSuccess(t *testing.T) {
 	result, msg := channelCourierServiceService.GetChannelCourierService("uid")
 
 	assert.NotNil(t, result)
-	assert.Equal(t, 201000, msg.Code, "Status code should be 200")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestGetChannelCourierServiceNotFound(t *testing.T) {
@@ -254,7 +255,7 @@ func TestGetChannelCourierServiceNotFound(t *testing.T) {
 	result, msg := channelCourierServiceService.GetChannelCourierService("uid")
 
 	assert.Nil(t, result)
-	assert.Equal(t, 34005, msg.Code, "Status code should be 34005")
+	assert.Equal(t, 34005, msg.Code, codeIsNotCorrect)
 }
 
 func TestUpdateChannelCourierServiceSuccess(t *testing.T) {
@@ -291,7 +292,7 @@ func TestUpdateChannelCourierServiceSuccess(t *testing.T) {
 	result, msg := channelCourierServiceService.UpdateChannelCourierService(input)
 
 	assert.NotNil(t, result)
-	assert.Equal(t, 201000, msg.Code, "Status code should be 200")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestUpdateGetChannelCourierServiceByUIDNotFound(t *testing.T) {
@@ -312,7 +313,7 @@ func TestUpdateGetChannelCourierServiceByUIDNotFound(t *testing.T) {
 	result, msg := channelCourierServiceService.UpdateChannelCourierService(input)
 
 	assert.Nil(t, result)
-	assert.Equal(t, 34402, msg.Code, "Status code should be 34402")
+	assert.Equal(t, 34402, msg.Code, codeIsNotCorrect)
 }
 
 func TestDeleteChannelCourierServiceSuccess(t *testing.T) {
@@ -348,7 +349,7 @@ func TestDeleteChannelCourierServiceSuccess(t *testing.T) {
 	channelCourierServiceRepo.Mock.On("DeleteChannelCourierServiceByID", mock.Anything).Return(nil)
 	msg := channelCourierServiceService.DeleteChannelCourierService(input.UID)
 
-	assert.Equal(t, 201000, msg.Code, "Status code should be 200")
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestDeleteChannelCourierServiceFailedNotFound(t *testing.T) {
@@ -368,5 +369,5 @@ func TestDeleteChannelCourierServiceFailedNotFound(t *testing.T) {
 	channelCourierServiceRepo.Mock.On("GetChannelCourierServiceByUID", mock.Anything).Return(nil, nil)
 	msg := channelCourierServiceService.DeleteChannelCourierService(input.UID)
 
-	assert.Equal(t, 34005, msg.Code, "Status code should be 34005")
+	assert.Equal(t, 34005, msg.Code, codeIsNotCorrect)
 }

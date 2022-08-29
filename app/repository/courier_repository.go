@@ -5,6 +5,8 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/response"
+	"go-klikdokter/pkg/util"
+
 	"gorm.io/gorm"
 )
 
@@ -87,42 +89,36 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 		Where("sp.type = 'courier_type'")
 
 	for k, v := range filter {
-		switch k {
-		case "courier_name":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where(like(k, value))
+
+		if util.IsSliceAndNotEmpty(v) {
+
+			switch k {
+			case "courier_name":
+				query = query.Where(like(k, v.([]string)))
+
+			case "code":
+				query = query.Where(like("courier.code", v.([]string)))
+
+			case "courier_type":
+				query = query.Where("courier_type IN ?", v.([]string))
+
+			case "status":
+				query = query.Where("courier.status IN ?", v)
 
 			}
-		case "code":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where(like("courier.code", value))
-
-			}
-		case "courier_type":
-			value, ok := v.([]string)
-			if ok && len(value) > 0 {
-				query = query.Where("courier_type IN ?", value)
-
-			}
-		case "status":
-			value, ok := v.([]int)
-			if ok && len(value) > 0 {
-				query = query.Where("courier.status IN ?", value)
-
-			}
-
 		}
 	}
 
 	if len(sort) > 0 {
 		m := map[string]string{"courier_code": "courier.code", "courier_type_name": "courier.courier_type_name"}
-		sortValue := m[sort]
-		query = query.Order(sortValue)
-	} else {
+		sort = m[sort]
+	}
+
+	if len(sort) == 0 {
 		query = query.Order("updated_at DESC")
 	}
+
+	query = query.Order(sort)
 
 	pagination.Limit = limit
 	pagination.Page = page

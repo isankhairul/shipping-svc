@@ -60,7 +60,7 @@ func (r *ChannelCourierServiceRepositoryMock) FindByParams(limit, page int, sort
 	return arguments.Get(0).([]entity.ChannelCourierService), arguments.Get(1).(*base.Pagination), nil
 }
 
-func (r *ChannelCourierServiceRepositoryMock) GetChannelCourierListByChannelUID(channel_uid string, limit int, page int, sort, dir string, filter map[string]interface{}) ([]response.CourierServiceByChannelResponse, *base.Pagination, error) {
+func (r *ChannelCourierServiceRepositoryMock) GetChannelCourierListByChannelUID(channelUID string, limit int, page int, sort, dir string, filter map[string]interface{}) ([]response.CourierServiceByChannelResponse, *base.Pagination, error) {
 	arguments := r.Mock.Called()
 	return arguments.Get(0).([]response.CourierServiceByChannelResponse), arguments.Get(1).(*base.Pagination), nil
 }
