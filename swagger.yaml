@@ -1,0 +1,2748 @@
+basePath: /shipment-svc/api/v1
+definitions:
+  BaseIDModel:
+    properties:
+      id:
+        description: |-
+          gorm.Model
+          Id of as primary key
+          in: int64
+        format: uint64
+        type: integer
+        x-go-name: ID
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      uid:
+        description: |-
+          UID of the a model
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/base
+  Channel:
+    properties:
+      channel_code:
+        description: |-
+          ChannelCode of the Channel
+          in: string
+        type: string
+        x-go-name: ChannelCode
+      channel_name:
+        description: |-
+          ChannelName of the Channel
+          in: string
+        type: string
+        x-go-name: ChannelName
+      description:
+        description: |-
+          Description of the Channel
+          in: string
+        type: string
+        x-go-name: Description
+      id:
+        description: |-
+          gorm.Model
+          Id of as primary key
+          in: int64
+        format: uint64
+        type: integer
+        x-go-name: ID
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      logo:
+        description: |-
+          Logo of the Channel
+          in: string
+        type: string
+        x-go-name: Logo
+      status:
+        description: |-
+          Status of the Channel
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          UID of the a model
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
+  ChannelCourier:
+    properties:
+      channel_id:
+        description: |-
+          Id of the Channel
+          in: integer
+        format: uint64
+        type: integer
+        x-go-name: ChannelID
+      courier_id:
+        description: |-
+          Id of the Courier
+          in: integer
+        format: uint64
+        type: integer
+        x-go-name: CourierID
+      hide_purpose:
+        description: |-
+          Hide purpose of the ChannelCourier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: HidePurpose
+      id:
+        description: |-
+          gorm.Model
+          Id of as primary key
+          in: int64
+        format: uint64
+        type: integer
+        x-go-name: ID
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      priority_sort:
+        description: |-
+          PrioritySort of the ChannelCourier
+          in: int
+        format: int32
+        type: integer
+        x-go-name: PrioritySort
+      status:
+        description: |-
+          Status of the ChannelCourier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          UID of the a model
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
+  ChannelCourierDTO:
+    description: 'swagger: model ChannelCourierDTO'
+    properties:
+      channel_code:
+        type: string
+        x-go-name: ChannelCode
+      channel_name:
+        type: string
+        x-go-name: ChannelName
+      courier_name:
+        type: string
+        x-go-name: CourierName
+      courier_uid:
+        type: string
+        x-go-name: CourierUID
+      hide_purpose:
+        format: int32
+        type: integer
+        x-go-name: HidePurpose
+      priority_sort:
+        format: int32
+        type: integer
+        x-go-name: PrioritySort
+      status:
+        format: int32
+        type: integer
+        x-go-name: Status
+      uid:
+        type: string
+        x-go-name: Uid
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
+  ChannelCourierPaginationReponse:
+    properties:
+      Items:
+        items:
+          $ref: '#/definitions/ChannelCourierDTO'
+        type: array
+      limit:
+        format: int64
+        type: integer
+        x-go-name: Limit
+      page:
+        format: int64
+        type: integer
+        x-go-name: Page
+      records:
+        format: int64
+        type: integer
+        x-go-name: Records
+      total_page:
+        format: int64
+        type: integer
+        x-go-name: TotalPage
+      total_records:
+        format: int64
+        type: integer
+        x-go-name: TotalRecords
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  ChannelCourierService:
+    properties:
+      channel_courier_id:
+        description: |-
+          Id of the Channel Courier
+          in: integer
+        format: uint64
+        type: integer
+        x-go-name: ChannelCourierID
+      courier_service_id:
+        description: |-
+          Id of the Courier
+          in: integer
+        format: uint64
+        type: integer
+        x-go-name: CourierServiceID
+      id:
+        description: |-
+          gorm.Model
+          Id of as primary key
+          in: int64
+        format: uint64
+        type: integer
+        x-go-name: ID
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      price_internal:
+        description: |-
+          Status of the Courier
+          in: number
+        format: double
+        type: number
+        x-go-name: PriceInternal
+      status:
+        description: |-
+          Status of the Courier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          UID of the a model
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
+  ChannelCourierServiceDetail:
+    properties:
+      channel_courier_uid:
+        type: string
+        x-go-name: ChannelCourierUID
+      channel_name:
+        type: string
+        x-go-name: ChannelName
+      courier_name:
+        type: string
+        x-go-name: CourierName
+      courier_service_uid:
+        type: string
+        x-go-name: CourierServiceUID
+      price_internal:
+        format: double
+        type: number
+        x-go-name: PriceInternal
+      shipping_name:
+        type: string
+        x-go-name: ShippingName
+      status:
+        format: int32
+        type: integer
+        x-go-name: Status
+      uid:
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  ChannelCourierServiceItem:
+    properties:
+      channel_name:
+        type: string
+        x-go-name: ChannelName
+      courier_name:
+        type: string
+        x-go-name: CourierName
+      courier_uid:
+        type: string
+        x-go-name: CourierUID
+      shipping_code:
+        type: string
+        x-go-name: ShippingCode
+      shipping_name:
+        type: string
+        x-go-name: ShippingName
+      shipping_type:
+        type: string
+        x-go-name: ShippingType
+      status:
+        format: int32
+        type: integer
+        x-go-name: Status
+      uid:
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  Courier:
+    properties:
+      code:
+        description: |-
+          Code of the Courier
+          in: string
+        type: string
+        x-go-name: Code
+      courier_api_intergration:
+        description: |-
+          Courier Api Integration of the Courier. Need to set column becase snake-case cannot understand convetnion.
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: CourierApiIntegration
+      courier_name:
+        description: |-
+          Name of the Courier
+          in: string
+        type: string
+        x-go-name: CourierName
+      courier_type:
+        description: |-
+          Type of the Courier
+          in: string
+        type: string
+        x-go-name: CourierType
+      hide_purpose:
+        description: |-
+          Hide purpose of the Courier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: HidePurpose
+      id:
+        description: |-
+          gorm.Model
+          Id of as primary key
+          in: int64
+        format: uint64
+        type: integer
+        x-go-name: ID
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      logo:
+        description: |-
+          Logo of the Courier
+          in: string
+        type: string
+        x-go-name: Logo
+      provide_airwaybill:
+        description: |-
+          Provide Airwaybill of the Courier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: ProvideAirwaybill
+      status:
+        description: |-
+          Status of the Courier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          UID of the a model
+          in: int64
+        type: string
+        x-go-name: UID
+      use_geocoodinate:
+        description: |-
+          Geo Coodinate of the Courier
+          in: string
+        format: int32
+        type: integer
+        x-go-name: UseGeocoodinate
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
+  CourierByChannelResponse:
+    properties:
+      courier_code:
+        example: shipper
+        type: string
+        x-go-name: CourierCode
+      courier_name:
+        example: Shipper
+        type: string
+        x-go-name: CourierName
+      courier_type_code:
+        example: third_party
+        type: string
+        x-go-name: CourierTypeCode
+      courier_type_name:
+        example: Third Party Courier
+        type: string
+        x-go-name: CourierTypeName
+      courier_uid:
+        example: aabb7778888dddeeeee
+        type: string
+        x-go-name: CourierUID
+      image_logo:
+        $ref: '#/definitions/JSONB'
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  CourierCoverageCode:
+    properties:
+      code1:
+        description: |-
+          Code 1 of the Courier Coverage Code
+          in: string
+        example: '"CKG011"'
+        type: string
+        x-go-name: Code1
+      code2:
+        description: |-
+          Code 2 of the Courier Coverage Code
+          in: string
+        example: '"CKG012"'
+        type: string
+        x-go-name: Code2
+      code3:
+        description: |-
+          Code 3 of the Courier Coverage Code
+          in: string
+        example: '""'
+        type: string
+        x-go-name: Code3
+      code4:
+        description: |-
+          Code 4 of the Courier Coverage Code
+          in: string
+        example: '""'
+        type: string
+        x-go-name: Code4
+      code5:
+        description: |-
+          Code 5 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code5
+      code6:
+        description: |-
+          Code 6 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code6
+      country_code:
+        description: |-
+          Country code of the Courier Coverage Code
+          in: string
+          require: true
+        example: '"ID"'
+        type: string
+        x-go-name: CountryCode
+      courier_name:
+        type: string
+        x-go-name: CourierName
+      courier_uid:
+        description: |-
+          Courier UID of the Courier
+          in: string
+          require: false
+        example: '"ggkjhsdf6668885555"'
+        type: string
+        x-go-name: CourierUID
+      description:
+        description: |-
+          Description of the Courier Coverage Code
+          in: string
+        example: '"PAGEDANGAN"'
+        type: string
+        x-go-name: Description
+      id:
+        description: |-
+          gorm.Model
+          Id of as primary key
+          in: int64
+        format: uint64
+        type: integer
+        x-go-name: ID
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      postal_code:
+        description: |-
+          Postal code of the Courier Coverage Code
+          in: string
+          require: true
+        example: '"151338"'
+        type: string
+        x-go-name: PostalCode
+      status:
+        description: |-
+          Status of the Courier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          UID of the a model
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
+  CourierService:
+    properties:
+      cancelable:
+        description: |-
+          Cancelable of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Cancelable
+      cod_available:
+        description: |-
+          Cod Available of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: CodAvailable
+      courier_uid:
+        description: |-
+          Courier UId of the Courier Service
+          in: string
+        type: string
+        x-go-name: CourierUId
+      end_time:
+        $ref: '#/definitions/Time'
+      etd_max:
+        description: |-
+          ETD Max of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: ETD_Max
+      etd_min:
+        description: |-
+          ETD Min of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: ETD_Min
+      id:
+        description: |-
+          gorm.Model
+          Id of as primary key
+          in: int64
+        format: uint64
+        type: integer
+        x-go-name: ID
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
+      insurance:
+        description: |-
+          Insurance of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Insurance
+      insurance_fee:
+        description: |-
+          Insurance Fee of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: InsuranceFee
+      insurance_fee_type:
+        description: |-
+          Insurance Fee Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: InsuranceFeeType
+      insurance_min:
+        description: |-
+          Insurance Min of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: InsuranceMin
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      logo:
+        description: |-
+          Logo of the Courier Service
+          in: string
+        type: string
+        x-go-name: Logo
+      max_distance:
+        description: |-
+          Max Distance of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxDistance
+      max_purchase:
+        description: |-
+          Max Purchase of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxPurchase
+      max_volume:
+        description: |-
+          Max Volume of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxVolume
+      max_weight:
+        description: |-
+          Max Weight of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxWeight
+      min_purchase:
+        description: |-
+          Min Purchase of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MinPurchase
+      prescription_allowed:
+        description: |-
+          Prescription Allowed of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: PrescriptionAllowed
+      repickup:
+        description: |-
+          Repickup Fee of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: Repickup
+      shipping_code:
+        description: |-
+          Shipping Code of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingCode
+      shipping_description:
+        description: |-
+          Shipping Description of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingDescription
+      shipping_name:
+        description: |-
+          Shipping Name of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingName
+      shipping_type:
+        description: |-
+          Shipping Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingType
+      start_time:
+        $ref: '#/definitions/Time'
+      status:
+        description: |-
+          Status of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Status
+      tracking_available:
+        description: |-
+          Tracking Available of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: TrackingAvailable
+      uid:
+        description: |-
+          UID of the a model
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
+  CourierServiceByChannel:
+    properties:
+      courier:
+        $ref: '#/definitions/CourierByChannelResponse'
+      courier_service_uid:
+        example: ssssbb7778888dddzzzzz
+        type: string
+        x-go-name: CourierServiceUID
+      etd_max:
+        example: 48
+        format: double
+        type: number
+        x-go-name: ETDMax
+      etd_min:
+        example: 24
+        format: double
+        type: number
+        x-go-name: ETDMin
+      image_logo:
+        $ref: '#/definitions/JSONB'
+      shipping_code:
+        example: shipper
+        type: string
+        x-go-name: ShippingCode
+      shipping_description:
+        example: Shipper adalah paket reguler yang ditawarkan Shipper
+        type: string
+        x-go-name: ShippingDescription
+      shipping_name:
+        example: Shipper
+        type: string
+        x-go-name: ShippingName
+      shipping_type_code:
+        example: regular
+        type: string
+        x-go-name: ShippingTypeCode
+      shipping_type_name:
+        example: Regular Delivery
+        type: string
+        x-go-name: ShippingTypeName
+    type: object
+    x-go-name: CourierServiceByChannelResponse
+    x-go-package: go-klikdokter/app/model/response
+  CourierServiceListResponse:
+    properties:
+      courier_name:
+        type: string
+        x-go-name: CourierName
+      courier_type:
+        type: string
+        x-go-name: CourierType
+      courier_type_name:
+        type: string
+        x-go-name: CourierTypeName
+      courier_uid:
+        type: string
+        x-go-name: CourierUID
+      id:
+        format: int32
+        type: integer
+        x-go-name: Id
+      shipping_code:
+        type: string
+        x-go-name: ShippingCode
+      shipping_name:
+        type: string
+        x-go-name: ShippingName
+      shipping_type:
+        type: string
+        x-go-name: ShippingType
+      shipping_type_name:
+        type: string
+        x-go-name: ShippingTypeName
+      status:
+        format: int32
+        type: integer
+        x-go-name: Status
+      uid:
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  DataResponse:
+    properties:
+      record:
+        type: object
+        x-go-name: Record
+      records:
+        type: object
+        x-go-name: Records
+    type: object
+    x-go-name: data
+    x-go-package: go-klikdokter/app/model/base
+  GetChannelCourierStatusResponse:
+    properties:
+      channel_name:
+        description: Channel name
+        type: string
+        x-go-name: ChannelName
+      courier_name:
+        description: Courier name
+        type: string
+        x-go-name: CourierName
+      courier_status:
+        $ref: '#/definitions/JSONB'
+      status_code:
+        description: Status Code
+        type: string
+        x-go-name: StatusCode
+      status_title:
+        description: Status Title
+        type: string
+        x-go-name: StatusTitle
+    type: object
+    x-go-name: GetChannelCourierStatusResponseItem
+    x-go-package: go-klikdokter/app/model/response
+  JSONB:
+    items:
+      format: uint8
+      type: integer
+    type: array
+    x-go-package: go-klikdokter/pkg/util/datatype
+  MetaResponse:
+    properties:
+      code:
+        description: |-
+          Code is the response code
+          in: int
+        format: int64
+        type: integer
+        x-go-name: Code
+      message:
+        description: |-
+          Message is the response message
+          in: string
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-name: metaResponse
+    x-go-package: go-klikdokter/app/model/base
+  PaginationResponse:
+    properties:
+      limit:
+        format: int64
+        type: integer
+        x-go-name: Limit
+      page:
+        format: int64
+        type: integer
+        x-go-name: Page
+      records:
+        format: int64
+        type: integer
+        x-go-name: Records
+      total_page:
+        format: int64
+        type: integer
+        x-go-name: TotalPage
+      total_records:
+        format: int64
+        type: integer
+        x-go-name: TotalRecords
+    type: object
+    x-go-name: Pagination
+    x-go-package: go-klikdokter/app/model/base
+  SaveChannelCourierRequest:
+    properties:
+      channel_uid:
+        description: |-
+          ID of the channel
+          in: string
+        type: string
+        x-go-name: ChannelUID
+      courier_uid:
+        description: |-
+          ID of the courier
+          in: int
+        type: string
+        x-go-name: CourierUID
+      hide_purpose:
+        description: |-
+          Hide purpose of the Courier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: HidePurpose
+      priority_sort:
+        description: |-
+          Priority Sort of ChannelCourier
+          in: int
+        format: int32
+        type: integer
+        x-go-name: PrioritySort
+      status:
+        description: |-
+          Courier status
+          in: int
+        format: int32
+        type: integer
+        x-go-name: Status
+    required:
+    - courier_uid
+    - channel_uid
+    - priority_sort
+    - status
+    - hide_purpose
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  SaveChannelCourierServiceRequest:
+    properties:
+      channel_courier_uid:
+        description: |-
+          UID of the channel courier
+          in: int
+        type: string
+        x-go-name: ChannelCourierUID
+      courier_service_uid:
+        description: |-
+          UID of the Courier Service
+          in: int
+        type: string
+        x-go-name: CourierServiceUID
+      price_internal:
+        description: |-
+          Priority Sort of ChannelCourier
+          in: number
+        format: double
+        type: number
+        x-go-name: PriceInternal
+      status:
+        description: |-
+          Courier status
+          in: number
+        format: int32
+        type: integer
+        x-go-name: Status
+    required:
+    - courier_service_uid
+    - channel_courier_uid
+    - price_internal
+    - status
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  SaveChannelRequest:
+    properties:
+      channel_code:
+        description: |-
+          ChannelCode of the Channel
+          in: string
+        type: string
+        x-go-name: ChannelCode
+      channel_name:
+        description: |-
+          ChannelName of the Channel
+          in: string
+        type: string
+        x-go-name: ChannelName
+      description:
+        description: |-
+          Description of the Channel
+          in: string
+        type: string
+        x-go-name: Description
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
+      logo:
+        description: |-
+          Logo of Channel
+          in: string
+        type: string
+        x-go-name: Logo
+      status:
+        description: |-
+          status of Channel
+          in: int
+        format: int32
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  SaveCourierCoverageCodeRequest:
+    properties:
+      code1:
+        description: |-
+          Code 1 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code1
+      code2:
+        description: |-
+          Code 2 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code2
+      code3:
+        description: |-
+          Code 3 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code3
+      code4:
+        description: |-
+          Code 4 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code4
+      code5:
+        description: |-
+          Code 5 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code5
+      code6:
+        description: |-
+          Code 6 of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Code6
+      country_code:
+        description: |-
+          Country code of the Courier Coverage Code
+          required: True
+          in: string
+        type: string
+        x-go-name: CountryCode
+      courier_uid:
+        description: |-
+          Courier UID of the Courier
+          required: True
+          in: string
+        type: string
+        x-go-name: CourierUID
+      description:
+        description: |-
+          Description of the Courier Coverage Code
+          in: string
+        type: string
+        x-go-name: Description
+      postal_code:
+        description: |-
+          Postal code of the Courier Coverage Code
+          required: True
+          in: string
+        type: string
+        x-go-name: PostalCode
+      status:
+        description: |-
+          Status of coverage code of the courỉe, use this on UPDATE function
+          in: int32
+        format: int32
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  SaveCourierRequestBody:
+    properties:
+      code:
+        description: |-
+          Code of the courier
+          in: string
+        type: string
+        x-go-name: Code
+      courier_api_intergration:
+        description: |-
+          Courier Api Integration of the Courier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: CourierApiIntegration
+      courier_name:
+        description: |-
+          Name of the courier
+          in: string
+        type: string
+        x-go-name: CourierName
+      courier_type:
+        description: |-
+          type of courier
+          in: string
+        type: string
+        x-go-name: CourierType
+      hide_purpose:
+        description: |-
+          Hide purpose of the Courier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: HidePurpose
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
+      logo:
+        description: |-
+          Logo of courier
+          in: string
+        type: string
+        x-go-name: Logo
+      provide_airwaybill:
+        description: |-
+          Provide Airwaybill of the Courier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: ProvideAirwaybill
+      status:
+        description: |-
+          Courier status
+          in: int
+        format: int32
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          Uid of the courỉe, use this on UPDATE function
+          in: int32
+        type: string
+        x-go-name: Uid
+      use_geocoodinate:
+        description: |-
+          Geo Coodinate of the Courier
+          in: string
+        format: int32
+        type: integer
+        x-go-name: UseGeocoodinate
+    type: object
+    x-go-name: SaveCourierRequest
+    x-go-package: go-klikdokter/app/model/request
+  SaveCourierServiceRequest:
+    properties:
+      cancelable:
+        description: |-
+          Cancelable of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Cancelable
+      cod_available:
+        description: |-
+          Cod Available of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: CodAvailable
+      courier_uid:
+        description: |-
+          Courier UId of the Courier Service
+          in: string
+        type: string
+        x-go-name: CourierUId
+      created_at:
+        description: |-
+          Created At of the Courier Service
+          in: time
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      created_by:
+        description: |-
+          Created By Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: CreatedBy
+      end_time:
+        $ref: '#/definitions/Time'
+      etd_max:
+        description: |-
+          ETD Max of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: ETD_Max
+      etd_min:
+        description: |-
+          ETD Min of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: ETD_Min
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
+      insurance:
+        description: |-
+          Insurance of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Insurance
+      insurance_fee:
+        description: |-
+          Insurance Fee of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: InsuranceFee
+      insurance_fee_type:
+        description: |-
+          Insurance Fee Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: InsuranceFeeType
+      insurance_min:
+        description: |-
+          Insurance Min of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: InsuranceMin
+      logo:
+        description: |-
+          Logo of the Courier Service
+          in: string
+        type: string
+        x-go-name: Logo
+      max_distance:
+        description: |-
+          Max Distance of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxDistance
+      max_purchase:
+        description: |-
+          Max Purchase of the Courier Service
+          in: integer
+        format: double
+        type: number
+        x-go-name: MaxPurchase
+      max_volume:
+        description: |-
+          Max Volume of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxVolume
+      max_weight:
+        description: |-
+          Max Weight of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxWeight
+      min_purchase:
+        description: |-
+          Min Purchase of the Courier Service
+          in: integer
+        format: double
+        type: number
+        x-go-name: MinPurchase
+      prescription_allowed:
+        description: |-
+          Prescription Allowed of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: PrescriptionAllowed
+      repickup:
+        description: |-
+          Repickup Fee of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: Repickup
+      shipping_code:
+        description: |-
+          Shipping Code of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingCode
+      shipping_description:
+        description: |-
+          Shipping Description of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingDescription
+      shipping_name:
+        description: |-
+          Shipping Name of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingName
+      shipping_type:
+        description: |-
+          Shipping Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingType
+      start_time:
+        $ref: '#/definitions/Time'
+      status:
+        description: |-
+          Status of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Status
+      tracking_available:
+        description: |-
+          Tracking Available of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: TrackingAvailable
+      updated_at:
+        description: |-
+          Updated At of the Courier Service
+          in: time
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+      updated_by:
+        description: |-
+          Updated By Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: UpdatedBy
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  ShippingTypeItem:
+    properties:
+      name:
+        example: Same Day Delivery
+        type: string
+        x-go-name: Name
+      shipping_type_code:
+        example: same_day
+        type: string
+        x-go-name: ShippingTypeCode
+      uid:
+        example: pqC8LqdgT2KKdcmn2bHnR
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  ShippmentPredefined:
+    properties:
+      code:
+        description: |-
+          Code of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Code
+      id:
+        description: |-
+          gorm.Model
+          Id of as primary key
+          in: int64
+        format: uint64
+        type: integer
+        x-go-name: ID
+      is_deleted:
+        type: boolean
+        x-go-name: IsDeleted
+      note:
+        description: |-
+          Note of the Courier
+          in: string
+        type: string
+        x-go-name: Note
+      status:
+        description: |-
+          Status of the ShippmentPredefined
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Status
+      title:
+        description: |-
+          Type of the Courier
+          in: string
+        type: string
+        x-go-name: Title
+      type:
+        description: |-
+          Name of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Type
+      uid:
+        description: |-
+          UID of the a model
+          in: int64
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
+  ShippmentPredefinedDetail:
+    properties:
+      code:
+        type: string
+        x-go-name: Code
+      note:
+        type: string
+        x-go-name: Note
+      status:
+        format: int32
+        type: integer
+        x-go-name: Status
+      title:
+        type: string
+        x-go-name: Title
+      type:
+        type: string
+        x-go-name: Type
+      uid:
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-name: ShippmentPredefined
+    x-go-package: go-klikdokter/app/model/response
+  SuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/DataResponse'
+      errors:
+        description: |-
+          Errors is the response message
+          in: string
+        type: object
+        x-go-name: Errors
+      meta:
+        $ref: '#/definitions/MetaResponse'
+      pagination:
+        $ref: '#/definitions/PaginationResponse'
+    type: object
+    x-go-name: responseHttp
+    x-go-package: go-klikdokter/app/model/base
+  Time:
+    type: string
+    x-go-package: go-klikdokter/pkg/util/datatype
+  UpdateChannelCourierRequest:
+    properties:
+      hide_purpose:
+        description: |-
+          Hide purpose of the Courier
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: HidePurpose
+      priority_sort:
+        description: |-
+          Priority Sort of ChannelCourier
+          in: int
+        format: int32
+        type: integer
+        x-go-name: PrioritySort
+      status:
+        description: |-
+          Courier status
+          in: int
+        format: int32
+        type: integer
+        x-go-name: Status
+    required:
+    - priority_sort
+    - status
+    - hide_purpose
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  UpdateChannelCourierService:
+    properties:
+      price_internal:
+        description: Priority Sort of ChannelCourier
+        format: double
+        type: number
+        x-go-name: PriceInternal
+      status:
+        description: Courier status
+        format: int64
+        type: integer
+        x-go-name: Status
+    required:
+    - price_internal
+    - status
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  UpdateChannelRequest:
+    properties:
+      channel_code:
+        description: |-
+          ChannelCode of Channel
+          in: string
+        type: string
+        x-go-name: ChannelCode
+      channel_name:
+        description: |-
+          ChannelName of the Channel
+          in: string
+        type: string
+        x-go-name: ChannelName
+      description:
+        description: |-
+          Description of the Channel
+          in: string
+        type: string
+        x-go-name: Description
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
+      logo:
+        description: |-
+          Logo of Channel
+          in: string
+        type: string
+        x-go-name: Logo
+      status:
+        description: |-
+          Status of Channel
+          in: int
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  UpdateCourierRequest:
+    properties:
+      code:
+        description: |-
+          Code of the courier
+          in: string
+        type: string
+        x-go-name: Code
+      courier_api_intergration:
+        description: |-
+          Courier Api Integration of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: CourierApiIntegration
+      courier_name:
+        description: |-
+          Name of the courier
+          in: string
+        type: string
+        x-go-name: CourierName
+      courier_type:
+        description: |-
+          type of courier
+          in: string
+        type: string
+        x-go-name: CourierType
+      hide_purpose:
+        description: |-
+          Hide purpose of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: HidePurpose
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
+      logo:
+        description: |-
+          Logo of courier
+          in: string
+        type: string
+        x-go-name: Logo
+      provide_airwaybill:
+        description: |-
+          Provide Airwaybill of the Courier
+          in: integer
+        format: int64
+        type: integer
+        x-go-name: ProvideAirwaybill
+      status:
+        description: |-
+          Courier status
+          in: int
+        format: int64
+        type: integer
+        x-go-name: Status
+      uid:
+        description: |-
+          Uid of the courier, use this on UPDATE function
+          in: int32
+        type: string
+        x-go-name: Uid
+      use_geocoodinate:
+        description: |-
+          Geo Coodinate of the Courier
+          in: string
+        format: int64
+        type: integer
+        x-go-name: UseGeocoodinate
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  UpdateShipmentPredefinedRequest:
+    properties:
+      code:
+        description: |-
+          Code of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Code
+      note:
+        description: |-
+          Note of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Note
+      status:
+        description: |-
+          Status of the ShippmentPredefined
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Status
+      title:
+        description: |-
+          Type of the Courier
+          in: string
+        type: string
+        x-go-name: Title
+      type:
+        description: |-
+          Name of the ShippmentPredefined
+          in: string
+        type: string
+        x-go-name: Type
+    title: 'swaggers:'
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  errorResponse:
+    properties:
+      data:
+        description: |-
+          Data is our data
+          in: struct{}
+        type: object
+        x-go-name: Data
+      errors:
+        description: |-
+          Errors is the response message
+          in: string
+        type: object
+        x-go-name: Errors
+      meta:
+        description: |-
+          Meta is the API response information
+          in: struct{}
+        properties:
+          code:
+            description: |-
+              Code is the response code
+              in: int
+            format: int64
+            type: integer
+            x-go-name: Code
+          message:
+            description: |-
+              Message is the response message
+              in: string
+            type: string
+            x-go-name: Message
+        type: object
+        x-go-name: Meta
+    type: object
+    x-go-package: go-klikdokter/app/model/base/encoder
+info:
+  title: 'Shipping Service:'
+  version: "1.0"
+paths:
+  /channel/{channel-uid}/courier-list:
+    get:
+      description: Get List of Courier and Courier Services By Channel
+      operationId: GetChannelCourierList
+      parameters:
+      - in: path
+        name: channel-uid
+        required: true
+        type: string
+        x-go-name: ChannelUID
+      - description: Maximun records per page
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: Page No
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: 'Filter: {"courier_type_code": ["third_party"],"courier_code":["shipper"],"courier_name":["Gojek"],"shipping_type_code":["instant","reguler"],"shipping_name":["Same
+          Day"],"status":[0,1]}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: Sort fields
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      - description: sort direction
+        enum:
+        - asc
+        - desc
+        in: query
+        name: dir
+        type: string
+        x-go-name: Dir
+      responses:
+        "200":
+          $ref: '#/responses/CourierByChannel'
+      tags:
+      - Channel-Courier-Service
+  /channel/channel-app:
+    get:
+      description: List of Channel Apps
+      operationId: Channels
+      parameters:
+      - description: 'Filter : {"channel_code":["value","value"],"channel_name":["value","value"],"status":[0,1]}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: |-
+          Sort fields
+          in: string
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Apps
+    post:
+      description: Add Channel App
+      operationId: SaveChannelRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveChannelRequest'
+        x-go-name: Body
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Apps
+  /channel/channel-app/{uid}:
+    delete:
+      description: Delete Channel Apps by uid
+      operationId: ChannelRequestDeleteByUid
+      parameters:
+      - description: Uid of the Channel
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Apps
+    get:
+      description: Get Detail of Channel Apps
+      operationId: ChannelRequestGetByUid
+      parameters:
+      - description: Uid of the Channel
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Apps
+    put:
+      description: Update Channel App by uid
+      operationId: UpdateChannelRequest
+      parameters:
+      - description: Uid of the Channel
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/UpdateChannelRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Apps
+  /channel/channel-courier-service/:
+    get:
+      description: Get List of Channel Courier Service
+      operationId: GetChannelCourierServiceList
+      parameters:
+      - description: 'Filter : {"channel_name":["value","value"],"courier_uid":["value","value"],"courier_name":["value","value"],"shipping_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"status":[0,1]}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: Maximun records per page
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: Page No
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: Sort fields and direction
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      responses:
+        "200":
+          $ref: '#/responses/ChannelCourierServiceList'
+      tags:
+      - Channel-Courier-Service
+    post:
+      description: Create Channel Courier Service
+      operationId: CreateChannelCourierService
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveChannelCourierServiceRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          $ref: '#/responses/ChannelCourierServiceDetailResponse'
+      tags:
+      - Channel-Courier-Service
+  /channel/channel-courier-service/{uid}:
+    delete:
+      description: Delete Courier Service
+      operationId: DeleteChannelCourierServiceByUID
+      parameters:
+      - description: 'name: uid'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Channel-Courier-Service
+    get:
+      description: Get Detail of Channel Courier Service
+      operationId: GetChannelCourierServiceByUID
+      parameters:
+      - description: 'name: uid'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      responses:
+        "200":
+          $ref: '#/responses/ChannelCourierServiceDetailResponse'
+      tags:
+      - Channel-Courier-Service
+    put:
+      description: Update a channel courier by uid
+      operationId: UpdateChannelCourierService
+      parameters:
+      - description: 'name: uid'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/UpdateChannelCourierService'
+        x-go-name: Body
+      responses:
+        "200":
+          $ref: '#/responses/ChannelCourierServiceDetailResponse'
+      tags:
+      - Channel-Courier-Service
+  /channel/channel-courier/:
+    get:
+      description: List of Assignment Channel and Courier
+      operationId: ChannelCourierListRequest
+      parameters:
+      - description: 'Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"channel_code":["value","value"],"status":[0,1]}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: |-
+          Sort fields
+          in: string
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      - description: |-
+          Sort fields
+          in: string
+        in: query
+        name: dir
+        type: string
+        x-go-name: Dir
+      responses:
+        "200":
+          description: PaginationResponse
+          schema:
+            $ref: '#/definitions/PaginationResponse'
+        "400":
+          $ref: '#/responses/InvalidRequestDataResponse'
+        "401":
+          $ref: '#/responses/UnauthorizedResponse'
+        "500":
+          $ref: '#/responses/InternalServerErrorResponse'
+      tags:
+      - Channel-Courier-Service
+    post:
+      description: Assign Courier to Channel
+      operationId: SaveChannelCourierRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveChannelCourierRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          $ref: '#/responses/ChannelCourierDTO'
+        "401":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+      tags:
+      - Channel-Courier-Service
+  /channel/channel-courier/{uid}:
+    delete:
+      description: Delete Channel Courier
+      operationId: DeleteChannelCourierByUid
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "400":
+          $ref: '#/responses/InvalidRequestDataResponse'
+        "401":
+          $ref: '#/responses/UnauthorizedResponse'
+        "500":
+          $ref: '#/responses/InternalServerErrorResponse'
+      tags:
+      - Channel-Courier-Service
+    get:
+      description: Get Detail of Channel Courier
+      operationId: GetChannelCourierByUid
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          $ref: '#/responses/ChannelCourierDTO'
+        "400":
+          $ref: '#/responses/InvalidRequestDataResponse'
+        "401":
+          $ref: '#/responses/UnauthorizedResponse'
+        "500":
+          $ref: '#/responses/InternalServerErrorResponse'
+      tags:
+      - Channel-Courier-Service
+    put:
+      description: Update a channel courier by uid
+      operationId: UpdateChannelCourierRequest
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/UpdateChannelCourierRequest'
+        x-go-name: Body
+      responses:
+        "201":
+          description: ChannelCourier
+          schema:
+            $ref: '#/definitions/ChannelCourier'
+        "401":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+      tags:
+      - Channel-Courier-Service
+  /channel/channel-status-courier-status:
+    get:
+      description: Get Channel Courier Status List
+      operationId: GetChannelCourierStatus
+      parameters:
+      - description: 'Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"status_code":["value","value"],
+          "status_code":["value","value"], "courier_status":["value","value"]}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: |-
+          Sort fields
+          in: string
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      responses:
+        "200":
+          $ref: '#/responses/GetChannelCourierStatusResponse'
+      tags:
+      - Channel-Apps
+  /courier/courier:
+    get:
+      description: Get list of couriers
+      operationId: CourierListRequest
+      parameters:
+      - description: 'Filter : {"courier_type":["value","value"],"courier_name":["value","value"],"courier_code":["value","value"],"status":[0,1]}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: |-
+          Sort fields
+          in: string
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+      tags:
+      - Couriers
+    post:
+      description: Create a new Courier
+      operationId: SaveCourierRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierRequestBody'
+        x-go-name: Body
+      responses:
+        "201":
+          description: Courier
+          schema:
+            $ref: '#/definitions/Courier'
+        "401":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+      tags:
+      - Couriers
+  /courier/courier-coverage-code/:
+    get:
+      description: List couriers coverage code
+      operationId: CourierCoverageCodeListRequest
+      parameters:
+      - description: |-
+          Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":["value","value"]
+          ,"status":[0,1], "code1":["value","value"], "code2":["value","value"], "code3":["value","value"], "code4":["value","value"], "code5":["value","value"], "code6":["value","value"]}
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: |-
+          Sort fields
+          in: string
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      responses:
+        "200":
+          description: PaginationResponse
+          schema:
+            $ref: '#/definitions/PaginationResponse'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+      tags:
+      - Courier-Coverage-Code
+    post:
+      description: Create Courier Coverage Code
+      operationId: SaveCourierCoverageCodeRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierCoverageCodeRequest'
+        x-go-name: Body
+      responses:
+        "201":
+          description: CourierCoverageCode
+          schema:
+            $ref: '#/definitions/CourierCoverageCode'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          $ref: '#/responses/InternalServerErrorResponse'
+      tags:
+      - Courier-Coverage-Code
+  /courier/courier-coverage-code/{uid}:
+    delete:
+      description: Delete courier coverage code by UID
+      operationId: DeleteCourierCoverageCodeByIDParam
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          $ref: '#/responses/InternalServerErrorResponse'
+      tags:
+      - Courier-Coverage-Code
+    get:
+      description: Get Courier Coverage Code by uid
+      operationId: CourierCoverageCodeByIDParam
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: CourierCoverageCode
+          schema:
+            $ref: '#/definitions/CourierCoverageCode'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          $ref: '#/responses/InternalServerErrorResponse'
+      tags:
+      - Courier-Coverage-Code
+    put:
+      description: Update courier coverage by uid
+      operationId: UpdateCourierCoverageCodeBody
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierCoverageCodeRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          $ref: '#/responses/InternalServerErrorResponse'
+      tags:
+      - Courier-Coverage-Code
+  /courier/courier-coverage-code/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Import courier coverage code by CSV file
+      operationId: ImportCourierCoverageCodeRequest
+      parameters:
+      - in: formData
+        name: file
+        type: file
+        x-go-name: File
+      produces:
+      - text/csv
+      responses:
+        "200":
+          description: ""
+      tags:
+      - Courier-Coverage-Code
+  /courier/courier-services:
+    get:
+      description: List of Courier Services
+      operationId: CourierServiceListRequest
+      parameters:
+      - description: 'Filter : {"courier_uid":["value","value"],"courier_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"shipping_type_code":["value","value"],"status":[0,1]}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: |-
+          Sort fields
+          in: string
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Services
+    post:
+      description: Add Courier Services
+      operationId: SaveCourierServiceRequest
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierServiceRequest'
+        x-go-name: Body
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Services
+  /courier/courier-services/{uid}:
+    delete:
+      description: Delete Courier Services
+      operationId: CourierServiceRequestDeleteByUid
+      parameters:
+      - description: Uid of the Courier Service
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Services
+    get:
+      description: Detail Courier Services
+      operationId: CourierServiceRequestGetByUid
+      parameters:
+      - description: Uid of the Courier Service
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Services
+    put:
+      description: Update Courier Services
+      operationId: UpdateCourierServiceRequest
+      parameters:
+      - description: Uid of the courier service.
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/SaveCourierServiceRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Services
+  /courier/courier/{uid}:
+    delete:
+      description: Delete courier by uid
+      operationId: DeleteCourierByUIdParam
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "400":
+          description: errorResponse
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          $ref: '#/responses/InternalServerErrorResponse'
+      tags:
+      - Couriers
+    get:
+      description: Get Courier
+      operationId: CourierByUIdParam
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      responses:
+        "200":
+          description: Courier
+          schema:
+            $ref: '#/definitions/Courier'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Couriers
+    put:
+      description: Update courier with specifeied id
+      operationId: UpdateCourierRequest
+      parameters:
+      - description: 'name: id'
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/UpdateCourierRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Couriers
+  /courier/shipping-type:
+    get:
+      description: Get List of Shipping Type
+      operationId: GetCourierShippingType
+      responses:
+        "200":
+          $ref: '#/responses/ShippingTypeList'
+      tags:
+      - Couriers
+  /other/shipment-predefined:
+    get:
+      description: Get predefined
+      operationId: ListShipmentPredefinedRequest
+      parameters:
+      - description: 'Filter : {"type":["value","value"],"code":["value","value"],"title":["value","value"],"description":["value","value"],"status":[0,1]}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: |-
+          Sort fields
+          in: string
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Predefined
+  /other/shipment-predefined/{uid}:
+    get:
+      description: Get shipment predefined by UID
+      operationId: GetShipmentPredefinedByUID
+      parameters:
+      - in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      responses:
+        "200":
+          $ref: '#/responses/GetShippmentPredefined'
+      tags:
+      - Courier-Predefined
+    put:
+      description: Update a shipment predefined
+      operationId: UpdateShipmentPredefinedRequest
+      parameters:
+      - description: Uid of the shipmentPredefinedRequest
+        in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UId
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/UpdateShipmentPredefinedRequest'
+        x-go-name: Body
+      responses:
+        "201":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "401":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Courier-Predefined
+produces:
+- application/json
+responses:
+  ChannelCourierDTO:
+    description: ""
+    schema:
+      $ref: '#/definitions/ChannelCourierDTO'
+  ChannelCourierServiceDetailResponse:
+    description: ""
+    schema:
+      $ref: '#/definitions/ChannelCourierServiceDetail'
+  ChannelCourierServiceList:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/ChannelCourierServiceItem'
+      type: array
+  CourierByChannel:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/CourierServiceByChannel'
+      type: array
+  CourierList:
+    description: ""
+    headers:
+      code:
+        type: string
+      courier_name:
+        type: string
+      courier_type:
+        type: string
+      courier_type_name:
+        type: string
+      id:
+        format: int32
+        type: integer
+      status:
+        format: int32
+        type: integer
+      uid:
+        type: string
+  GetChannelCourierStatusResponse:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/GetChannelCourierStatusResponse'
+      type: array
+  GetShippmentPredefined:
+    description: ""
+    schema:
+      $ref: '#/definitions/ShippmentPredefinedDetail'
+  ImportStatus:
+    description: ""
+  ShippingTypeList:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/ShippingTypeItem'
+      type: array
+schemes:
+- http
+- https
+swagger: "2.0"
