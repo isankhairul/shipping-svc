@@ -347,6 +347,6 @@ func TestImportCourierCoverageCodeFailedWithNotFoundCourier(t *testing.T) {
 	courierCoverageCodeRepository.Mock.On("Update", mock.Anything, mock.Anything).Return(&entity.CourierCoverageCode{}, nil)
 	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(errors.New("Found"))
 	result, msg := svcCourierCoverageCode.ImportCourierCoverageCode(req)
-	assert.Nil(t, result)
-	assert.Equal(t, msg.Code, message.ErrDB.Code)
+	assert.NotNil(t, result)
+	assert.Equal(t, msg.Code, message.SuccessMsg.Code)
 }

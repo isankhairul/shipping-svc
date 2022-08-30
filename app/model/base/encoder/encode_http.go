@@ -98,7 +98,7 @@ func EncodeResponseCSV(ctx context.Context, w http.ResponseWriter, resp interfac
 	if ok {
 		w.Header().Set(contentType, "text/csv")
 		w.Header().Set(contentDisposition, "attachment;filename="+result.Name)
-
+		w.WriteHeader(http.StatusOK)
 		b := &bytes.Buffer{}
 		wr := csv.NewWriter(b)
 
@@ -109,7 +109,6 @@ func EncodeResponseCSV(ctx context.Context, w http.ResponseWriter, resp interfac
 
 		_, err := w.Write(b.Bytes())
 
-		w.WriteHeader(http.StatusOK)
 		return err
 	}
 
