@@ -10,9 +10,9 @@ COPY . .
 
 RUN go get
 
-RUN git clone https://github.com/go-swagger/go-swagger && cd go-swagger && go install ./cmd/swagger
-RUN swagger generate spec -o swagger.yaml --scan-models
-RUN sed -i 's|localhost:5600|shipping-api.medkomtek-stg.com|g' swagger.yaml && sed -i 's/\- https//g' swagger.yaml && sed -i "s|- http|- https|g" swagger.yaml && rm -rf go-swagger
+#RUN git clone https://github.com/go-swagger/go-swagger && cd go-swagger && go install ./cmd/swagger
+#RUN swagger generate spec -o swagger.yaml --scan-models
+#RUN sed -i 's|localhost:5600|shipping-api.medkomtek-stg.com|g' swagger.yaml && sed -i 's/\- https//g' swagger.yaml && sed -i "s|- http|- https|g" swagger.yaml && rm -rf go-swagger
 
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o /go/bin/shipping-svc
 
