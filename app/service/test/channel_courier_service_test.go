@@ -231,11 +231,12 @@ func TestCreateChannelCourierFailedWithInvalidChannel(t *testing.T) {
 		PrioritySort: 10,
 		Status:       1,
 	}
-	channelCourierRepo.Mock.On("FindCourierByUID", mock.Anything).Return(nil, errors.New("Not found"))
+	channelCourierRepo.Mock.On("FindCourierByUID", mock.Anything).Return(courier1)
+	channelCourierRepo.Mock.On("FindChannelByUID", mock.Anything).Return(nil, errors.New("Not found"))
 	result, msg := channelCourierService.CreateChannelCourier(input)
 
 	assert.Nil(t, result)
-	assert.Equal(t, message.ErrCourierNotFound.Code, msg.Code, codeIsNotCorrect)
+	assert.Equal(t, message.ErrChannelNotFound.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestCreateChannelCourierFailedWithDuplicatedChannelCourier(t *testing.T) {

@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
@@ -9,8 +8,6 @@ import (
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
 	"strings"
-
-	"gorm.io/gorm"
 
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -265,122 +262,62 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 		},
 	}
 
+	ok := s.checkImportedDataColumnValidity(input.Rows)
+	if !ok {
+		return nil, message.ErrImportData
+	}
+
 	for _, row := range input.Rows {
-		courierUid, courierUidOk := row["courier_uid"]
-		countryCode, countryCodeOk := row["country_code"]
-		postalCode, postalCodeOk := row["postal_code"]
-		description, descriptionOk := row["description"]
-		code1, code1Ok := row["code1"]
-		code2, code2Ok := row["code2"]
-		code3, code3Ok := row["code3"]
-		code4, code4Ok := row["code4"]
-		code5, code5Ok := row["code5"]
-		code6, code6Ok := row["code6"]
+		countryCode := row["country_code"]
+		postalCode := row["postal_code"]
+		description := row["description"]
+		code1 := row["code1"]
+		code2 := row["code2"]
+		code3 := row["code3"]
+		code4 := row["code4"]
+		code5 := row["code5"]
+		code6 := row["code6"]
 
-		if !courierUidOk || !countryCodeOk || !postalCodeOk || !descriptionOk || !code1Ok || !code2Ok || !code3Ok || !code4Ok || !code5Ok || !code6Ok {
-			return nil, message.ErrImportData
-		}
+		courier, failedData, failedRowCount, summaryRowsCount := s.checkImportedDataRow(row)
 
-		//ignore summary
-		if courierUid == "Summary" {
-			totalRows--
-			continue
-		}
-
-		// Check empty string
-		if courierUid == "" || countryCode == "" || postalCode == "" {
-			resp = append(resp, []string{
-				courierUid,
-				countryCode,
-				postalCode,
-				description,
-				code1,
-				code2,
-				code3,
-				code4,
-				code5,
-				code6,
-				"Can not import missing Courier UID, Country Code, and Postal Code",
-			},
-			)
+		if failedRowCount > 0 {
+			resp = append(resp, failedData)
 			failedRows++
 			continue
 		}
 
-		// check courier_id existing
-		var courier entity.Courier
-		err := s.courierCoverageCodeRepo.GetCourierUid(&courier, courierUid)
-		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				resp = append(resp, []string{
-					courierUid,
-					countryCode,
-					postalCode,
-					description,
-					code1,
-					code2,
-					code3,
-					code4,
-					code5,
-					code6,
-					"Not found Courier UID in Courier table",
-				},
-				)
-				failedRows++
-				continue
-			} else {
-				_ = level.Error(logger).Log(err)
-				return nil, message.ErrDB
-			}
+		if summaryRowsCount > 0 {
+			totalRows--
+			continue
 		}
+
 		// Check CourierUID, country_code and postal_code are unique
 		var courierCoverageCode entity.CourierCoverageCode
-		count, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, countryCode, postalCode, 0)
+		_, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, countryCode, postalCode, 0)
 
 		if err != nil {
 			_ = level.Error(logger).Log(err)
 			return nil, message.ErrDB
 		}
 
-		if count == 0 {
-			data := entity.CourierCoverageCode{
-				CourierID:   courier.ID,
-				CountryCode: countryCode,
-				PostalCode:  postalCode,
-				Description: description,
-				Code1:       code1,
-				Code2:       code2,
-				Code3:       code3,
-				Code4:       code4,
-				Code5:       code5,
-				Code6:       code6,
-			}
-			_, err := s.courierCoverageCodeRepo.Create(&data)
-			if err != nil {
-				_ = level.Error(logger).Log(err)
-				return nil, message.ErrDB
-			}
-
-		} else {
-			data := map[string]interface{}{
-				"courier_id":   courier.ID,
-				"country_code": countryCode,
-				"postal_code":  postalCode,
-				"description":  description,
-				"code1":        code1,
-				"code2":        code2,
-				"code3":        code3,
-				"code4":        code4,
-				"code5":        code5,
-				"code6":        code6,
-			}
-			_, err := s.courierCoverageCodeRepo.Update(courierCoverageCode.UID, data)
-			if err != nil {
-				_ = level.Error(logger).Log(err)
-				return nil, message.ErrDB
-			}
+		data := entity.CourierCoverageCode{
+			CourierID:   courier.ID,
+			CountryCode: countryCode,
+			PostalCode:  postalCode,
+			Description: description,
+			Code1:       code1,
+			Code2:       code2,
+			Code3:       code3,
+			Code4:       code4,
+			Code5:       code5,
+			Code6:       code6,
 		}
-		successRows++
+
+		successCount, msg := s.upsert(courierCoverageCode.UID, data)
+		if msg != message.SuccessMsg {
+			return nil, msg
+		}
+		successRows += successCount
 	}
 
 	//Add summary
@@ -404,4 +341,111 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 		Type: "text/csv",
 		Data: resp,
 	}, message.SuccessMsg
+}
+
+// return successCount, message
+func (s *CourierCoverageCodeServiceImpl) upsert(uid string, input entity.CourierCoverageCode) (int, message.Message) {
+	logger := log.With(s.logger, "CourierCoverageCodeService", "upsert")
+	var log string
+	var err error
+
+	if len(uid) == 0 {
+		log = "s.courierCoverageCodeRepo.Create"
+		_, err = s.courierCoverageCodeRepo.Create(&input)
+
+	} else {
+		log = "s.courierCoverageCodeRepo.Update"
+		data := map[string]interface{}{
+			"courier_id":   input.CourierID,
+			"country_code": input.CountryCode,
+			"postal_code":  input.PostalCode,
+			"description":  input.Description,
+			"code1":        input.Code1,
+			"code2":        input.Code2,
+			"code3":        input.Code3,
+			"code4":        input.Code4,
+			"code5":        input.Code5,
+			"code6":        input.Code6,
+		}
+		_, err = s.courierCoverageCodeRepo.Update(uid, data)
+
+	}
+
+	if err != nil {
+		_ = level.Error(logger).Log(log, err.Error())
+		return 0, message.ErrDB
+	}
+
+	return 1, message.SuccessMsg
+}
+
+func (s *CourierCoverageCodeServiceImpl) checkImportedDataColumnValidity(input []map[string]string) bool {
+	var row map[string]string
+
+	if len(input) == 0 {
+		return true
+	}
+	row = input[0]
+
+	_, courierUidOk := row["courier_uid"]
+	_, countryCodeOk := row["country_code"]
+	_, postalCodeOk := row["postal_code"]
+	_, descriptionOk := row["description"]
+	_, code1Ok := row["code1"]
+	_, code2Ok := row["code2"]
+	_, code3Ok := row["code3"]
+	_, code4Ok := row["code4"]
+	_, code5Ok := row["code5"]
+	_, code6Ok := row["code6"]
+
+	return courierUidOk && countryCodeOk && postalCodeOk && descriptionOk && code1Ok && code2Ok && code3Ok && code4Ok && code5Ok && code6Ok
+}
+
+// return courier, array failed data, failedRowCount, summaryRowCount, message
+func (s *CourierCoverageCodeServiceImpl) checkImportedDataRow(row map[string]string) (*entity.Courier, []string, int, int) {
+	courierUid := row["courier_uid"]
+	countryCode := row["country_code"]
+	postalCode := row["postal_code"]
+	description := row["description"]
+	code1 := row["code1"]
+	code2 := row["code2"]
+	code3 := row["code3"]
+	code4 := row["code4"]
+	code5 := row["code5"]
+	code6 := row["code6"]
+
+	//ignore summary
+	if courierUid == "Summary" {
+		return nil, nil, 0, 1
+	}
+
+	msg := "Can not import missing Courier UID, Country Code, and Postal Code"
+
+	if courierUid != "" && countryCode != "" && postalCode != "" {
+
+		// check courier_uid is exist
+		var courier entity.Courier
+		err := s.courierCoverageCodeRepo.GetCourierUid(&courier, courierUid)
+
+		if err == nil {
+			return &courier, nil, 0, 0
+		}
+
+		msg = "Courier UID not found"
+	}
+
+	// check courier_id existing
+	return nil, []string{
+		courierUid,
+		countryCode,
+		postalCode,
+		description,
+		code1,
+		code2,
+		code3,
+		code4,
+		code5,
+		code6,
+		msg,
+	}, 1, 0
 }

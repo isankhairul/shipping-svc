@@ -123,13 +123,13 @@ func TestListChannel(t *testing.T) {
 }
 
 func TestCreateChannelFail(t *testing.T) {
-	status := int32(1)
+	//status := int32(1)
 	req := request.SaveChannelRequest{
-		ChannelName: "test",
-		ChannelCode: "string",
-		Description: "description test",
-		Status:      &status,
-		Logo:        "logo test",
+		ChannelName: channelTest.ChannelName,
+		ChannelCode: channelTest.ChannelCode,
+		Description: channelTest.Description,
+		Status:      &channelTest.Status,
+		Logo:        channelTest.Logo,
 	}
 	channels := []entity.Channel{}
 	channel := entity.Channel{}
@@ -155,11 +155,11 @@ func TestCreateChannelFail(t *testing.T) {
 func TestUpdateChannelFail(t *testing.T) {
 	req := request.UpdateChannelRequest{
 		Uid:         "BnOI8D7p9rR7tI1R9rySw",
-		ChannelName: "test",
-		ChannelCode: "string1",
-		Description: "description test",
-		Status:      1,
-		Logo:        "logo test",
+		ChannelName: channelTest.ChannelName,
+		ChannelCode: channelTest.ChannelCode,
+		Description: channelTest.Description,
+		Status:      int(channelTest.Status),
+		Logo:        channelTest.Logo,
 	}
 	channel := entity.Channel{}
 

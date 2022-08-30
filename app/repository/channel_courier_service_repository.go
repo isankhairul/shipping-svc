@@ -16,6 +16,10 @@ type ChannelCourierServiceRepositoryImpl struct {
 	base BaseRepository
 }
 
+const (
+	channelCourierServiceStatus = "channel_courier_service.status"
+)
+
 type ChannelCourierServiceRepository interface {
 	GetChannelCourierService(channelCourierID, courierServiceID uint64) (*entity.ChannelCourierService, error)
 	GetChannelCourierServiceByUID(uid string) (*entity.ChannelCourierService, error)
@@ -94,14 +98,14 @@ func (r *ChannelCourierServiceRepositoryImpl) FindByParams(limit, page int, sort
 
 	for k, v := range filters {
 		k = strings.ReplaceAll(k, "courier_uid", "co.uid")
-		k = strings.ReplaceAll(k, "status", "channel_courier_service.status")
+		k = strings.ReplaceAll(k, "status", channelCourierServiceStatus)
 
 		if util.IsSliceAndNotEmpty(v) {
 			query = query.Where(fmt.Sprint(k, " IN ?"), v)
 		}
 	}
 
-	sort = strings.ReplaceAll(strings.ToLower(sort), "status", "channel_courier_service.status")
+	sort = strings.ReplaceAll(strings.ToLower(sort), "status", channelCourierServiceStatus)
 
 	if len(sort) == 0 {
 		sort = "channel_courier_service.updated_at DESC"
@@ -222,7 +226,7 @@ func (r *ChannelCourierServiceRepositoryImpl) GetChannelCourierListByChannelUID(
 			k = strings.ReplaceAll(k, "courier_name", "c.courier_name")
 			k = strings.ReplaceAll(k, "shipping_type_code", "st.code")
 			k = strings.ReplaceAll(k, "shipping_name", "cs.shipping_name")
-			k = strings.ReplaceAll(k, "status", "channel_courier_service.status")
+			k = strings.ReplaceAll(k, "status", channelCourierServiceStatus)
 
 			query = query.Where(fmt.Sprint(k, " IN ?"), v)
 		}

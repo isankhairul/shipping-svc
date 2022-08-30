@@ -1,9 +1,10 @@
-#logging settings
+---
+# logging settings
 log:
   filename: /Users/sw/go/log/kd-microservice.log.log
   level: DEBUG
 
-#database settings
+# database settings
 database:
   driver: ${DB_DRIVER}
   host: ${DB_HOST}
@@ -12,7 +13,7 @@ database:
   password: ${DB_PASSWORD}
   dbname: ${DB_NAME}
 
-#server settings
+# server settings
 server:
   port: 5600
   env: prd
@@ -21,7 +22,7 @@ server:
   config-path: .
   service-name: kd-microservice
 
-#Access Control SETTING
+# Access Control SETTING
 access-control:
   allow-origin: "*"
   allow-methods: "GET, POST, PUT, DELETE, OPTIONS"

@@ -1,9 +1,10 @@
-#logging settings
+---
+# logging settings
 log:
   filename: ../../kd-microservice.log.log
   level: DEBUG
 
-#database settings
+# database settings
 database:
   driver: sqlite
   hostname: 10.1.35.39
@@ -29,11 +30,11 @@ security:
 cache:
   redis:
     host: localhost
-    user: 
-    password: 
+    user:
+    password:
     port: 6379
 
-#Access Control SETTING
+# Access Control SETTING
 access-control:
   allow-origin: "*"
   allow-methods: "GET, POST, PUT, DELETE, OPTIONS"

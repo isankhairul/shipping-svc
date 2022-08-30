@@ -1,20 +1,21 @@
+---
 version: '3'
 services:
-#  db:
-#    image: mysql:5.7
-#    restart: always
-#    command: --max_allowed_packet=32505856
-#    environment:
-#      MYSQL_DATABASE: 'sds_admin'
-#      MYSQL_USER: 'sds_admin'
-#      MYSQL_PASSWORD: 'asdfghjkl228'
-#      MYSQL_ROOT_PASSWORD: 'asdfghjkl228'
-#    ports:
-#      - "3306:3306"
-#    expose:
-#      - 3306
-#    volumes:
-#      - db:/var/lib/mysql
+  #  db:
+  #    image: mysql:5.7
+  #    restart: always
+  #    command: --max_allowed_packet=32505856
+  #    environment:
+  #      MYSQL_DATABASE: 'sds_admin'
+  #      MYSQL_USER: 'sds_admin'
+  #      MYSQL_PASSWORD: 'asdfghjkl228'
+  #      MYSQL_ROOT_PASSWORD: 'asdfghjkl228'
+  #    ports:
+  #      - "3306:3306"
+  #    expose:
+  #      - 3306
+  #    volumes:
+  #      - db:/var/lib/mysql
   api:
     image: aprilsea/as:shipping_svc
     restart: always
