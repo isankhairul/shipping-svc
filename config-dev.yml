@@ -29,10 +29,16 @@ security:
 
 cache:
   redis:
-    host: localhost
-    user:
-    password:
+    host: 127.0.0.1
+    user: 
+    password: 12345678
     port: 6379
+    index:
+      primary: 0
+    is-active : true
+    expired-in-minute: 
+      default : 1440
+      shipping-rate : 1440
 
 # Access Control SETTING
 access-control:
@@ -44,3 +50,12 @@ access-control:
 
 route:
   site: "/shipment-svc/api/v1"
+
+shipper:
+  auth:
+    key: X-API-Key
+    value: g47huhFCiZJTDCqUSxwg2TvyTRxZlNrsrm5AwQBRgxYaibN4GG8KlOtnI10EmD47
+  base: https://merchant-api-sandbox.shipper.id
+  path:
+    get-pricing-domestic: /v3/pricing/domestic
+

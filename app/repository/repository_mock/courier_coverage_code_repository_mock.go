@@ -87,3 +87,19 @@ func (repository *CourierCoverageCodeRepositoryMock) DeleteByUid(uid string) err
 	}
 	return nil
 }
+
+func (repository *CourierCoverageCodeRepositoryMock) FindByCountryCodeAndPostalCode(courierID uint64, countryCode, postalCode string) (*entity.CourierCoverageCode, error) {
+	arguments := repository.Mock.Called()
+
+	if len(arguments) > 1 {
+		f := arguments.Get(1)
+		if f != nil {
+			return nil, f.(error)
+		}
+	}
+
+	if arguments.Get(0) != nil {
+		return arguments.Get(0).(*entity.CourierCoverageCode), nil
+	}
+	return nil, nil
+}

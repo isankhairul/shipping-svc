@@ -27,6 +27,7 @@ type CourierServiceRepository interface {
 	Delete(uid string) error
 	Update(uid string, input map[string]interface{}) error
 	IsCourierServiceAssigned(courierServiceID uint64) bool
+	FindCourierServiceByChannelAndUIDs(channel_uid string, uids []string) ([]entity.ChannelCourierServiceForShippingRate, error)
 }
 
 func NewCourierServiceRepository(br BaseRepository) CourierServiceRepository {
@@ -220,4 +221,52 @@ func (r *courierServiceRepo) IsCourierServiceAssigned(courierServiceID uint64) b
 		Count(&count)
 
 	return count > 0
+}
+
+func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid string, uids []string) ([]entity.ChannelCourierServiceForShippingRate, error) {
+
+	db := r.base.GetDB()
+	var courierService []entity.ChannelCourierServiceForShippingRate
+
+	query := db.Model(&entity.ChannelCourierService{}).
+		Select(
+			"cs.uid AS courier_service_uid",
+			"cs.shipping_code AS shipping_code",
+			"cs.shipping_name AS shipping_name",
+			"cs.shipping_description AS shipping_description",
+			"cs.image_path AS logo",
+			"cs.etd_min AS etd_min",
+			"cs.etd_max AS etd_max",
+			"cs.shipping_type AS shipping_type_code",
+			"st.title AS shipping_type_name",
+			"st.note AS shipping_type_description",
+			"c.id AS courier_id",
+			"c.uid AS courier_uid",
+			"c.code AS courier_code",
+			"c.courier_name AS courier_name",
+			"c.courier_type AS courier_type_code",
+			"ct.title AS courier_type_name",
+		).
+		Joins("INNER JOIN channel_courier cc ON cc.id = channel_courier_service.channel_courier_id").
+		Joins("INNER JOIN courier_service cs ON cs.id = channel_courier_service.courier_service_id").
+		Joins("INNER JOIN channel ch ON ch.id = cc.channel_id").
+		Joins("INNER JOIN courier c ON cc.courier_id = c.id").
+		Joins("LEFT JOIN shippment_predefined ct ON ct.code = c.courier_type AND ct.type = 'courier_type'").
+		Joins("LEFT JOIN shippment_predefined st ON st.code = cs.shipping_type AND st.type = 'shipping_type'").
+		Where("ch.uid = ?", channel_uid)
+
+	if len(uids) > 0 {
+		query = query.Where("cs.uid IN ?", uids)
+	}
+
+	err := query.Find(&courierService).Error
+
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return courierService, nil
 }

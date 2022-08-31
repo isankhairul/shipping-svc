@@ -78,13 +78,21 @@ func main() {
 	}
 	_ = logger.Log("message", "Connection Db Success")
 
+	redis, err := initialization.InitCache(logger)
+
+	if err != nil {
+		_ = logger.Log("Err Redis connection :", err.Error())
+		panic(err.Error())
+	}
+	_ = logger.Log("message", "Connection Redis Success")
+
 	//Consul initialization
 	registar := consul.ConsulRegisterService(config.GetConfigString(viper.GetString("server.service-name")), config.GetConfigInt(viper.GetString(global.ServerPort)), logger)
 	registar.Register()
 	defer registar.Deregister()
 
 	// Routing initialization
-	mux := initialization.InitRouting(db, logger)
+	mux := initialization.InitRouting(db, logger, redis)
 	http.Handle("/", accessControl(mux))
 
 	errs := make(chan error, 2)

@@ -3,6 +3,8 @@ package registry
 import (
 	rp "go-klikdokter/app/repository"
 	"go-klikdokter/app/service"
+	"go-klikdokter/helper/http_helper/shipping_provider"
+	"go-klikdokter/pkg/cache"
 
 	"github.com/go-kit/log"
 	"gorm.io/gorm"
@@ -58,4 +60,16 @@ func RegisterChannelCourierServiceService(db *gorm.DB, logger log.Logger) servic
 		rp.NewChannelCourierRepository(repo),
 		rp.NewChannelCourierServiceRepository(repo),
 		rp.NewCourierServiceRepository(repo))
+}
+
+func RegisterShippingService(db *gorm.DB, logger log.Logger, redis cache.RedisCache) service.ShippingService {
+	repo := rp.NewBaseRepository(db)
+	return service.NewShippingService(
+		logger, repo,
+		rp.NewChannelRepository(repo),
+		rp.NewCourierServiceRepository(repo),
+		rp.NewCourierCoverageCodeRepository(repo),
+		shipping_provider.NewShipper(logger),
+		redis,
+	)
 }

@@ -23,6 +23,7 @@ type CourierCoverageCodeRepository interface {
 	FindByUid(uid string) (*entity.CourierCoverageCode, error)
 	Update(uid string, values map[string]interface{}) (*entity.CourierCoverageCode, error)
 	CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string, id uint64) (int64, error)
+	FindByCountryCodeAndPostalCode(courierID uint64, countryCode, postalCode string) (*entity.CourierCoverageCode, error)
 	DeleteByUid(uid string) error
 }
 
@@ -188,4 +189,21 @@ func (r *CourierCoverageCodeRepo) DeleteByUid(uid string) error {
 	}
 
 	return nil
+}
+
+func (r *CourierCoverageCodeRepo) FindByCountryCodeAndPostalCode(courierID uint64, countryCode, postalCode string) (*entity.CourierCoverageCode, error) {
+	var courierCoverageCode entity.CourierCoverageCode
+	err := r.base.GetDB().
+		Preload("Courier").
+		Where(&entity.CourierCoverageCode{CourierID: courierID}).
+		Where(&entity.CourierCoverageCode{CountryCode: countryCode}).
+		Where(&entity.CourierCoverageCode{PostalCode: postalCode}).
+		First(&courierCoverageCode).Error
+	if err != nil {
+		return nil, err
+	}
+	if courierCoverageCode.Courier != nil {
+		courierCoverageCode.CourierName = courierCoverageCode.Courier.CourierName
+	}
+	return &courierCoverageCode, nil
 }
