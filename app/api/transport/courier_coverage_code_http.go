@@ -58,7 +58,7 @@ func CourierCoverageCodeHttpHandler(s service.CourierCoverageCodeService, logger
 	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixCourierCoverageCode, global.PathImport)).Handler(httptransport.NewServer(
 		ep.Import,
 		decodeImportCourierCoverageCode,
-		encoder.EncodeResponseCSV,
+		encoder.EncodeResponseHTTP,
 		options...,
 	))
 

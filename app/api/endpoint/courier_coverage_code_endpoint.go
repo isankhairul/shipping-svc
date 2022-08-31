@@ -87,7 +87,7 @@ func makeImportCourierCoverageCode(s service.CourierCoverageCodeService) endpoin
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
 
-		return *result, nil
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }
 

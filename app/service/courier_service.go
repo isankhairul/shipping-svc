@@ -195,8 +195,6 @@ func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCouri
 //
 // responses:
 //  200: SuccessResponse
-//  400: errorResponse
-//  500: InternalServerErrorResponse
 func (s *courierServiceImpl) DeleteCourier(uid string) message.Message {
 	logger := log.With(s.logger, "CourierService", "DeleteCourier")
 
@@ -530,7 +528,7 @@ func (s *courierServiceImpl) GetCourierShippingType() ([]response.ShippingTypeIt
 		items[index] = ToCourierServiceDetailDTO(&value)
 	}
 	return items
-}*///temporary comment this
+}*/ //temporary comment this
 
 func ToCourierServiceDetailDTO(cs *entity.CourierService) *entity.CourierServiceDetailDTO {
 	ret := &entity.CourierServiceDetailDTO{
