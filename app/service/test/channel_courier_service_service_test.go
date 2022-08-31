@@ -213,7 +213,7 @@ func TestListChannelCouriersServiceNotFound(t *testing.T) {
 	channelCourierServiceRepo.Mock.On("FindByParams", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return([]entity.ChannelCourierService{}, &base.Pagination{}, nil)
 	result, _, msg := channelCourierServiceService.ListChannelCouriersService(input)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.Equal(t, 34005, msg.Code, codeIsNotCorrect)
 }
 

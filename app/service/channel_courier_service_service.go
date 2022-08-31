@@ -127,7 +127,7 @@ func (s *channelCourierServiceServiceImpl) ListChannelCouriersService(input requ
 	}
 
 	if len(result) == 0 {
-		return nil, nil, message.ErrNoData
+		return response.NewChannelCourierServiceList(result), paging, message.ErrNoData
 	}
 
 	return response.NewChannelCourierServiceList(result), paging, message.SuccessMsg
