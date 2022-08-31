@@ -5,8 +5,13 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
+	"go-klikdokter/helper/message"
 
 	"github.com/go-kit/kit/endpoint"
+)
+
+var (
+	emptyArrayResult = []string{}
 )
 
 type ChannelCourierServiceEndpoint struct {
@@ -48,6 +53,10 @@ func ListChannelCourierServices(s service.ChannelCourierServiceService) endpoint
 func GetChannelCourierService(s service.ChannelCourierServiceService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
 		result, msg := s.GetChannelCourierService(rqst.(string))
+
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, emptyArrayResult, nil), nil
+		}
 
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}

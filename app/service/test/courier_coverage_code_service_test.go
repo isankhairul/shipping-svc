@@ -174,10 +174,10 @@ func TestImportCourierCoverageCode(t *testing.T) {
 	}
 	courierCoverageCodeRepository.Mock.On("Update", mock.Anything, mock.Anything).Return(&entity.CourierCoverageCode{}, nil)
 	result, _ := svcCourierCoverageCode.ImportCourierCoverageCode(req)
-	data := result.Data.([][]string)
+	data := result.FailedData
 	assert.NotNil(t, result)
-	assert.Equal(t, 3, len(data), "Count of result must be 3")
-	assert.Equal(t, vn.CourierUID, data[1][0], courierUIDIsNotCorrect)
+	assert.Equal(t, 1, len(data), "Count of result must be 1")
+	assert.Equal(t, vn.CourierUID, data[0].CourierUID, courierUIDIsNotCorrect)
 }
 
 func TestCreateCourierCoverageCodeFailedWithDuplicated(t *testing.T) {

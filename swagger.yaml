@@ -521,6 +521,17 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/entity
+  CourierCoverageCodeImportResponse:
+    properties:
+      failed_data:
+        items:
+          $ref: '#/definitions/ImportStatus'
+        type: array
+        x-go-name: FailedData
+      summary:
+        $ref: '#/definitions/ImportSummary'
+    type: object
+    x-go-package: go-klikdokter/app/model/response
   CourierService:
     properties:
       cancelable:
@@ -823,6 +834,67 @@ definitions:
         x-go-name: StatusTitle
     type: object
     x-go-name: GetChannelCourierStatusResponseItem
+    x-go-package: go-klikdokter/app/model/response
+  ImportStatus:
+    properties:
+      code1:
+        type: string
+        x-go-name: Code1
+      code2:
+        type: string
+        x-go-name: Code2
+      code3:
+        type: string
+        x-go-name: Code3
+      code4:
+        type: string
+        x-go-name: Code4
+      code5:
+        type: string
+        x-go-name: Code5
+      code6:
+        type: string
+        x-go-name: Code6
+      country_code:
+        type: string
+        x-go-name: CountryCode
+      courier_uid:
+        description: Courier UID of the Courier
+        type: string
+        x-go-name: CourierUID
+      description:
+        type: string
+        x-go-name: Description
+      message:
+        type: string
+        x-go-name: Message
+      postal_code:
+        type: string
+        x-go-name: PostalCode
+      uid:
+        description: UID of the Courier Coverage Code
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  ImportSummary:
+    properties:
+      failed_row:
+        example: 45
+        format: int64
+        type: integer
+        x-go-name: FailedRow
+      success_row:
+        example: 55
+        format: int64
+        type: integer
+        x-go-name: SuccessRow
+      total_row:
+        example: 100
+        format: int64
+        type: integer
+        x-go-name: TotalRow
+    type: object
     x-go-package: go-klikdokter/app/model/response
   JSONB:
     items:
@@ -2019,12 +2091,6 @@ paths:
           description: PaginationResponse
           schema:
             $ref: '#/definitions/PaginationResponse'
-        "400":
-          $ref: '#/responses/InvalidRequestDataResponse'
-        "401":
-          $ref: '#/responses/UnauthorizedResponse'
-        "500":
-          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Channel-Courier-Service
     post:
@@ -2061,12 +2127,6 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-        "400":
-          $ref: '#/responses/InvalidRequestDataResponse'
-        "401":
-          $ref: '#/responses/UnauthorizedResponse'
-        "500":
-          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Channel-Courier-Service
     get:
@@ -2082,12 +2142,6 @@ paths:
       responses:
         "200":
           $ref: '#/responses/ChannelCourierDTO'
-        "400":
-          $ref: '#/responses/InvalidRequestDataResponse'
-        "401":
-          $ref: '#/responses/UnauthorizedResponse'
-        "500":
-          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Channel-Courier-Service
     put:
@@ -2279,16 +2333,10 @@ paths:
           $ref: '#/definitions/SaveCourierCoverageCodeRequest'
         x-go-name: Body
       responses:
-        "201":
-          description: CourierCoverageCode
-          schema:
-            $ref: '#/definitions/CourierCoverageCode'
         "400":
           description: errorResponse
           schema:
             $ref: '#/definitions/errorResponse'
-        "500":
-          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
   /courier/courier-coverage-code/{uid}:
@@ -2307,12 +2355,6 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-        "400":
-          description: errorResponse
-          schema:
-            $ref: '#/definitions/errorResponse'
-        "500":
-          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
     get:
@@ -2330,12 +2372,6 @@ paths:
           description: CourierCoverageCode
           schema:
             $ref: '#/definitions/CourierCoverageCode'
-        "400":
-          description: errorResponse
-          schema:
-            $ref: '#/definitions/errorResponse'
-        "500":
-          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
     put:
@@ -2358,12 +2394,6 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-        "400":
-          description: errorResponse
-          schema:
-            $ref: '#/definitions/errorResponse'
-        "500":
-          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Courier-Coverage-Code
   /courier/courier-coverage-code/import:
@@ -2377,11 +2407,9 @@ paths:
         name: file
         type: file
         x-go-name: File
-      produces:
-      - text/csv
       responses:
         "200":
-          description: ""
+          $ref: '#/responses/ImportCourierCoverageCode'
       tags:
       - Courier-Coverage-Code
   /courier/courier-services:
@@ -2533,12 +2561,6 @@ paths:
           description: SuccessResponse
           schema:
             $ref: '#/definitions/SuccessResponse'
-        "400":
-          description: errorResponse
-          schema:
-            $ref: '#/definitions/errorResponse'
-        "500":
-          $ref: '#/responses/InternalServerErrorResponse'
       tags:
       - Couriers
     get:
@@ -2734,8 +2756,10 @@ responses:
     description: ""
     schema:
       $ref: '#/definitions/ShippmentPredefinedDetail'
-  ImportStatus:
+  ImportCourierCoverageCode:
     description: ""
+    schema:
+      $ref: '#/definitions/CourierCoverageCodeImportResponse'
   ShippingTypeList:
     description: ""
     schema:

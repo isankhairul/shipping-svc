@@ -1,14 +1,15 @@
 package service
 
 import (
-	"github.com/go-kit/log"
-	"github.com/go-kit/log/level"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/message"
+
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 )
 
 type ChannelCourierService interface {
@@ -91,9 +92,6 @@ func (s *ChannelCourierServiceImpl) createChannelCourierInTx(input request.SaveC
 //
 // responses:
 //  200: ChannelCourierDTO
-//  401: UnauthorizedResponse
-// 	400: InvalidRequestDataResponse
-//  500: InternalServerErrorResponse
 func (s *ChannelCourierServiceImpl) GetChannelCourier(uid string) (*entity.ChannelCourierDTO, message.Message) {
 	logger := log.With(s.logger, "ChannelCourierService", "Get Detail of Channel Courier")
 	cur, err := s.channelCouriers.GetChannelCourierByUID(uid)
@@ -113,9 +111,6 @@ func (s *ChannelCourierServiceImpl) GetChannelCourier(uid string) (*entity.Chann
 //
 // responses:
 //  200: PaginationResponse
-//  401: UnauthorizedResponse
-// 	400: InvalidRequestDataResponse
-//  500: InternalServerErrorResponse
 func (s *ChannelCourierServiceImpl) ListChannelCouriers(input request.ChannelCourierListRequest) ([]*entity.ChannelCourierDTO, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "ChannelCourierService", "ListChannelCouriers")
 
@@ -182,9 +177,6 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 //
 // responses:
 //  200: SuccessResponse
-//  401: UnauthorizedResponse
-// 	400: InvalidRequestDataResponse
-//  500: InternalServerErrorResponse
 func (s *ChannelCourierServiceImpl) DeleteChannelCourier(uid string) message.Message {
 	channelCourier, err := s.channelCouriers.GetChannelCourierByUID(uid)
 	if err != nil {
