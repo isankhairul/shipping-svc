@@ -34,11 +34,15 @@ var ErrChannelCourierServiceCreateFailed = Message{Code: 34606, Message: "Unable
 // courier: 341xx
 var ErrCourierNotFound = Message{Code: 34101, Message: "Courier not found"}
 var ErrCourierServiceNotFound = Message{Code: 34101, Message: "Courier service not found"}
+var ErrCourierServiceIsRequired = Message{Code: 34101, Message: "Courier service uid is required"}
 var ErrDataCourierUIdNotExist = Message{Code: 34001, Message: "CourierUID not exist"}
 
 // courier coverage code : 346xx
 var ErrCourierCoverageCodeUidNotExist = Message{Code: 34601, Message: "Courier Coverage Code not exist"}
 var ErrCourierCoverageCodeUidExist = Message{Code: 34602, Message: "Courier Coverage Code exists"}
+var ErrOriginNotFound = Message{Code: 34602, Message: "Origin not in Courier Coverage"}
+var ErrDestinationNotFound = Message{Code: 34602, Message: "Destination not in Courier Coverage"}
+var ErrGetShipperRate = Message{Code: 34602, Message: "Failed to get shipper shipping rate"}
 
 //channel : 342xx
 var ErrChannelNotFound = Message{Code: 34201, Message: "Channel not found"}

@@ -8,6 +8,7 @@ import (
 	"go-klikdokter/helper/config"
 	"go-klikdokter/helper/database"
 	"go-klikdokter/helper/global"
+	"go-klikdokter/pkg/cache"
 	"net/http"
 
 	"github.com/go-kit/log"
@@ -38,7 +39,7 @@ func DbInit(logger log.Logger) (*gorm.DB, error) {
 	return db, nil
 }
 
-func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
+func InitRouting(db *gorm.DB, logger log.Logger, redis cache.RedisCache) *http.ServeMux {
 	// Service registry
 	courierSvc := registry.RegisterCourierService(db, logger)
 	channelCourierSvc := registry.RegisterChannelCourierService(db, logger)
@@ -46,6 +47,7 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	shipmentPredefinedService := registry.RegisterShipmentPredefinedService(db, logger)
 	courierCoverageCodeSvc := registry.RegisterCourierCoverageCodeService(db, logger)
 	channelCourierServiceSvc := registry.RegisterChannelCourierServiceService(db, logger)
+	shippingService := registry.RegisterShippingService(db, logger, redis)
 
 	// Transport initialization
 	swagHttp := transport.SwaggerHttpHandler(log.With(logger, "SwaggerTransportLayer", "HTTP")) //don't delete or change this !!
@@ -55,6 +57,7 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	shipmentPredefinedHttp := transport.ShipmentPredefinedHandler(shipmentPredefinedService, log.With(logger, "ShipmentPredefinedTransportLayer", "HTTP"))
 	channelHttp := transport.ChannelHttpHandler(channelSvc, channelCourierSvc, log.With(logger, "ChannelTransportLayer", "HTTP"))
 	channelCourierServiceHttp := transport.ChannelCourierServiceHttpHandler(channelCourierServiceSvc, log.With(logger, "ChannelCourierServiceTransportLayer", "HTTP"))
+	shippingHttp := transport.ShippingHttpHandler(shippingService, log.With(logger, "ShippingTransportLayer", "HTTP"))
 
 	// Routing path
 	mux := http.NewServeMux()
@@ -65,6 +68,21 @@ func InitRouting(db *gorm.DB, logger log.Logger) *http.ServeMux {
 	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixChannel), channelHttp)
 	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourier), channelCourierHttp)
 	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourierService), channelCourierServiceHttp)
+	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixShipping), shippingHttp)
 
 	return mux
+}
+
+func InitCache(logger log.Logger) (cache.RedisCache, error) {
+
+	redis, err := cache.SetupRedisConnection(
+		viper.GetString("cache.redis.host"),
+		viper.GetString("cache.redis.port"),
+		viper.GetInt("cache.redis.index.primary"),
+		viper.GetString("cache.redis.password"),
+		viper.GetBool("cache.redis.is-active"),
+		viper.GetInt("cache.redis.expired-in-minute.default"),
+	)
+
+	return redis, err
 }

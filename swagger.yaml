@@ -1,5 +1,21 @@
 basePath: /shipment-svc/api/v1
 definitions:
+  AreaDetailPayload:
+    properties:
+      country_code:
+        type: string
+        x-go-name: CountryCode
+      latitude:
+        type: string
+        x-go-name: Latitude
+      longitude:
+        type: string
+        x-go-name: Longitude
+      postal_code:
+        type: string
+        x-go-name: PostalCode
+    type: object
+    x-go-package: go-klikdokter/app/model/request
   BaseIDModel:
     properties:
       id:
@@ -305,6 +321,13 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/response
+  ChannelCourierServicePayloadItem:
+    properties:
+      courier_service_uid:
+        type: string
+        x-go-name: CourierServiceUID
+    type: object
+    x-go-package: go-klikdokter/app/model/request
   Courier:
     properties:
       code:
@@ -834,6 +857,207 @@ definitions:
         x-go-name: StatusTitle
     type: object
     x-go-name: GetChannelCourierStatusResponseItem
+    x-go-package: go-klikdokter/app/model/response
+  GetShippingRateCourir:
+    properties:
+      courier_code:
+        type: string
+        x-go-name: CourierCode
+      courier_name:
+        type: string
+        x-go-name: CourierName
+      courier_type_code:
+        type: string
+        x-go-name: CourierTypeCode
+      courier_type_name:
+        type: string
+        x-go-name: CourierTypeName
+      courier_uid:
+        type: string
+        x-go-name: CourierUID
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  GetShippingRateError:
+    properties:
+      id:
+        type: string
+        x-go-name: ID
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  GetShippingRatePriceRange:
+    properties:
+      max_price:
+        format: double
+        type: number
+        x-go-name: MaxPrice
+      min_price:
+        format: double
+        type: number
+        x-go-name: MinPrice
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  GetShippingRateRequest:
+    properties:
+      channel_courier_services:
+        items:
+          $ref: '#/definitions/ChannelCourierServicePayloadItem'
+        type: array
+        x-go-name: ChannelCourierService
+      channel_uid:
+        type: string
+        x-go-name: ChannelUID
+      contain_prescription:
+        format: int64
+        type: integer
+        x-go-name: ContainPrescription
+      destination:
+        $ref: '#/definitions/AreaDetailPayload'
+      origin:
+        $ref: '#/definitions/AreaDetailPayload'
+      total_heigth:
+        format: double
+        type: number
+        x-go-name: TotalHeight
+      total_length:
+        format: double
+        type: number
+        x-go-name: TotalLength
+      total_product_price:
+        format: double
+        type: number
+        x-go-name: TotalProductPrice
+      total_weight:
+        format: double
+        type: number
+        x-go-name: TotalWeight
+      total_width:
+        format: double
+        type: number
+        x-go-name: TotalWidth
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  GetShippingRateResponse:
+    properties:
+      available_code:
+        format: int64
+        type: integer
+        x-go-name: AvailableCode
+      error:
+        $ref: '#/definitions/GetShippingRateError'
+      etd_max:
+        format: double
+        type: number
+        x-go-name: EtdMax
+      etd_min:
+        format: double
+        type: number
+        x-go-name: EtdMin
+      price_range:
+        $ref: '#/definitions/GetShippingRatePriceRange'
+      services:
+        items:
+          $ref: '#/definitions/GetShippingRateService'
+        type: array
+        x-go-name: Services
+      shipping_type_code:
+        type: string
+        x-go-name: ShippingTypeCode
+      shipping_type_description:
+        type: string
+        x-go-name: ShippingTypeDescription
+      shipping_type_name:
+        type: string
+        x-go-name: ShippingTypeName
+    type: object
+    x-go-package: go-klikdokter/app/model/response
+  GetShippingRateService:
+    properties:
+      available_code:
+        format: int64
+        type: integer
+        x-go-name: AvailableCode
+      courier:
+        $ref: '#/definitions/GetShippingRateCourir'
+      courier_service_uid:
+        type: string
+        x-go-name: CourierServiceUID
+      distance:
+        format: double
+        type: number
+        x-go-name: Distance
+      error:
+        $ref: '#/definitions/GetShippingRateError'
+      etd_max:
+        format: double
+        type: number
+        x-go-name: Etd_Max
+      etd_min:
+        format: double
+        type: number
+        x-go-name: Etd_Min
+      final_weight:
+        format: double
+        type: number
+        x-go-name: FinalWeight
+      insurance_applied:
+        type: boolean
+        x-go-name: InsuranceApplied
+      insurance_fee:
+        format: double
+        type: number
+        x-go-name: InsuranceFee
+      logo:
+        $ref: '#/definitions/JSONB'
+      max_day:
+        format: int64
+        type: integer
+        x-go-name: MaxDay
+      min_day:
+        format: int64
+        type: integer
+        x-go-name: MinDay
+      must_use_insurance:
+        type: boolean
+        x-go-name: MustUseInsurance
+      shipping_code:
+        type: string
+        x-go-name: ShippingCode
+      shipping_name:
+        type: string
+        x-go-name: ShippingName
+      shipping_type_code:
+        type: string
+        x-go-name: ShippingTypeCode
+      shipping_type_description:
+        type: string
+        x-go-name: ShippingTypeDescription
+      shipping_type_name:
+        type: string
+        x-go-name: ShippingTypeName
+      total_price:
+        format: double
+        type: number
+        x-go-name: TotalPrice
+      unit_price:
+        format: double
+        type: number
+        x-go-name: UnitPrice
+      volume:
+        format: double
+        type: number
+        x-go-name: Volume
+      volume_weight:
+        format: double
+        type: number
+        x-go-name: VolumeWeight
+      weight:
+        format: double
+        type: number
+        x-go-name: Weight
+    type: object
     x-go-package: go-klikdokter/app/model/response
   ImportStatus:
     properties:
@@ -2704,6 +2928,21 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Courier-Predefined
+  /shipping/shipping-rate:
+    post:
+      description: Get Shipping Rate
+      operationId: ShippingRate
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/GetShippingRateRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          $ref: '#/responses/ShippingRate'
+      tags:
+      - Shipping
 produces:
 - application/json
 responses:
@@ -2760,6 +2999,12 @@ responses:
     description: ""
     schema:
       $ref: '#/definitions/CourierCoverageCodeImportResponse'
+  ShippingRate:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/GetShippingRateResponse'
+      type: array
   ShippingTypeList:
     description: ""
     schema:

@@ -32,3 +32,24 @@ access-control:
 
 route:
   site: "/shipment-svc/api/v1"
+
+cache:
+  redis:
+    host: ${REDIS_HOST}
+    user: ${REDIS_USER}
+    password: ${REDIS_PASSWORD}
+    port: ${REDIS_PORT}
+    index:
+      primary: 0
+    is-active : true
+    expired-in-minute: 
+      default : 1440
+      shipping-rate : 1440
+
+shipper:
+  auth:
+    key: X-API-Key
+    value: ${SHIPPER_AUTH_VALUE}
+  base: ${SHIPPER_BASE}
+  path:
+    get-pricing-domestic: /v3/pricing/domestic
