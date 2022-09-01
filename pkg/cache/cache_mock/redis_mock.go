@@ -11,21 +11,39 @@ type Redis_Mock struct {
 }
 
 func (cache *Redis_Mock) Deletes(keys ...string) {
+	/*
+		implemented
+	*/
 }
 
 func (cache *Redis_Mock) Delete(key string) {
+	/*
+		implemented
+	*/
 }
 
 func (cache *Redis_Mock) HashDelete(key string, field string) {
+	/*
+		implemented
+	*/
 }
 
 func (cache *Redis_Mock) HashDeletes(key string, fields ...string) {
+	/*
+		implemented
+	*/
 }
 
 func (cache *Redis_Mock) DeletePrefix(prefix string) {
+	/*
+		implemented
+	*/
 }
 
 func (cache *Redis_Mock) Expire(key string, expiration time.Duration) {
+	/*
+		implemented
+	*/
 }
 
 func (cache *Redis_Mock) Get(key string) (string, error) {
@@ -87,6 +105,9 @@ func (cache *Redis_Mock) IsExist(key string) bool {
 }
 
 func (cache *Redis_Mock) Set(key string, value interface{}, exp ...int) {
+	/*
+		implemented
+	*/
 }
 
 func (cache *Redis_Mock) HashSet(key string, field string, value interface{}, exp ...int) error {
@@ -100,4 +121,7 @@ func (cache *Redis_Mock) HashSet(key string, field string, value interface{}, ex
 }
 
 func (cache *Redis_Mock) SetJsonStruct(key string, value interface{}, exp ...int) {
+	/*
+		implemented
+	*/
 }

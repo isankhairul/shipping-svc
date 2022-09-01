@@ -42,7 +42,7 @@ var ErrCourierCoverageCodeUidNotExist = Message{Code: 34601, Message: "Courier C
 var ErrCourierCoverageCodeUidExist = Message{Code: 34602, Message: "Courier Coverage Code exists"}
 var ErrOriginNotFound = Message{Code: 34602, Message: "Origin not in Courier Coverage"}
 var ErrDestinationNotFound = Message{Code: 34602, Message: "Destination not in Courier Coverage"}
-var ErrGetShipperRate = Message{Code: 34602, Message: "Failed to get shipper shipping rate"}
+var ErrShippingRateNotFound = Message{Code: 34602, Message: "shipping rate not found"}
 
 //channel : 342xx
 var ErrChannelNotFound = Message{Code: 34201, Message: "Channel not found"}

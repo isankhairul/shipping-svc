@@ -2,11 +2,11 @@ package service
 
 import (
 	"fmt"
+	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
-	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/http_helper/shipping_provider"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/cache"
@@ -59,7 +59,6 @@ func (s *shippingServiceImpl) GetShippingRate(input request.GetShippingRateReque
 
 	//Find Channel By UID
 	channel, err := s.channelRepo.FindByUid(&input.ChannelUID)
-	msg := message.SuccessMsg
 
 	if err != nil {
 		_ = level.Error(logger).Log("s.channelRepo.FindByUid", err.Error())
@@ -87,115 +86,80 @@ func (s *shippingServiceImpl) GetShippingRate(input request.GetShippingRateReque
 		return nil, message.ErrCourierServiceNotFound
 	}
 
-	price := s.getPrice(&input, courierServices)
+	//Populate courier
+	//courier map[id]code
+	courier := make(map[uint64]string)
+	var courierList []entity.Courier
+	for _, v := range courierServices {
+		_, ok := courier[v.CourierID]
+		if !ok {
+			courier[v.CourierID] = v.CourierCode
+			courierList = append(courierList, entity.Courier{
+				BaseIDModel: base.BaseIDModel{
+					ID:  v.CourierID,
+					UID: v.CourierUID,
+				},
+				Code: v.CourierCode,
+			})
+		}
+	}
+
+	price := s.GetAllCourierPrice(courierList, &input)
 	resp = response.ToGetShippingRateResponseList(courierServices, price)
 
-	return resp, msg
+	return resp, message.SuccessMsg
 }
 
-// Find Price Data
-func (s *shippingServiceImpl) getPrice(input *request.GetShippingRateRequest, courierService []entity.ChannelCourierServiceForShippingRate) *response.ShippingRateCommonResponse {
-	resp := response.ShippingRateCommonResponse{}
-	resp.Rate = make(map[string]response.ShippingRateData)
-	resp.Summary = make(map[string]response.ShippingRateSummary)
-
-	for _, v := range courierService {
-
-		originData, destinationData, msg := s.getOriginAndDestination(v.CourierID, input.Origin, input.Destination)
-
-		courierShippingCode := global.CourierShippingCodeKey(v.CourierCode, v.ShippingCode)
-		if msg.Code != message.SuccessMsg.Code {
-			resp.Rate[courierShippingCode] = response.ShippingRateData{
-				AvailableCode: 400,
-				Error: response.GetShippingRateError{
-					Message: msg.Message,
-				},
-			}
-			continue
-		}
-
-		resp.Rate[courierShippingCode] = s.getSinglePrice(originData, destinationData, v.CourierCode, v.ShippingCode, input)
-		resp.SummaryPerShippingType(v.ShippingTypeCode, resp.Rate[courierShippingCode].TotalPrice, v.EtdMax, v.EtdMin)
-	}
-
-	return &resp
-}
-
-// Get Origin and Destination data form database
-func (s *shippingServiceImpl) getOriginAndDestination(courierID uint64, origin, destination request.AreaDetailPayload) (*entity.CourierCoverageCode, *entity.CourierCoverageCode, message.Message) {
-	logger := log.With(s.logger, "ShippingService", "getOriginAndDestination")
-
-	//Find Origin Area Data
-	originResponse, err := s.courierCoverageCode.FindByCountryCodeAndPostalCode(courierID, origin.CountryCode, origin.PostalCode)
-
-	if err != nil {
-		_ = level.Error(logger).Log("s.courierCoverageCode.FindByCountryCodeAndPostalCode", err.Error())
-		return nil, nil, message.ErrOriginNotFound
-	}
-
-	if originResponse == nil {
-		return nil, nil, message.ErrOriginNotFound
-	}
-
-	//Find Destination Area Data
-	destinationResponse, err := s.courierCoverageCode.FindByCountryCodeAndPostalCode(courierID, destination.CountryCode, destination.PostalCode)
-
-	if err != nil {
-		_ = level.Error(logger).Log("s.courierCoverageCode.FindByCountryCodeAndPostalCode", err.Error())
-		return nil, nil, message.ErrDestinationNotFound
-	}
-
-	if destinationResponse == nil {
-		return nil, nil, message.ErrDestinationNotFound
-
-	}
-
-	return originResponse, destinationResponse, message.SuccessMsg
-}
-
-// Get Third Party Price Data
-func (s *shippingServiceImpl) getSinglePrice(origin, destination *entity.CourierCoverageCode, courierCode, shippingCode string, input *request.GetShippingRateRequest) response.ShippingRateData {
-
-	var resp *response.ShippingRateCommonResponse
-	var err error
-
-	key := fmt.Sprintf("%s:%s:%s:%s:%s:%s:%s:%f",
-		courierCode,
-		input.Origin.PostalCode,
-		input.Destination.PostalCode,
-		input.Origin.Latitude,
-		input.Origin.Longitude,
-		input.Destination.Latitude,
-		input.Destination.Longitude,
-		input.TotalHeight,
-	)
-
-	// try to get data from cache
-	err = s.redis.GetJsonStruct(key, &resp)
-	courierShippingCode := global.CourierShippingCodeKey(courierCode, shippingCode)
-	if resp != nil {
-		return resp.FindShippingCode(courierShippingCode)
-	}
-
-	// get data from shipping provider if cache doesn't exist
-	resp = &response.ShippingRateCommonResponse{
+// Get Price Data By Courier
+func (s *shippingServiceImpl) GetAllCourierPrice(courier []entity.Courier, input *request.GetShippingRateRequest) *response.ShippingRateCommonResponse {
+	logger := log.With(s.logger, "ShippingService", "getAllCourierPrice")
+	var resp = &response.ShippingRateCommonResponse{
 		Rate:    make(map[string]response.ShippingRateData),
-		Summary: make(map[string]response.ShippingRateSummary),
+		Summary: map[string]response.ShippingRateSummary{},
 	}
-	switch courierCode {
-	case shipping_provider.ShipperCode:
-		resp, err = s.shipper.GetShippingRate(origin, destination, input)
-	default:
-		resp.Rate[courierShippingCode] = response.ShippingRateData{
-			AvailableCode: 200,
-			Error:         response.GetShippingRateError{Message: "shipping price not found"},
+
+	for _, v := range courier {
+		var (
+			couriePrice *response.ShippingRateCommonResponse
+			err         error
+			log         string
+		)
+
+		// try to get price data from cache
+		key := fmt.Sprintf("%s:%s:%s:%s:%s:%s:%s:%f",
+			v.Code,
+			input.Origin.PostalCode,
+			input.Destination.PostalCode,
+			input.Origin.Latitude,
+			input.Origin.Longitude,
+			input.Destination.Latitude,
+			input.Destination.Longitude,
+			input.TotalHeight,
+		)
+
+		_ = s.redis.GetJsonStruct(key, &couriePrice)
+		// if cache doesn't exist
+		if couriePrice == nil {
+			switch v.Code {
+			case shipping_provider.ShipperCode:
+				couriePrice, err = s.shipper.GetShippingRate(&v.ID, input)
+			default:
+				continue
+			}
+
+			if err != nil {
+				_ = level.Error(logger).Log(log, err.Error())
+				continue
+			}
+
+			// save price to redis cache
+			s.redis.SetJsonStruct(key, couriePrice, viper.GetInt("cache.redis.expired-in-minute.shipping-rate"))
+		}
+
+		if couriePrice != nil {
+			resp.Add(couriePrice.Rate)
 		}
 	}
 
-	// save data to cache
-	if err == nil {
-		s.redis.SetJsonStruct(key, resp, viper.GetInt("cache.redis.expired-in-minute.shipping-rate"))
-	}
-
-	return resp.FindShippingCode(courierShippingCode)
+	return resp
 }

@@ -1,7 +1,6 @@
 package test
 
 import (
-	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
@@ -52,20 +51,17 @@ func TestGetShippingRate_ShipperSuccess(t *testing.T) {
 		}).Once()
 
 	redis.Mock.On("GetJsonStruct", mock.Anything).
-		Return(nil).Twice()
-
-	courierCoverageCodeRepository.Mock.On("FindByCountryCodeAndPostalCode", mock.Anything).
-		Return(&entity.CourierCoverageCode{Code1: "1"}).Times(4)
+		Return(nil).Once()
 
 	shipper.Mock.On("GetShippingRate", mock.Anything).
 		Return(&response.ShippingRateCommonResponse{
 			Rate:    make(map[string]response.ShippingRateData),
 			Summary: make(map[string]response.ShippingRateSummary),
-		}).Twice()
+		}).Once()
 
 	result, msg := shippingService.GetShippingRate(input)
-	assert.NotNil(t, result, "Result should not be nil")
-	assert.Equal(t, msg, message.SuccessMsg, "Message is no correct")
+	assert.NotNil(t, result)
+	assert.Equal(t, msg, message.SuccessMsg, codeIsNotCorrect)
 }
 
 func TestGetShippingRate_DefaultSuccess(t *testing.T) {
@@ -81,19 +77,16 @@ func TestGetShippingRate_DefaultSuccess(t *testing.T) {
 
 	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
 		Return([]entity.ChannelCourierServiceForShippingRate{
-			{CourierCode: ""},
-			{CourierCode: ""},
+			{CourierCode: "aa"},
+			{CourierCode: "bb"},
 		}).Once()
 
 	redis.Mock.On("GetJsonStruct", mock.Anything).
 		Return(nil).Twice()
 
-	courierCoverageCodeRepository.Mock.On("FindByCountryCodeAndPostalCode", mock.Anything).
-		Return(&entity.CourierCoverageCode{Code1: "1"}).Times(4)
-
 	result, msg := shippingService.GetShippingRate(input)
-	assert.NotNil(t, result, "Result should not be nil")
-	assert.Equal(t, msg, message.SuccessMsg, "Message is no correct")
+	assert.NotNil(t, result)
+	assert.Equal(t, msg, message.SuccessMsg, codeIsNotCorrect)
 }
 
 func TestGetShippingRate_ShipperFailed(t *testing.T) {
@@ -112,78 +105,15 @@ func TestGetShippingRate_ShipperFailed(t *testing.T) {
 	redis.Mock.On("GetJsonStruct", mock.Anything).
 		Return(nil).Once()
 
-	courierCoverageCodeRepository.Mock.On("FindByCountryCodeAndPostalCode", mock.Anything).
-		Return(&entity.CourierCoverageCode{Code1: "1"}).Once()
-
-	courierCoverageCodeRepository.Mock.On("FindByCountryCodeAndPostalCode", mock.Anything).
-		Return(&entity.CourierCoverageCode{Code1: "2"}).Once()
-
 	shipper.Mock.On("GetShippingRate", mock.Anything).
 		Return(&response.ShippingRateCommonResponse{
-			Rate:    make(map[string]response.ShippingRateData),
-			Summary: make(map[string]response.ShippingRateSummary),
-			Msg:     message.ErrGetShipperRate,
+			Rate: make(map[string]response.ShippingRateData),
 		}).Once()
 
 	result, msg := shippingService.GetShippingRate(input)
-	assert.NotNil(t, result, "Result should not be nil")
+	assert.NotNil(t, result)
 	assert.Equal(t, 400, result[0].Services[0].AvailableCode)
-	assert.Equal(t, message.ErrGetShipperRate.Message, result[0].Services[0].Error.Message)
-	assert.Equal(t, message.SuccessMsg, msg, codeIsNotCorrect)
-}
-
-func TestGetShippingRate_DestinationNotFound(t *testing.T) {
-	input := request.GetShippingRateRequest{
-		ChannelCourierService: []request.ChannelCourierServicePayloadItem{
-			{},
-		},
-	}
-
-	channelRepository.Mock.On("FindByUid", mock.Anything).
-		Return(entity.Channel{BaseIDModel: base.BaseIDModel{UID: "1"}}).Once()
-
-	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
-		Return([]entity.ChannelCourierServiceForShippingRate{{CourierCode: shipping_provider.ShipperCode}}).Once()
-
-	redis.Mock.On("GetJsonStruct", mock.Anything).
-		Return(nil).Once()
-
-	courierCoverageCodeRepository.Mock.On("FindByCountryCodeAndPostalCode", mock.Anything).
-		Return(&entity.CourierCoverageCode{Code1: "1"}).Once()
-
-	courierCoverageCodeRepository.Mock.On("FindByCountryCodeAndPostalCode", mock.Anything).
-		Return(&entity.CourierCoverageCode{Code1: "2"}, errors.New("")).Once()
-
-	result, msg := shippingService.GetShippingRate(input)
-	assert.NotNil(t, result, "Result should not be nil")
-	assert.Equal(t, 400, result[0].Services[0].AvailableCode)
-	assert.Equal(t, message.ErrDestinationNotFound.Message, result[0].Services[0].Error.Message)
-	assert.Equal(t, message.SuccessMsg, msg, codeIsNotCorrect)
-}
-
-func TestGetShippingRate_OriginNotFound(t *testing.T) {
-	input := request.GetShippingRateRequest{
-		ChannelCourierService: []request.ChannelCourierServicePayloadItem{
-			{},
-		},
-	}
-
-	channelRepository.Mock.On("FindByUid", mock.Anything).
-		Return(entity.Channel{BaseIDModel: base.BaseIDModel{UID: "1"}}).Once()
-
-	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
-		Return([]entity.ChannelCourierServiceForShippingRate{{CourierCode: shipping_provider.ShipperCode}}).Once()
-
-	redis.Mock.On("GetJsonStruct", mock.Anything).
-		Return(nil).Once()
-
-	courierCoverageCodeRepository.Mock.On("FindByCountryCodeAndPostalCode", mock.Anything).
-		Return(&entity.CourierCoverageCode{Code1: "1"}, errors.New("")).Once()
-
-	result, msg := shippingService.GetShippingRate(input)
-	assert.NotNil(t, result, "Result should not be nil")
-	assert.Equal(t, 400, result[0].Services[0].AvailableCode)
-	assert.Equal(t, message.ErrOriginNotFound.Message, result[0].Services[0].Error.Message)
+	assert.Equal(t, message.ErrShippingRateNotFound.Message, result[0].Services[0].Error.Message)
 	assert.Equal(t, message.SuccessMsg, msg, codeIsNotCorrect)
 }
 
@@ -202,8 +132,8 @@ func TestGetShippingRate_CourierServiceNotFound(t *testing.T) {
 		Return([]entity.ChannelCourierServiceForShippingRate{}).Once()
 
 	result, msg := shippingService.GetShippingRate(input)
-	assert.Nil(t, result, "Result should be nil")
-	assert.Equal(t, message.ErrCourierServiceNotFound, msg, "Message is no correct")
+	assert.Nil(t, result)
+	assert.Equal(t, message.ErrCourierServiceNotFound, msg, codeIsNotCorrect)
 }
 
 func TestGetShippingRate_ChannelNotFound(t *testing.T) {
@@ -218,8 +148,8 @@ func TestGetShippingRate_ChannelNotFound(t *testing.T) {
 		Return(nil).Once()
 
 	result, msg := shippingService.GetShippingRate(input)
-	assert.Nil(t, result, "Result should be nil")
-	assert.Equal(t, message.ErrChannelNotFound, msg, "Message is no correct")
+	assert.Nil(t, result)
+	assert.Equal(t, message.ErrChannelNotFound, msg, codeIsNotCorrect)
 }
 
 func TestGetShippingRateCourierServiceUID_Required(t *testing.T) {
@@ -228,6 +158,6 @@ func TestGetShippingRateCourierServiceUID_Required(t *testing.T) {
 	}
 
 	result, msg := shippingService.GetShippingRate(input)
-	assert.Nil(t, result, "Result should be nil")
-	assert.Equal(t, message.ErrCourierServiceIsRequired, msg, "Message is no correct")
+	assert.Nil(t, result)
+	assert.Equal(t, message.ErrCourierServiceIsRequired, msg, codeIsNotCorrect)
 }

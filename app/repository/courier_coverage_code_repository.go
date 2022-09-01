@@ -4,6 +4,7 @@ import (
 	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/app/model/request"
 	"go-klikdokter/helper/global"
 	"go-klikdokter/pkg/util"
 	"math"
@@ -23,7 +24,7 @@ type CourierCoverageCodeRepository interface {
 	FindByUid(uid string) (*entity.CourierCoverageCode, error)
 	Update(uid string, values map[string]interface{}) (*entity.CourierCoverageCode, error)
 	CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string, id uint64) (int64, error)
-	FindByCountryCodeAndPostalCode(courierID uint64, countryCode, postalCode string) (*entity.CourierCoverageCode, error)
+	FindShipperCourierCoverage(input *request.FindShipperCourierCoverage) (*entity.CourierCoverageCode, error)
 	DeleteByUid(uid string) error
 }
 
@@ -191,13 +192,13 @@ func (r *CourierCoverageCodeRepo) DeleteByUid(uid string) error {
 	return nil
 }
 
-func (r *CourierCoverageCodeRepo) FindByCountryCodeAndPostalCode(courierID uint64, countryCode, postalCode string) (*entity.CourierCoverageCode, error) {
+func (r *CourierCoverageCodeRepo) FindShipperCourierCoverage(input *request.FindShipperCourierCoverage) (*entity.CourierCoverageCode, error) {
 	var courierCoverageCode entity.CourierCoverageCode
 	err := r.base.GetDB().
 		Preload("Courier").
-		Where(&entity.CourierCoverageCode{CourierID: courierID}).
-		Where(&entity.CourierCoverageCode{CountryCode: countryCode}).
-		Where(&entity.CourierCoverageCode{PostalCode: postalCode}).
+		Where(&entity.CourierCoverageCode{CourierID: input.CourierID}).
+		Where(&entity.CourierCoverageCode{CountryCode: input.CountryCode}).
+		Where(&entity.CourierCoverageCode{PostalCode: input.PostalCode}).
 		First(&courierCoverageCode).Error
 	if err != nil {
 		return nil, err

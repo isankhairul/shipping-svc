@@ -69,7 +69,7 @@ func RegisterShippingService(db *gorm.DB, logger log.Logger, redis cache.RedisCa
 		rp.NewChannelRepository(repo),
 		rp.NewCourierServiceRepository(repo),
 		rp.NewCourierCoverageCodeRepository(repo),
-		shipping_provider.NewShipper(logger),
+		shipping_provider.NewShipper(rp.NewCourierCoverageCodeRepository(repo), logger),
 		redis,
 	)
 }
