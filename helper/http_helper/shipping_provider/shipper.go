@@ -3,9 +3,10 @@ package shipping_provider
 import (
 	"encoding/json"
 	"errors"
-	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/model/response"
+	"go-klikdokter/app/repository"
+	"strconv"
 
 	"go-klikdokter/helper/http_helper"
 	"go-klikdokter/helper/message"
@@ -15,22 +16,24 @@ import (
 )
 
 type Shipper interface {
-	GetShippingRate(origin, destination *entity.CourierCoverageCode, data *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error)
+	GetShippingRate(courierID *uint64, input *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error)
 	GetPricingDomestic(req *request.GetPricingDomestic) (*response.GetPricingDomestic, error)
 }
 type shipper struct {
-	Logger        log.Logger
-	Authorization map[string]string
-	Base          string
+	courierCoverage repository.CourierCoverageCodeRepository
+	Logger          log.Logger
+	Authorization   map[string]string
+	Base            string
 }
 
-func NewShipper(log log.Logger) Shipper {
+func NewShipper(ccr repository.CourierCoverageCodeRepository, log log.Logger) Shipper {
 	return &shipper{
 		Authorization: map[string]string{
 			viper.GetString("shipper.auth.key"): viper.GetString("shipper.auth.value"),
 		},
-		Base:   viper.GetString("shipper.base"),
-		Logger: log,
+		Base:            viper.GetString("shipper.base"),
+		courierCoverage: ccr,
+		Logger:          log,
 	}
 }
 
@@ -62,18 +65,66 @@ func (h *shipper) GetPricingDomestic(req *request.GetPricingDomestic) (*response
 	return &response, nil
 }
 
-func (h *shipper) GetShippingRate(origin, destination *entity.CourierCoverageCode, data *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error) {
+func (h *shipper) GetOriginAndDestination(courierID *uint64, input *request.GetShippingRateRequest) (int, int, message.Message) {
+	originReq := &request.FindShipperCourierCoverage{
+		CourierID:   *courierID,
+		CountryCode: input.Origin.CountryCode,
+		PostalCode:  input.Origin.PostalCode,
+	}
 
-	payload := request.NewGetPricingDomesticRequest(origin, destination, data)
+	origin, _ := h.courierCoverage.FindShipperCourierCoverage(originReq)
+	if origin == nil {
+		return 0, 0, message.ErrOriginNotFound
+	}
+
+	originAreaID, _ := strconv.Atoi(origin.Code1)
+	if originAreaID == 0 {
+		return 0, 0, message.ErrOriginNotFound
+	}
+
+	destinationReq := &request.FindShipperCourierCoverage{
+		CourierID:   *courierID,
+		CountryCode: input.Destination.CountryCode,
+		PostalCode:  input.Destination.PostalCode,
+	}
+
+	destination, _ := h.courierCoverage.FindShipperCourierCoverage(destinationReq)
+	if destination == nil {
+		return 0, 0, message.ErrDestinationNotFound
+	}
+
+	destinationAreaID, _ := strconv.Atoi(destination.Code1)
+	if destinationAreaID == 0 {
+		return 0, 0, message.ErrDestinationNotFound
+	}
+
+	return originAreaID, destinationAreaID, message.SuccessMsg
+}
+
+func (h *shipper) GetShippingRate(courierID *uint64, input *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error) {
+
+	origin, destination, msg := h.GetOriginAndDestination(courierID, input)
+
+	//if origin or destination not found
+	if msg.Code != message.SuccessMsg.Code {
+		return &response.ShippingRateCommonResponse{
+			Rate: make(map[string]response.ShippingRateData),
+			Msg:  msg,
+		}, errors.New(msg.Message)
+	}
+
+	payload := request.NewGetPricingDomesticRequest(origin, destination, input)
 
 	shipperResponse, err := h.GetPricingDomestic(payload)
+
+	//if failed to get pricing from shipper api
 	if err != nil {
 		return &response.ShippingRateCommonResponse{
 			Rate: make(map[string]response.ShippingRateData),
-			Msg:  message.ErrGetShipperRate,
 		}, err
 	}
 
+	//if everithing go well
 	resp := shipperResponse.ToShippingRate()
 	return resp, nil
 }

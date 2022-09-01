@@ -85,7 +85,7 @@ func ToGetShippingRateResponseList(input []entity.ChannelCourierServiceForShippi
 
 	for _, v := range input {
 		courierShippingCode := global.CourierShippingCodeKey(v.CourierCode, v.ShippingCode)
-		p := price.Rate[courierShippingCode]
+		p := price.FindShippingCode(courierShippingCode)
 		service := GetShippingRateService{
 			Courier: GetShippingRateCourir{
 				CourierUID:      v.CourierUID,
@@ -119,6 +119,8 @@ func ToGetShippingRateResponseList(input []entity.ChannelCourierServiceForShippi
 			InsuranceApplied: p.InsuranceApplied,
 			Distance:         p.Distance,
 		}
+
+		price.SummaryPerShippingType(v.ShippingTypeCode, p.TotalPrice, v.EtdMax, v.EtdMin)
 
 		if _, ok := shippingTypeMap[v.ShippingTypeCode]; !ok {
 			shippingTypeMap[v.ShippingTypeCode] = []GetShippingRateService{}
@@ -158,6 +160,12 @@ type ShippingRateCommonResponse struct {
 	Msg     message.Message
 }
 
+func (s *ShippingRateCommonResponse) Add(data map[string]ShippingRateData) {
+	for k, v := range data {
+		s.Rate[k] = v
+	}
+}
+
 func (s *ShippingRateCommonResponse) FindShippingCode(shippingCode string) ShippingRateData {
 	data, ok := s.Rate[shippingCode]
 
@@ -174,7 +182,7 @@ func (s *ShippingRateCommonResponse) FindShippingCode(shippingCode string) Shipp
 		return ShippingRateData{
 			AvailableCode: 400,
 			Error: GetShippingRateError{
-				Message: "shipping price not found",
+				Message: message.ErrShippingRateNotFound.Message,
 			},
 		}
 	}

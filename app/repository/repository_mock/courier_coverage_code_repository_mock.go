@@ -3,6 +3,7 @@ package repository_mock
 import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/app/model/request"
 	"reflect"
 
 	"github.com/stretchr/testify/mock"
@@ -88,7 +89,7 @@ func (repository *CourierCoverageCodeRepositoryMock) DeleteByUid(uid string) err
 	return nil
 }
 
-func (repository *CourierCoverageCodeRepositoryMock) FindByCountryCodeAndPostalCode(courierID uint64, countryCode, postalCode string) (*entity.CourierCoverageCode, error) {
+func (repository *CourierCoverageCodeRepositoryMock) FindShipperCourierCoverage(input *request.FindShipperCourierCoverage) (*entity.CourierCoverageCode, error) {
 	arguments := repository.Mock.Called()
 
 	if len(arguments) > 1 {

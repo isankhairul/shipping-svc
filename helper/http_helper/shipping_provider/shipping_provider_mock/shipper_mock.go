@@ -1,7 +1,6 @@
 package shipping_provider_mock
 
 import (
-	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/model/response"
 
@@ -28,7 +27,7 @@ func (h *ShipperMock) GetPricingDomestic(req *request.GetPricingDomestic) (*resp
 	return arguments.Get(0).(*response.GetPricingDomestic), nil
 }
 
-func (h *ShipperMock) GetShippingRate(origin, destination *entity.CourierCoverageCode, data *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error) {
+func (h *ShipperMock) GetShippingRate(courierID *uint64, input *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error) {
 	arguments := h.Mock.Called()
 
 	if len(arguments) > 1 {

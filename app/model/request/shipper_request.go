@@ -1,25 +1,18 @@
 package request
 
-import (
-	"go-klikdokter/app/model/entity"
-	"strconv"
-)
-
-func NewGetPricingDomesticRequest(origin, destination *entity.CourierCoverageCode, input *GetShippingRateRequest) *GetPricingDomestic {
-	originAreaID, _ := strconv.Atoi(origin.Code1)
-	destinationAreaID, _ := strconv.Atoi(destination.Code1)
+func NewGetPricingDomesticRequest(origin, destination int, input *GetShippingRateRequest) *GetPricingDomestic {
 	req := GetPricingDomestic{
 		Height: input.TotalHeight,
 		Length: input.TotalLength,
 		Weight: input.TotalWeight,
 		Width:  input.TotalWidth,
 		Origin: AreaDetail{
-			AreaID:    originAreaID,
+			AreaID:    origin,
 			Latitude:  input.Origin.Latitude,
 			Longitude: input.Origin.Longitude,
 		},
 		Destination: AreaDetail{
-			AreaID:    destinationAreaID,
+			AreaID:    destination,
 			Latitude:  input.Destination.Latitude,
 			Longitude: input.Destination.Longitude,
 		},
@@ -48,4 +41,10 @@ type AreaDetail struct {
 	AreaID    int    `json:"area_id"`
 	Latitude  string `json:"lat"`
 	Longitude string `json:"long"`
+}
+
+type FindShipperCourierCoverage struct {
+	CourierID   uint64
+	CountryCode string
+	PostalCode  string
 }
