@@ -214,7 +214,7 @@ func TestListChannelCouriersServiceNotFound(t *testing.T) {
 	result, _, msg := channelCourierServiceService.ListChannelCouriersService(input)
 
 	assert.NotNil(t, result)
-	assert.Equal(t, 34005, msg.Code, codeIsNotCorrect)
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code, codeIsNotCorrect)
 }
 
 func TestGetChannelCourierServiceSuccess(t *testing.T) {
