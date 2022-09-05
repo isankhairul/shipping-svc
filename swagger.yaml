@@ -448,28 +448,26 @@ definitions:
         description: |-
           Code 1 of the Courier Coverage Code
           in: string
-        example: '"CKG011"'
+        example: CKG011
         type: string
         x-go-name: Code1
       code2:
         description: |-
           Code 2 of the Courier Coverage Code
           in: string
-        example: '"CKG012"'
+        example: CKG012
         type: string
         x-go-name: Code2
       code3:
         description: |-
           Code 3 of the Courier Coverage Code
           in: string
-        example: '""'
         type: string
         x-go-name: Code3
       code4:
         description: |-
           Code 4 of the Courier Coverage Code
           in: string
-        example: '""'
         type: string
         x-go-name: Code4
       code5:
@@ -489,7 +487,7 @@ definitions:
           Country code of the Courier Coverage Code
           in: string
           require: true
-        example: '"ID"'
+        example: ID
         type: string
         x-go-name: CountryCode
       courier_name:
@@ -500,14 +498,14 @@ definitions:
           Courier UID of the Courier
           in: string
           require: false
-        example: '"ggkjhsdf6668885555"'
+        example: ggkjhsdf6668885555
         type: string
         x-go-name: CourierUID
       description:
         description: |-
           Description of the Courier Coverage Code
           in: string
-        example: '"PAGEDANGAN"'
+        example: PAGEDANGAN
         type: string
         x-go-name: Description
       id:
@@ -526,7 +524,7 @@ definitions:
           Postal code of the Courier Coverage Code
           in: string
           require: true
-        example: '"151338"'
+        example: "151338"
         type: string
         x-go-name: PostalCode
       status:
@@ -536,6 +534,14 @@ definitions:
         format: int32
         type: integer
         x-go-name: Status
+      subdistrict:
+        description: |-
+          Subdistrict of the Courier Coverage Code
+          in: string
+          require: true
+        example: "151338"
+        type: string
+        x-go-name: Subdistrict
       uid:
         description: |-
           UID of the a model
@@ -1095,6 +1101,9 @@ definitions:
       postal_code:
         type: string
         x-go-name: PostalCode
+      subdistrict:
+        type: string
+        x-go-name: Subdistrict
       uid:
         description: UID of the Courier Coverage Code
         type: string
@@ -1362,6 +1371,13 @@ definitions:
         format: int32
         type: integer
         x-go-name: Status
+      subdistrict:
+        description: |-
+          Postal code of the Courier Coverage Code
+          required: True
+          in: string
+        type: string
+        x-go-name: Subdistrict
     type: object
     x-go-package: go-klikdokter/app/model/request
   SaveCourierRequestBody:
@@ -2507,7 +2523,7 @@ paths:
       operationId: CourierCoverageCodeListRequest
       parameters:
       - description: |-
-          Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":["value","value"]
+          Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"subdistrict":["value","value"],"description":["value","value"]
           ,"status":[0,1], "code1":["value","value"], "code2":["value","value"], "code3":["value","value"], "code4":["value","value"], "code5":["value","value"], "code6":["value","value"]}
         in: query
         name: filter

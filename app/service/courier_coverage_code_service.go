@@ -48,12 +48,11 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 	err := s.courierCoverageCodeRepo.GetCourierUid(&courier, input.CourierUID)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
-		mess := message.ErrDataExists
-		mess.Message = "Not found courier_uid"
-		return nil, mess
+		return nil, message.ErrCourierNotFound
 	}
+
 	var courierCoverageCode entity.CourierCoverageCode
-	count, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, input.CountryCode, input.PostalCode, 0)
+	count, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, input.CountryCode, input.PostalCode, input.Subdistrict, 0)
 
 	if err != nil {
 		_ = level.Error(logger).Log(err)
@@ -61,8 +60,7 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 	}
 
 	if count > 0 {
-		mess := message.Message{Code: 34005, Message: "The combination of courier_uid, country_code and postal_code is exist in database"}
-		return nil, mess
+		return nil, message.ErrCourierCoverageCodeExist
 	}
 
 	// set request to entity
@@ -70,6 +68,7 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 		CourierID:   courier.ID,
 		CountryCode: input.CountryCode,
 		PostalCode:  input.PostalCode,
+		Subdistrict: input.Subdistrict,
 		Description: input.Description,
 		Code1:       input.Code1,
 		Code2:       input.Code2,
@@ -102,6 +101,7 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 		"courier_name": input.Filters.CourierName,
 		"country_code": input.Filters.CountryCode,
 		"postal_code":  input.Filters.PostalCode,
+		"subdistrict":  input.Filters.Subdistrict,
 		"description":  input.Filters.Description,
 		"status":       input.Filters.Status,
 		"code1":        input.Filters.Code1,
@@ -169,7 +169,7 @@ func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*en
 // responses:
 //  200: SuccessResponse
 func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message) {
-	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Code")
+	logger := log.With(s.logger, "CourierCoverageCodeService", "UpdateCourierCoverageCode")
 
 	courierCoverageCodeRepo, err := s.courierCoverageCodeRepo.FindByUid(input.Uid)
 	if err != nil {
@@ -177,25 +177,24 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 		return nil, message.ErrNoData
 	}
 	courierId := courierCoverageCodeRepo.ID
+
 	var courier entity.Courier
 	err = s.courierCoverageCodeRepo.GetCourierUid(&courier, input.CourierUID)
 	if err != nil {
-		_ = level.Error(logger).Log(err)
-		mess := message.ErrDataExists
-		mess.Message = "Not found Courier UID in Courier table"
-		return nil, mess
+		_ = level.Error(logger).Log("s.courierCoverageCodeRepo.GetCourierUid", err.Error())
+		return nil, message.ErrCourierNotFound
 	}
 
 	var courierCoverageCode entity.CourierCoverageCode
-	count, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, input.CountryCode, input.PostalCode, courierId)
+	count, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, input.CountryCode, input.PostalCode, input.Subdistrict, courierId)
 
 	if err != nil {
-		_ = level.Error(logger).Log(err)
+		_ = level.Error(logger).Log("s.courierCoverageCodeRepo.CombinationUnique", err.Error())
 		return nil, message.FailedMsg
 	}
 
 	if count > 0 {
-		mess := message.Message{Code: 34005, Message: "The combination of courier_uid, country_code and postal_code is exist in database"}
+		mess := message.ErrCourierCoverageCodeExist
 		return nil, mess
 	}
 
@@ -203,6 +202,7 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 		"courier_id":   courier.ID,
 		"country_code": input.CountryCode,
 		"postal_code":  input.PostalCode,
+		"subdistrict":  input.Subdistrict,
 		"description":  input.Description,
 		"code1":        input.Code1,
 		"code2":        input.Code2,
@@ -214,7 +214,7 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 	}
 	result, err := s.courierCoverageCodeRepo.Update(input.Uid, data)
 	if err != nil {
-		_ = level.Error(logger).Log(err)
+		_ = level.Error(logger).Log(s.courierCoverageCodeRepo.Update, err.Error())
 		return nil, message.FailedMsg
 	}
 	result.CourierUID = input.CourierUID
@@ -246,6 +246,7 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 	for _, row := range input.Rows {
 		countryCode := row["country_code"]
 		postalCode := row["postal_code"]
+		subdistrict := row["subdistrict"]
 		description := row["description"]
 		code1 := row["code1"]
 		code2 := row["code2"]
@@ -264,7 +265,7 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 
 		// Check CourierUID, country_code and postal_code are unique
 		var courierCoverageCode entity.CourierCoverageCode
-		_, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, countryCode, postalCode, 0)
+		_, err := s.courierCoverageCodeRepo.CombinationUnique(&courierCoverageCode, courier.ID, countryCode, postalCode, subdistrict, 0)
 
 		if err != nil {
 			_ = level.Error(logger).Log(err)
@@ -275,6 +276,7 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 			CourierID:   courier.ID,
 			CountryCode: countryCode,
 			PostalCode:  postalCode,
+			Subdistrict: subdistrict,
 			Description: description,
 			Code1:       code1,
 			Code2:       code2,
@@ -317,6 +319,7 @@ func (s *CourierCoverageCodeServiceImpl) upsert(uid string, input entity.Courier
 			"courier_id":   input.CourierID,
 			"country_code": input.CountryCode,
 			"postal_code":  input.PostalCode,
+			"subdistrict":  input.Subdistrict,
 			"description":  input.Description,
 			"code1":        input.Code1,
 			"code2":        input.Code2,
@@ -348,6 +351,7 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataColumnValidity(input [
 	_, courierUidOk := row["courier_uid"]
 	_, countryCodeOk := row["country_code"]
 	_, postalCodeOk := row["postal_code"]
+	_, subdistrictOk := row["subdistrict"]
 	_, descriptionOk := row["description"]
 	_, code1Ok := row["code1"]
 	_, code2Ok := row["code2"]
@@ -356,7 +360,7 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataColumnValidity(input [
 	_, code5Ok := row["code5"]
 	_, code6Ok := row["code6"]
 
-	return courierUidOk && countryCodeOk && postalCodeOk && descriptionOk && code1Ok && code2Ok && code3Ok && code4Ok && code5Ok && code6Ok
+	return courierUidOk && countryCodeOk && postalCodeOk && subdistrictOk && descriptionOk && code1Ok && code2Ok && code3Ok && code4Ok && code5Ok && code6Ok
 }
 
 // return courier, array failed data, failedRowCount, summaryRowCount, message
@@ -364,6 +368,7 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataRow(row map[string]str
 	courierUid := row["courier_uid"]
 	countryCode := row["country_code"]
 	postalCode := row["postal_code"]
+	subdistrict := row["subdistrict"]
 	description := row["description"]
 	code1 := row["code1"]
 	code2 := row["code2"]
@@ -384,7 +389,7 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataRow(row map[string]str
 			return &courier, nil, 0
 		}
 
-		msg = "Courier UID not found"
+		msg = message.ErrCourierNotFound.Message
 	}
 
 	// check courier_id existing
@@ -392,6 +397,7 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataRow(row map[string]str
 		CourierUID:  courierUid,
 		CountryCode: countryCode,
 		PostalCode:  postalCode,
+		Subdistrict: subdistrict,
 		Description: description,
 		Code1:       code1,
 		Code2:       code2,

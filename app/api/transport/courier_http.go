@@ -90,7 +90,7 @@ func CourierHttpHandler(s service.CourierService, cc service.ChannelCourierServi
 		options...,
 	))
 
-	pr.Methods("DELETE").Path(fmt.Sprint(global.PrefixBase, global.PathCourierServiceUID)).Handler(httptransport.NewServer(
+	pr.Methods("DELETE").Path(fmt.Sprint(global.PrefixBase, global.PrefixCourier, global.PathCourierServiceUID)).Handler(httptransport.NewServer(
 		ep.DeleteCourierSerivce,
 		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,

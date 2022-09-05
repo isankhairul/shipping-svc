@@ -10,7 +10,7 @@ import (
 
 // swagger:parameters CourierCoverageCodeListRequest
 type CourierCoverageCodeListRequest struct {
-	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":["value","value"]
+	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"subdistrict":["value","value"],"description":["value","value"]
 	//,"status":[0,1], "code1":["value","value"], "code2":["value","value"], "code3":["value","value"], "code4":["value","value"], "code5":["value","value"], "code6":["value","value"]}
 	// in: query
 	Filter string `json:"filter"`
@@ -33,6 +33,7 @@ type CourierCoverageCodeListFilter struct {
 	CourierName []string `json:"courier_name"`
 	CountryCode []string `json:"country_code"`
 	PostalCode  []string `json:"postal_code"`
+	Subdistrict []string `json:"subdistrict"`
 	Description []string `json:"description"`
 	Status      []int    `json:"status"`
 	Code1       []string `json:"code1"`
@@ -88,6 +89,11 @@ type SaveCourierCoverageCodeRequest struct {
 	// required: True
 	// in: string
 	PostalCode string `json:"postal_code"`
+
+	// Postal code of the Courier Coverage Code
+	// required: True
+	// in: string
+	Subdistrict string `json:"subdistrict"`
 
 	// Description of the Courier Coverage Code
 	// in: string

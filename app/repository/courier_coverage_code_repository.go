@@ -23,7 +23,7 @@ type CourierCoverageCodeRepository interface {
 	FindByParams(limit int, page int, sort string, filters map[string]interface{}) ([]*entity.CourierCoverageCode, *base.Pagination, error)
 	FindByUid(uid string) (*entity.CourierCoverageCode, error)
 	Update(uid string, values map[string]interface{}) (*entity.CourierCoverageCode, error)
-	CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string, id uint64) (int64, error)
+	CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode, subdistrict string, id uint64) (int64, error)
 	FindShipperCourierCoverage(input *request.FindShipperCourierCoverage) (*entity.CourierCoverageCode, error)
 	DeleteByUid(uid string) error
 }
@@ -62,12 +62,12 @@ func (r *CourierCoverageCodeRepo) GetCourierId(courier *entity.Courier, id uint6
 	return nil
 }
 
-func (r *CourierCoverageCodeRepo) CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierId uint64, countryCode, postalCode string, id uint64) (int64, error) {
+func (r *CourierCoverageCodeRepo) CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierId uint64, countryCode, postalCode, subdistrict string, id uint64) (int64, error) {
 	var result = r.base.GetDB()
 	if id == 0 {
-		result = result.First(&courierCoverageCode, "courier_id = ? AND country_code = ? AND postal_code = ?", courierId, countryCode, postalCode)
+		result = result.First(&courierCoverageCode, "courier_id = ? AND country_code = ? AND postal_code = ? AND subdistrict = ?", courierId, countryCode, postalCode, subdistrict)
 	} else {
-		result = result.First(&courierCoverageCode, "courier_id = ? AND country_code = ? AND postal_code = ? AND id != ?", courierId, countryCode, postalCode, id)
+		result = result.First(&courierCoverageCode, "courier_id = ? AND country_code = ? AND postal_code = ? AND subdistrict = ? AND id != ?", courierId, countryCode, postalCode, subdistrict, id)
 	}
 	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return 0, result.Error
@@ -93,7 +93,7 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 				query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id").
 					Where(global.AddLike("courier.courier_name", v.([]string)))
 
-			case "country_code", "postal_code":
+			case "country_code", "postal_code", "subdistrict":
 				query = query.Where(k+" IN ?", v.([]string))
 
 			case "description", "":

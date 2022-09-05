@@ -16,6 +16,10 @@ type ImportStatus struct {
 
 	PostalCode string `json:"postal_code"`
 
+	// Subdistrict of the Courier Coverage Code
+
+	Subdistrict string `json:"subdistrict"`
+
 	// Description of the Courier Coverage Code
 
 	Description string `json:"description"`

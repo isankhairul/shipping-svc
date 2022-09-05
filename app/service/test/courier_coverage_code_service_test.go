@@ -150,6 +150,7 @@ func TestImportCourierCoverageCode(t *testing.T) {
 				"courier_uid":  vn.CourierUID,
 				"country_code": vn.CountryCode,
 				"postal_code":  vn.PostalCode,
+				"subdistrict":  vn.Subdistrict,
 				"description":  vn.Description,
 				"code1":        "",
 				"code2":        "",
@@ -162,6 +163,7 @@ func TestImportCourierCoverageCode(t *testing.T) {
 				"courier_uid":  "UCMvWngocMqKbaC3AWQBF",
 				"country_code": "",
 				"postal_code":  "",
+				"subdistrict":  vn.Subdistrict,
 				"description":  vn.Description,
 				"code1":        "",
 				"code2":        "",
@@ -178,25 +180,6 @@ func TestImportCourierCoverageCode(t *testing.T) {
 	assert.NotNil(t, result)
 	assert.Equal(t, 1, len(data), "Count of result must be 1")
 	assert.Equal(t, vn.CourierUID, data[0].CourierUID, courierUIDIsNotCorrect)
-}
-
-func TestCreateCourierCoverageCodeFailedWithDuplicated(t *testing.T) {
-	var baseCourierCoverageCodeRepository = &repository_mock.BaseRepositoryMock{Mock: mock.Mock{}}
-	var courierCoverageCodeRepository = &repository_mock.CourierCoverageCodeRepositoryMock{Mock: mock.Mock{}}
-	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
-
-	req := request.SaveCourierCoverageCodeRequest{
-		CourierUID:  vn.CourierUID,
-		CountryCode: vn.CountryCode,
-		PostalCode:  vn.PostalCode,
-		Description: vn.Description,
-	}
-
-	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(errors.New("Found"))
-	result, msg := svcCourierCoverageCode.CreateCourierCoverageCode(req)
-
-	assert.Nil(t, result)
-	assert.Equal(t, msg.Code, message.ErrDataExists.Code, "Duplicated coverage code")
 }
 
 func TestCreateCourierCoverageCodeFailedWithDuplicatedUniqueCode(t *testing.T) {
@@ -335,6 +318,7 @@ func TestImportCourierCoverageCodeFailedWithNotFoundCourier(t *testing.T) {
 				"country_code": vn.CountryCode,
 				"description":  vn.Description,
 				"postal_code":  "any",
+				"subdistrict":  vn.Subdistrict,
 				"code1":        "",
 				"code2":        "",
 				"code3":        "",
@@ -348,5 +332,5 @@ func TestImportCourierCoverageCodeFailedWithNotFoundCourier(t *testing.T) {
 	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(errors.New("Found"))
 	result, msg := svcCourierCoverageCode.ImportCourierCoverageCode(req)
 	assert.NotNil(t, result)
-	assert.Equal(t, msg.Code, message.SuccessMsg.Code)
+	assert.Equal(t, message.SuccessMsg.Code, msg.Code)
 }
