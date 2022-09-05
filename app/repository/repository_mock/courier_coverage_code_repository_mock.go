@@ -40,7 +40,7 @@ func (repository *CourierCoverageCodeRepositoryMock) FindByParams(limit int, pag
 	return arguments.Get(0).([]*entity.CourierCoverageCode), arguments.Get(1).(*base.Pagination), nil
 }
 
-func (repository *CourierCoverageCodeRepositoryMock) CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode string, id uint64) (int64, error) {
+func (repository *CourierCoverageCodeRepositoryMock) CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode, subdistrict string, id uint64) (int64, error) {
 	arguments := repository.Mock.Called("CombinationUnique")
 	if len(arguments) > 1 {
 		a2 := arguments.Get(1)
