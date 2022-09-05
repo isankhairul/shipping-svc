@@ -36,7 +36,7 @@ route:
 cache:
   redis:
     host: ${REDIS_HOST}
-    user: ${REDIS_USER}
+    user: 
     password: ${REDIS_PASSWORD}
     port: ${REDIS_PORT}
     index:
