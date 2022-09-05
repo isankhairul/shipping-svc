@@ -38,7 +38,7 @@ cache:
     host: ${REDIS_HOST}
     user: 
     password: ${REDIS_PASSWORD}
-    port: ${REDIS_PORT}
+    port: 6379
     index:
       primary: 0
     is-active : true
