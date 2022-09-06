@@ -104,3 +104,12 @@ func (repository *CourierCoverageCodeRepositoryMock) FindShipperCourierCoverage(
 	}
 	return nil, nil
 }
+
+func (repository *CourierCoverageCodeRepositoryMock) FindInternalAndMerchantCourierCoverage(courierID []uint64, countryCode, postalCode string) map[string]bool {
+	arguments := repository.Mock.Called()
+
+	if arguments.Get(0) != nil {
+		return arguments.Get(0).(map[string]bool)
+	}
+	return make(map[string]bool)
+}

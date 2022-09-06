@@ -70,6 +70,7 @@ func (h *shipper) GetOriginAndDestination(courierID *uint64, input *request.GetS
 		CourierID:   *courierID,
 		CountryCode: input.Origin.CountryCode,
 		PostalCode:  input.Origin.PostalCode,
+		Subdistrict: input.Origin.Subdistrict,
 	}
 
 	origin, _ := h.courierCoverage.FindShipperCourierCoverage(originReq)
@@ -77,7 +78,7 @@ func (h *shipper) GetOriginAndDestination(courierID *uint64, input *request.GetS
 		return 0, 0, message.ErrOriginNotFound
 	}
 
-	originAreaID, _ := strconv.Atoi(origin.Code1)
+	originAreaID, _ := strconv.Atoi(origin.Subdistrict)
 	if originAreaID == 0 {
 		return 0, 0, message.ErrOriginNotFound
 	}
@@ -86,6 +87,7 @@ func (h *shipper) GetOriginAndDestination(courierID *uint64, input *request.GetS
 		CourierID:   *courierID,
 		CountryCode: input.Destination.CountryCode,
 		PostalCode:  input.Destination.PostalCode,
+		Subdistrict: input.Destination.Subdistrict,
 	}
 
 	destination, _ := h.courierCoverage.FindShipperCourierCoverage(destinationReq)
@@ -93,7 +95,7 @@ func (h *shipper) GetOriginAndDestination(courierID *uint64, input *request.GetS
 		return 0, 0, message.ErrDestinationNotFound
 	}
 
-	destinationAreaID, _ := strconv.Atoi(destination.Code1)
+	destinationAreaID, _ := strconv.Atoi(destination.Subdistrict)
 	if destinationAreaID == 0 {
 		return 0, 0, message.ErrDestinationNotFound
 	}

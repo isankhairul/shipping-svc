@@ -25,6 +25,7 @@ type CourierCoverageCodeRepository interface {
 	Update(uid string, values map[string]interface{}) (*entity.CourierCoverageCode, error)
 	CombinationUnique(courierCoverageCode *entity.CourierCoverageCode, courierUid uint64, countryCode, postalCode, subdistrict string, id uint64) (int64, error)
 	FindShipperCourierCoverage(input *request.FindShipperCourierCoverage) (*entity.CourierCoverageCode, error)
+	FindInternalAndMerchantCourierCoverage(courierID []uint64, countryCode, postalCode string) map[string]bool
 	DeleteByUid(uid string) error
 }
 
@@ -199,6 +200,7 @@ func (r *CourierCoverageCodeRepo) FindShipperCourierCoverage(input *request.Find
 		Where(&entity.CourierCoverageCode{CourierID: input.CourierID}).
 		Where(&entity.CourierCoverageCode{CountryCode: input.CountryCode}).
 		Where(&entity.CourierCoverageCode{PostalCode: input.PostalCode}).
+		Where(&entity.CourierCoverageCode{Subdistrict: input.Subdistrict}).
 		First(&courierCoverageCode).Error
 	if err != nil {
 		return nil, err
@@ -207,4 +209,29 @@ func (r *CourierCoverageCodeRepo) FindShipperCourierCoverage(input *request.Find
 		courierCoverageCode.CourierName = courierCoverageCode.Courier.CourierName
 	}
 	return &courierCoverageCode, nil
+}
+
+func (r *CourierCoverageCodeRepo) FindInternalAndMerchantCourierCoverage(courierID []uint64, countryCode, postalCode string) map[string]bool {
+	var result = make(map[string]bool)
+	var courierCoverageCode []entity.CourierCoverageCode
+	var courierType = []string{"internal", "merchant"}
+
+	err := r.base.GetDB().
+		Preload("Courier").
+		Joins("INNER JOIN courier c ON c.id = courier_coverage_code.courier_id").
+		Where(&entity.CourierCoverageCode{CountryCode: countryCode}).
+		Where(&entity.CourierCoverageCode{PostalCode: postalCode}).
+		Where("courier_id IN ?", courierID).
+		Where("c.courier_type IN ?", courierType).
+		Find(&courierCoverageCode).Error
+
+	if err != nil {
+		return result
+	}
+
+	for _, v := range courierCoverageCode {
+		result[v.Courier.Code] = true
+	}
+
+	return result
 }

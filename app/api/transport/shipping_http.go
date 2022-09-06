@@ -16,6 +16,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	shippingTypePath = "shipping-type"
+)
+
 func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Handler {
 	pr := mux.NewRouter()
 
@@ -32,6 +36,13 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 		options...,
 	))
 
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathShippingRateShippingType)).Handler(httptransport.NewServer(
+		ep.GetShippingRateByShippingType,
+		decodeGetShippingRate,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
 	return pr
 }
 
@@ -40,5 +51,6 @@ func decodeGetShippingRate(ctx context.Context, r *http.Request) (rqst interface
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
+	req.ShippingType = mux.Vars(r)[shippingTypePath]
 	return req, nil
 }

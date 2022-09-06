@@ -47,4 +47,5 @@ type FindShipperCourierCoverage struct {
 	CourierID   uint64
 	CountryCode string
 	PostalCode  string
+	Subdistrict string
 }

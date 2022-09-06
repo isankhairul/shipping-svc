@@ -76,7 +76,7 @@ func (repository *CourierServiceRepositoryMock) IsCourierServiceAssigned(courier
 	return arguments.Get(0).(bool)
 }
 
-func (repository *CourierServiceRepositoryMock) FindCourierServiceByChannelAndUIDs(channel_uid string, uids []string) ([]entity.ChannelCourierServiceForShippingRate, error) {
+func (repository *CourierServiceRepositoryMock) FindCourierServiceByChannelAndUIDs(channel_uid string, uids []string, containPrescription bool, shippingType string) ([]entity.ChannelCourierServiceForShippingRate, error) {
 	arguments := repository.Mock.Called()
 
 	if len(arguments) > 1 {

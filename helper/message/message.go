@@ -44,6 +44,7 @@ var ErrOriginNotFound = Message{Code: 34602, Message: "Origin not in Courier Cov
 var ErrDestinationNotFound = Message{Code: 34602, Message: "Destination not in Courier Coverage"}
 var ErrShippingRateNotFound = Message{Code: 34602, Message: "shipping rate not found"}
 var ErrCourierCoverageCodeExist = Message{Code: 34005, Message: "The combination of courier_uid, country_code postal_code, and subdistrict is exist in database"}
+var ErrShippingTypeRequired = Message{Code: 34602, Message: "shipping type is required"}
 
 //channel : 342xx
 var ErrChannelNotFound = Message{Code: 34201, Message: "Channel not found"}
