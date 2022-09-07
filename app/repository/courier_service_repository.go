@@ -264,7 +264,7 @@ func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid stri
 		Where("c.hide_purpose = 0")
 
 	if containPrescription {
-		query = query.Where("cs.PrescriptionAllowed = 1")
+		query = query.Where("cs.prescription_allowed = 1")
 	}
 
 	if shippingType != "" {

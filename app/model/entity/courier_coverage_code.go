@@ -40,7 +40,7 @@ type CourierCoverageCode struct {
 	// Description of the Courier Coverage Code
 	// in: string
 	// example: PAGEDANGAN
-	Description string `gorm:"type:varchar(20)" json:"description"`
+	Description string `gorm:"type:varchar(100)" json:"description"`
 
 	// Code 1 of the Courier Coverage Code
 	// in: string
