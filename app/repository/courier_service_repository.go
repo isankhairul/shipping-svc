@@ -27,7 +27,7 @@ type CourierServiceRepository interface {
 	Delete(uid string) error
 	Update(uid string, input map[string]interface{}) error
 	IsCourierServiceAssigned(courierServiceID uint64) bool
-	FindCourierServiceByChannelAndUIDs(channel_uid string, uids []string) ([]entity.ChannelCourierServiceForShippingRate, error)
+	FindCourierServiceByChannelAndUIDs(channel_uid string, uids []string, containPrescription bool, shippingType string) ([]entity.ChannelCourierServiceForShippingRate, error)
 }
 
 func NewCourierServiceRepository(br BaseRepository) CourierServiceRepository {
@@ -223,7 +223,7 @@ func (r *courierServiceRepo) IsCourierServiceAssigned(courierServiceID uint64) b
 	return count > 0
 }
 
-func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid string, uids []string) ([]entity.ChannelCourierServiceForShippingRate, error) {
+func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid string, uids []string, containPrescription bool, shippingType string) ([]entity.ChannelCourierServiceForShippingRate, error) {
 
 	db := r.base.GetDB()
 	var courierService []entity.ChannelCourierServiceForShippingRate
@@ -246,14 +246,30 @@ func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid stri
 			"c.courier_name AS courier_name",
 			"c.courier_type AS courier_type_code",
 			"ct.title AS courier_type_name",
+			"cs.insurance_fee AS insurance_fee",
+			"cs.insurance AS use_insurance",
+			"channel_courier_service.price_internal AS price",
 		).
 		Joins("INNER JOIN channel_courier cc ON cc.id = channel_courier_service.channel_courier_id").
 		Joins("INNER JOIN courier_service cs ON cs.id = channel_courier_service.courier_service_id").
 		Joins("INNER JOIN channel ch ON ch.id = cc.channel_id").
 		Joins("INNER JOIN courier c ON cc.courier_id = c.id").
-		Joins("LEFT JOIN shippment_predefined ct ON ct.code = c.courier_type AND ct.type = 'courier_type'").
-		Joins("LEFT JOIN shippment_predefined st ON st.code = cs.shipping_type AND st.type = 'shipping_type'").
-		Where("ch.uid = ?", channel_uid)
+		Joins("INNER JOIN shippment_predefined ct ON ct.code = c.courier_type AND ct.type = 'courier_type'").
+		Joins("INNER JOIN shippment_predefined st ON st.code = cs.shipping_type AND st.type = 'shipping_type'").
+		Where("ch.uid = ?", channel_uid).
+		Where("channel_courier_service.status = 1").
+		Where("cc.status = 1").
+		Where("c.status = 1").
+		Where("cs.status = 1").
+		Where("c.hide_purpose = 0")
+
+	if containPrescription {
+		query = query.Where("cs.PrescriptionAllowed = 1")
+	}
+
+	if shippingType != "" {
+		query = query.Where("cs.shipping_type = ?", shippingType)
+	}
 
 	if len(uids) > 0 {
 		query = query.Where("cs.uid IN ?", uids)

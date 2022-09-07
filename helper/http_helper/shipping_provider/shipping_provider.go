@@ -1,5 +1,8 @@
 package shipping_provider
 
 const (
-	ShipperCode = "shipper"
+	ShipperCode      = "shipper"
+	InternalCourier  = "internal"
+	MerchantCourier  = "merchant"
+	ThirPartyCourier = "third_party"
 )

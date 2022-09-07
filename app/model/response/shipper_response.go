@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
+	"go-klikdokter/pkg/util"
 )
 
 type ShipperMetaData struct {
@@ -115,7 +116,7 @@ func (g *GetPricingDomestic) ToShippingRate() *ShippingRateCommonResponse {
 			InsuranceFee:     v.InsuranceFee,
 			MustUseInsurance: v.MustUseInsurance,
 			InsuranceApplied: v.InsuranceApplied,
-			Distance: global.DistanceKM(g.Data.Origin.Latitude,
+			Distance: util.CalculateDistanceInKm(g.Data.Origin.Latitude,
 				g.Data.Origin.Longitude,
 				g.Data.Destination.Latitude,
 				g.Data.Destination.Longitude),

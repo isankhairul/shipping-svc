@@ -47,4 +47,7 @@ type ChannelCourierServiceForShippingRate struct {
 	Logo                    datatype.JSONB `gorm:"column:logo"`
 	EtdMin                  float64        `gorm:"column:etd_min"`
 	EtdMax                  float64        `gorm:"column:etd_max"`
+	Price                   float64        `gorm:"column:price"`
+	UseInsurance            bool           `gorm:"column:use_insurance"`
+	InsuranceFee            float64        `gorm:"column:insurance_fee"`
 }

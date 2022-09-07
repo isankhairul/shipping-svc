@@ -1,8 +1,6 @@
 package response
 
 import (
-	"go-klikdokter/app/model/entity"
-	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
 )
@@ -77,75 +75,6 @@ type GetShippingRateResponse struct {
 	AvailableCode           int                       `json:"available_code"`
 	Error                   GetShippingRateError      `json:"error"`
 	Services                []GetShippingRateService  `json:"services"`
-}
-
-func ToGetShippingRateResponseList(input []entity.ChannelCourierServiceForShippingRate, price *ShippingRateCommonResponse) []GetShippingRateResponse {
-	shippingTypeMap := make(map[string][]GetShippingRateService)
-	var resp []GetShippingRateResponse
-
-	for _, v := range input {
-		courierShippingCode := global.CourierShippingCodeKey(v.CourierCode, v.ShippingCode)
-		p := price.FindShippingCode(courierShippingCode)
-		service := GetShippingRateService{
-			Courier: GetShippingRateCourir{
-				CourierUID:      v.CourierUID,
-				CourierCode:     v.CourierCode,
-				CourierName:     v.CourierName,
-				CourierTypeCode: v.CourierTypeCode,
-				CourierTypeName: v.CourierTypeName,
-			},
-			CourierServiceUID:       v.CourierServiceUID,
-			ShippingCode:            v.ShippingCode,
-			ShippingName:            v.ShippingName,
-			ShippingTypeCode:        v.ShippingTypeCode,
-			ShippingTypeName:        v.ShippingTypeName,
-			ShippingTypeDescription: v.ShippingTypeDescription,
-			Logo:                    v.Logo,
-			Etd_Min:                 v.EtdMin,
-			Etd_Max:                 v.EtdMax,
-
-			AvailableCode:    p.AvailableCode,
-			Error:            p.Error,
-			Weight:           p.Weight,
-			Volume:           p.Volume,
-			VolumeWeight:     p.VolumeWeight,
-			FinalWeight:      p.FinalWeight,
-			MinDay:           p.MinDay,
-			MaxDay:           p.MaxDay,
-			UnitPrice:        p.UnitPrice,
-			TotalPrice:       p.TotalPrice,
-			InsuranceFee:     p.InsuranceFee,
-			MustUseInsurance: p.MustUseInsurance,
-			InsuranceApplied: p.InsuranceApplied,
-			Distance:         p.Distance,
-		}
-
-		price.SummaryPerShippingType(v.ShippingTypeCode, p.TotalPrice, v.EtdMax, v.EtdMin)
-
-		if _, ok := shippingTypeMap[v.ShippingTypeCode]; !ok {
-			shippingTypeMap[v.ShippingTypeCode] = []GetShippingRateService{}
-		}
-
-		shippingTypeMap[v.ShippingTypeCode] = append(shippingTypeMap[v.ShippingTypeCode], service)
-	}
-
-	for k, v := range shippingTypeMap {
-		s := price.Summary[k]
-		data := GetShippingRateResponse{
-			ShippingTypeCode:        k,
-			ShippingTypeName:        v[0].ShippingTypeName,
-			ShippingTypeDescription: v[0].ShippingTypeDescription,
-			PriceRange:              s.PriceRange,
-			EtdMax:                  s.EtdMax,
-			EtdMin:                  s.EtdMin,
-			Services:                v,
-			AvailableCode:           200,
-			Error:                   GetShippingRateError{},
-		}
-		resp = append(resp, data)
-	}
-
-	return resp
 }
 
 //swagger:response ShippingRate

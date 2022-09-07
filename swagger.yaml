@@ -14,6 +14,9 @@ definitions:
       postal_code:
         type: string
         x-go-name: PostalCode
+      subdistrict:
+        type: string
+        x-go-name: Subdistrict
     type: object
     x-go-package: go-klikdokter/app/model/request
   BaseIDModel:
@@ -321,13 +324,6 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/response
-  ChannelCourierServicePayloadItem:
-    properties:
-      courier_service_uid:
-        type: string
-        x-go-name: CourierServiceUID
-    type: object
-    x-go-package: go-klikdokter/app/model/request
   Courier:
     properties:
       code:
@@ -907,18 +903,19 @@ definitions:
     x-go-package: go-klikdokter/app/model/response
   GetShippingRateRequest:
     properties:
-      channel_courier_services:
-        items:
-          $ref: '#/definitions/ChannelCourierServicePayloadItem'
-        type: array
-        x-go-name: ChannelCourierService
+      ShippingType:
+        type: string
       channel_uid:
         type: string
         x-go-name: ChannelUID
       contain_prescription:
-        format: int64
-        type: integer
+        type: boolean
         x-go-name: ContainPrescription
+      courier_service_uid:
+        items:
+          type: string
+        type: array
+        x-go-name: CourierServiceUID
       destination:
         $ref: '#/definitions/AreaDetailPayload'
       origin:
@@ -2949,6 +2946,26 @@ paths:
       description: Get Shipping Rate
       operationId: ShippingRate
       parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/GetShippingRateRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          $ref: '#/responses/ShippingRate'
+      tags:
+      - Shipping
+  /shipping/shipping-rate/{shipping-type}:
+    post:
+      description: Get Shipping Rate By Shipping Type
+      operationId: ShippingRateByShippingType
+      parameters:
+      - in: path
+        name: shipping-type
+        required: true
+        type: string
+        x-go-name: ShippingType
       - in: body
         name: body
         schema:

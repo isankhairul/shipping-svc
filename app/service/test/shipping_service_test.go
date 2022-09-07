@@ -35,10 +35,7 @@ func init() {
 
 func TestGetShippingRate_ShipperSuccess(t *testing.T) {
 	input := request.GetShippingRateRequest{
-		ChannelCourierService: []request.ChannelCourierServicePayloadItem{
-			{},
-			{},
-		},
+		CourierServiceUID: []string{"", ""},
 	}
 
 	channelRepository.Mock.On("FindByUid", mock.Anything).
@@ -66,10 +63,7 @@ func TestGetShippingRate_ShipperSuccess(t *testing.T) {
 
 func TestGetShippingRate_DefaultSuccess(t *testing.T) {
 	input := request.GetShippingRateRequest{
-		ChannelCourierService: []request.ChannelCourierServicePayloadItem{
-			{},
-			{},
-		},
+		CourierServiceUID: []string{"", ""},
 	}
 
 	channelRepository.Mock.On("FindByUid", mock.Anything).
@@ -89,11 +83,54 @@ func TestGetShippingRate_DefaultSuccess(t *testing.T) {
 	assert.Equal(t, msg, message.SuccessMsg, codeIsNotCorrect)
 }
 
+func TestGetShippingRate_InternalSuccess(t *testing.T) {
+	input := request.GetShippingRateRequest{
+		CourierServiceUID: []string{"", ""},
+	}
+
+	channelRepository.Mock.On("FindByUid", mock.Anything).
+		Return(entity.Channel{BaseIDModel: base.BaseIDModel{UID: "1"}}).Once()
+
+	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
+		Return([]entity.ChannelCourierServiceForShippingRate{
+			{CourierID: 1, CourierCode: "aa", CourierTypeCode: "internal"},
+			{CourierID: 2, CourierCode: "bb", CourierTypeCode: "merchant"},
+		}).Once()
+
+	courierCoverageCodeRepository.Mock.On("FindInternalAndMerchantCourierCoverage").Return(map[string]bool{"aa": true, "bb": true}).Twice()
+
+	result, msg := shippingService.GetShippingRate(input)
+	assert.NotNil(t, result)
+	assert.Len(t, result[0].Services, 2)
+	assert.Equal(t, msg, message.SuccessMsg, codeIsNotCorrect)
+}
+
+func TestGetShippingRate_InternalNotExistSuccess(t *testing.T) {
+	input := request.GetShippingRateRequest{
+		CourierServiceUID: []string{"", ""},
+	}
+
+	channelRepository.Mock.On("FindByUid", mock.Anything).
+		Return(entity.Channel{BaseIDModel: base.BaseIDModel{UID: "1"}}).Once()
+
+	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
+		Return([]entity.ChannelCourierServiceForShippingRate{
+			{CourierID: 1, CourierCode: "aa", CourierTypeCode: "internal"},
+			{CourierID: 2, CourierCode: "bb", CourierTypeCode: "merchant"},
+		}).Once()
+
+	courierCoverageCodeRepository.Mock.On("FindInternalAndMerchantCourierCoverage").Return(map[string]bool{"aa": true}).Twice()
+
+	result, msg := shippingService.GetShippingRate(input)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.SuccessMsg.Message, result[0].Services[0].Error.Message)
+	assert.Equal(t, message.ErrCourierCoverageCodeUidNotExist.Message, result[0].Services[1].Error.Message)
+	assert.Equal(t, msg, message.SuccessMsg, codeIsNotCorrect)
+}
+
 func TestGetShippingRate_ShipperFailed(t *testing.T) {
 	input := request.GetShippingRateRequest{
-		ChannelCourierService: []request.ChannelCourierServicePayloadItem{
-			{},
-		},
+		CourierServiceUID: []string{""},
 	}
 
 	channelRepository.Mock.On("FindByUid", mock.Anything).
@@ -119,10 +156,7 @@ func TestGetShippingRate_ShipperFailed(t *testing.T) {
 
 func TestGetShippingRate_CourierServiceNotFound(t *testing.T) {
 	input := request.GetShippingRateRequest{
-		ChannelCourierService: []request.ChannelCourierServicePayloadItem{
-			{},
-			{},
-		},
+		CourierServiceUID: []string{"", ""},
 	}
 
 	channelRepository.Mock.On("FindByUid", mock.Anything).
@@ -138,10 +172,7 @@ func TestGetShippingRate_CourierServiceNotFound(t *testing.T) {
 
 func TestGetShippingRate_ChannelNotFound(t *testing.T) {
 	input := request.GetShippingRateRequest{
-		ChannelCourierService: []request.ChannelCourierServicePayloadItem{
-			{},
-			{},
-		},
+		CourierServiceUID: []string{"", ""},
 	}
 
 	channelRepository.Mock.On("FindByUid", mock.Anything).
@@ -154,10 +185,20 @@ func TestGetShippingRate_ChannelNotFound(t *testing.T) {
 
 func TestGetShippingRateCourierServiceUID_Required(t *testing.T) {
 	input := request.GetShippingRateRequest{
-		ChannelCourierService: []request.ChannelCourierServicePayloadItem{},
+		CourierServiceUID: []string{},
 	}
 
 	result, msg := shippingService.GetShippingRate(input)
 	assert.Nil(t, result)
 	assert.Equal(t, message.ErrCourierServiceIsRequired, msg, codeIsNotCorrect)
+}
+
+func TestGetShippingRateByShippingType_ShippingTypeRequired(t *testing.T) {
+	input := request.GetShippingRateRequest{
+		CourierServiceUID: []string{},
+	}
+
+	result, msg := shippingService.GetShippingRateByShippingType(input)
+	assert.Nil(t, result)
+	assert.Equal(t, message.ErrShippingTypeRequired, msg, codeIsNotCorrect)
 }
