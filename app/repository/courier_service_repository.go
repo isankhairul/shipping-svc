@@ -28,6 +28,7 @@ type CourierServiceRepository interface {
 	Update(uid string, input map[string]interface{}) error
 	IsCourierServiceAssigned(courierServiceID uint64) bool
 	FindCourierServiceByChannelAndUIDs(channel_uid string, uids []string, containPrescription bool, shippingType string) ([]entity.ChannelCourierServiceForShippingRate, error)
+	FindCourierService(channelUID, courierServiceUID string) (*entity.CourierService, error)
 }
 
 func NewCourierServiceRepository(br BaseRepository) CourierServiceRepository {
@@ -249,6 +250,7 @@ func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid stri
 			"cs.insurance_fee AS insurance_fee",
 			"cs.insurance AS use_insurance",
 			"channel_courier_service.price_internal AS price",
+			"cs.max_weight AS max_weight",
 		).
 		Joins("INNER JOIN channel_courier cc ON cc.id = channel_courier_service.channel_courier_id").
 		Joins("INNER JOIN courier_service cs ON cs.id = channel_courier_service.courier_service_id").
@@ -274,6 +276,31 @@ func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid stri
 	if len(uids) > 0 {
 		query = query.Where("cs.uid IN ?", uids)
 	}
+
+	err := query.Find(&courierService).Error
+
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return courierService, nil
+}
+
+func (r *courierServiceRepo) FindCourierService(channelUID, courierServiceUID string) (*entity.CourierService, error) {
+	db := r.base.GetDB()
+	var courierService *entity.CourierService
+
+	query := db.Model(&entity.CourierService{}).
+		Preload("Courier").
+		Joins("INNER JOIN channel_courier_service ccs ON ccs.courier_service_id = courier_service.id").
+		Joins("INNER JOIN channel_courier cc ON cc.id = ccs.channel_courier_id").
+		Joins("INNER JOIN channel ch ON ch.id = cc.channel_id").
+		Joins("INNER JOIN courier c ON cc.courier_id = courier_service.courier_id").
+		Where("courier_service.uid = ?", courierServiceUID).
+		Where("ch.uid = ?", channelUID)
 
 	err := query.Find(&courierService).Error
 

@@ -15,3 +15,19 @@ func (r *ShippingCourierStatusRepositoryMock) FindByParams(limit int, page int, 
 	arguments := r.Mock.Called(limit, page, sort, filters)
 	return arguments.Get(0).([]entity.ShippingCourierStatus), arguments.Get(1).(*base.Pagination), nil
 }
+
+func (r *ShippingCourierStatusRepositoryMock) FindByCode(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error) {
+	arguments := r.Mock.Called()
+
+	if len(arguments) > 1 {
+		if arguments.Get(1) != nil {
+			return nil, arguments.Get(1).(error)
+		}
+	}
+
+	if arguments.Get(0) == nil {
+		return nil, nil
+	}
+
+	return arguments.Get(0).(*entity.ShippingCourierStatus), nil
+}

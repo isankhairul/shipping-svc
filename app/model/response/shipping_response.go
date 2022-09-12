@@ -3,6 +3,7 @@ package response
 import (
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
+	"time"
 )
 
 type GetShippingRatePriceRange struct {
@@ -168,8 +169,49 @@ type ShippingRateData struct {
 	Distance         float64
 }
 
+func (s *ShippingRateData) SetMessage(isErr bool, msg message.Message) {
+	if s.AvailableCode == 400 {
+		return
+	}
+
+	if !isErr {
+		s.AvailableCode = 200
+		s.Error = GetShippingRateError{Message: message.SuccessMsg.Message}
+		return
+	}
+
+	s.AvailableCode = 400
+	s.Error = GetShippingRateError{Message: msg.Message}
+}
+
 type ShippingRateSummary struct {
 	PriceRange GetShippingRatePriceRange
 	EtdMin     *float64
 	EtdMax     *float64
+}
+
+//swagger:response CreateDelivery
+type CreateDeliveryResponse struct {
+	//in:body
+	Body CreateDelivery `json:"body"`
+}
+
+//swagger:model CreateDeliveryResponse
+type CreateDelivery struct {
+	OrderShippingUID string `json:"order_shipping_uid"`
+	OrderNoAPI       string `json:"order_no_api"`
+}
+
+type CreateDeliveryThirdPartyData struct {
+	Insurance          bool
+	InsuranceCost      float64
+	ShippingCost       float64
+	TotalShippingCost  float64
+	ActualShippingCost float64
+	BookingID          string
+	Status             string
+	Airwaybill         string
+
+	PickUpTime time.Time
+	PickUpCode string
 }

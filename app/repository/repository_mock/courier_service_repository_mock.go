@@ -91,3 +91,19 @@ func (repository *CourierServiceRepositoryMock) FindCourierServiceByChannelAndUI
 
 	return arguments.Get(0).([]entity.ChannelCourierServiceForShippingRate), nil
 }
+
+func (repository *CourierServiceRepositoryMock) FindCourierService(channelUID, courierServiceUID string) (*entity.CourierService, error) {
+	arguments := repository.Mock.Called()
+
+	if len(arguments) > 1 {
+		if arguments.Get(0) != nil {
+			return nil, arguments.Get(1).(error)
+		}
+	}
+
+	if arguments.Get(0) == nil {
+		return nil, nil
+	}
+
+	return arguments.Get(0).(*entity.CourierService), nil
+}

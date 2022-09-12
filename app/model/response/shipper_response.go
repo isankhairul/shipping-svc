@@ -5,6 +5,7 @@ import (
 	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util"
+	"time"
 )
 
 type ShipperMetaData struct {
@@ -93,6 +94,21 @@ type GetPricingDomestic struct {
 	Pagination ShipperPagination      `json:"pagination"`
 }
 
+type CreateOrderShipperResponse struct {
+	Metadata ShipperMetaData    `json:"metadata"`
+	Data     CreateOrderShipper `json:"data"`
+}
+
+type GetPickUpTimeslotResponse struct {
+	Metadata ShipperMetaData   `json:"metadata"`
+	Data     GetPickUpTimeslot `json:"data"`
+}
+
+type CreatePickUpOrderShipperResponse struct {
+	Metadata ShipperMetaData          `json:"metadata"`
+	Data     CreatePickUpOrderShipper `json:"data"`
+}
+
 func (g *GetPricingDomestic) ToShippingRate() *ShippingRateCommonResponse {
 	if g == nil {
 		return nil
@@ -104,7 +120,7 @@ func (g *GetPricingDomestic) ToShippingRate() *ShippingRateCommonResponse {
 		courierShippingCode := global.CourierShippingCodeKey("shipper", fmt.Sprint(v.Rate.ID))
 		data[courierShippingCode] = ShippingRateData{
 			AvailableCode:    200,
-			Error:            GetShippingRateError{},
+			Error:            GetShippingRateError{Message: message.SuccessMsg.Message},
 			Weight:           v.Weight,
 			Volume:           v.Volume,
 			VolumeWeight:     v.VolumeWeight,
@@ -128,4 +144,87 @@ func (g *GetPricingDomestic) ToShippingRate() *ShippingRateCommonResponse {
 		Summary: make(map[string]ShippingRateSummary),
 		Msg:     message.SuccessMsg,
 	}
+}
+
+type CreateOrderShipperPartner struct {
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phone_number"`
+}
+
+type CreateOrderShipperCourier struct {
+	RateID          int     `json:"rate_id"`
+	UseInsurance    bool    `json:"use_insurance"`
+	Amount          float64 `json:"amount"`
+	InsuranceAmount float64 `json:"insurance_amount"`
+	COD             bool    `json:"cod"`
+}
+
+type CreateOrderShipperArea struct {
+	Address      string `json:"address"`
+	AreaID       uint64 `json:"area_id"`
+	AreaName     string `json:"area_name"`
+	CityID       uint64 `json:"city_id"`
+	CityName     string `json:"city_name"`
+	CountryID    uint64 `json:"country_id"`
+	CountryName  string `json:"country_name"`
+	Lat          string `json:"lat"`
+	Long         string `json:"lng"`
+	PostalCode   string `json:"postal_code"`
+	ProvinceID   uint64 `json:"province_id"`
+	ProvinceName string `json:"province_name"`
+	SuburbID     uint64 `json:"suburb_id"`
+	SuburbName   string `json:"suburb_name"`
+	EmailAddress string `json:"email_address"`
+	CompanyName  string `json:"company_name"`
+}
+
+type CreateOrderShipperPackage struct {
+	Items       []CreateOrderShipperPackageItem `json:"items"`
+	Height      float64                         `json:"height"`
+	Length      float64                         `json:"length"`
+	PackageType int                             `json:"package_type"`
+	Price       float64                         `json:"price"`
+	Width       float64                         `json:"width"`
+	Weight      float64                         `json:"weight"`
+}
+type CreateOrderShipperPackageItem struct {
+	ID    uint64  `json:"id"`
+	Name  string  `json:"name"`
+	Price float64 `json:"price"`
+	Qty   uint64  `json:"qty"`
+}
+
+type CreateOrderShipper struct {
+	Consignee   CreateOrderShipperPartner `json:"consignee"`
+	Consigner   CreateOrderShipperPartner `json:"consigner"`
+	Courier     CreateOrderShipperCourier `json:"courier"`
+	Destination CreateOrderShipperArea    `json:"destination"`
+	Origin      CreateOrderShipperArea    `json:"origin"`
+	Package     CreateOrderShipperPackage `json:"package"`
+	Coverage    string                    `json:"coverage"`
+	ExternalID  string                    `json:"external_id"`
+	OrderID     string                    `json:"order_id"`
+	PaymentType string                    `json:"payment_type"`
+}
+
+type GetPickUpTimeslot struct {
+	Timezone  string     `json:"time_zone"`
+	Timeslots []Timeslot `json:"time_slots"`
+}
+
+type Timeslot struct {
+	StartTime time.Time `json:"start_time"`
+	EndTime   time.Time `json:"end_time"`
+}
+
+type CreatePickUpOrderOrderActivation struct {
+	OrderID     string    `json:"order_id"`
+	PickUpCode  string    `json:"pickup_code"`
+	IsActivated bool      `json:"is_activate"`
+	PickUpTime  time.Time `json:"pickup_time"`
+}
+
+type CreatePickUpOrderShipper struct {
+	OrderActivation []CreatePickUpOrderOrderActivation `json:"order_activations"`
 }
