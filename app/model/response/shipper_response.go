@@ -8,6 +8,32 @@ import (
 	"time"
 )
 
+type GetPricingDomestic struct {
+	Metadata   ShipperMetaData        `json:"metadata"`
+	Data       GetPricingDomesticData `json:"data"`
+	Pagination ShipperPagination      `json:"pagination"`
+}
+
+type CreateOrderShipperResponse struct {
+	Metadata ShipperMetaData    `json:"metadata"`
+	Data     CreateOrderShipper `json:"data"`
+}
+
+type GetPickUpTimeslotResponse struct {
+	Metadata ShipperMetaData   `json:"metadata"`
+	Data     GetPickUpTimeslot `json:"data"`
+}
+
+type CreatePickUpOrderShipperResponse struct {
+	Metadata ShipperMetaData          `json:"metadata"`
+	Data     CreatePickUpOrderShipper `json:"data"`
+}
+
+type GetOrderDetailResponse struct {
+	Metadata ShipperMetaData `json:"metadata"`
+	Data     GetOrderDetail  `json:"data"`
+}
+
 type ShipperMetaData struct {
 	Path           string `json:"path"`
 	HTTPStatusCode int    `json:"http_status_code"`
@@ -86,27 +112,6 @@ type PricingRateDetail struct {
 	Description     string `json:"description"`
 	FullDescription string `json:"full_description"`
 	IsHubless       bool   `json:"is_hubless"`
-}
-
-type GetPricingDomestic struct {
-	Metadata   ShipperMetaData        `json:"metadata"`
-	Data       GetPricingDomesticData `json:"data"`
-	Pagination ShipperPagination      `json:"pagination"`
-}
-
-type CreateOrderShipperResponse struct {
-	Metadata ShipperMetaData    `json:"metadata"`
-	Data     CreateOrderShipper `json:"data"`
-}
-
-type GetPickUpTimeslotResponse struct {
-	Metadata ShipperMetaData   `json:"metadata"`
-	Data     GetPickUpTimeslot `json:"data"`
-}
-
-type CreatePickUpOrderShipperResponse struct {
-	Metadata ShipperMetaData          `json:"metadata"`
-	Data     CreatePickUpOrderShipper `json:"data"`
 }
 
 func (g *GetPricingDomestic) ToShippingRate() *ShippingRateCommonResponse {
@@ -227,4 +232,58 @@ type CreatePickUpOrderOrderActivation struct {
 
 type CreatePickUpOrderShipper struct {
 	OrderActivation []CreatePickUpOrderOrderActivation `json:"order_activations"`
+}
+
+type GetOrderDetail struct {
+	Consignee        interface{}              `json:"consignee"`
+	Consigner        interface{}              `json:"consigner"`
+	Origin           interface{}              `json:"origin"`
+	Destination      interface{}              `json:"destination"`
+	ExternalID       string                   `json:"external_id"`
+	OrderID          string                   `json:"order_id"`
+	Courier          interface{}              `json:"courier"`
+	Package          interface{}              `json:"package"`
+	PaymentType      string                   `json:"payment_type"`
+	Driver           interface{}              `json:"driver"`
+	LabelCheckSum    string                   `json:"label_check_sum"`
+	CreationDate     time.Time                `json:"creation_date"`
+	LastUpdatedDate  time.Time                `json:"last_updated_date"`
+	AWBNumber        string                   `json:"awb_number"`
+	Trackings        []GetOrderDetailTracking `json:"trackings"`
+	IsActive         bool                     `json:"is_active"`
+	IsHubless        bool                     `json:"is_hubless"`
+	PickUpCode       string                   `json:"pickup_code"`
+	PickUpTime       string                   `json:"pickup_time"`
+	ShipmentStatus   interface{}              `json:"shipment_status"`
+	ProofOfDelivery  interface{}              `json:"proof_of_delivery"`
+	TimeSlotSelected interface{}              `json:"time_slot_selected"`
+}
+
+type GetOrderDetailTracking struct {
+	ShipperStatus  GetOrderDetailTrackingStatus `json:"shipper_status"`
+	LogisticStatus GetOrderDetailTrackingStatus `json:"logistic_status"`
+	CreatedDate    time.Time                    `json:"created_date"`
+}
+
+type GetOrderDetailTrackingStatus struct {
+	Code        int    `json:"code"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+func (g *GetOrderDetail) ToOrderShippingTracking() []GetOrderShippingTracking {
+	resp := []GetOrderShippingTracking{}
+	codes := make(map[int]bool)
+	for _, v := range g.Trackings {
+		if _, ok := codes[v.LogisticStatus.Code]; ok {
+			continue
+		}
+		codes[v.LogisticStatus.Code] = true
+		resp = append(resp, GetOrderShippingTracking{
+			Note: v.LogisticStatus.Name,
+			Date: v.CreatedDate.Format(util.LayoutDateOnly),
+			Time: v.CreatedDate.Format(util.LayoutTimeOnly),
+		})
+	}
+	return resp
 }

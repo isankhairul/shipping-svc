@@ -215,3 +215,19 @@ type CreateDeliveryThirdPartyData struct {
 	PickUpTime time.Time
 	PickUpCode string
 }
+
+//swagger:response OrderShippingTracking
+type GetOrderShippingTrackingResponse struct {
+	//in:body
+	Body []GetOrderShippingTracking `json:"body"`
+}
+
+//swagger:model GetOrderShippingTrackingResponse
+type GetOrderShippingTracking struct {
+	//example: 2022-01-31
+	Date string `json:"date"`
+	//example: 12:30
+	Time string `json:"time"`
+	//example: Order Masuk ke sistem
+	Note string `json:"note"`
+}

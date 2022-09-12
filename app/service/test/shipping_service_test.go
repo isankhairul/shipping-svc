@@ -772,3 +772,209 @@ func TestCreateDeliveryShipperChannelNotFoundError(t *testing.T) {
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrChannelNotFound, msg)
 }
+
+var getOrderTrackingRequest = &request.GetOrderShippingTracking{
+	UID:        "ORDER_SHIPPING_UID",
+	ChannelUID: "CHHANNEL_UID",
+}
+
+func TestOrderShippingTrackingShipperSuccess(t *testing.T) {
+	courier := &entity.Courier{
+		BaseIDModel: base.BaseIDModel{
+			ID:  1,
+			UID: "COURIER_UID",
+		},
+		CourierType: shipping_provider.ThirPartyCourier,
+		Code:        shipping_provider.ShipperCode,
+	}
+
+	channel := &entity.Channel{
+		BaseIDModel: base.BaseIDModel{
+			ID:  1,
+			UID: getOrderTrackingRequest.ChannelUID,
+		},
+	}
+
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).
+		Return(&entity.OrderShipping{
+			BaseIDModel: base.BaseIDModel{
+				UID: getOrderTrackingRequest.UID,
+			},
+			CourierID: courier.ID,
+			BookingID: "SHIPER_ORDER_ID",
+			Courier:   courier,
+			Channel:   channel,
+		}).Once()
+
+	shipper.Mock.On("GetTracking", mock.Anything).
+		Return([]response.GetOrderShippingTracking{}).Once()
+
+	result, msg := shippingService.OrderShippingTracking(getOrderTrackingRequest)
+	assert.NotNil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestOrderShippingTrackingShipperGetOrderDetailError(t *testing.T) {
+	channel := &entity.Channel{
+		BaseIDModel: base.BaseIDModel{
+			ID:  1,
+			UID: getOrderTrackingRequest.ChannelUID,
+		},
+	}
+
+	courier := &entity.Courier{
+		BaseIDModel: base.BaseIDModel{
+			ID:  1,
+			UID: "COURIER_UID",
+		},
+		CourierType: shipping_provider.ThirPartyCourier,
+		Code:        shipping_provider.ShipperCode,
+	}
+
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).
+		Return(&entity.OrderShipping{
+			BaseIDModel: base.BaseIDModel{
+				UID: getOrderTrackingRequest.UID,
+			},
+			CourierID: courier.ID,
+			BookingID: "SHIPER_ORDER_ID",
+			Courier:   courier,
+			Channel:   channel,
+		}).Once()
+
+	shipper.Mock.On("GetTracking", mock.Anything).
+		Return(nil, message.ErrGetOrderDetail).Once()
+
+	result, msg := shippingService.OrderShippingTracking(getOrderTrackingRequest)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrGetOrderDetail, msg)
+}
+
+func TestOrderShippingTrackingInvalidThirdPartyCourier(t *testing.T) {
+	courier := &entity.Courier{
+		BaseIDModel: base.BaseIDModel{
+			ID:  1,
+			UID: "COURIER_UID",
+		},
+		CourierType: shipping_provider.ThirPartyCourier,
+		Code:        "INVALID",
+	}
+
+	channel := &entity.Channel{
+		BaseIDModel: base.BaseIDModel{
+			ID:  1,
+			UID: getOrderTrackingRequest.ChannelUID,
+		},
+	}
+
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).
+		Return(&entity.OrderShipping{
+			BaseIDModel: base.BaseIDModel{
+				UID: getOrderTrackingRequest.UID,
+			},
+			CourierID: courier.ID,
+			BookingID: "SHIPER_ORDER_ID",
+			Courier:   courier,
+			Channel:   channel,
+		}).Once()
+
+	result, msg := shippingService.OrderShippingTracking(getOrderTrackingRequest)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrInvalidCourierCode, msg)
+}
+
+func TestOrderShippingTrackingInvalidCourierType(t *testing.T) {
+	courier := &entity.Courier{
+		BaseIDModel: base.BaseIDModel{
+			ID:  1,
+			UID: "COURIER_UID",
+		},
+		CourierType: "INVALID",
+	}
+
+	channel := &entity.Channel{
+		BaseIDModel: base.BaseIDModel{
+			ID:  1,
+			UID: getOrderTrackingRequest.ChannelUID,
+		},
+	}
+
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).
+		Return(&entity.OrderShipping{
+			BaseIDModel: base.BaseIDModel{
+				UID: getOrderTrackingRequest.UID,
+			},
+			CourierID: courier.ID,
+			BookingID: "SHIPER_ORDER_ID",
+			Courier:   courier,
+			Channel:   channel,
+		}).Once()
+
+	result, msg := shippingService.OrderShippingTracking(getOrderTrackingRequest)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrInvalidCourierType, msg)
+}
+
+func TestOrderShippingTrackingOrderNotBelongToChannel(t *testing.T) {
+	courier := &entity.Courier{
+		BaseIDModel: base.BaseIDModel{
+			ID:  1,
+			UID: "COURIER_UID",
+		},
+		CourierType: "INVALID",
+	}
+
+	channel := &entity.Channel{
+		BaseIDModel: base.BaseIDModel{
+			ID:  1,
+			UID: "OTHER CHANNEL",
+		},
+	}
+
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).
+		Return(&entity.OrderShipping{
+			BaseIDModel: base.BaseIDModel{
+				UID: getOrderTrackingRequest.UID,
+			},
+			CourierID: courier.ID,
+			BookingID: "SHIPER_ORDER_ID",
+			Courier:   courier,
+			Channel:   channel,
+		}).Once()
+
+	result, msg := shippingService.OrderShippingTracking(getOrderTrackingRequest)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrOrderBelongToAnotherChannel, msg)
+}
+
+func TestOrderShippingTrackingGetOrderShippingNotFound(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).
+		Return(nil).Once()
+
+	result, msg := shippingService.OrderShippingTracking(getOrderTrackingRequest)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
+
+func TestOrderShippingTrackingGetOrderShippingError(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).
+		Return(nil, errors.New("")).Once()
+
+	result, msg := shippingService.OrderShippingTracking(getOrderTrackingRequest)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
+
+func TestOrderShippingTrackingChannelUIDRequired(t *testing.T) {
+	result, msg := shippingService.OrderShippingTracking(&request.GetOrderShippingTracking{UID: "", ChannelUID: ""})
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrChannelUIDRequired, msg)
+}
