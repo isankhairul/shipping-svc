@@ -24,6 +24,7 @@ type ShippingService interface {
 	GetShippingRate(input request.GetShippingRateRequest) ([]response.GetShippingRateResponse, message.Message)
 	GetShippingRateByShippingType(input request.GetShippingRateRequest) ([]response.GetShippingRateResponse, message.Message)
 	CreateDelivery(input *request.CreateDelivery) (*response.CreateDelivery, message.Message)
+	OrderShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message)
 }
 
 type shippingServiceImpl struct {
@@ -471,4 +472,47 @@ func (s *shippingServiceImpl) createDeliveryThirdParty(bookingID string, courier
 
 		return nil, message.ErrInvalidCourierCode
 	}
+}
+
+// swagger:route GET /shipping/order-tracking/{uid} Shipping OrderShippingTracking
+// Get Order Shipping Tracking
+//
+// responses:
+//  200: OrderShippingTracking
+func (s *shippingServiceImpl) OrderShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message) {
+	logger := log.With(s.logger, "ShippingService", "OrderShippingTracking")
+
+	if len(req.ChannelUID) == 0 {
+		return nil, message.ErrChannelUIDRequired
+	}
+
+	orderShipping, err := s.orderShipping.FindByUID(req.UID)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.FindByUID", err.Error())
+		return nil, message.ErrOrderShippingNotFound
+	}
+
+	if orderShipping == nil {
+		return nil, message.ErrOrderShippingNotFound
+	}
+
+	if orderShipping.Channel.UID != req.ChannelUID {
+		return nil, message.ErrOrderBelongToAnotherChannel
+	}
+
+	switch orderShipping.Courier.CourierType {
+	case shipping_provider.ThirPartyCourier:
+		return s.thridPartyTracking(orderShipping)
+	}
+
+	return nil, message.ErrInvalidCourierType
+}
+
+func (s *shippingServiceImpl) thridPartyTracking(orderShipping *entity.OrderShipping) ([]response.GetOrderShippingTracking, message.Message) {
+	switch orderShipping.Courier.Code {
+	case shipping_provider.ShipperCode:
+		return s.shipper.GetTracking(orderShipping.BookingID)
+	}
+
+	return nil, message.ErrInvalidCourierCode
 }

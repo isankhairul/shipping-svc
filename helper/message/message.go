@@ -53,6 +53,10 @@ var ErrGetPickUpTimeslot = Message{Code: 34602, Message: "failed when trying to 
 var ErrCreatePickUpOrder = Message{Code: 34602, Message: "failed when trying to create pickup order"}
 var ErrShippingStatus = Message{Code: 34602, Message: "shipping status not found"}
 var ErrOrderNoAlreadyExists = Message{Code: 34602, Message: "order no already exists"}
+var ErrOrderShippingNotFound = Message{Code: 34602, Message: "order shipping not found"}
+var ErrGetOrderDetail = Message{Code: 34602, Message: "failed when trying to get order detail"}
+var ErrOrderBelongToAnotherChannel = Message{Code: 34602, Message: "the order is belong to another channel"}
+var ErrChannelUIDRequired = Message{Code: 34602, Message: "channel_uid is required"}
 
 //channel : 342xx
 var ErrChannelNotFound = Message{Code: 34201, Message: "Channel not found"}

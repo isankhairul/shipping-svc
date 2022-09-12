@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
 
 	"gorm.io/gorm"
@@ -12,6 +13,7 @@ type OrderShippingRepository interface {
 	Update(input *entity.OrderShipping) (*entity.OrderShipping, error)
 	Upsert(input *entity.OrderShipping) (*entity.OrderShipping, error)
 	FindByOrderNo(orderNo string) (*entity.OrderShipping, error)
+	FindByUID(uid string) (*entity.OrderShipping, error)
 }
 
 type orderShippingRepository struct {
@@ -59,6 +61,27 @@ func (r *orderShippingRepository) FindByOrderNo(orderNo string) (*entity.OrderSh
 		Preload("OrderShippingItem").
 		Preload("OrderShippingHistory").
 		Where(&entity.OrderShipping{OrderNo: orderNo})
+
+	err := query.First(&result).Error
+
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (r *orderShippingRepository) FindByUID(uid string) (*entity.OrderShipping, error) {
+	var result entity.OrderShipping
+	query := r.base.GetDB().
+		Preload("Channel").
+		Preload("Courier").
+		Model(&entity.OrderShipping{}).
+		Where(&entity.OrderShipping{BaseIDModel: base.BaseIDModel{UID: uid}})
 
 	err := query.First(&result).Error
 

@@ -14,6 +14,7 @@ import (
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
 )
 
 const (
@@ -50,6 +51,13 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 		options...,
 	))
 
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathOrderTracking)).Handler(httptransport.NewServer(
+		ep.GetOrderShippingTracking,
+		decodeGetOrderTracking,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
 	return pr
 }
 
@@ -69,4 +77,18 @@ func decodeCreateDelivery(ctx context.Context, r *http.Request) (rqst interface{
 	}
 
 	return req, nil
+}
+
+func decodeGetOrderTracking(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var params request.GetOrderShippingTracking
+	if err := r.ParseForm(); err != nil {
+		return nil, err
+	}
+
+	if err = schema.NewDecoder().Decode(&params, r.Form); err != nil {
+		return nil, err
+	}
+
+	params.UID = mux.Vars(r)[pathUID]
+	return params, nil
 }

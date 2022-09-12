@@ -116,3 +116,31 @@ func (h *ShipperMock) CreateDelivery(shipperOrderID string, courierService *enti
 
 	return arguments.Get(0).(*response.CreateDeliveryThirdPartyData), message.SuccessMsg
 }
+
+func (h *ShipperMock) GetOrderDetail(orderID string) (*response.GetOrderDetailResponse, error) {
+	arguments := h.Mock.Called()
+
+	if len(arguments) > 1 {
+		if arguments.Get(1) != nil {
+			return nil, arguments.Get(1).(error)
+		}
+	}
+
+	if arguments.Get(0) == nil {
+		return nil, nil
+	}
+
+	return arguments.Get(0).(*response.GetOrderDetailResponse), nil
+}
+
+func (h *ShipperMock) GetTracking(orderID string) ([]response.GetOrderShippingTracking, message.Message) {
+	arguments := h.Mock.Called()
+
+	if len(arguments) > 1 {
+		if arguments.Get(1) != nil {
+			return nil, arguments.Get(1).(message.Message)
+		}
+	}
+
+	return arguments.Get(0).([]response.GetOrderShippingTracking), message.SuccessMsg
+}

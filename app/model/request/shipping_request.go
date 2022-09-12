@@ -160,3 +160,14 @@ func (c *CreateDelivery) ToCreateOrderShipper() *CreateOrderShipper {
 		PaymentType: "postpay",
 	}
 }
+
+// swagger:parameters OrderShippingTracking
+type GetOrderShippingTracking struct {
+	// in: path
+	// required: true
+	UID string `json:"uid"`
+
+	// in: query
+	// required: true
+	ChannelUID string `schema:"channel_uid" json:"channel_uid"`
+}

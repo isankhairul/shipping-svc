@@ -8,6 +8,7 @@ import (
 	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"strconv"
+	"strings"
 
 	"go-klikdokter/helper/http_helper"
 	"go-klikdokter/helper/message"
@@ -23,6 +24,8 @@ type Shipper interface {
 	CreateOrder(req *request.CreateOrderShipper) (*response.CreateOrderShipperResponse, error)
 	CreatePickUpOrder(req *request.CreatePickUpOrderShipper) (*response.CreatePickUpOrderShipperResponse, error)
 	CreateDelivery(ShipperOrderID string, courierService *entity.CourierService, req *request.CreateDelivery) (*response.CreateDeliveryThirdPartyData, message.Message)
+	GetOrderDetail(orderID string) (*response.GetOrderDetailResponse, error)
+	GetTracking(orderID string) ([]response.GetOrderShippingTracking, message.Message)
 }
 type shipper struct {
 	courierCoverage repository.CourierCoverageCodeRepository
@@ -308,4 +311,43 @@ func (h *shipper) CreateDelivery(shipperOrderID string, courierService *entity.C
 	}
 
 	return resp, message.SuccessMsg
+}
+
+func (h *shipper) GetOrderDetail(orderID string) (*response.GetOrderDetailResponse, error) {
+	response := response.GetOrderDetailResponse{}
+	path := viper.GetString("shipper.path.order-detail")
+	path = strings.ReplaceAll(path, "{orderID}", orderID)
+	url := h.Base + path
+
+	header := h.Authorization
+	header["Content-Type"] = "application/json"
+
+	respByte, err := http_helper.Get(url, header, map[string]string{}, h.Logger)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(respByte, &response)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Metadata.HTTPStatusCode != 200 {
+		return nil, errors.New(response.Metadata.HTTPStatus)
+	}
+
+	return &response, nil
+}
+
+func (h *shipper) GetTracking(orderID string) ([]response.GetOrderShippingTracking, message.Message) {
+	logger := log.With(h.Logger, "Shipper", "GetTracking")
+	orderDetail, err := h.GetOrderDetail(orderID)
+	if err != nil {
+		_ = level.Error(logger).Log("h.GetOrderDetail", err.Error())
+		return nil, message.ErrGetOrderDetail
+	}
+
+	return orderDetail.Data.ToOrderShippingTracking(), message.SuccessMsg
 }

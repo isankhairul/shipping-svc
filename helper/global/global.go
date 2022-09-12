@@ -42,6 +42,7 @@ var (
 	PathShippingRate             = "shipping-rate"
 	PathShippingRateShippingType = "shipping-rate/{shipping-type}"
 	PathOrderShipping            = "order-shipping"
+	PathOrderTracking            = "order-tracking/{uid}"
 
 	ServerPort = "server.port"
 )

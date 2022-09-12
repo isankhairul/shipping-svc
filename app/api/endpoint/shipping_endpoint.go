@@ -13,6 +13,7 @@ type ShippingEndpoint struct {
 	GetShippingRate               endpoint.Endpoint
 	GetShippingRateByShippingType endpoint.Endpoint
 	CreateDelivery                endpoint.Endpoint
+	GetOrderShippingTracking      endpoint.Endpoint
 }
 
 func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
@@ -20,6 +21,7 @@ func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
 		GetShippingRate:               makeGetShippingRate(s),
 		GetShippingRateByShippingType: makeGetShippingRateByShippingType(s),
 		CreateDelivery:                makeCreateDelivery(s),
+		GetOrderShippingTracking:      makeGetOrderShippingTracking(s),
 	}
 }
 
@@ -43,6 +45,13 @@ func makeCreateDelivery(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
 		req := rqst.(request.CreateDelivery)
 		result, msg := s.CreateDelivery(&req)
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
+	}
+}
+func makeGetOrderShippingTracking(s service.ShippingService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		req := rqst.(request.GetOrderShippingTracking)
+		result, msg := s.OrderShippingTracking(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }

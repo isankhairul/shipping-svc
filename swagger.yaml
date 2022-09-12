@@ -1001,6 +1001,23 @@ definitions:
     type: object
     x-go-name: GetChannelCourierStatusResponseItem
     x-go-package: go-klikdokter/app/model/response
+  GetOrderShippingTrackingResponse:
+    properties:
+      date:
+        example: "2022-01-31"
+        type: string
+        x-go-name: Date
+      note:
+        example: Order Masuk ke sistem
+        type: string
+        x-go-name: Note
+      time:
+        example: "12:30"
+        type: string
+        x-go-name: Time
+    type: object
+    x-go-name: GetOrderShippingTracking
+    x-go-package: go-klikdokter/app/model/response
   GetShippingRateCourir:
     properties:
       courier_code:
@@ -3097,6 +3114,26 @@ paths:
           $ref: '#/responses/CreateDelivery'
       tags:
       - Shipping
+  /shipping/order-tracking/{uid}:
+    get:
+      description: Get Order Shipping Tracking
+      operationId: OrderShippingTracking
+      parameters:
+      - in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      - in: query
+        name: channel_uid
+        required: true
+        type: string
+        x-go-name: ChannelUID
+      responses:
+        "200":
+          $ref: '#/responses/OrderShippingTracking'
+      tags:
+      - Shipping
   /shipping/shipping-rate:
     post:
       description: Get Shipping Rate
@@ -3192,6 +3229,12 @@ responses:
     description: ""
     schema:
       $ref: '#/definitions/CourierCoverageCodeImportResponse'
+  OrderShippingTracking:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/GetOrderShippingTrackingResponse'
+      type: array
   ShippingRate:
     description: ""
     schema:
