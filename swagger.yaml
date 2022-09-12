@@ -826,6 +826,147 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/response
+  CreateDeiveryArea:
+    properties:
+      address:
+        type: string
+        x-go-name: Address
+      city_name:
+        type: string
+        x-go-name: CityName
+      country_code:
+        type: string
+        x-go-name: CountryCode
+      district_name:
+        type: string
+        x-go-name: DistrictName
+      latitude:
+        type: string
+        x-go-name: Latitude
+      longitude:
+        type: string
+        x-go-name: Longitude
+      postal_code:
+        type: string
+        x-go-name: PostalCode
+      province_name:
+        type: string
+        x-go-name: ProvinceCode
+      subdistrict:
+        type: string
+        x-go-name: Subdistrict
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  CreateDelivery:
+    properties:
+      channel_uid:
+        type: string
+        x-go-name: ChannelUID
+      cod:
+        type: boolean
+        x-go-name: COD
+      courier_service_uid:
+        type: string
+        x-go-name: CouirerServiceUID
+      customer:
+        $ref: '#/definitions/CreateDeliveryPartner'
+      destination:
+        $ref: '#/definitions/CreateDeiveryArea'
+      merchant:
+        $ref: '#/definitions/CreateDeliveryPartner'
+      notes:
+        type: string
+        x-go-name: Notes
+      order_no:
+        type: string
+        x-go-name: OrderNo
+      origin:
+        $ref: '#/definitions/CreateDeiveryArea'
+      package:
+        $ref: '#/definitions/CreateDeliveryPackage'
+      use_insurance:
+        type: boolean
+        x-go-name: UseInsurance
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  CreateDeliveryPackage:
+    properties:
+      contain_prescription:
+        format: uint64
+        type: integer
+        x-go-name: ContainPrescription
+      product:
+        items:
+          $ref: '#/definitions/CreateDeliveryProduct'
+        type: array
+        x-go-name: Product
+      total_height:
+        format: double
+        type: number
+        x-go-name: TotalHeight
+      total_length:
+        format: double
+        type: number
+        x-go-name: TotalLength
+      total_product_price:
+        format: double
+        type: number
+        x-go-name: TotalProductPrice
+      total_weight:
+        format: double
+        type: number
+        x-go-name: TotalWeight
+      total_width:
+        format: double
+        type: number
+        x-go-name: TotalWidth
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  CreateDeliveryPartner:
+    properties:
+      email:
+        type: string
+        x-go-name: Email
+      name:
+        type: string
+        x-go-name: Name
+      phone:
+        type: string
+        x-go-name: Phone
+      uid:
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  CreateDeliveryProduct:
+    properties:
+      name:
+        type: string
+        x-go-name: Name
+      price:
+        format: double
+        type: number
+        x-go-name: Price
+      qty:
+        format: int64
+        type: integer
+        x-go-name: Qty
+      uid:
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  CreateDeliveryResponse:
+    properties:
+      order_no_api:
+        type: string
+        x-go-name: OrderNoAPI
+      order_shipping_uid:
+        type: string
+        x-go-name: OrderShippingUID
+    type: object
+    x-go-name: CreateDelivery
+    x-go-package: go-klikdokter/app/model/response
   DataResponse:
     properties:
       record:
@@ -2941,6 +3082,21 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Courier-Predefined
+  /shipping/order-shipping:
+    post:
+      description: Create Order Shipping
+      operationId: CreateDelivery
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/CreateDelivery'
+        x-go-name: Body
+      responses:
+        "200":
+          $ref: '#/responses/CreateDelivery'
+      tags:
+      - Shipping
   /shipping/shipping-rate:
     post:
       description: Get Shipping Rate
@@ -3018,6 +3174,10 @@ responses:
         type: integer
       uid:
         type: string
+  CreateDelivery:
+    description: ""
+    schema:
+      $ref: '#/definitions/CreateDeliveryResponse'
   GetChannelCourierStatusResponse:
     description: ""
     schema:

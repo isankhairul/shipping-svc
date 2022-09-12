@@ -5,4 +5,7 @@ const (
 	InternalCourier  = "internal"
 	MerchantCourier  = "merchant"
 	ThirPartyCourier = "third_party"
+
+	StatusCreated       = "created"
+	StatusRequestPickup = "request_pickup"
 )

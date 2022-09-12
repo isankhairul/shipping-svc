@@ -23,16 +23,20 @@ import (
 type ShippingService interface {
 	GetShippingRate(input request.GetShippingRateRequest) ([]response.GetShippingRateResponse, message.Message)
 	GetShippingRateByShippingType(input request.GetShippingRateRequest) ([]response.GetShippingRateResponse, message.Message)
+	CreateDelivery(input *request.CreateDelivery) (*response.CreateDelivery, message.Message)
 }
 
 type shippingServiceImpl struct {
-	logger              log.Logger
-	baseRepo            repository.BaseRepository
-	channelRepo         repository.ChannelRepository
-	courierServiceRepo  repository.CourierServiceRepository
-	courierCoverageCode repository.CourierCoverageCodeRepository
-	shipper             shipping_provider.Shipper
-	redis               cache.RedisCache
+	logger                    log.Logger
+	baseRepo                  repository.BaseRepository
+	channelRepo               repository.ChannelRepository
+	courierServiceRepo        repository.CourierServiceRepository
+	courierCoverageCode       repository.CourierCoverageCodeRepository
+	shipper                   shipping_provider.Shipper
+	redis                     cache.RedisCache
+	orderShipping             repository.OrderShippingRepository
+	courierRepo               repository.CourierRepository
+	shippingCourierStatusRepo repository.ShippingCourierStatusRepository
 }
 
 func NewShippingService(
@@ -43,9 +47,12 @@ func NewShippingService(
 	cccrp repository.CourierCoverageCodeRepository,
 	sh shipping_provider.Shipper,
 	rc cache.RedisCache,
+	osr repository.OrderShippingRepository,
+	cr repository.CourierRepository,
+	scs repository.ShippingCourierStatusRepository,
 ) ShippingService {
 	return &shippingServiceImpl{
-		l, br, chrp, csrp, cccrp, sh, rc,
+		l, br, chrp, csrp, cccrp, sh, rc, osr, cr, scs,
 	}
 }
 
@@ -152,6 +159,10 @@ func (s *shippingServiceImpl) internalAndMerchantPrice(courierList []entity.Cour
 		courierIDs = append(courierIDs, v.ID)
 	}
 
+	if len(courierIDs) == 0 {
+		return price
+	}
+
 	var (
 		volume       = util.CalculateVolume(req.TotalHeight, req.TotalLength, req.TotalLength)
 		volumeWeight = util.CalculateVolumeWeightKg(req.TotalHeight, req.TotalLength, req.TotalLength)
@@ -164,10 +175,6 @@ func (s *shippingServiceImpl) internalAndMerchantPrice(courierList []entity.Cour
 
 		distance = util.CalculateDistanceInKm(lat1, long1, lat2, long2)
 	)
-
-	if len(courierIDs) == 0 {
-		return price
-	}
 
 	// Check courier coverage
 	origin := s.courierCoverageCode.FindInternalAndMerchantCourierCoverage(courierIDs, req.Origin.CountryCode, req.Origin.PostalCode)
@@ -196,20 +203,21 @@ func (s *shippingServiceImpl) internalAndMerchantPrice(courierList []entity.Cour
 			MinDay:           0,
 			MaxDay:           0,
 			UnitPrice:        0,
-			AvailableCode:    200,
-			Error: response.GetShippingRateError{
-				Message: message.SuccessMsg.Message,
-			},
 		}
 
 		if v.CourierTypeCode == shipping_provider.MerchantCourier {
 			value.TotalPrice = 0
 		}
 
-		if !(originOK && destinationOK) {
-			value.AvailableCode = 400
-			value.Error.Message = message.ErrCourierCoverageCodeUidNotExist.Message
-		}
+		value.SetMessage(false, message.SuccessMsg)
+
+		// check if origin or destination not available
+		isErr := !(originOK && destinationOK)
+		value.SetMessage(isErr, message.ErrCourierCoverageCodeUidNotExist)
+
+		// check if weight exceeds the maximum weight allowed
+		isErr = finalWeight > v.MaxWeight && v.MaxWeight > 0
+		value.SetMessage(isErr, message.ErrWeightExceeds)
 
 		price.Rate[key] = value
 	}
@@ -342,4 +350,125 @@ func toGetShippingRateResponseList(input []entity.ChannelCourierServiceForShippi
 	}
 
 	return resp
+}
+
+func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelivery) (*entity.CourierService, *entity.OrderShipping, *entity.ShippingCourierStatus, message.Message) {
+	logger := log.With(s.logger, "ShippingService", "PopulateCreateDelivery")
+
+	// find Channel By UID
+	channel, err := s.channelRepo.FindByUid(&input.ChannelUID)
+	if err != nil {
+		_ = level.Error(logger).Log("s.channelRepo.FindByUid", err.Error())
+		return nil, nil, nil, message.ErrChannelNotFound
+	}
+
+	if channel == nil {
+		return nil, nil, nil, message.ErrChannelNotFound
+	}
+
+	// find Courier Service By UID
+	courierService, err := s.courierServiceRepo.FindCourierService(input.ChannelUID, input.CouirerServiceUID)
+	if err != nil {
+		_ = level.Error(logger).Log("s.courierServiceRepo.FindCourierService", err.Error())
+		return nil, nil, nil, message.ErrCourierServiceNotFound
+	}
+
+	if courierService == nil {
+		return nil, nil, nil, message.ErrCourierServiceNotFound
+	}
+
+	// check if order no already exist with status created
+	orderShipping, err := s.orderShipping.FindByOrderNo(input.OrderNo)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.FindByOrderNo", err.Error())
+		return nil, nil, nil, message.ErrDB
+	}
+
+	if orderShipping != nil && orderShipping.Status != shipping_provider.StatusCreated {
+		return nil, nil, nil, message.ErrOrderNoAlreadyExists
+	}
+
+	// get shipping status
+	shippingStatus, _ := s.shippingCourierStatusRepo.FindByCode(courierService.CourierID, shipping_provider.StatusRequestPickup)
+	if shippingStatus == nil {
+		return nil, nil, nil, message.ErrShippingStatus
+	}
+
+	// if order no doesn't exist create new one
+	if orderShipping == nil {
+		orderShipping = &entity.OrderShipping{}
+		orderShipping.FromCreateDeliveryRequest(input)
+		orderShipping.ChannelID = channel.ID
+		orderShipping.CourierID = courierService.CourierID
+		orderShipping.CourierServiceID = courierService.ID
+	}
+
+	return courierService, orderShipping, shippingStatus, message.SuccessMsg
+}
+
+// swagger:route POST /shipping/order-shipping Shipping CreateDelivery
+// Create Order Shipping
+//
+// responses:
+//  200: CreateDelivery
+func (s *shippingServiceImpl) CreateDelivery(input *request.CreateDelivery) (*response.CreateDelivery, message.Message) {
+	logger := log.With(s.logger, "ShippingService", "CreateDelivery")
+	var resp *response.CreateDelivery
+
+	courierService, orderShipping, shippingStatus, msg := s.PopulateCreateDelivery(input)
+	if msg != message.SuccessMsg {
+		return nil, msg
+	}
+
+	switch courierService.Courier.CourierType {
+	case shipping_provider.ThirPartyCourier:
+
+		orderData, msg := s.createDeliveryThirdParty(orderShipping.BookingID, courierService, input)
+		if msg != message.SuccessMsg {
+			return nil, msg
+		}
+
+		if orderShipping.ID == 0 {
+			orderShipping.Insurance = orderData.Insurance
+			orderShipping.InsuranceCost = orderData.InsuranceCost
+			orderShipping.ShippingCost = orderData.ShippingCost
+			orderShipping.TotalShippingCost = orderData.TotalShippingCost
+			orderShipping.ActualShippingCost = orderData.ActualShippingCost
+			orderShipping.BookingID = orderData.BookingID
+		}
+
+		orderShipping.Status = orderData.Status
+
+	case shipping_provider.InternalCourier:
+		return resp, message.ErrInvalidCourierType
+	case shipping_provider.MerchantCourier:
+		return resp, message.ErrInvalidCourierType
+	default:
+		return resp, message.ErrInvalidCourierType
+	}
+
+	if orderShipping.Status != shipping_provider.StatusCreated {
+		orderShipping.AddHistoryStatus(shippingStatus, "")
+	}
+
+	orderShipping, err := s.orderShipping.Upsert(orderShipping)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		return nil, message.ErrCreateOrder
+	}
+
+	return &response.CreateDelivery{
+		OrderNoAPI:       input.OrderNo,
+		OrderShippingUID: orderShipping.UID,
+	}, message.SuccessMsg
+}
+
+func (s *shippingServiceImpl) createDeliveryThirdParty(bookingID string, courierService *entity.CourierService, input *request.CreateDelivery) (*response.CreateDeliveryThirdPartyData, message.Message) {
+	switch courierService.Courier.Code {
+	case shipping_provider.ShipperCode:
+		return s.shipper.CreateDelivery(bookingID, courierService, input)
+	default:
+
+		return nil, message.ErrInvalidCourierCode
+	}
 }

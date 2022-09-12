@@ -50,4 +50,5 @@ type ChannelCourierServiceForShippingRate struct {
 	Price                   float64        `gorm:"column:price"`
 	UseInsurance            bool           `gorm:"column:use_insurance"`
 	InsuranceFee            float64        `gorm:"column:insurance_fee"`
+	MaxWeight               float64        `gorm:"column:max_weight"`
 }

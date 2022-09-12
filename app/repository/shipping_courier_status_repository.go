@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
@@ -13,6 +14,7 @@ import (
 
 type ShippingCourierStatusRepository interface {
 	FindByParams(limit int, page int, sort string, filters map[string]interface{}) ([]entity.ShippingCourierStatus, *base.Pagination, error)
+	FindByCode(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error)
 }
 
 type shippingCourierStatusRepositoryImpl struct {
@@ -86,4 +88,21 @@ func (r *shippingCourierStatusRepositoryImpl) Paginate(value interface{}, pagina
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Offset(pagination.GetOffset()).Limit(pagination.GetLimit())
 	}
+}
+
+func (r *shippingCourierStatusRepositoryImpl) FindByCode(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error) {
+	result := &entity.ShippingCourierStatus{}
+	query := r.base.GetDB().
+		Where(&entity.ShippingCourierStatus{StatusCode: statusCode}).
+		Where(&entity.ShippingCourierStatus{CourierID: courierID})
+
+	err := query.First(result).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+	}
+
+	return result, nil
 }

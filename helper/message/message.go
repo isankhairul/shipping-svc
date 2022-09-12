@@ -45,6 +45,14 @@ var ErrDestinationNotFound = Message{Code: 34602, Message: "Destination not in C
 var ErrShippingRateNotFound = Message{Code: 34602, Message: "shipping rate not found"}
 var ErrCourierCoverageCodeExist = Message{Code: 34005, Message: "The combination of courier_uid, country_code postal_code, and subdistrict is exist in database"}
 var ErrShippingTypeRequired = Message{Code: 34602, Message: "shipping type is required"}
+var ErrWeightExceeds = Message{Code: 34602, Message: "final weight exceeds the maximum weight allowed"}
+var ErrInvalidCourierType = Message{Code: 34602, Message: "courier type is not valid"}
+var ErrInvalidCourierCode = Message{Code: 34602, Message: "courier code is not valid"}
+var ErrCreateOrder = Message{Code: 34602, Message: "failed when trying to create order"}
+var ErrGetPickUpTimeslot = Message{Code: 34602, Message: "failed when trying to get pickup timeslot"}
+var ErrCreatePickUpOrder = Message{Code: 34602, Message: "failed when trying to create pickup order"}
+var ErrShippingStatus = Message{Code: 34602, Message: "shipping status not found"}
+var ErrOrderNoAlreadyExists = Message{Code: 34602, Message: "order no already exists"}
 
 //channel : 342xx
 var ErrChannelNotFound = Message{Code: 34201, Message: "Channel not found"}

@@ -43,6 +43,13 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 		options...,
 	))
 
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathOrderShipping)).Handler(httptransport.NewServer(
+		ep.CreateDelivery,
+		decodeCreateDelivery,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
 	return pr
 }
 
@@ -52,5 +59,14 @@ func decodeGetShippingRate(ctx context.Context, r *http.Request) (rqst interface
 		return nil, err
 	}
 	req.ShippingType = mux.Vars(r)[shippingTypePath]
+	return req, nil
+}
+
+func decodeCreateDelivery(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var req request.CreateDelivery
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, err
+	}
+
 	return req, nil
 }

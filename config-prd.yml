@@ -53,3 +53,7 @@ shipper:
   base: ${SHIPPER_BASE}
   path:
     get-pricing-domestic: /v3/pricing/domestic
+    order: /v3/order
+    pick-up-timeslot: /v3/pickup/timeslot
+  setting:
+    package-type: 3
