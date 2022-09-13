@@ -15,6 +15,7 @@ import (
 type ShippingCourierStatusRepository interface {
 	FindByParams(limit int, page int, sort string, filters map[string]interface{}) ([]entity.ShippingCourierStatus, *base.Pagination, error)
 	FindByCode(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error)
+	FindByCourierStatus(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error)
 }
 
 type shippingCourierStatusRepositoryImpl struct {
@@ -72,8 +73,14 @@ func (r *shippingCourierStatusRepositoryImpl) FindByParams(limit int, page int, 
 	pagination.Limit = limit
 	pagination.Page = page
 
-	err := query.Offset(pagination.GetOffset()).Limit((pagination.GetLimit())).Find(&result).Error
+	err := query.Scopes(r.Paginate(result, &pagination, query, int64(len(result)))).
+		Find(&result).
+		Error
+
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil, nil
+		}
 		return nil, nil, err
 	}
 
@@ -95,6 +102,23 @@ func (r *shippingCourierStatusRepositoryImpl) FindByCode(courierID uint64, statu
 	query := r.base.GetDB().
 		Where(&entity.ShippingCourierStatus{StatusCode: statusCode}).
 		Where(&entity.ShippingCourierStatus{CourierID: courierID})
+
+	err := query.First(result).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+	}
+
+	return result, nil
+}
+
+func (r *shippingCourierStatusRepositoryImpl) FindByCourierStatus(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error) {
+	result := &entity.ShippingCourierStatus{}
+	query := r.base.GetDB().
+		Where(&entity.ShippingCourierStatus{CourierID: courierID}).
+		Where(fmt.Sprintf("(shipping_courier_status.status_courier->'status')::text ilike '%%\"%s\"%%'", statusCode))
 
 	err := query.First(result).Error
 

@@ -31,3 +31,19 @@ func (r *ShippingCourierStatusRepositoryMock) FindByCode(courierID uint64, statu
 
 	return arguments.Get(0).(*entity.ShippingCourierStatus), nil
 }
+
+func (r *ShippingCourierStatusRepositoryMock) FindByCourierStatus(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error) {
+	arguments := r.Mock.Called()
+
+	if len(arguments) > 1 {
+		if arguments.Get(1) != nil {
+			return nil, arguments.Get(1).(error)
+		}
+	}
+
+	if arguments.Get(0) == nil {
+		return nil, nil
+	}
+
+	return arguments.Get(0).(*entity.ShippingCourierStatus), nil
+}

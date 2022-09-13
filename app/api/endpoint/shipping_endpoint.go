@@ -14,6 +14,7 @@ type ShippingEndpoint struct {
 	GetShippingRateByShippingType endpoint.Endpoint
 	CreateDelivery                endpoint.Endpoint
 	GetOrderShippingTracking      endpoint.Endpoint
+	UpdateStatusShipper           endpoint.Endpoint
 }
 
 func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
@@ -22,6 +23,7 @@ func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
 		GetShippingRateByShippingType: makeGetShippingRateByShippingType(s),
 		CreateDelivery:                makeCreateDelivery(s),
 		GetOrderShippingTracking:      makeGetOrderShippingTracking(s),
+		UpdateStatusShipper:           makeUpdateStatusShipper(s),
 	}
 }
 
@@ -53,5 +55,12 @@ func makeGetOrderShippingTracking(s service.ShippingService) endpoint.Endpoint {
 		req := rqst.(request.GetOrderShippingTracking)
 		result, msg := s.OrderShippingTracking(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
+	}
+}
+func makeUpdateStatusShipper(s service.ShippingService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		req := rqst.(request.WebhookUpdateStatusShipper)
+		_, msg := s.UpdateStatusShipper(&req)
+		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 	}
 }

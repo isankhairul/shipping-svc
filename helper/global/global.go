@@ -18,6 +18,7 @@ var (
 	PrefixChannelCourier        = "/channel/channel-courier/"
 	PrefixChannelCourierService = "/channel/channel-courier-service/"
 	PrefixShipping              = "/shipping/"
+	PrefixWebhook               = "/shipping/webhook/"
 	PrefixOther                 = "/other/"
 
 	//Path
@@ -43,6 +44,7 @@ var (
 	PathShippingRateShippingType = "shipping-rate/{shipping-type}"
 	PathOrderShipping            = "order-shipping"
 	PathOrderTracking            = "order-tracking/{uid}"
+	PathShipper                  = "shipper"
 
 	ServerPort = "server.port"
 )
