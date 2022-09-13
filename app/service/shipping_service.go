@@ -455,7 +455,7 @@ func (s *shippingServiceImpl) CreateDelivery(input *request.CreateDelivery) (*re
 	orderShipping, err := s.orderShipping.Upsert(orderShipping)
 	if err != nil {
 		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
-		return nil, message.ErrCreateOrder
+		return nil, message.ErrSaveOrderShipping
 	}
 
 	return &response.CreateDelivery{
