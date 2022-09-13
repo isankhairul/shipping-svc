@@ -57,6 +57,7 @@ var ErrOrderShippingNotFound = Message{Code: 34602, Message: "order shipping not
 var ErrGetOrderDetail = Message{Code: 34602, Message: "failed when trying to get order detail"}
 var ErrOrderBelongToAnotherChannel = Message{Code: 34602, Message: "the order is belong to another channel"}
 var ErrChannelUIDRequired = Message{Code: 34602, Message: "channel_uid is required"}
+var ErrSaveOrderShipping = Message{Code: 34602, Message: "failed when trying to save order shipping"}
 
 //channel : 342xx
 var ErrChannelNotFound = Message{Code: 34201, Message: "Channel not found"}

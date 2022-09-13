@@ -47,11 +47,24 @@ func (r *orderShippingRepository) Update(input *entity.OrderShipping) (*entity.O
 }
 
 func (r *orderShippingRepository) Upsert(input *entity.OrderShipping) (*entity.OrderShipping, error) {
-	if input.ID > 0 {
-		return r.Update(input)
-	}
 
-	return r.Create(input)
+	err := r.base.GetDB().Transaction(func(tx *gorm.DB) error {
+		if input.ID == 0 {
+			if err := tx.Create(input).Error; err != nil {
+				return err
+			}
+
+			return nil
+		}
+
+		if err := tx.Updates(input).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return input, err
 }
 
 func (r *orderShippingRepository) FindByOrderNo(orderNo string) (*entity.OrderShipping, error) {

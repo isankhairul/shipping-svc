@@ -366,7 +366,7 @@ func TestCreateDeliveryShipperSuccess(t *testing.T) {
 	assert.Equal(t, message.SuccessMsg, msg)
 }
 
-func TestCreateDeliveryShipperSaveSuccess(t *testing.T) {
+func TestCreateDeliveryShipperSaveFailed(t *testing.T) {
 
 	channel := entity.Channel{BaseIDModel: base.BaseIDModel{ID: 1, UID: createDeliveryRequest.ChannelUID}}
 	channelRepository.Mock.On("FindByUid", mock.Anything).
@@ -429,7 +429,7 @@ func TestCreateDeliveryShipperSaveSuccess(t *testing.T) {
 
 	assert.Nil(t, result)
 	assert.NotNil(t, msg)
-	assert.Equal(t, message.ErrCreateOrder, msg)
+	assert.Equal(t, message.ErrSaveOrderShipping, msg)
 }
 
 func TestCreateDeliveryThridPartyCourierInvalid(t *testing.T) {
