@@ -978,3 +978,79 @@ func TestOrderShippingTrackingChannelUIDRequired(t *testing.T) {
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrChannelUIDRequired, msg)
 }
+
+var updateStatusReq = &request.WebhookUpdateStatusShipper{
+	ExternalID: "ORDERNO",
+	ExternalStatus: request.ShipperStatus{
+		Code:        1,
+		Name:        "Name",
+		Description: "Desc",
+	},
+	Awb: "AWB-00001",
+}
+
+func TestUpdateStatusShipper(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{}).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(&entity.ShippingCourierStatus{}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(&entity.OrderShipping{}).Once()
+
+	result, msg := shippingService.UpdateStatusShipper(updateStatusReq)
+
+	assert.NotNil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestUpdateStatusShipperSaveFailed(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{}).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(&entity.ShippingCourierStatus{}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(nil, errors.New("")).Once()
+
+	result, msg := shippingService.UpdateStatusShipper(updateStatusReq)
+
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrSaveOrderShipping, msg)
+}
+
+func TestUpdateStatusShipperShippingStatusNotFOund(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{}).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(nil).Once()
+
+	result, msg := shippingService.UpdateStatusShipper(updateStatusReq)
+
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrShippingStatus, msg)
+}
+
+func TestUpdateStatusShipperGetShippingStatusError(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{}).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(nil, errors.New("")).Once()
+
+	result, msg := shippingService.UpdateStatusShipper(updateStatusReq)
+
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrShippingStatus, msg)
+}
+
+func TestUpdateStatusShipperOrderNotFound(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(nil).Once()
+
+	result, msg := shippingService.UpdateStatusShipper(updateStatusReq)
+
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
+
+func TestUpdateStatusShipperGetOrderError(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(nil, errors.New("")).Once()
+
+	result, msg := shippingService.UpdateStatusShipper(updateStatusReq)
+
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}

@@ -1,5 +1,7 @@
 package request
 
+import "time"
+
 //swagger:parameters ShippingRate
 type GetShippingRate struct {
 	//in: body
@@ -170,4 +172,37 @@ type GetOrderShippingTracking struct {
 	// in: query
 	// required: true
 	ChannelUID string `schema:"channel_uid" json:"channel_uid"`
+}
+
+// swagger:parameters WebhookUpdateStatusShipper
+type WebhookUpdateStatusShipperRequest struct {
+	// in:body
+	Body WebhookUpdateStatusShipper `json:"body"`
+}
+
+// swagger:model WebhookUpdateStatusShipperRequest
+type WebhookUpdateStatusShipper struct {
+	Auth            string         `json:"auth"`
+	OrderID         string         `json:"order_id"`
+	TrackingID      string         `json:"tracking_id"`
+	OrderTrackingID string         `json:"order_tracking_id"`
+	ExternalID      string         `json:"external_id"`
+	StatusDate      time.Time      `json:"status_date"`
+	Internal        ShippingStatus `json:"internal"`
+	External        ShippingStatus `json:"external"`
+	InternalStatus  ShipperStatus  `json:"internal_status"`
+	ExternalStatus  ShipperStatus  `json:"external_status"`
+	Awb             string         `json:"awb,omitempty"`
+}
+
+type ShippingStatus struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+type ShipperStatus struct {
+	Code        int    `json:"code"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }

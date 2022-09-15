@@ -1809,6 +1809,34 @@ definitions:
         x-go-name: UpdatedBy
     type: object
     x-go-package: go-klikdokter/app/model/request
+  ShipperStatus:
+    properties:
+      code:
+        format: int64
+        type: integer
+        x-go-name: Code
+      description:
+        type: string
+        x-go-name: Description
+      name:
+        type: string
+        x-go-name: Name
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  ShippingStatus:
+    properties:
+      description:
+        type: string
+        x-go-name: Description
+      id:
+        format: int64
+        type: integer
+        x-go-name: ID
+      name:
+        type: string
+        x-go-name: Name
+    type: object
+    x-go-package: go-klikdokter/app/model/request
   ShippingTypeItem:
     properties:
       name:
@@ -2122,6 +2150,41 @@ definitions:
         x-go-name: Type
     title: 'swaggers:'
     type: object
+    x-go-package: go-klikdokter/app/model/request
+  WebhookUpdateStatusShipperRequest:
+    properties:
+      auth:
+        type: string
+        x-go-name: Auth
+      awb:
+        type: string
+        x-go-name: Awb
+      external:
+        $ref: '#/definitions/ShippingStatus'
+      external_id:
+        type: string
+        x-go-name: ExternalID
+      external_status:
+        $ref: '#/definitions/ShipperStatus'
+      internal:
+        $ref: '#/definitions/ShippingStatus'
+      internal_status:
+        $ref: '#/definitions/ShipperStatus'
+      order_id:
+        type: string
+        x-go-name: OrderID
+      order_tracking_id:
+        type: string
+        x-go-name: OrderTrackingID
+      status_date:
+        format: date-time
+        type: string
+        x-go-name: StatusDate
+      tracking_id:
+        type: string
+        x-go-name: TrackingID
+    type: object
+    x-go-name: WebhookUpdateStatusShipper
     x-go-package: go-klikdokter/app/model/request
   errorResponse:
     properties:
@@ -3167,6 +3230,23 @@ paths:
       responses:
         "200":
           $ref: '#/responses/ShippingRate'
+      tags:
+      - Shipping
+  /shipping/webhook/shipper:
+    post:
+      description: Update Status Shipper
+      operationId: WebhookUpdateStatusShipper
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/WebhookUpdateStatusShipperRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
       tags:
       - Shipping
 produces:

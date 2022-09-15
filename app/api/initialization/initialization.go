@@ -61,6 +61,7 @@ func InitRouting(db *gorm.DB, logger log.Logger, redis cache.RedisCache) *http.S
 	channelHttp := transport.ChannelHttpHandler(channelSvc, channelCourierSvc, log.With(logger, "ChannelTransportLayer", "HTTP"))
 	channelCourierServiceHttp := transport.ChannelCourierServiceHttpHandler(channelCourierServiceSvc, log.With(logger, "ChannelCourierServiceTransportLayer", "HTTP"))
 	shippingHttp := transport.ShippingHttpHandler(shippingService, log.With(logger, "ShippingTransportLayer", "HTTP"))
+	webhookHttp := transport.WebhookHttpHandler(shippingService, log.With(logger, "WebhookTransportLayer", "HTTP"))
 
 	// Routing path
 	mux := http.NewServeMux()
@@ -72,6 +73,7 @@ func InitRouting(db *gorm.DB, logger log.Logger, redis cache.RedisCache) *http.S
 	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourier), channelCourierHttp)
 	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourierService), channelCourierServiceHttp)
 	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixShipping), shippingHttp)
+	mux.Handle(fmt.Sprint(global.PrefixBase, global.PrefixWebhook), webhookHttp)
 
 	return mux
 }

@@ -25,6 +25,7 @@ type ShippingService interface {
 	GetShippingRateByShippingType(input request.GetShippingRateRequest) ([]response.GetShippingRateResponse, message.Message)
 	CreateDelivery(input *request.CreateDelivery) (*response.CreateDelivery, message.Message)
 	OrderShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message)
+	UpdateStatusShipper(req *request.WebhookUpdateStatusShipper) (*entity.OrderShipping, message.Message)
 }
 
 type shippingServiceImpl struct {
@@ -515,4 +516,50 @@ func (s *shippingServiceImpl) thridPartyTracking(orderShipping *entity.OrderShip
 	}
 
 	return nil, message.ErrInvalidCourierCode
+}
+
+// swagger:route POST /shipping/webhook/shipper Shipping WebhookUpdateStatusShipper
+// Update Status Shipper
+//
+// responses:
+//  200: SuccessResponse
+func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStatusShipper) (*entity.OrderShipping, message.Message) {
+	logger := log.With(s.logger, "ShippingService", "UpdateStatusShipper")
+
+	orderShipping, err := s.orderShipping.FindByOrderNo(req.ExternalID)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.FindByOrderNo", err.Error())
+		return nil, message.ErrOrderShippingNotFound
+	}
+
+	if orderShipping == nil {
+		return nil, message.ErrOrderShippingNotFound
+	}
+
+	shippingStatus, err := s.shippingCourierStatusRepo.FindByCourierStatus(orderShipping.CourierID, fmt.Sprint(req.ExternalStatus.Code))
+
+	if err != nil {
+		_ = level.Error(logger).Log("s.shippingCourierStatusRepo.FindByCourierStatus", err.Error())
+		return nil, message.ErrShippingStatus
+	}
+
+	if shippingStatus == nil {
+		return nil, message.ErrShippingStatus
+	}
+
+	orderShipping.Status = shippingStatus.StatusCode
+
+	if len(req.Awb) > 0 {
+		orderShipping.Airwaybill = req.Awb
+	}
+
+	orderShipping.AddHistoryStatus(shippingStatus, req.ExternalStatus.Description)
+
+	orderShipping, err = s.orderShipping.Upsert(orderShipping)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		return nil, message.ErrSaveOrderShipping
+	}
+
+	return orderShipping, message.SuccessMsg
 }
