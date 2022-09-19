@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"context"
+	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
@@ -16,6 +17,7 @@ type ShippingEndpoint struct {
 	GetOrderShippingTracking      endpoint.Endpoint
 	UpdateStatusShipper           endpoint.Endpoint
 	GetOrderShippingList          endpoint.Endpoint
+	GetOrderShippingDetail        endpoint.Endpoint
 }
 
 func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
@@ -26,6 +28,7 @@ func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
 		GetOrderShippingTracking:      makeGetOrderShippingTracking(s),
 		UpdateStatusShipper:           makeUpdateStatusShipper(s),
 		GetOrderShippingList:          makeGetOrderShippingList(s),
+		GetOrderShippingDetail:        makeGetOrderShippingDetail(s),
 	}
 }
 
@@ -72,5 +75,12 @@ func makeGetOrderShippingList(s service.ShippingService) endpoint.Endpoint {
 		req := rqst.(request.GetOrderShippingList)
 		result, pagination, msg := s.GetOrderShippingList(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, pagination), nil
+	}
+}
+
+func makeGetOrderShippingDetail(s service.ShippingService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		result, msg := s.GetOrderShippingDetailByUID(fmt.Sprint(rqst))
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }

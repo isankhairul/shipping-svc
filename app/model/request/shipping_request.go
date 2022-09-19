@@ -250,3 +250,10 @@ func (m *GetOrderShippingList) GetFilter() {
 		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
 	}
 }
+
+// swagger:parameters GetOrderShippingDetail
+type GetOrderShippingDetail struct {
+	// in: path
+	// required: true
+	UID string `json:"uid"`
+}

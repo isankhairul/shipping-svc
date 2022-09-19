@@ -27,6 +27,7 @@ type ShippingService interface {
 	OrderShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message)
 	UpdateStatusShipper(req *request.WebhookUpdateStatusShipper) (*entity.OrderShipping, message.Message)
 	GetOrderShippingList(req *request.GetOrderShippingList) ([]response.GetOrderShippingList, *base.Pagination, message.Message)
+	GetOrderShippingDetailByUID(uid string) (*response.GetOrderShippingDetail, message.Message)
 }
 
 type shippingServiceImpl struct {
@@ -599,4 +600,105 @@ func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShipping
 	}
 
 	return result, pagination, message.SuccessMsg
+}
+
+// swagger:route GET /shipping/order-shipping/{uid} Shipping GetOrderShippingDetail
+// Get Order Shipping Detail By UID
+//
+// responses:
+//  200: GetOrderShippingDetail
+
+func (s *shippingServiceImpl) GetOrderShippingDetailByUID(uid string) (*response.GetOrderShippingDetail, message.Message) {
+	logger := log.With(s.logger, "ShippingService", "GetOrderShippingDetailByUID")
+	var resp *response.GetOrderShippingDetail
+
+	orderShipping, err := s.orderShipping.FindByUID(uid)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.FindByUID", err.Error())
+		return nil, message.ErrOrderShippingNotFound
+	}
+
+	if orderShipping == nil {
+		return nil, message.ErrOrderShippingNotFound
+	}
+
+	resp = getOrderShippingDetailByUIDResponse(orderShipping)
+
+	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.CourierID, orderShipping.Status)
+
+	if shipperStatus != nil {
+		resp.ShippingStatusName = shipperStatus.ShippingStatus.StatusName
+	}
+
+	return resp, message.SuccessMsg
+}
+
+func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *response.GetOrderShippingDetail {
+	if orderShipping == nil {
+		return nil
+	}
+
+	resp := &response.GetOrderShippingDetail{}
+	resp.ChannelCode = orderShipping.Channel.ChannelCode
+	resp.ChannelName = orderShipping.Channel.ChannelName
+	resp.CourierName = orderShipping.Courier.CourierName
+	resp.CourierServiceName = orderShipping.CourierService.ShippingName
+	resp.Airwaybill = orderShipping.Airwaybill
+	resp.BookingID = orderShipping.BookingID
+	resp.OrderNo = orderShipping.OrderNo
+	resp.OrderNoAPI = orderShipping.OrderNoAPI
+	resp.ShippingStatus = orderShipping.Status
+	resp.TotalProductPrice = orderShipping.TotalProductPrice
+	resp.TotalWeight = orderShipping.TotalWeight
+	resp.TotalVolume = orderShipping.TotalVolume
+	resp.FinalWeight = orderShipping.TotalFinalWeight
+	resp.TotalProductPrice = orderShipping.TotalProductPrice
+	resp.ShippingCost = orderShipping.ShippingCost
+	resp.Insurance = orderShipping.Insurance
+	resp.InsuranceCost = orderShipping.InsuranceCost
+	resp.TotalShippingCost = orderShipping.TotalShippingCost
+	resp.ShippingNotes = orderShipping.ShippingNotes
+	resp.MerchantUID = orderShipping.MerchantUID
+	resp.MerchantName = orderShipping.MerchantName
+	resp.MerchantEmail = orderShipping.MerchantEmail
+	resp.MerchantPhone = orderShipping.MerchantPhoneNumber
+	resp.MerchantAddress = orderShipping.MerchantAddress
+	resp.MerchantDistrictName = orderShipping.MerchantDistrictCode
+	resp.MerchantCityName = orderShipping.MerchantCityCode
+	resp.MerchantProvinceName = orderShipping.MerchantProvinceCode
+	resp.MerchantPostalCode = orderShipping.MerchantPostalCode
+	resp.CustomerUID = orderShipping.CustomerUID
+	resp.CustomerName = orderShipping.CustomerName
+	resp.CustomerEmail = orderShipping.CustomerEmail
+	resp.CustomerPhone = orderShipping.CustomerPhoneNumber
+	resp.CustomerAddress = orderShipping.CustomerAddress
+	resp.CustomerDistrictName = orderShipping.CustomerDistrictCode
+	resp.CustomerCityName = orderShipping.CustomerCityCode
+	resp.CustomerProvinceName = orderShipping.CustomerProvinceCode
+	resp.CustomerPostalCode = orderShipping.CustomerPostalCode
+	resp.CustomerNotes = orderShipping.CustomerNotes
+	resp.OrderShippingItem = []response.GetOrderShippingDetailItem{}
+	resp.OrderShippingHistory = []response.GetOrderShippingDetailHistory{}
+
+	for _, v := range orderShipping.OrderShippingItem {
+		resp.OrderShippingItem = append(resp.OrderShippingItem, response.GetOrderShippingDetailItem{
+			ItemName:    v.ItemName,
+			ProductUID:  v.ProductUID,
+			Qty:         v.Quantity,
+			Price:       v.Price,
+			Weight:      v.Weight,
+			Volume:      v.Volume,
+			Prescrition: v.Prescription,
+		})
+	}
+
+	for _, v := range orderShipping.OrderShippingHistory {
+		resp.OrderShippingHistory = append(resp.OrderShippingHistory, response.GetOrderShippingDetailHistory{
+			CreatedAt: v.CreatedAt,
+			Status:    v.StatusCode,
+			Notes:     v.Note,
+		})
+	}
+
+	return resp
 }

@@ -65,6 +65,13 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 		options...,
 	))
 
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathOrderShippingUID)).Handler(httptransport.NewServer(
+		ep.GetOrderShippingDetail,
+		encoder.UIDRequestHTTP,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
 	return pr
 }
 

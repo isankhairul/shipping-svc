@@ -100,6 +100,7 @@ func (r *shippingCourierStatusRepositoryImpl) Paginate(value interface{}, pagina
 func (r *shippingCourierStatusRepositoryImpl) FindByCode(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error) {
 	result := &entity.ShippingCourierStatus{}
 	query := r.base.GetDB().
+		Preload("ShippingStatus").
 		Where(&entity.ShippingCourierStatus{StatusCode: statusCode}).
 		Where(&entity.ShippingCourierStatus{CourierID: courierID})
 
