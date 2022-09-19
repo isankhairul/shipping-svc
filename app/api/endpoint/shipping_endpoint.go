@@ -18,6 +18,7 @@ type ShippingEndpoint struct {
 	UpdateStatusShipper           endpoint.Endpoint
 	GetOrderShippingList          endpoint.Endpoint
 	GetOrderShippingDetail        endpoint.Endpoint
+	CancelPickUp                  endpoint.Endpoint
 }
 
 func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
@@ -29,6 +30,7 @@ func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
 		UpdateStatusShipper:           makeUpdateStatusShipper(s),
 		GetOrderShippingList:          makeGetOrderShippingList(s),
 		GetOrderShippingDetail:        makeGetOrderShippingDetail(s),
+		CancelPickUp:                  makeCancelPickup(s),
 	}
 }
 
@@ -82,5 +84,12 @@ func makeGetOrderShippingDetail(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
 		result, msg := s.GetOrderShippingDetailByUID(fmt.Sprint(rqst))
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
+	}
+}
+
+func makeCancelPickup(s service.ShippingService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		msg := s.CancelPickup(fmt.Sprint(rqst))
+		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 	}
 }

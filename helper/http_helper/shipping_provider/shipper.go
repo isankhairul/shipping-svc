@@ -26,6 +26,7 @@ type Shipper interface {
 	CreateDelivery(ShipperOrderID string, courierService *entity.CourierService, req *request.CreateDelivery) (*response.CreateDeliveryThirdPartyData, message.Message)
 	GetOrderDetail(orderID string) (*response.GetOrderDetailResponse, error)
 	GetTracking(orderID string) ([]response.GetOrderShippingTracking, message.Message)
+	CancelPickupRequest(pickupCode string) (*response.MetadataResponse, error)
 }
 type shipper struct {
 	courierCoverage repository.CourierCoverageCodeRepository
@@ -350,4 +351,31 @@ func (h *shipper) GetTracking(orderID string) ([]response.GetOrderShippingTracki
 	}
 
 	return orderDetail.Data.ToOrderShippingTracking(), message.SuccessMsg
+}
+
+func (h *shipper) CancelPickupRequest(pickupCode string) (*response.MetadataResponse, error) {
+	response := response.MetadataResponse{}
+	path := viper.GetString("shipper.path.cancel-pickup")
+	url := h.Base + path
+
+	header := h.Authorization
+	header["Content-Type"] = "application/json"
+
+	respByte, err := http_helper.Patch(url, header, map[string]string{"pickup_Code": pickupCode}, h.Logger)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(respByte, &response)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Metadata.HTTPStatusCode != 200 {
+		return nil, errors.New(response.Metadata.HTTPStatus)
+	}
+
+	return &response, nil
 }

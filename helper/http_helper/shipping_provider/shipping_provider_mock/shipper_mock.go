@@ -144,3 +144,19 @@ func (h *ShipperMock) GetTracking(orderID string) ([]response.GetOrderShippingTr
 
 	return arguments.Get(0).([]response.GetOrderShippingTracking), message.SuccessMsg
 }
+
+func (h *ShipperMock) CancelPickupRequest(pickupCode string) (*response.MetadataResponse, error) {
+	arguments := h.Mock.Called()
+
+	if len(arguments) > 1 {
+		if arguments.Get(1) != nil {
+			return nil, arguments.Get(1).(error)
+		}
+	}
+
+	if arguments.Get(0) == nil {
+		return nil, nil
+	}
+
+	return arguments.Get(0).(*response.MetadataResponse), nil
+}

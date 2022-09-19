@@ -58,7 +58,7 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 		options...,
 	))
 
-	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathOrderShipping)).Handler(httptransport.NewServer(
+		pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathOrderShipping)).Handler(httptransport.NewServer(
 		ep.GetOrderShippingList,
 		decodeGetOrderShippingList,
 		encoder.EncodeResponseHTTP,
@@ -67,6 +67,13 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 
 	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathOrderShippingUID)).Handler(httptransport.NewServer(
 		ep.GetOrderShippingDetail,
+		encoder.UIDRequestHTTP,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathCancelPickupUID)).Handler(httptransport.NewServer(
+		ep.CancelPickUp,
 		encoder.UIDRequestHTTP,
 		encoder.EncodeResponseHTTP,
 		options...,

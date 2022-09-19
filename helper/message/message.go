@@ -59,6 +59,9 @@ var ErrOrderBelongToAnotherChannel = Message{Code: 34602, Message: "the order is
 var ErrChannelUIDRequired = Message{Code: 34602, Message: "channel_uid is required"}
 var ErrSaveOrderShipping = Message{Code: 34602, Message: "failed when trying to save order shipping"}
 var ErrFormatDateYYYYMMDD = Message{Code: 34602, Message: "date format must be YYYY-MM-DD"}
+var ErrCancelPickup = Message{Code: 34602, Message: "failed when trying to cancel pickup"}
+var ErrCantCancelOrderShipping = Message{Code: 34602, Message: "can't cancel this order"}
+var ErrCantCancelOrderCourierService = Message{Code: 34602, Message: "courier service is not cancelable"}
 
 //channel : 342xx
 var ErrChannelNotFound = Message{Code: 34201, Message: "Channel not found"}

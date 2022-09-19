@@ -56,6 +56,7 @@ type OrderShipping struct {
 	BookingID            string    `gorm:"type:varchar(50);null"`
 	Airwaybill           string    `gorm:"type:varchar(50);null"`
 	Status               string    `gorm:"type:varchar(50);null"`
+	PickupCode           string    `gorm:"type:varchar(50);null"`
 
 	Channel              *Channel               `gorm:"foreignKey:channel_id"`
 	Courier              *Courier               `gorm:"foreignKey:courier_id"`
