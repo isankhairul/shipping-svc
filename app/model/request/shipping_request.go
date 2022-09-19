@@ -258,3 +258,19 @@ type GetOrderShippingDetail struct {
 	// required: true
 	UID string `json:"uid"`
 }
+
+// swagger:parameters CancelOrder
+type CancelOrder struct {
+	// in: path
+	// required: true
+	UID string `json:"uid"`
+
+	// in: body
+	Body CancelOrderBodyRequest `json:"body"`
+}
+
+// swagger:model CancelOrderBodyRequest
+type CancelOrderBodyRequest struct {
+	// example: Stok barang habis
+	Reason string `json:"reason"`
+}

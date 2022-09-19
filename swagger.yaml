@@ -40,6 +40,14 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/base
+  CancelOrderBodyRequest:
+    properties:
+      reason:
+        example: Stok barang habis
+        type: string
+        x-go-name: Reason
+    type: object
+    x-go-package: go-klikdokter/app/model/request
   Channel:
     properties:
       channel_code:
@@ -3441,6 +3449,28 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Courier-Predefined
+  /shipping/cancel-order/{uid}:
+    post:
+      description: Cancel Order Shipping
+      operationId: CancelOrder
+      parameters:
+      - in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/CancelOrderBodyRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Shipping
   /shipping/cancel-pickup/{uid}:
     post:
       description: Cancel Pickup Order

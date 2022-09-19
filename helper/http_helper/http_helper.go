@@ -123,6 +123,43 @@ func Patch(url string, header map[string]string, request interface{}, log ...log
 	return bodyBytes, err
 }
 
+func Delete(url string, header map[string]string, request interface{}, log ...log.Logger) ([]byte, error) {
+
+	jsonReq, err := json.Marshal(request)
+
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, url, bytes.NewBuffer(jsonReq))
+
+	if err != nil {
+		return nil, err
+	}
+
+	for k, h := range header {
+		req.Header.Add(k, h)
+	}
+
+	client := http.Client{}
+	response, err := client.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer response.Body.Close()
+	bodyBytes, err := ioutil.ReadAll(response.Body)
+
+	for _, v := range log {
+		_ = level.Info(v).Log("url", url)
+		_ = level.Info(v).Log("request", string(jsonReq))
+		_ = level.Info(v).Log("response", string(bodyBytes))
+	}
+
+	return bodyBytes, err
+}
+
 // func getString(url string, header map[string]string, queryString string) ([]byte, error) {
 
 // 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s?%s", url, queryString), nil)

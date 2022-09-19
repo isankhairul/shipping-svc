@@ -16,7 +16,7 @@ func (r *ShippingCourierStatusRepositoryMock) FindByParams(limit int, page int, 
 	return arguments.Get(0).([]entity.ShippingCourierStatus), arguments.Get(1).(*base.Pagination), nil
 }
 
-func (r *ShippingCourierStatusRepositoryMock) FindByCode(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error) {
+func (r *ShippingCourierStatusRepositoryMock) FindByCode(channelID, courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error) {
 	arguments := r.Mock.Called()
 
 	if len(arguments) > 1 {

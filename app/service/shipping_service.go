@@ -29,6 +29,7 @@ type ShippingService interface {
 	GetOrderShippingList(req *request.GetOrderShippingList) ([]response.GetOrderShippingList, *base.Pagination, message.Message)
 	GetOrderShippingDetailByUID(uid string) (*response.GetOrderShippingDetail, message.Message)
 	CancelPickup(uid string) message.Message
+	CancelOrder(req *request.CancelOrder) message.Message
 }
 
 type shippingServiceImpl struct {
@@ -394,7 +395,7 @@ func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelive
 	}
 
 	// get shipping status
-	shippingStatus, _ := s.shippingCourierStatusRepo.FindByCode(courierService.CourierID, shipping_provider.StatusRequestPickup)
+	shippingStatus, _ := s.shippingCourierStatusRepo.FindByCode(channel.ID, courierService.CourierID, shipping_provider.StatusRequestPickup)
 	if shippingStatus == nil {
 		return nil, nil, nil, message.ErrShippingStatus
 	}
@@ -566,6 +567,7 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 
 	return orderShipping, message.SuccessMsg
 }
+
 // swagger:route GET /shipping/order-shipping Shipping GetOrderShippingList
 // Get Order Shipping List
 //
@@ -625,7 +627,7 @@ func (s *shippingServiceImpl) GetOrderShippingDetailByUID(uid string) (*response
 
 	resp = getOrderShippingDetailByUIDResponse(orderShipping)
 
-	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.CourierID, orderShipping.Status)
+	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, orderShipping.Status)
 
 	if shipperStatus != nil {
 		resp.ShippingStatusName = shipperStatus.ShippingStatus.StatusName
@@ -732,7 +734,7 @@ func (s *shippingServiceImpl) CancelPickup(uid string) message.Message {
 		return msg
 	}
 
-	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.CourierID, shipping_provider.StatusCancelled)
+	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, shipping_provider.StatusCancelled)
 
 	if shipperStatus == nil {
 		return message.ErrShippingStatus
@@ -761,7 +763,7 @@ func (s *shippingServiceImpl) cancelPickup(orderShipping *entity.OrderShipping) 
 func (s *shippingServiceImpl) cancelPickupThirdParty(orderShipping *entity.OrderShipping) message.Message {
 
 	// check if order current status is cancelable
-	if !shipping_provider.IsOrderCancelable(orderShipping.Courier.Code, orderShipping.Status) {
+	if !shipping_provider.IsPickUpOrderCancelable(orderShipping.Courier.Code, orderShipping.Status) {
 		return message.ErrCantCancelOrderShipping
 	}
 
@@ -769,6 +771,81 @@ func (s *shippingServiceImpl) cancelPickupThirdParty(orderShipping *entity.Order
 	switch orderShipping.Courier.Code {
 	case shipping_provider.ShipperCode:
 		_, err = s.shipper.CancelPickupRequest(orderShipping.PickupCode)
+	}
+
+	if err != nil {
+		return message.ErrCancelPickup
+	}
+
+	return message.SuccessMsg
+}
+
+// swagger:route POST /shipping/cancel-order/{uid} Shipping CancelOrder
+// Cancel Order Shipping
+//
+// responses:
+//  200: SuccessResponse
+func (s *shippingServiceImpl) CancelOrder(req *request.CancelOrder) message.Message {
+	logger := log.With(s.logger, "ShippingService", "CancelOrder")
+
+	orderShipping, err := s.orderShipping.FindByUID(req.UID)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.FindByUID", err.Error())
+		return message.ErrOrderShippingNotFound
+	}
+
+	if orderShipping == nil {
+		return message.ErrOrderShippingNotFound
+	}
+
+	// check if courier service is cancelable
+	if orderShipping.CourierService.Cancelable == 0 {
+		return message.ErrCantCancelOrderCourierService
+	}
+
+	msg := s.cancelOrder(orderShipping, req)
+
+	if msg != message.SuccessMsg {
+		return msg
+	}
+
+	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, shipping_provider.StatusCancelled)
+
+	if shipperStatus == nil {
+		return message.ErrShippingStatus
+	}
+
+	orderShipping.AddHistoryStatus(shipperStatus, req.Body.Reason)
+	orderShipping.Status = shipping_provider.StatusCancelled
+	_, err = s.orderShipping.Upsert(orderShipping)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		return message.ErrSaveOrderShipping
+	}
+
+	return message.SuccessMsg
+}
+
+func (s *shippingServiceImpl) cancelOrder(orderShipping *entity.OrderShipping, req *request.CancelOrder) message.Message {
+	switch orderShipping.Courier.CourierType {
+	case shipping_provider.ThirPartyCourier:
+		return s.cancelOrderThirdParty(orderShipping, req)
+	}
+
+	return message.ErrInvalidCourierType
+}
+
+func (s *shippingServiceImpl) cancelOrderThirdParty(orderShipping *entity.OrderShipping, req *request.CancelOrder) message.Message {
+
+	// check if order current status is cancelable
+	if !shipping_provider.IsOrderCancelable(orderShipping.Courier.Code, orderShipping.Status) {
+		return message.ErrCantCancelOrderShipping
+	}
+
+	var err error
+	switch orderShipping.Courier.Code {
+	case shipping_provider.ShipperCode:
+		_, err = s.shipper.CancelOrder(orderShipping.BookingID, req)
 	}
 
 	if err != nil {
