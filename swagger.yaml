@@ -1001,6 +1001,244 @@ definitions:
     type: object
     x-go-name: GetChannelCourierStatusResponseItem
     x-go-package: go-klikdokter/app/model/response
+  GetOrderShippingDetailResponse:
+    properties:
+      airwaybill:
+        example: 13421BBFGXZ
+        type: string
+        x-go-name: Airwaybill
+      booking_id:
+        example: "11222449"
+        type: string
+        x-go-name: BookingID
+      channel_code:
+        example: kd
+        type: string
+        x-go-name: ChannelCode
+      channel_name:
+        example: Klikdokter
+        type: string
+        x-go-name: ChannelName
+      courier_name:
+        example: Shipper
+        type: string
+        x-go-name: CourierName
+      courier_services_name:
+        example: Sicepat Next Day
+        type: string
+        x-go-name: CourierServiceName
+      customer_address:
+        example: Graha Kirana, Jl. Mitra Sunter Bulevar No.16, RW.11, Sunter Jaya
+        type: string
+        x-go-name: CustomerAddress
+      customer_city_name:
+        example: Jakarta Utara
+        type: string
+        x-go-name: CustomerCityName
+      customer_district_name:
+        example: Tanjung Priok
+        type: string
+        x-go-name: CustomerDistrictName
+      customer_email:
+        example: budi@test.com
+        type: string
+        x-go-name: CustomerEmail
+      customer_name:
+        example: Bapak Budiman
+        type: string
+        x-go-name: CustomerName
+      customer_notes:
+        example: antar paket keruang mail room, samping lobby
+        type: string
+        x-go-name: CustomerNotes
+      customer_phone:
+        example: "620876324562323"
+        type: string
+        x-go-name: CustomerPhone
+      customer_postal_code:
+        example: "13360"
+        type: string
+        x-go-name: CustomerPostalCode
+      customer_province_name:
+        example: DKI Jakarta
+        type: string
+        x-go-name: CustomerProvinceName
+      customer_uid:
+        example: lsdkosdfg0376762345dfg
+        type: string
+        x-go-name: CustomerUID
+      final_weight:
+        example: 4.5
+        format: double
+        type: number
+        x-go-name: FinalWeight
+      insurance:
+        example: false
+        type: boolean
+        x-go-name: Insurance
+      insurance_cost:
+        example: 10000
+        format: double
+        type: number
+        x-go-name: InsuranceCost
+      merchant_address:
+        example: Jl. BSD Grand Boulevard, BSD Green Office Park, BSD City My Republic
+          Plaza (Green Office Park 6
+        type: string
+        x-go-name: MerchantAddress
+      merchant_city_name:
+        example: Kabupaten Tangerang
+        type: string
+        x-go-name: MerchantCityName
+      merchant_district_name:
+        example: Cisauk
+        type: string
+        x-go-name: MerchantDistrictName
+      merchant_email:
+        example: fahmi@test.com
+        type: string
+        x-go-name: MerchantEmail
+      merchant_name:
+        example: Fahmi Store
+        type: string
+        x-go-name: MerchantName
+      merchant_phone:
+        example: "6208734567345"
+        type: string
+        x-go-name: MerchantPhone
+      merchant_postal_code:
+        example: "15345"
+        type: string
+        x-go-name: MerchantPostalCode
+      merchant_province_name:
+        example: Banten
+        type: string
+        x-go-name: MerchantProvinceName
+      merchant_uid:
+        example: fhdsfg0376762345dfg
+        type: string
+        x-go-name: MerchantUID
+      order_no:
+        example: "1000363553.1"
+        type: string
+        x-go-name: OrderNo
+      order_no_api:
+        example: "1000363553.1"
+        type: string
+        x-go-name: OrderNoAPI
+      order_shipping_date:
+        format: date-time
+        type: string
+        x-go-name: OrderShippingDate
+      order_shipping_history:
+        items:
+          $ref: '#/definitions/GetOrderShippingDetailResponseHistory'
+        type: array
+        x-go-name: OrderShippingHistory
+      order_shipping_item:
+        items:
+          $ref: '#/definitions/GetOrderShippingDetailResponseItem'
+        type: array
+        x-go-name: OrderShippingItem
+      order_shipping_uid:
+        example: hh6845hjjisdfhidsf
+        type: string
+        x-go-name: OrderShippingUID
+      shipping_cost:
+        example: 20000
+        format: double
+        type: number
+        x-go-name: ShippingCost
+      shipping_notes:
+        example: Notes
+        type: string
+        x-go-name: ShippingNotes
+      shipping_status:
+        example: delivered
+        type: string
+        x-go-name: ShippingStatus
+      shipping_status_name:
+        example: Delivered
+        type: string
+        x-go-name: ShippingStatusName
+      total_product_price:
+        example: 150000
+        format: double
+        type: number
+        x-go-name: TotalProductPrice
+      total_shipping_cost:
+        example: 2000
+        format: double
+        type: number
+        x-go-name: TotalShippingCost
+      total_volume:
+        example: 4.5
+        format: double
+        type: number
+        x-go-name: TotalVolume
+      total_weight:
+        example: 3.5
+        format: double
+        type: number
+        x-go-name: TotalWeight
+    type: object
+    x-go-name: GetOrderShippingDetail
+    x-go-package: go-klikdokter/app/model/response
+  GetOrderShippingDetailResponseHistory:
+    properties:
+      created_at:
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      notes:
+        example: 'Pickup Request with Airwaybill No : 1077400000002'
+        type: string
+        x-go-name: Notes
+      status:
+        example: request_pickup
+        type: string
+        x-go-name: Status
+    type: object
+    x-go-name: GetOrderShippingDetailHistory
+    x-go-package: go-klikdokter/app/model/response
+  GetOrderShippingDetailResponseItem:
+    properties:
+      item_name:
+        example: Chil Kid Strawberry 900 gr
+        type: string
+        x-go-name: ItemName
+      prescription:
+        example: 1
+        format: int64
+        type: integer
+        x-go-name: Prescrition
+      price:
+        example: 110000
+        format: double
+        type: number
+        x-go-name: Price
+      product_uid:
+        example: sssabcgz88877
+        type: string
+        x-go-name: ProductUID
+      qty:
+        example: 3
+        format: int64
+        type: integer
+        x-go-name: Qty
+      volume:
+        example: 2.5
+        format: double
+        type: number
+        x-go-name: Volume
+      weight:
+        example: 1.3
+        format: double
+        type: number
+        x-go-name: Weight
+    type: object
+    x-go-name: GetOrderShippingDetailItem
+    x-go-package: go-klikdokter/app/model/response
   GetOrderShippingListResponse:
     properties:
       airwaybill:
@@ -3265,6 +3503,21 @@ paths:
           $ref: '#/responses/CreateDelivery'
       tags:
       - Shipping
+  /shipping/order-shipping/{uid}:
+    get:
+      description: Get Order Shipping Detail By UID
+      operationId: GetOrderShippingDetail
+      parameters:
+      - in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      responses:
+        "200":
+          $ref: '#/responses/GetOrderShippingDetail'
+      tags:
+      - Shipping
   /shipping/order-tracking/{uid}:
     get:
       description: Get Order Shipping Tracking
@@ -3388,6 +3641,12 @@ responses:
     schema:
       items:
         $ref: '#/definitions/GetChannelCourierStatusResponse'
+      type: array
+  GetOrderShippingDetail:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/GetOrderShippingDetailResponse'
       type: array
   GetOrderShippingList:
     description: ""

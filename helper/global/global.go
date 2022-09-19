@@ -45,6 +45,7 @@ var (
 	PathOrderShipping            = "order-shipping"
 	PathOrderTracking            = "order-tracking/{uid}"
 	PathShipper                  = "shipper"
+	PathOrderShippingUID         = "order-shipping/{uid}"
 
 	ServerPort = "server.port"
 )

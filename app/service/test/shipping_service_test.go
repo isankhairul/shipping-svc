@@ -1108,3 +1108,61 @@ func TestGetOrderShippingListInvalidDateToError(t *testing.T) {
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrFormatDateYYYYMMDD, msg)
 }
+
+func TestGetOrderShippingDetailByUIDSuccess(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByUID").Return(&entity.OrderShipping{
+		Channel:              &entity.Channel{},
+		Courier:              &entity.Courier{},
+		CourierService:       &entity.CourierService{},
+		OrderShippingItem:    []entity.OrderShippingItem{},
+		OrderShippingHistory: []entity.OrderShippingHistory{},
+	}).Once()
+
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
+
+	result, msg := shippingService.GetOrderShippingDetailByUID("")
+
+	assert.NotNil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestGetOrderShippingDetailByUIDStatusNil(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByUID").Return(&entity.OrderShipping{
+		Channel:              &entity.Channel{},
+		Courier:              &entity.Courier{},
+		CourierService:       &entity.CourierService{},
+		OrderShippingItem:    []entity.OrderShippingItem{},
+		OrderShippingHistory: []entity.OrderShippingHistory{},
+	}).Once()
+
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(nil).Once()
+
+	result, msg := shippingService.GetOrderShippingDetailByUID("")
+
+	assert.NotNil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestGetOrderShippingDetailByUIDNotFound(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByUID").Return(nil).Once()
+
+	result, msg := shippingService.GetOrderShippingDetailByUID("")
+
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
+
+func TestGetOrderShippingDetailByUIDNotFoundError(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByUID").Return(nil, errors.New("")).Once()
+
+	result, msg := shippingService.GetOrderShippingDetailByUID("")
+
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}

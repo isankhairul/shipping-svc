@@ -253,3 +253,121 @@ type GetOrderShippingList struct {
 	ShippingStatus     string `gorm:"column:shipping_status" json:"shipping_status"`
 	ShippingStatusName string `gorm:"column:shipping_status_name" json:"shipping_status_name"`
 }
+//swagger:response GetOrderShippingDetail
+type GetOrderShippingDetailResponse struct {
+	//in:body
+	Body []GetOrderShippingDetail `json:"body"`
+}
+
+//swagger:model GetOrderShippingDetailResponse
+type GetOrderShippingDetail struct {
+	//example: kd
+	ChannelCode string `json:"channel_code"`
+	//example: Klikdokter
+	ChannelName string `json:"channel_name"`
+	//example: hh6845hjjisdfhidsf
+	OrderShippingUID string `json:"order_shipping_uid"`
+
+	OrderShippingDate time.Time `json:"order_shipping_date"`
+	//example: 1000363553.1
+	OrderNo string `json:"order_no"`
+	//example: 1000363553.1
+	OrderNoAPI string `json:"order_no_api"`
+	//example: delivered
+	ShippingStatus string `json:"shipping_status"`
+	//example: Delivered
+	ShippingStatusName string `json:"shipping_status_name"`
+	//example: Shipper
+	CourierName string `json:"courier_name"`
+	//example: Sicepat Next Day
+	CourierServiceName string `json:"courier_services_name"`
+	//example: 13421BBFGXZ
+	Airwaybill string `json:"airwaybill"`
+	//example: 11222449
+	BookingID string `json:"booking_id"`
+	//example: 150000
+	TotalProductPrice float64 `json:"total_product_price"`
+	//example: 3.5
+	TotalWeight float64 `json:"total_weight"`
+	//example: 4.5
+	TotalVolume float64 `json:"total_volume"`
+	//example: 4.5
+	FinalWeight float64 `json:"final_weight"`
+	//example: 20000
+	ShippingCost float64 `json:"shipping_cost"`
+	//example: false
+	Insurance bool `json:"insurance"`
+	//example: 10000
+	InsuranceCost float64 `json:"insurance_cost"`
+	//example: 2000
+	TotalShippingCost float64 `json:"total_shipping_cost"`
+	//example: Notes
+	ShippingNotes string `json:"shipping_notes"`
+	//example: fhdsfg0376762345dfg
+	MerchantUID string `json:"merchant_uid"`
+	//example: Fahmi Store
+	MerchantName string `json:"merchant_name"`
+	//example: fahmi@test.com
+	MerchantEmail string `json:"merchant_email"`
+	//example: 6208734567345
+	MerchantPhone string `json:"merchant_phone"`
+	//example: Jl. BSD Grand Boulevard, BSD Green Office Park, BSD City My Republic Plaza (Green Office Park 6
+	MerchantAddress string `json:"merchant_address"`
+	//example: Cisauk
+	MerchantDistrictName string `json:"merchant_district_name"`
+	//example: Kabupaten Tangerang
+	MerchantCityName string `json:"merchant_city_name"`
+	//example: Banten
+	MerchantProvinceName string `json:"merchant_province_name"`
+	//example: 15345
+	MerchantPostalCode string `json:"merchant_postal_code"`
+	//example: lsdkosdfg0376762345dfg
+	CustomerUID string `json:"customer_uid"`
+	//example: Bapak Budiman
+	CustomerName string `json:"customer_name"`
+	//example: budi@test.com
+	CustomerEmail string `json:"customer_email"`
+	//example: 620876324562323
+	CustomerPhone string `json:"customer_phone"`
+	//example: Graha Kirana, Jl. Mitra Sunter Bulevar No.16, RW.11, Sunter Jaya
+	CustomerAddress string `json:"customer_address"`
+	//example: Tanjung Priok
+	CustomerDistrictName string `json:"customer_district_name"`
+	//example: Jakarta Utara
+	CustomerCityName string `json:"customer_city_name"`
+	//example: DKI Jakarta
+	CustomerProvinceName string `json:"customer_province_name"`
+	//example: 13360
+	CustomerPostalCode string `json:"customer_postal_code"`
+	//example: antar paket keruang mail room, samping lobby
+	CustomerNotes        string                          `json:"customer_notes"`
+	OrderShippingItem    []GetOrderShippingDetailItem    `json:"order_shipping_item"`
+	OrderShippingHistory []GetOrderShippingDetailHistory `json:"order_shipping_history"`
+}
+
+//swagger:model GetOrderShippingDetailResponseItem
+type GetOrderShippingDetailItem struct {
+	//example: Chil Kid Strawberry 900 gr
+	ItemName string `json:"item_name"`
+	//example: sssabcgz88877
+	ProductUID string `json:"product_uid"`
+	//example: 3
+	Qty int `json:"qty"`
+	//example: 110000
+	Price float64 `json:"price"`
+	//example: 1.3
+	Weight float64 `json:"weight"`
+	//example: 2.5
+	Volume float64 `json:"volume"`
+	//example: 1
+	Prescrition int `json:"prescription"`
+}
+
+//swagger:model GetOrderShippingDetailResponseHistory
+type GetOrderShippingDetailHistory struct {
+	CreatedAt time.Time `json:"created_at"`
+	//example: request_pickup
+	Status string `json:"status"`
+	//example: Pickup Request with Airwaybill No : 1077400000002
+	Notes string `json:"notes"`
+}
