@@ -1,7 +1,9 @@
 package repository_mock
 
 import (
+	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/app/model/response"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -88,4 +90,16 @@ func (r *OrderShippingRepositoryMock) FindByUID(uid string) (*entity.OrderShippi
 	}
 
 	return arguments.Get(0).(*entity.OrderShipping), nil
+}
+
+func (r *OrderShippingRepositoryMock) FindByParams(limit, page int, sort, dir string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error) {
+	arguments := r.Mock.Called()
+
+	if len(arguments) > 2 {
+		if arguments.Get(2) != nil {
+			return nil, nil, arguments.Get(2).(error)
+		}
+	}
+
+	return arguments.Get(0).([]response.GetOrderShippingList), arguments.Get(1).(*base.Pagination), nil
 }

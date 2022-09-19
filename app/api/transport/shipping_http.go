@@ -58,6 +58,13 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 		options...,
 	))
 
+	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathOrderShipping)).Handler(httptransport.NewServer(
+		ep.GetOrderShippingList,
+		decodeGetOrderShippingList,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
 	return pr
 }
 
@@ -90,5 +97,18 @@ func decodeGetOrderTracking(ctx context.Context, r *http.Request) (rqst interfac
 	}
 
 	params.UID = mux.Vars(r)[pathUID]
+	return params, nil
+}
+
+func decodeGetOrderShippingList(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var params request.GetOrderShippingList
+	if err := r.ParseForm(); err != nil {
+		return nil, err
+	}
+
+	if err = schema.NewDecoder().Decode(&params, r.Form); err != nil {
+		return nil, err
+	}
+	params.GetFilter()
 	return params, nil
 }

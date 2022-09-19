@@ -4,6 +4,9 @@ import (
 	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/app/model/response"
+	"go-klikdokter/pkg/util"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -14,6 +17,7 @@ type OrderShippingRepository interface {
 	Upsert(input *entity.OrderShipping) (*entity.OrderShipping, error)
 	FindByOrderNo(orderNo string) (*entity.OrderShipping, error)
 	FindByUID(uid string) (*entity.OrderShipping, error)
+	FindByParams(limit, page int, sort, dir string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error)
 }
 
 type orderShippingRepository struct {
@@ -93,6 +97,8 @@ func (r *orderShippingRepository) FindByUID(uid string) (*entity.OrderShipping, 
 	query := r.base.GetDB().
 		Preload("Channel").
 		Preload("Courier").
+		Preload("OrderShippingItem").
+		Preload("OrderShippingHistory").
 		Model(&entity.OrderShipping{}).
 		Where(&entity.OrderShipping{BaseIDModel: base.BaseIDModel{UID: uid}})
 
@@ -107,4 +113,90 @@ func (r *orderShippingRepository) FindByUID(uid string) (*entity.OrderShipping, 
 	}
 
 	return &result, nil
+}
+
+func (r *orderShippingRepository) FindByParams(limit, page int, sort, dir string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error) {
+	pagination := &base.Pagination{}
+
+	var result []response.GetOrderShippingList
+
+	query := r.base.GetDB().
+		Model(&entity.OrderShipping{}).
+		Select(
+			"ch.channel_code AS channel_code",
+			"ch.channel_name AS channel_name",
+			"order_shipping.uid AS order_shipping_uid",
+			"order_shipping.order_no AS order_no",
+			"c.courier_name AS courier_name",
+			"cs.shipping_name AS courier_services_name",
+			"order_shipping.airwaybill AS airwaybill",
+			"order_shipping.booking_id AS booking_id",
+			"order_shipping.merchant_name AS merchant_name",
+			"order_shipping.customer_name AS customer_name",
+			"order_shipping.status AS shipping_status",
+			"ss.status_name AS shipping_status_name",
+		).
+		Joins("INNER JOIN channel ch ON ch.id = order_shipping.channel_id").
+		Joins("INNER JOIN courier c ON c.id = order_shipping.courier_id").
+		Joins("INNER JOIN courier_service cs ON cs.id = order_shipping.courier_service_id").
+		Joins("INNER JOIN shipping_status ss ON ss.status_code = order_shipping.status")
+
+	for k, v := range filter {
+
+		if util.IsSliceAndNotEmpty(v) {
+
+			switch k {
+			case "courier_name":
+				query = query.Where(like("c.courier_name", v.([]string)))
+
+			case "channel_name":
+				query = query.Where(like("ch.channel_name", v.([]string)))
+
+			case "channel_code":
+				query = query.Where("ch.channel_code IN ?", v.([]string))
+
+			case "shipping_status":
+				query = query.Where("order_shipping.status IN ?", v.([]string))
+			}
+		}
+
+		if k == "order_shipping_date_from" && len(v.(string)) > 0 {
+			query.Where("CAST(order_shipping_date AS DATE) >= CAST(? AS DATE)", v)
+		}
+
+		if k == "order_shipping_date_to" && len(v.(string)) > 0 {
+			query.Where("CAST(order_shipping_date AS DATE) <= CAST(? AS DATE)", v)
+		}
+	}
+
+	m := map[string]string{
+		"channel_code":    "ch.channel_code",
+		"channel_name":    "ch.channel_name",
+		"courier_code":    "c.code",
+		"courier_name":    "c.courier_name",
+		"shipping_status": "order_shipping.status",
+	}
+	sort = m[sort]
+	sort = util.ReplaceEmptyString(sort, "order_shipping.updated_at")
+
+	if strings.EqualFold(dir, "desc") {
+		sort += "desc"
+	}
+
+	query = query.Order(sort)
+
+	pagination.Limit = limit
+	pagination.Page = page
+	err := query.Scopes(r.base.Paginate(&entity.OrderShipping{}, pagination, query, int64(len(result)))).
+		Find(&result).
+		Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil, nil
+		}
+		return nil, nil, err
+	}
+
+	return result, pagination, nil
 }

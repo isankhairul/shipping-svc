@@ -1054,3 +1054,57 @@ func TestUpdateStatusShipperGetOrderError(t *testing.T) {
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
 }
+var getOrderShippingListRequest = request.GetOrderShippingList{
+	Limit:   3,
+	Page:    2,
+	Sort:    "",
+	Dir:     "desc",
+	Filters: request.GetOrderShippingFilter{},
+}
+
+func TestGetOrderShippingList(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByParams", mock.Anything).
+		Return([]response.GetOrderShippingList{},
+			&base.Pagination{Limit: getOrderShippingListRequest.Limit, Page: getOrderShippingListRequest.Page}).
+		Once()
+	result, pagination, msg := shippingService.GetOrderShippingList(&getOrderShippingListRequest)
+	assert.NotNil(t, result)
+	assert.NotNil(t, pagination)
+	assert.NotNil(t, msg)
+	assert.Equal(t, getOrderShippingListRequest.Limit, pagination.Limit)
+	assert.Equal(t, getOrderShippingListRequest.Page, pagination.Page)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestGetOrderShippingListError(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByParams", mock.Anything).
+		Return(nil, nil, errors.New("")).
+		Once()
+	result, pagination, msg := shippingService.GetOrderShippingList(&getOrderShippingListRequest)
+	assert.Nil(t, result)
+	assert.Nil(t, pagination)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrNoData, msg)
+}
+
+func TestGetOrderShippingListInvalidDateFromError(t *testing.T) {
+	req := getOrderShippingListRequest
+	req.Filters.OrderShippingDateFrom = "INVALID_DATE"
+
+	result, pagination, msg := shippingService.GetOrderShippingList(&req)
+	assert.Nil(t, result)
+	assert.Nil(t, pagination)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrFormatDateYYYYMMDD, msg)
+}
+
+func TestGetOrderShippingListInvalidDateToError(t *testing.T) {
+	req := getOrderShippingListRequest
+	req.Filters.OrderShippingDateTo = "INVALID_DATE"
+
+	result, pagination, msg := shippingService.GetOrderShippingList(&req)
+	assert.Nil(t, result)
+	assert.Nil(t, pagination)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrFormatDateYYYYMMDD, msg)
+}

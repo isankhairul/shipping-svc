@@ -1001,6 +1001,47 @@ definitions:
     type: object
     x-go-name: GetChannelCourierStatusResponseItem
     x-go-package: go-klikdokter/app/model/response
+  GetOrderShippingListResponse:
+    properties:
+      airwaybill:
+        type: string
+        x-go-name: Airwaybill
+      booking_id:
+        type: string
+        x-go-name: BookingID
+      channel_code:
+        type: string
+        x-go-name: ChannelCode
+      channel_name:
+        type: string
+        x-go-name: ChannelName
+      courier_name:
+        type: string
+        x-go-name: CourierName
+      courier_services_name:
+        type: string
+        x-go-name: CourierServiceName
+      customer_name:
+        type: string
+        x-go-name: CustomerName
+      merchant_name:
+        type: string
+        x-go-name: MerchantName
+      order_no:
+        type: string
+        x-go-name: OrderNo
+      order_shipping_uid:
+        type: string
+        x-go-name: OrderShippingUID
+      shipping_status:
+        type: string
+        x-go-name: ShippingStatus
+      shipping_status_name:
+        type: string
+        x-go-name: ShippingStatusName
+    type: object
+    x-go-name: GetOrderShippingList
+    x-go-package: go-klikdokter/app/model/response
   GetOrderShippingTrackingResponse:
     properties:
       date:
@@ -3163,6 +3204,53 @@ paths:
       tags:
       - Courier-Predefined
   /shipping/order-shipping:
+    get:
+      description: Get Order Shipping List
+      operationId: GetOrderShippingList
+      parameters:
+      - description: 'Filter : {"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":"2022-09-09","order_shipping_date_to":"2022-09-12"}'
+        in: query
+        name: filter
+        type: string
+        x-go-name: Filter
+      - description: |-
+          Maximun records per page
+          in: int32
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: |-
+          Page No
+          in: int32
+        format: int64
+        in: query
+        name: page
+        type: integer
+        x-go-name: Page
+      - description: |-
+          Sort fields
+          in: string
+        in: query
+        name: sort
+        type: string
+        x-go-name: Sort
+      - description: |-
+          Sort direction
+          in: string
+        enum:
+        - asc
+        - ' desc'
+        in: query
+        name: dir
+        type: string
+        x-go-name: Dir
+      responses:
+        "200":
+          $ref: '#/responses/GetOrderShippingList'
+      tags:
+      - Shipping
     post:
       description: Create Order Shipping
       operationId: CreateDelivery
@@ -3300,6 +3388,12 @@ responses:
     schema:
       items:
         $ref: '#/definitions/GetChannelCourierStatusResponse'
+      type: array
+  GetOrderShippingList:
+    description: ""
+    schema:
+      items:
+        $ref: '#/definitions/GetOrderShippingListResponse'
       type: array
   GetShippmentPredefined:
     description: ""
