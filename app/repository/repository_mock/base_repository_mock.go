@@ -1,6 +1,8 @@
 package repository_mock
 
 import (
+	"go-klikdokter/app/model/base"
+
 	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
 )
@@ -29,4 +31,8 @@ func (b *BaseRepositoryMock) RollbackTx() {
 	/*
 		implemented
 	*/
+}
+
+func (b *BaseRepositoryMock) Paginate(value interface{}, pagination *base.Pagination, db *gorm.DB, currRecord int64) func(db *gorm.DB) *gorm.DB {
+	return nil
 }

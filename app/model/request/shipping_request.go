@@ -1,6 +1,9 @@
 package request
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 //swagger:parameters ShippingRate
 type GetShippingRate struct {
@@ -205,4 +208,45 @@ type ShipperStatus struct {
 	Code        int    `json:"code"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+}
+
+// swagger:parameters GetOrderShippingList
+type GetOrderShippingList struct {
+	// Filter : {"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":"2022-09-09","order_shipping_date_to":"2022-09-12"}
+	// in: query
+	Filter string `json:"filter"`
+
+	// Maximun records per page
+	// in: int32
+	Limit int `schema:"limit" binding:"omitempty,numeric,min=1,max=100" json:"limit"`
+
+	// Page No
+	// in: int32
+	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
+
+	// Sort fields
+	// in: string
+	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
+
+	// Sort direction
+	// in: string
+	// enum: asc, desc
+	Dir string `schema:"dir" binding:"omitempty" json:"dir"`
+
+	Filters GetOrderShippingFilter `json:"-"`
+}
+
+type GetOrderShippingFilter struct {
+	ChannelCode           []string `json:"channel_code"`
+	ChannelName           []string `json:"channel_name"`
+	CourierName           []string `json:"courier_name"`
+	ShippingStatus        []string `json:"shipping_status"`
+	OrderShippingDateFrom string   `json:"order_shipping_date_from"`
+	OrderShippingDateTo   string   `json:"order_shipping_date_to"`
+}
+
+func (m *GetOrderShippingList) GetFilter() {
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
 }

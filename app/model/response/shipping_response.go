@@ -231,3 +231,25 @@ type GetOrderShippingTracking struct {
 	//example: Order Masuk ke sistem
 	Note string `json:"note"`
 }
+
+//swagger:response GetOrderShippingList
+type GetOrderShippingListResponse struct {
+	//in:body
+	Body []GetOrderShippingList `json:"body"`
+}
+
+//swagger:model GetOrderShippingListResponse
+type GetOrderShippingList struct {
+	ChannelCode        string `gorm:"column:channel_code" json:"channel_code"`
+	ChannelName        string `gorm:"column:channel_name" json:"channel_name"`
+	OrderShippingUID   string `gorm:"column:order_shipping_uid" json:"order_shipping_uid"`
+	OrderNo            string `gorm:"column:order_no" json:"order_no"`
+	CourierName        string `gorm:"column:courier_name" json:"courier_name"`
+	CourierServiceName string `gorm:"column:courier_services_name" json:"courier_services_name"`
+	Airwaybill         string `gorm:"column:airwaybill" json:"airwaybill"`
+	BookingID          string `gorm:"column:booking_id" json:"booking_id"`
+	MerchantName       string `gorm:"column:merchant_name" json:"merchant_name"`
+	CustomerName       string `gorm:"column:customer_name" json:"customer_name"`
+	ShippingStatus     string `gorm:"column:shipping_status" json:"shipping_status"`
+	ShippingStatusName string `gorm:"column:shipping_status_name" json:"shipping_status_name"`
+}

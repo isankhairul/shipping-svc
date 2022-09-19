@@ -26,6 +26,7 @@ type ShippingService interface {
 	CreateDelivery(input *request.CreateDelivery) (*response.CreateDelivery, message.Message)
 	OrderShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message)
 	UpdateStatusShipper(req *request.WebhookUpdateStatusShipper) (*entity.OrderShipping, message.Message)
+	GetOrderShippingList(req *request.GetOrderShippingList) ([]response.GetOrderShippingList, *base.Pagination, message.Message)
 }
 
 type shippingServiceImpl struct {
@@ -562,4 +563,40 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 	}
 
 	return orderShipping, message.SuccessMsg
+}
+// swagger:route GET /shipping/order-shipping Shipping GetOrderShippingList
+// Get Order Shipping List
+//
+// responses:
+//  200: GetOrderShippingList
+func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShippingList) ([]response.GetOrderShippingList, *base.Pagination, message.Message) {
+	logger := log.With(s.logger, "ShippingService", "GetOrderShippingList")
+
+	if len(req.Filters.OrderShippingDateFrom) > 0 {
+		if ok := util.DateValidationYYYYMMDD(req.Filters.OrderShippingDateFrom); !ok {
+			return nil, nil, message.ErrFormatDateYYYYMMDD
+		}
+	}
+
+	if len(req.Filters.OrderShippingDateTo) > 0 {
+		if ok := util.DateValidationYYYYMMDD(req.Filters.OrderShippingDateTo); !ok {
+			return nil, nil, message.ErrFormatDateYYYYMMDD
+		}
+	}
+
+	filter := make(map[string]interface{})
+	filter["channel_code"] = req.Filters.ChannelCode
+	filter["channel_name"] = req.Filters.ChannelName
+	filter["courier_name"] = req.Filters.CourierName
+	filter["shipping_status"] = req.Filters.ShippingStatus
+	filter["order_shipping_date_from"] = req.Filters.OrderShippingDateFrom
+	filter["order_shipping_date_to"] = req.Filters.OrderShippingDateTo
+
+	result, pagination, err := s.orderShipping.FindByParams(req.Limit, req.Page, req.Sort, req.Dir, filter)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.FindByParams", err.Error())
+		return result, pagination, message.ErrNoData
+	}
+
+	return result, pagination, message.SuccessMsg
 }

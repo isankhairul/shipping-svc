@@ -8,3 +8,12 @@ func IsSliceAndNotEmpty(input interface{}) bool {
 	}
 	return false
 }
+
+// Replace empty string with default value
+func ReplaceEmptyString(str string, defaultValue string) string {
+	if len(str) == 0 {
+		return defaultValue
+	}
+
+	return str
+}
