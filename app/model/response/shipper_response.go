@@ -34,6 +34,10 @@ type GetOrderDetailResponse struct {
 	Data     GetOrderDetail  `json:"data"`
 }
 
+type MetadataResponse struct {
+	Metadata ShipperMetaData `json:"metadata"`
+}
+
 type ShipperMetaData struct {
 	Path           string `json:"path"`
 	HTTPStatusCode int    `json:"http_status_code"`

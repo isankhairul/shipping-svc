@@ -28,6 +28,7 @@ type ShippingService interface {
 	UpdateStatusShipper(req *request.WebhookUpdateStatusShipper) (*entity.OrderShipping, message.Message)
 	GetOrderShippingList(req *request.GetOrderShippingList) ([]response.GetOrderShippingList, *base.Pagination, message.Message)
 	GetOrderShippingDetailByUID(uid string) (*response.GetOrderShippingDetail, message.Message)
+	CancelPickup(uid string) message.Message
 }
 
 type shippingServiceImpl struct {
@@ -701,4 +702,78 @@ func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *r
 	}
 
 	return resp
+}
+
+// swagger:route POST /shipping/cancel-pickup/{uid} Shipping CancelPickup
+// Cancel Pickup Order
+//
+// responses:
+//  200: SuccessResponse
+func (s *shippingServiceImpl) CancelPickup(uid string) message.Message {
+	logger := log.With(s.logger, "ShippingService", "CancelPickup")
+	orderShipping, err := s.orderShipping.FindByUID(uid)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.FindByUID", err.Error())
+		return message.ErrOrderShippingNotFound
+	}
+
+	if orderShipping == nil {
+		return message.ErrOrderShippingNotFound
+	}
+
+	// check if courier service is cancelable
+	if orderShipping.CourierService.Cancelable == 0 {
+		return message.ErrCantCancelOrderCourierService
+	}
+
+	msg := s.cancelPickup(orderShipping)
+
+	if msg != message.SuccessMsg {
+		return msg
+	}
+
+	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.CourierID, shipping_provider.StatusCancelled)
+
+	if shipperStatus == nil {
+		return message.ErrShippingStatus
+	}
+
+	orderShipping.AddHistoryStatus(shipperStatus, "")
+	orderShipping.Status = shipping_provider.StatusCancelled
+	_, err = s.orderShipping.Upsert(orderShipping)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		return message.ErrSaveOrderShipping
+	}
+
+	return message.SuccessMsg
+}
+
+func (s *shippingServiceImpl) cancelPickup(orderShipping *entity.OrderShipping) message.Message {
+	switch orderShipping.Courier.CourierType {
+	case shipping_provider.ThirPartyCourier:
+		return s.cancelPickupThirdParty(orderShipping)
+	}
+
+	return message.ErrInvalidCourierType
+}
+
+func (s *shippingServiceImpl) cancelPickupThirdParty(orderShipping *entity.OrderShipping) message.Message {
+
+	// check if order current status is cancelable
+	if !shipping_provider.IsOrderCancelable(orderShipping.Courier.Code, orderShipping.Status) {
+		return message.ErrCantCancelOrderShipping
+	}
+
+	var err error
+	switch orderShipping.Courier.Code {
+	case shipping_provider.ShipperCode:
+		_, err = s.shipper.CancelPickupRequest(orderShipping.PickupCode)
+	}
+
+	if err != nil {
+		return message.ErrCancelPickup
+	}
+
+	return message.SuccessMsg
 }

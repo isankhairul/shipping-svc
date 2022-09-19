@@ -1166,3 +1166,105 @@ func TestGetOrderShippingDetailByUIDNotFoundError(t *testing.T) {
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
 }
+
+var orderShipping = entity.OrderShipping{
+	Channel: &entity.Channel{},
+	Courier: &entity.Courier{
+		Code:        shipping_provider.ShipperCode,
+		CourierType: shipping_provider.ThirPartyCourier,
+	},
+	CourierService:       &entity.CourierService{Cancelable: 1},
+	OrderShippingItem:    []entity.OrderShippingItem{},
+	OrderShippingHistory: []entity.OrderShippingHistory{},
+	Status:               shipping_provider.StatusRequestPickup,
+}
+
+func TestCancelPickUpSuccess(t *testing.T) {
+	order := orderShipping
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+	shipper.Mock.On("CancelPickupRequest", mock.Anything).Return(nil).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(&order).Once()
+	msg := shippingService.CancelPickup("uid")
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestCancelPickUpFailed(t *testing.T) {
+	order := orderShipping
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+	shipper.Mock.On("CancelPickupRequest", mock.Anything).Return(nil).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(nil, errors.New("")).Once()
+	msg := shippingService.CancelPickup("uid")
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrSaveOrderShipping, msg)
+}
+
+func TestCancelPickUpShippingStatusNofFound(t *testing.T) {
+	order := orderShipping
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+	shipper.Mock.On("CancelPickupRequest", mock.Anything).Return(nil).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(nil).Once()
+	msg := shippingService.CancelPickup("uid")
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrShippingStatus, msg)
+}
+
+func TestCancelPickUpShippingThirdPartyError(t *testing.T) {
+	order := orderShipping
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+	shipper.Mock.On("CancelPickupRequest", mock.Anything).Return(nil, errors.New("")).Once()
+
+	msg := shippingService.CancelPickup("uid")
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrCancelPickup, msg)
+}
+
+func TestCancelPickUpShippingThirdPartyOrderNotCancelableError(t *testing.T) {
+	order := orderShipping
+	order.Status = "not_cancelable"
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+
+	msg := shippingService.CancelPickup("uid")
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrCantCancelOrderShipping, msg)
+}
+
+func TestCancelPickUpShippingInvalidCourierTypeError(t *testing.T) {
+	order := orderShipping
+	order.Courier.CourierType = ""
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+
+	msg := shippingService.CancelPickup("uid")
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrInvalidCourierType, msg)
+}
+
+func TestCancelPickUpShippingCourierServiceNotCancelableError(t *testing.T) {
+	order := orderShipping
+	order.CourierService.Cancelable = 0
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+
+	msg := shippingService.CancelPickup("uid")
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrCantCancelOrderCourierService, msg)
+}
+
+func TestCancelPickUpShippingOrderServiceNotfound(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(nil).Once()
+	msg := shippingService.CancelPickup("uid")
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
+
+func TestCancelPickUpShippingOrderServiceNotfoundError(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(nil, errors.New("")).Once()
+	msg := shippingService.CancelPickup("uid")
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}

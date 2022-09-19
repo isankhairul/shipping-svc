@@ -3441,6 +3441,23 @@ paths:
             $ref: '#/definitions/SuccessResponse'
       tags:
       - Courier-Predefined
+  /shipping/cancel-pickup/{uid}:
+    post:
+      description: Cancel Pickup Order
+      operationId: CancelPickup
+      parameters:
+      - in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      responses:
+        "200":
+          description: SuccessResponse
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      tags:
+      - Shipping
   /shipping/order-shipping:
     get:
       description: Get Order Shipping List

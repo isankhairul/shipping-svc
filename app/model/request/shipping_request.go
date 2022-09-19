@@ -252,6 +252,7 @@ func (m *GetOrderShippingList) GetFilter() {
 }
 
 // swagger:parameters GetOrderShippingDetail
+// swagger:parameters GetOrderShippingDetail CancelPickup
 type GetOrderShippingDetail struct {
 	// in: path
 	// required: true

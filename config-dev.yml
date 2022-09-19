@@ -61,5 +61,6 @@ shipper:
     order: /v3/order
     order-detail: /v3/order/{orderID}
     pick-up-timeslot: /v3/pickup/timeslot
+    cancel-pickup: /v3/pickup/cancel
   setting:
     package-type: 3
