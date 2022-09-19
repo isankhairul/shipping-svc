@@ -122,3 +122,7 @@ type CreatePickUpOrderShipperOrderActivation struct {
 	StartTime time.Time `json:"start_time"`
 	EndTime   time.Time `json:"end_time"`
 }
+
+type CancelOrderShipperRequest struct {
+	Reason string `json:"reason"`
+}

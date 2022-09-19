@@ -277,16 +277,16 @@ type GetOrderDetailTrackingStatus struct {
 
 func (g *GetOrderDetail) ToOrderShippingTracking() []GetOrderShippingTracking {
 	resp := []GetOrderShippingTracking{}
-	codes := make(map[int]bool)
+	codes := make(map[string]bool)
 	for _, v := range g.Trackings {
-		if _, ok := codes[v.LogisticStatus.Code]; ok {
+		if _, ok := codes[v.LogisticStatus.Name]; ok {
 			continue
 		}
-		codes[v.LogisticStatus.Code] = true
+		codes[v.LogisticStatus.Name] = true
 		resp = append(resp, GetOrderShippingTracking{
 			Note: v.LogisticStatus.Name,
-			Date: v.CreatedDate.Format(util.LayoutDateOnly),
-			Time: v.CreatedDate.Format(util.LayoutTimeOnly),
+			Date: v.CreatedDate.In(util.Loc).Format(util.LayoutDateOnly),
+			Time: v.CreatedDate.In(util.Loc).Format(util.LayoutTimeOnly),
 		})
 	}
 	return resp

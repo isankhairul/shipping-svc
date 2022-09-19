@@ -13,8 +13,30 @@ const (
 	StatusCancelled     = "cancelled"
 )
 
-var shipperCancelableStatus = []string{
+var shipperPickupOrderCancelableStatus = []string{
 	StatusRequestPickup,
+}
+
+var shipperOrderCancelableStatus = []string{
+	StatusCreated,
+	StatusRequestPickup,
+}
+
+func IsPickUpOrderCancelable(courierCode, status string) bool {
+	var statusList []string
+
+	switch courierCode {
+	case ShipperCode:
+		statusList = shipperPickupOrderCancelableStatus
+	}
+
+	for _, v := range statusList {
+		if strings.EqualFold(v, status) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func IsOrderCancelable(courierCode, status string) bool {
@@ -22,7 +44,7 @@ func IsOrderCancelable(courierCode, status string) bool {
 
 	switch courierCode {
 	case ShipperCode:
-		statusList = shipperCancelableStatus
+		statusList = shipperOrderCancelableStatus
 	}
 
 	for _, v := range statusList {

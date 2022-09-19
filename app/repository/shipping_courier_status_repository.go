@@ -14,7 +14,7 @@ import (
 
 type ShippingCourierStatusRepository interface {
 	FindByParams(limit int, page int, sort string, filters map[string]interface{}) ([]entity.ShippingCourierStatus, *base.Pagination, error)
-	FindByCode(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error)
+	FindByCode(channelID, courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error)
 	FindByCourierStatus(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error)
 }
 
@@ -97,10 +97,11 @@ func (r *shippingCourierStatusRepositoryImpl) Paginate(value interface{}, pagina
 	}
 }
 
-func (r *shippingCourierStatusRepositoryImpl) FindByCode(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error) {
+func (r *shippingCourierStatusRepositoryImpl) FindByCode(channelID, courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error) {
 	result := &entity.ShippingCourierStatus{}
 	query := r.base.GetDB().
 		Preload("ShippingStatus").
+		Joins("INNER JOIN shipping_status ss ON ss.ID = shipping_courier_status.shipping_status_id AND ss.channel_id = ?", channelID).
 		Where(&entity.ShippingCourierStatus{StatusCode: statusCode}).
 		Where(&entity.ShippingCourierStatus{CourierID: courierID})
 
