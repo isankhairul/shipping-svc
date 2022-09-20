@@ -5,6 +5,11 @@
 //  BasePath: /shipment-svc/api/v1
 //  Produces:
 //    - application/json
+//  securityDefinitions:
+//   Bearer:
+//    type: apiKey
+//    name: Authorization
+//    in: header
 //
 // swagger:meta
 package main

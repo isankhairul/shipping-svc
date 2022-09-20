@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
@@ -72,6 +73,9 @@ type CreateShipmentPredefinedRequest struct {
 	// Status of the ShippmentPredefined
 	// in: integer
 	Status int `json:"status" binding:"omitempty"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 // swaggers:
@@ -96,6 +100,9 @@ type UpdateShipmentPredefinedRequest struct {
 	// Status of the ShippmentPredefined
 	// in: integer
 	Status int32 `json:"status" binding:"omitempty"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 func (req UpdateShipmentPredefinedRequest) Validate() error {

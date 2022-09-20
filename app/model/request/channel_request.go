@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
 
@@ -43,6 +44,9 @@ type SaveChannelRequest struct {
 	// in: string
 	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
 	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 // swagger:parameters Channel
@@ -138,6 +142,9 @@ type UpdateChannelRequest struct {
 	// in: string
 	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
 	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 // swagger:parameters ChannelRequestGetByUid

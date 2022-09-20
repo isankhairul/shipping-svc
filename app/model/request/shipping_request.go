@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"go-klikdokter/helper/global"
 	"time"
 )
 
@@ -99,6 +100,9 @@ type CreateDelivery struct {
 	Origin            CreateDeiveryArea     `json:"origin"`
 	Destination       CreateDeiveryArea     `json:"destination"`
 	Package           CreateDeliveryPackage `json:"package"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 func (c *CreateDelivery) ToCreateOrderShipperPackage() *CreateOrderShipperPackage {
@@ -196,6 +200,9 @@ type WebhookUpdateStatusShipper struct {
 	InternalStatus  ShipperStatus  `json:"internal_status"`
 	ExternalStatus  ShipperStatus  `json:"external_status"`
 	Awb             string         `json:"awb,omitempty"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 type ShippingStatus struct {
@@ -251,7 +258,6 @@ func (m *GetOrderShippingList) GetFilter() {
 	}
 }
 
-// swagger:parameters GetOrderShippingDetail
 // swagger:parameters GetOrderShippingDetail CancelPickup
 type GetOrderShippingDetail struct {
 	// in: path
@@ -273,4 +279,7 @@ type CancelOrder struct {
 type CancelOrderBodyRequest struct {
 	// example: Stok barang habis
 	Reason string `json:"reason"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }

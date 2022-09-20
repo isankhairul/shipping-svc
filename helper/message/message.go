@@ -11,6 +11,7 @@ var ErrDataExists = Message{Code: 34001, Message: "Data already exists"}
 var ErrBadRouting = Message{Code: 34002, Message: "Inconsistent mapping between route and handler"}
 var ErrInternalError = Message{Code: 34003, Message: "Error has been occured while processing request"}
 var ErrNoAuth = Message{Code: 34004, Message: "No Authorization"}
+var ErrUnAuth = Message{Code: 34004, Message: "Unauthorized"}
 var ErrInvalidHeader = Message{Code: 34005, Message: "Invalid header"}
 var ErrDB = Message{Code: 34005, Message: "Error has been occured while processing database request"}
 var ErrNoData = Message{Code: 34005, Message: "Data is not found"}

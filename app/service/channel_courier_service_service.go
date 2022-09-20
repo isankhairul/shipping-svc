@@ -41,6 +41,9 @@ func NewChannelCourierServiceService(
 // swagger:route POST /channel/channel-courier-service/ Channel-Courier-Service CreateChannelCourierService
 // Create Channel Courier Service
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  200: ChannelCourierServiceDetailResponse
 func (s *channelCourierServiceServiceImpl) CreateChannelCourierService(input request.SaveChannelCourierServiceRequest) (*response.ChannelCourierServiceDetail, message.Message) {
@@ -88,6 +91,9 @@ func (s *channelCourierServiceServiceImpl) CreateChannelCourierService(input req
 		CourierServiceID: courierService.ID,
 		PriceInternal:    input.PriceInternal,
 		Status:           &input.Status,
+		BaseIDModel: base.BaseIDModel{
+			CreatedBy: input.ActorName,
+		},
 	}
 
 	result, err := s.channelCourierServices.CreateChannelCourierService(channelCourierService)
@@ -104,6 +110,9 @@ func (s *channelCourierServiceServiceImpl) CreateChannelCourierService(input req
 
 // swagger:route GET /channel/channel-courier-service/ Channel-Courier-Service GetChannelCourierServiceList
 // Get List of Channel Courier Service
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: ChannelCourierServiceList
@@ -132,6 +141,9 @@ func (s *channelCourierServiceServiceImpl) ListChannelCouriersService(input requ
 // swagger:route GET /channel/channel-courier-service/{uid} Channel-Courier-Service GetChannelCourierServiceByUID
 // Get Detail of Channel Courier Service
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  200: ChannelCourierServiceDetailResponse
 func (s *channelCourierServiceServiceImpl) GetChannelCourierService(uid string) (*response.ChannelCourierServiceDetail, message.Message) {
@@ -154,6 +166,9 @@ func (s *channelCourierServiceServiceImpl) GetChannelCourierService(uid string) 
 // swagger:route PUT /channel/channel-courier-service/{uid} Channel-Courier-Service UpdateChannelCourierService
 // Update a channel courier by uid
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  200: ChannelCourierServiceDetailResponse
 func (s *channelCourierServiceServiceImpl) UpdateChannelCourierService(input request.UpdateChannelCourierServiceRequest) (*response.ChannelCourierServiceDetail, message.Message) {
@@ -162,6 +177,7 @@ func (s *channelCourierServiceServiceImpl) UpdateChannelCourierService(input req
 	data := map[string]interface{}{
 		"status":         input.Body.Status,
 		"price_internal": input.Body.PriceInternal,
+		"updated_by":     input.Body.ActorName,
 	}
 
 	result, err := s.channelCourierServices.GetChannelCourierServiceByUID(input.UID)
@@ -185,6 +201,9 @@ func (s *channelCourierServiceServiceImpl) UpdateChannelCourierService(input req
 
 // swagger:route DELETE /channel/channel-courier-service/{uid} Channel-Courier-Service DeleteChannelCourierServiceByUID
 // Delete Courier Service
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: SuccessResponse

@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
 
@@ -65,6 +66,9 @@ type SaveCourierRequest struct {
 	// in: string
 	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
 	ImagePath datatype.JSONB `json:"image_path"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 // swagger:parameters CourierByUIdParam
@@ -177,6 +181,9 @@ type UpdateCourierRequest struct {
 	// Courier status
 	// in: int
 	Status int `json:"status" binding:"omitempty"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 func (req SaveCourierRequest) Validate() error {

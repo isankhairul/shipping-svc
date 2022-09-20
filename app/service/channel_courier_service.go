@@ -42,6 +42,9 @@ func NewChannelCourierService(
 // swagger:route POST /channel/channel-courier/ Channel-Courier-Service SaveChannelCourierRequest
 // Assign Courier to Channel
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  401: errorResponse
 //  200: ChannelCourierDTO
@@ -73,6 +76,9 @@ func (s *ChannelCourierServiceImpl) createChannelCourierInTx(input request.SaveC
 		PrioritySort: input.PrioritySort,
 		HidePurpose:  input.HidePurpose,
 		Status:       &input.Status,
+		BaseIDModel: base.BaseIDModel{
+			CreatedBy: input.ActorName,
+		},
 	}
 
 	cc, err := s.channelCouriers.CreateChannelCourier(cc)
@@ -89,6 +95,9 @@ func (s *ChannelCourierServiceImpl) createChannelCourierInTx(input request.SaveC
 
 // swagger:route GET /channel/channel-courier/{uid} Channel-Courier-Service GetChannelCourierByUid
 // Get Detail of Channel Courier
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: ChannelCourierDTO
@@ -108,6 +117,9 @@ func (s *ChannelCourierServiceImpl) GetChannelCourier(uid string) (*entity.Chann
 
 // swagger:route GET /channel/channel-courier/ Channel-Courier-Service ChannelCourierListRequest
 // List of Assignment Channel and Courier
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: PaginationResponse
@@ -141,6 +153,9 @@ func (s *ChannelCourierServiceImpl) ListChannelCouriers(input request.ChannelCou
 // swagger:route PUT /channel/channel-courier/{uid} Channel-Courier-Service UpdateChannelCourierRequest
 // Update a channel courier by uid
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  401: errorResponse
 //  201: ChannelCourier
@@ -155,6 +170,7 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 		"hide_purpose":  input.HidePurpose,
 		"status":        input.Status,
 		"priority_sort": input.PrioritySort,
+		"updated_by":    input.ActorName,
 	}
 
 	cur, err := s.channelCouriers.GetChannelCourierByUID(input.Uid)
@@ -174,6 +190,9 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 
 // swagger:route DELETE /channel/channel-courier/{uid} Channel-Courier-Service DeleteChannelCourierByUid
 // Delete Channel Courier
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: SuccessResponse
@@ -218,6 +237,9 @@ func mapInputUIDS(courierServiceUIDs []*request.CourierServiceDTO) []*string {
 
 // swagger:route GET /channel/{channel-uid}/courier-list Channel-Courier-Service GetChannelCourierList
 // Get List of Courier and Courier Services By Channel
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: CourierByChannel

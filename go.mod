@@ -8,6 +8,7 @@ require (
 	github.com/go-kit/log v0.2.0
 	github.com/go-openapi/runtime v0.21.0
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/schema v1.2.0

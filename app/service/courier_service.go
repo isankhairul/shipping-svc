@@ -52,6 +52,9 @@ func NewCourierService(
 // swagger:route POST /courier/courier Couriers SaveCourierRequest
 // Create a new Courier
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  401: errorResponse
 //  500: errorResponse
@@ -82,6 +85,9 @@ func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*e
 		Status:                &input.Status,
 		ImageUID:              input.ImageUID,
 		ImagePath:             input.ImagePath,
+		BaseIDModel: base.BaseIDModel{
+			CreatedBy: input.ActorName,
+		},
 	}
 
 	result, err := s.courierRepo.CreateCourier(&Courier)
@@ -95,6 +101,9 @@ func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*e
 
 // swagger:route GET /courier/courier/{uid} Couriers CourierByUIdParam
 // Get Courier
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: SuccessResponse
@@ -117,6 +126,9 @@ func (s *courierServiceImpl) GetCourier(uid string) (*entity.Courier, message.Me
 
 // swagger:route GET /courier/courier Couriers CourierListRequest
 // Get list of couriers
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: errorResponse
@@ -156,6 +168,9 @@ func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]respon
 // swagger:route PUT /courier/courier/{uid} Couriers UpdateCourierRequest
 // Update courier with specifeied id
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  401: SuccessResponse
 //  200: SuccessResponse
@@ -180,6 +195,7 @@ func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCouri
 		"hide_purpose":       input.HidePurpose,
 		"image_uid":          input.ImageUID,
 		"image_path":         input.ImagePath,
+		"updated_by":         input.ActorName,
 	}
 
 	err = s.courierRepo.Update(uid, data)
@@ -192,6 +208,9 @@ func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCouri
 
 // swagger:route DELETE /courier/courier/{uid} Couriers DeleteCourierByUIdParam
 // Delete courier by uid
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: SuccessResponse
@@ -233,6 +252,9 @@ func (s *courierServiceImpl) DeleteCourier(uid string) message.Message {
 
 // swagger:route POST /courier/courier-services Courier-Services SaveCourierServiceRequest
 // Add Courier Services
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: SuccessResponse
@@ -295,6 +317,9 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 		Repickup:         input.Repickup,
 		ImageUID:         input.ImageUID,
 		ImagePath:        input.ImagePath,
+		BaseIDModel: base.BaseIDModel{
+			CreatedBy: input.ActorName,
+		},
 	}
 	if input.Status != nil {
 		courierService.Status = input.Status
@@ -310,6 +335,9 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 
 // swagger:route GET /courier/courier-services/{uid} Courier-Services CourierServiceRequestGetByUid
 // Detail Courier Services
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: SuccessResponse
@@ -334,6 +362,9 @@ func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierServi
 
 // swagger:route GET /courier/courier-services Courier-Services CourierServiceListRequest
 // List of Courier Services
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: SuccessResponse
@@ -373,6 +404,9 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 
 // swagger:route PUT /courier/courier-services/{uid} Courier-Services UpdateCourierServiceRequest
 // Update Courier Services
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: SuccessResponse
@@ -443,6 +477,7 @@ func (s *courierServiceImpl) UpdateCourierService(uid string, input request.Upda
 		"repickup":             input.Repickup,
 		"image_uid":            input.ImageUID,
 		"image_path":           input.ImagePath,
+		"updated_by":           input.ActorName,
 	}
 
 	err = s.courierServiceRepo.Update(uid, data)
@@ -468,6 +503,9 @@ func (s *courierServiceImpl) UpdateCourierService(uid string, input request.Upda
 
 // swagger:route DELETE /courier/courier-services/{uid} Courier-Services CourierServiceRequestDeleteByUid
 // Delete Courier Services
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: SuccessResponse
@@ -502,6 +540,9 @@ func (s *courierServiceImpl) DeleteCourierService(uid string) message.Message {
 
 // swagger:route GET /courier/shipping-type Couriers GetCourierShippingType
 // Get List of Shipping Type
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: ShippingTypeList

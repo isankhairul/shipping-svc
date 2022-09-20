@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
@@ -38,6 +39,9 @@ type SaveChannelCourierRequest struct {
 	// in: integer
 	// required: true
 	HidePurpose int32 `json:"hide_purpose" binding:"omitempty"`
+
+	//Extend JWT Info
+	global.JWTInfo
 }
 
 type CourierServiceDTO struct {
@@ -86,6 +90,9 @@ type UpdateChannelCourierRequest struct {
 	// in: integer
 	// required: true
 	HidePurpose int32 `json:"hide_purpose" binding:"omitempty"`
+
+	//Extend JWT Info
+	global.JWTInfo
 }
 
 func (req SaveChannelCourierRequest) Validate() error {

@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/schema"
 
+	"github.com/go-kit/kit/auth/jwt"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
@@ -25,6 +26,7 @@ func ShipmentPredefinedHandler(s service.ShipmentPredefinedService, logger log.L
 	options := []httptransport.ServerOption{
 		httptransport.ServerErrorLogger(logger),
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
+		httptransport.ServerBefore(jwt.HTTPToContext()),
 	}
 
 	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixOther, global.PathShipmentPredefinedUID)).Handler(httptransport.NewServer(
