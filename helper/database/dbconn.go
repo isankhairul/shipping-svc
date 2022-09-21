@@ -2,7 +2,9 @@ package database
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"go-klikdokter/app/model/entity"
+	"go-klikdokter/helper/config"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -14,22 +16,46 @@ import (
 
 func NewConnectionDB(driverDB string, database string, host string, user string, password string, port int) (*gorm.DB, error) {
 	var dialect gorm.Dialector
+	//add schema name gorm
+	stringTimezone := "Asia/Jakarta"
+	schemaName := ""
+	configSchemaName := config.GetConfigString(viper.GetString("database.schemaname"))
+	if configSchemaName != "" {
+		schemaName = configSchemaName + "."
+	}
+
 	gormConfig := &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
+			TablePrefix:   schemaName,
 		},
 	}
 
 	if driverDB == "postgres" {
-		dsn := fmt.Sprintf(
-			"host=%s port=%d user=%s dbname=%s password=%s sslmode=%s",
-			host,
-			port,
-			user,
-			database,
-			password,
-			"disable",
-		)
+		dsn := ""
+		if schemaName != "" {
+			dsn = fmt.Sprintf(
+				"host=%s port=%d user=%s dbname=%s password=%s sslmode=%s search_path=%s TimeZone=%s",
+				host,
+				port,
+				user,
+				database,
+				password,
+				"disable",
+				configSchemaName,
+				stringTimezone,
+			)
+		} else {
+			dsn = fmt.Sprintf(
+				"host=%s port=%d user=%s dbname=%s password=%s sslmode=%s",
+				host,
+				port,
+				user,
+				database,
+				password,
+				"disable",
+			)
+		}
 
 		dialect = postgres.Open(dsn)
 	} else if driverDB == "mysql" {
