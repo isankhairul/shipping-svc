@@ -81,6 +81,9 @@ func (o *OrderShipping) FromCreateDeliveryRequest(req *request.CreateDelivery) {
 			Price:      v.Price,
 			Quantity:   v.Qty,
 			TotalPrice: v.Price * float64(v.Qty),
+			BaseIDModel: base.BaseIDModel{
+				CreatedBy: req.ActorName,
+			},
 		})
 	}
 
@@ -123,6 +126,10 @@ func (o *OrderShipping) FromCreateDeliveryRequest(req *request.CreateDelivery) {
 	o.ShippingNotes = req.Notes
 	o.OrderShippingItem = orderShippingItems
 	o.OrderShippingHistory = []OrderShippingHistory{}
+	o.BaseIDModel = base.BaseIDModel{
+		CreatedBy: req.ActorName,
+		UpdatedBy: req.ActorName,
+	}
 }
 func (o *OrderShipping) AddHistoryStatus(s *ShippingCourierStatus, note string) {
 	o.OrderShippingHistory = append(o.OrderShippingHistory, OrderShippingHistory{
@@ -130,6 +137,9 @@ func (o *OrderShipping) AddHistoryStatus(s *ShippingCourierStatus, note string) 
 		ShippingStatusID: s.ID,
 		StatusCode:       s.StatusCode,
 		Note:             note,
+		BaseIDModel: base.BaseIDModel{
+			CreatedBy: o.UpdatedBy,
+		},
 	})
 }
 

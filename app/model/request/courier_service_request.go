@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
 	"time"
@@ -140,6 +141,9 @@ type SaveCourierServiceRequest struct {
 	// in: string
 	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
 	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 // swagger:parameters courier service
@@ -311,6 +315,9 @@ type UpdateCourierServiceRequest struct {
 	// in: string
 	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
 	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 // swagger:parameters CourierServiceRequestGetByUid

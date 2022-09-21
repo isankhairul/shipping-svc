@@ -11,6 +11,7 @@ import (
 	"go-klikdokter/helper/global"
 	"net/http"
 
+	"github.com/go-kit/kit/auth/jwt"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
@@ -28,6 +29,7 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 	options := []httptransport.ServerOption{
 		httptransport.ServerErrorLogger(logger),
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
+		httptransport.ServerBefore(jwt.HTTPToContext()),
 	}
 
 	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathShippingRate)).Handler(httptransport.NewServer(

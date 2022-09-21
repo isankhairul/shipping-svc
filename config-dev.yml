@@ -24,6 +24,7 @@ server:
 security:
   jwt:
     secret: adPcd+mrzpsZEkKxsOhgcw==
+    skip-validation: false
     token-validity-in-second: 86400
     token-validity-in-second-for-remember-me: 2592000
 
@@ -35,7 +36,7 @@ cache:
     port: 6379
     index:
       primary: 0
-    is-active : true
+    is-active : false
     expired-in-minute: 
       default : 1440
       shipping-rate : 1440

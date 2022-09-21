@@ -40,6 +40,9 @@ func NewChannelService(
 // swagger:route GET /channel/channel-app Channel-Apps Channels
 // List of Channel Apps
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
@@ -74,6 +77,9 @@ func (s *ChannelServiceImpl) GetList(input request.ChannelListRequest) ([]entity
 // swagger:route GET /channel/channel-app/{uid} Channel-Apps ChannelRequestGetByUid
 // Get Detail of Channel Apps
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
@@ -94,6 +100,9 @@ func (s *ChannelServiceImpl) GetChannel(uid string) (*entity.Channel, message.Me
 
 // swagger:route POST /channel/channel-app Channel-Apps SaveChannelRequest
 // Add Channel App
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: SuccessResponse
@@ -123,6 +132,9 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 		Status:      1, //Default
 		ImageUID:    input.ImageUID,
 		ImagePath:   input.ImagePath,
+		BaseIDModel: base.BaseIDModel{
+			CreatedBy: input.ActorName,
+		},
 	}
 	if input.Status != nil {
 		channel.Status = *input.Status
@@ -138,6 +150,9 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 
 // swagger:route PUT /channel/channel-app/{uid} Channel-Apps UpdateChannelRequest
 // Update Channel App by uid
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: SuccessResponse
@@ -174,6 +189,7 @@ func (s *ChannelServiceImpl) UpdateChannel(input request.UpdateChannelRequest) m
 		"status":       input.Status,
 		"image_uid":    input.ImageUID,
 		"image_path":   input.ImagePath,
+		"updated_by":   input.ActorName,
 	}
 
 	err = s.channelRepo.Update(uid, data)
@@ -187,6 +203,9 @@ func (s *ChannelServiceImpl) UpdateChannel(input request.UpdateChannelRequest) m
 
 // swagger:route DELETE /channel/channel-app/{uid} Channel-Apps ChannelRequestDeleteByUid
 // Delete Channel Apps by uid
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: SuccessResponse
@@ -224,6 +243,9 @@ func (s *ChannelServiceImpl) DeleteChannel(uid string) message.Message {
 
 // swagger:route GET /channel/channel-status-courier-status Channel-Apps GetChannelCourierStatus
 // Get Channel Courier Status List
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: GetChannelCourierStatusResponse

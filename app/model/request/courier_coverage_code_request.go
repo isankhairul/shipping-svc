@@ -3,6 +3,7 @@ package request
 import (
 	"bytes"
 	"encoding/json"
+	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
@@ -130,6 +131,9 @@ type SaveCourierCoverageCodeRequest struct {
 	// Status of coverage code of the courỉe, use this on UPDATE function
 	// in: int32
 	Status int32 `json:"status"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 // swagger:parameters DeleteCourierCoverageCodeByIDParam
@@ -158,6 +162,9 @@ type ImportCourierCoverageCodeRequest struct {
 	File *bytes.Buffer `json:"file"`
 
 	FileName string `json:"-"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 func (req SaveCourierCoverageCodeRequest) Validate() error {

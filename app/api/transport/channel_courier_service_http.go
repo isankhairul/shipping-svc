@@ -11,6 +11,7 @@ import (
 	"go-klikdokter/helper/global"
 	"net/http"
 
+	"github.com/go-kit/kit/auth/jwt"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
@@ -24,6 +25,7 @@ func ChannelCourierServiceHttpHandler(s service.ChannelCourierServiceService, lo
 	options := []httptransport.ServerOption{
 		httptransport.ServerErrorLogger(logger),
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
+		httptransport.ServerBefore(jwt.HTTPToContext()),
 	}
 
 	pr.Methods("GET").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannelCourierService, global.PathUID)).Handler(httptransport.NewServer(

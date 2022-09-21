@@ -6,6 +6,8 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
+	"go-klikdokter/helper/global"
+	"go-klikdokter/helper/message"
 
 	"github.com/go-kit/kit/endpoint"
 )
@@ -38,6 +40,13 @@ func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
 
 func makeGetShippingRate(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.GetShippingRateRequest)
 		result, msg := s.GetShippingRate(req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
@@ -46,6 +55,13 @@ func makeGetShippingRate(s service.ShippingService) endpoint.Endpoint {
 
 func makeGetShippingRateByShippingType(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.GetShippingRateRequest)
 		result, msg := s.GetShippingRateByShippingType(req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
@@ -54,13 +70,28 @@ func makeGetShippingRateByShippingType(s service.ShippingService) endpoint.Endpo
 
 func makeCreateDelivery(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		jwtInfo, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.CreateDelivery)
+		req.JWTInfo = *jwtInfo
 		result, msg := s.CreateDelivery(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }
 func makeGetOrderShippingTracking(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.GetOrderShippingTracking)
 		result, msg := s.OrderShippingTracking(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
@@ -68,14 +99,29 @@ func makeGetOrderShippingTracking(s service.ShippingService) endpoint.Endpoint {
 }
 func makeUpdateStatusShipper(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		jwtInfo, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.WebhookUpdateStatusShipper)
-		_, msg := s.UpdateStatusShipper(&req)
+		req.JWTInfo = *jwtInfo
+		_, msg = s.UpdateStatusShipper(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 	}
 }
 
 func makeGetOrderShippingList(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.GetOrderShippingList)
 		result, pagination, msg := s.GetOrderShippingList(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, pagination), nil
@@ -84,6 +130,13 @@ func makeGetOrderShippingList(s service.ShippingService) endpoint.Endpoint {
 
 func makeGetOrderShippingDetail(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		result, msg := s.GetOrderShippingDetailByUID(fmt.Sprint(rqst))
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
@@ -91,15 +144,30 @@ func makeGetOrderShippingDetail(s service.ShippingService) endpoint.Endpoint {
 
 func makeCancelPickup(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-		msg := s.CancelPickup(fmt.Sprint(rqst))
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		msg = s.CancelPickup(fmt.Sprint(rqst))
 		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 	}
 }
 
 func makeCancelOrder(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		jwtInfo, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.CancelOrder)
-		msg := s.CancelOrder(&req)
+		req.Body.JWTInfo = *jwtInfo
+		msg = s.CancelOrder(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 	}
 }

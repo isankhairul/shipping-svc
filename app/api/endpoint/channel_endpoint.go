@@ -6,6 +6,8 @@ import (
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/service"
+	"go-klikdokter/helper/global"
+	"go-klikdokter/helper/message"
 
 	"github.com/go-kit/kit/endpoint"
 )
@@ -34,7 +36,15 @@ func MakeChannelEndpoints(s service.ChannelService, ccs service.ChannelCourierSe
 
 func makeSaveChannel(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		jwtInfo, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.SaveChannelRequest)
+		req.JWTInfo = *jwtInfo
 		result, msg := s.CreateChannel(req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
@@ -46,6 +56,13 @@ func makeSaveChannel(s service.ChannelService) endpoint.Endpoint {
 
 func makeShowChannel(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		result, msg := s.GetChannel(fmt.Sprint(rqst))
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
@@ -57,6 +74,13 @@ func makeShowChannel(s service.ChannelService) endpoint.Endpoint {
 
 func getListChannels(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.ChannelListRequest)
 		result, pagination, msg := s.GetList(req)
 		if msg.Code == 4000 {
@@ -69,7 +93,14 @@ func getListChannels(s service.ChannelService) endpoint.Endpoint {
 
 func makeDeleteChannel(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		msg := s.DeleteChannel(fmt.Sprint(request))
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		msg = s.DeleteChannel(fmt.Sprint(request))
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
@@ -80,8 +111,16 @@ func makeDeleteChannel(s service.ChannelService) endpoint.Endpoint {
 
 func makeUpdateChannel(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		jwtInfo, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.UpdateChannelRequest)
-		msg := s.UpdateChannel(req)
+		req.JWTInfo = *jwtInfo
+		msg = s.UpdateChannel(req)
 		if msg.Code == 4000 {
 			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 		}
@@ -92,6 +131,13 @@ func makeUpdateChannel(s service.ChannelService) endpoint.Endpoint {
 
 func makeGetListChannelStatus(s service.ChannelService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.GetChannelCourierStatusRequest)
 		result, pagination, msg := s.GetListStatus(req)
 
@@ -101,6 +147,13 @@ func makeGetListChannelStatus(s service.ChannelService) endpoint.Endpoint {
 
 func makeGetChannelCourierList(s service.ChannelCourierService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
 		req := rqst.(request.GetChannelCourierListRequest)
 		result, pagination, msg := s.GetChannelCourierListByChannelUID(req)
 

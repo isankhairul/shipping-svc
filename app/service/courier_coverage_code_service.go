@@ -39,6 +39,9 @@ func NewCourierCoverageCodeService(
 // swagger:route POST /courier/courier-coverage-code/ Courier-Coverage-Code SaveCourierCoverageCodeRequest
 // Create Courier Coverage Code
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  400: errorResponse
 func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message) {
@@ -77,6 +80,9 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 		Code5:       input.Code5,
 		Code6:       input.Code6,
 		Status:      &input.Status,
+		BaseIDModel: base.BaseIDModel{
+			CreatedBy: input.ActorName,
+		},
 	}
 	result, err := s.courierCoverageCodeRepo.Create(&courierCoverageCode)
 	if err != nil {
@@ -90,6 +96,9 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 
 // swagger:route GET /courier/courier-coverage-code/ Courier-Coverage-Code CourierCoverageCodeListRequest
 // List couriers coverage code
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: PaginationResponse
@@ -134,6 +143,9 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 // swagger:route DELETE /courier/courier-coverage-code/{uid} Courier-Coverage-Code DeleteCourierCoverageCodeByIDParam
 // Delete courier coverage code by UID
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  200: SuccessResponse
 func (s *CourierCoverageCodeServiceImpl) DeleteCourierCoverageCode(uid string) message.Message {
@@ -146,6 +158,9 @@ func (s *CourierCoverageCodeServiceImpl) DeleteCourierCoverageCode(uid string) m
 
 // swagger:route GET /courier/courier-coverage-code/{uid} Courier-Coverage-Code CourierCoverageCodeByIDParam
 // Get Courier Coverage Code by uid
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: CourierCoverageCode
@@ -165,6 +180,9 @@ func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*en
 
 // swagger:route PUT /courier/courier-coverage-code/{uid} Courier-Coverage-Code UpdateCourierCoverageCodeBody
 // Update courier coverage by uid
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: SuccessResponse
@@ -211,6 +229,7 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 		"code5":        input.Code5,
 		"code6":        input.Code6,
 		"status":       input.Status,
+		"updated_by":   input.ActorName,
 	}
 	result, err := s.courierCoverageCodeRepo.Update(input.Uid, data)
 	if err != nil {
@@ -226,6 +245,9 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 // Import courier coverage code by CSV file
 // consumes:
 // - multipart/form-data
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: ImportCourierCoverageCode
@@ -284,6 +306,9 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 			Code4:       code4,
 			Code5:       code5,
 			Code6:       code6,
+			BaseIDModel: base.BaseIDModel{
+				CreatedBy: input.ActorName,
+			},
 		}
 
 		successCount, msg := s.upsert(courierCoverageCode.UID, data)
@@ -327,6 +352,7 @@ func (s *CourierCoverageCodeServiceImpl) upsert(uid string, input entity.Courier
 			"code4":        input.Code4,
 			"code5":        input.Code5,
 			"code6":        input.Code6,
+			"updated_by":   input.CreatedBy,
 		}
 		_, err = s.courierCoverageCodeRepo.Update(uid, data)
 

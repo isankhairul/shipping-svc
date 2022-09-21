@@ -65,6 +65,9 @@ func NewShippingService(
 // swagger:route POST /shipping/shipping-rate/{shipping-type} Shipping ShippingRateByShippingType
 // Get Shipping Rate By Shipping Type
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  200: ShippingRate
 func (s *shippingServiceImpl) GetShippingRateByShippingType(input request.GetShippingRateRequest) ([]response.GetShippingRateResponse, message.Message) {
@@ -76,6 +79,9 @@ func (s *shippingServiceImpl) GetShippingRateByShippingType(input request.GetShi
 
 // swagger:route POST /shipping/shipping-rate Shipping ShippingRate
 // Get Shipping Rate
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: ShippingRate
@@ -408,12 +414,15 @@ func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelive
 		orderShipping.CourierID = courierService.CourierID
 		orderShipping.CourierServiceID = courierService.ID
 	}
-
+	orderShipping.UpdatedBy = input.ActorName
 	return courierService, orderShipping, shippingStatus, message.SuccessMsg
 }
 
 // swagger:route POST /shipping/order-shipping Shipping CreateDelivery
 // Create Order Shipping
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: CreateDelivery
@@ -482,6 +491,9 @@ func (s *shippingServiceImpl) createDeliveryThirdParty(bookingID string, courier
 // swagger:route GET /shipping/order-tracking/{uid} Shipping OrderShippingTracking
 // Get Order Shipping Tracking
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  200: OrderShippingTracking
 func (s *shippingServiceImpl) OrderShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message) {
@@ -525,6 +537,9 @@ func (s *shippingServiceImpl) thridPartyTracking(orderShipping *entity.OrderShip
 // swagger:route POST /shipping/webhook/shipper Shipping WebhookUpdateStatusShipper
 // Update Status Shipper
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  200: SuccessResponse
 func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStatusShipper) (*entity.OrderShipping, message.Message) {
@@ -552,6 +567,7 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 	}
 
 	orderShipping.Status = shippingStatus.StatusCode
+	orderShipping.UpdatedBy = "SHIPPER_WEBHOOK"
 
 	if len(req.Awb) > 0 {
 		orderShipping.Airwaybill = req.Awb
@@ -570,6 +586,9 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 
 // swagger:route GET /shipping/order-shipping Shipping GetOrderShippingList
 // Get Order Shipping List
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: GetOrderShippingList
@@ -607,6 +626,9 @@ func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShipping
 
 // swagger:route GET /shipping/order-shipping/{uid} Shipping GetOrderShippingDetail
 // Get Order Shipping Detail By UID
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: GetOrderShippingDetail
@@ -709,6 +731,9 @@ func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *r
 // swagger:route POST /shipping/cancel-pickup/{uid} Shipping CancelPickup
 // Cancel Pickup Order
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  200: SuccessResponse
 func (s *shippingServiceImpl) CancelPickup(uid string) message.Message {
@@ -783,6 +808,9 @@ func (s *shippingServiceImpl) cancelPickupThirdParty(orderShipping *entity.Order
 // swagger:route POST /shipping/cancel-order/{uid} Shipping CancelOrder
 // Cancel Order Shipping
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  200: SuccessResponse
 func (s *shippingServiceImpl) CancelOrder(req *request.CancelOrder) message.Message {
@@ -815,8 +843,10 @@ func (s *shippingServiceImpl) CancelOrder(req *request.CancelOrder) message.Mess
 		return message.ErrShippingStatus
 	}
 
-	orderShipping.AddHistoryStatus(shipperStatus, req.Body.Reason)
 	orderShipping.Status = shipping_provider.StatusCancelled
+	orderShipping.UpdatedBy = req.Body.ActorName
+	orderShipping.AddHistoryStatus(shipperStatus, req.Body.Reason)
+
 	_, err = s.orderShipping.Upsert(orderShipping)
 	if err != nil {
 		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())

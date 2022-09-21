@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/schema"
 
+	"github.com/go-kit/kit/auth/jwt"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
@@ -29,6 +30,7 @@ func ChannelHttpHandler(s service.ChannelService, ccs service.ChannelCourierServ
 	options := []httptransport.ServerOption{
 		httptransport.ServerErrorLogger(logger),
 		httptransport.ServerErrorEncoder(encoder.EncodeError),
+		httptransport.ServerBefore(jwt.HTTPToContext()),
 	}
 
 	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixChannel, global.PathChannelApp)).Handler(httptransport.NewServer(

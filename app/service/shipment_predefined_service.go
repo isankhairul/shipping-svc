@@ -53,6 +53,9 @@ func (s *ShipmentPredefinedServiceImpl) CreateShipmentPredefined(input request.C
 // swagger:route PUT /other/shipment-predefined/{uid} Courier-Predefined UpdateShipmentPredefinedRequest
 // Update a shipment predefined
 //
+// security:
+// - Bearer:
+//
 // responses:
 //  401: SuccessResponse
 //  201: SuccessResponse
@@ -70,7 +73,10 @@ func (s *ShipmentPredefinedServiceImpl) UpdateShipmentPredefined(input request.U
 	predefined := &entity.ShippmentPredefined{Type: input.Type,
 		Title: input.Title,
 		Code:  input.Code, Status: input.Status,
-		Note: input.Note, BaseIDModel: base.BaseIDModel{UID: input.Uid}}
+		Note: input.Note, BaseIDModel: base.BaseIDModel{
+			UID:       input.Uid,
+			UpdatedBy: input.ActorName,
+		}}
 	ret, err = s.predefines.UpdateShipmentPredefined(*predefined)
 	if err != nil {
 		_ = level.Error(logger).Log(err)
@@ -82,6 +88,9 @@ func (s *ShipmentPredefinedServiceImpl) UpdateShipmentPredefined(input request.U
 
 // swagger:route GET /other/shipment-predefined Courier-Predefined ListShipmentPredefinedRequest
 // Get predefined
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  401: SuccessResponse
@@ -113,6 +122,9 @@ func (s *ShipmentPredefinedServiceImpl) GetAll(input request.ListShipmentPredefi
 
 // swagger:route GET /other/shipment-predefined/{uid} Courier-Predefined GetShipmentPredefinedByUID
 // Get shipment predefined by UID
+//
+// security:
+// - Bearer:
 //
 // responses:
 //  200: GetShippmentPredefined

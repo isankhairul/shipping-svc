@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 
 	validation "github.com/itgelo/ozzo-validation/v4"
@@ -32,6 +33,9 @@ type SaveChannelCourierServiceRequest struct {
 	// in: number
 	// required: true
 	Status int32 `json:"status" binding:"omitempty"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 func (req SaveChannelCourierServiceRequest) Validate() error {
@@ -59,6 +63,9 @@ type UpdateChannelCourierService struct {
 	// Courier status
 	// required: true
 	Status int `json:"status" binding:"omitempty"`
+
+	// Extend Jwt Info
+	global.JWTInfo
 }
 
 // swagger:parameters GetChannelCourierServiceList
