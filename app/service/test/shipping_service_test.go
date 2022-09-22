@@ -199,7 +199,7 @@ func TestGetShippingRate_CourierServiceNotFound(t *testing.T) {
 		Return([]entity.ChannelCourierServiceForShippingRate{}).Once()
 
 	result, msg := shippingService.GetShippingRate(input)
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.Equal(t, message.ErrCourierServiceNotFound, msg, codeIsNotCorrect)
 }
 
@@ -212,7 +212,7 @@ func TestGetShippingRate_ChannelNotFound(t *testing.T) {
 		Return(nil).Once()
 
 	result, msg := shippingService.GetShippingRate(input)
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.Equal(t, message.ErrChannelNotFound, msg, codeIsNotCorrect)
 }
 
@@ -222,7 +222,7 @@ func TestGetShippingRateCourierServiceUID_Required(t *testing.T) {
 	}
 
 	result, msg := shippingService.GetShippingRate(input)
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.Equal(t, message.ErrCourierServiceIsRequired, msg, codeIsNotCorrect)
 }
 
@@ -232,7 +232,7 @@ func TestGetShippingRateByShippingType_ShippingTypeRequired(t *testing.T) {
 	}
 
 	result, msg := shippingService.GetShippingRateByShippingType(input)
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.Equal(t, message.ErrShippingTypeRequired, msg, codeIsNotCorrect)
 }
 

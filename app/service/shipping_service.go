@@ -72,7 +72,7 @@ func NewShippingService(
 //  200: ShippingRate
 func (s *shippingServiceImpl) GetShippingRateByShippingType(input request.GetShippingRateRequest) ([]response.GetShippingRateResponse, message.Message) {
 	if input.ShippingType == "" {
-		return nil, message.ErrShippingTypeRequired
+		return []response.GetShippingRateResponse{}, message.ErrShippingTypeRequired
 	}
 	return s.GetShippingRate(input)
 }
@@ -89,7 +89,7 @@ func (s *shippingServiceImpl) GetShippingRate(input request.GetShippingRateReque
 	logger := log.With(s.logger, "ShippingService", "GetShippingRate")
 
 	if len(input.CourierServiceUID) == 0 {
-		return nil, message.ErrCourierServiceIsRequired
+		return []response.GetShippingRateResponse{}, message.ErrCourierServiceIsRequired
 	}
 
 	// find Channel By UID
@@ -97,11 +97,11 @@ func (s *shippingServiceImpl) GetShippingRate(input request.GetShippingRateReque
 
 	if err != nil {
 		_ = level.Error(logger).Log("s.channelRepo.FindByUid", err.Error())
-		return nil, message.ErrChannelNotFound
+		return []response.GetShippingRateResponse{}, message.ErrChannelNotFound
 	}
 
 	if channel == nil {
-		return nil, message.ErrChannelNotFound
+		return []response.GetShippingRateResponse{}, message.ErrChannelNotFound
 	}
 
 	// find Courier Servies By Channel UID and Courier Servies UID Slice
@@ -109,11 +109,11 @@ func (s *shippingServiceImpl) GetShippingRate(input request.GetShippingRateReque
 
 	if err != nil {
 		_ = level.Error(logger).Log("s.courierServiceRepo.FindCourierServiceByChannelAndUIDs", err.Error())
-		return nil, message.ErrCourierServiceNotFound
+		return []response.GetShippingRateResponse{}, message.ErrCourierServiceNotFound
 	}
 
 	if len(courierServices) == 0 {
-		return nil, message.ErrCourierServiceNotFound
+		return []response.GetShippingRateResponse{}, message.ErrCourierServiceNotFound
 	}
 
 	price := s.getAllCourierPrice(courierServices, &input)
