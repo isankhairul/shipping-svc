@@ -21,7 +21,7 @@ type GetShippingRateByShippingType struct {
 }
 
 type GetShippingRateRequest struct {
-	ShippingType        string
+	ShippingType        string            `json:"-"`
 	ChannelUID          string            `json:"channel_uid"`
 	TotalWeight         float64           `json:"total_weight"`
 	TotalWidth          float64           `json:"total_width"`
