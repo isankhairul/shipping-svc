@@ -555,7 +555,10 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 		return nil, message.ErrOrderShippingNotFound
 	}
 
-	shippingStatus, err := s.shippingCourierStatusRepo.FindByCourierStatus(orderShipping.CourierID, fmt.Sprint(req.ExternalStatus.Code))
+	statusCode := req.InternalStatus.Code
+	statusDescription := req.InternalStatus.Description
+
+	shippingStatus, err := s.shippingCourierStatusRepo.FindByCourierStatus(orderShipping.CourierID, fmt.Sprint(statusCode))
 
 	if err != nil {
 		_ = level.Error(logger).Log("s.shippingCourierStatusRepo.FindByCourierStatus", err.Error())
@@ -573,7 +576,7 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 		orderShipping.Airwaybill = req.Awb
 	}
 
-	orderShipping.AddHistoryStatus(shippingStatus, req.ExternalStatus.Description)
+	orderShipping.AddHistoryStatus(shippingStatus, statusDescription)
 
 	orderShipping, err = s.orderShipping.Upsert(orderShipping)
 	if err != nil {
