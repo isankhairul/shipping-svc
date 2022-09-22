@@ -1348,8 +1348,6 @@ definitions:
     x-go-package: go-klikdokter/app/model/response
   GetShippingRateRequest:
     properties:
-      ShippingType:
-        type: string
       channel_uid:
         type: string
         x-go-name: ChannelUID
