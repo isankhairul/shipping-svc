@@ -1093,8 +1093,8 @@ func TestGetOrderShippingListInvalidDateFromError(t *testing.T) {
 	req.Filters.OrderShippingDateFrom = "INVALID_DATE"
 
 	result, pagination, msg := shippingService.GetOrderShippingList(&req)
-	assert.Nil(t, result)
-	assert.Nil(t, pagination)
+	assert.NotNil(t, result)
+	assert.NotNil(t, pagination)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrFormatDateYYYYMMDD, msg)
 }
@@ -1104,8 +1104,8 @@ func TestGetOrderShippingListInvalidDateToError(t *testing.T) {
 	req.Filters.OrderShippingDateTo = "INVALID_DATE"
 
 	result, pagination, msg := shippingService.GetOrderShippingList(&req)
-	assert.Nil(t, result)
-	assert.Nil(t, pagination)
+	assert.NotNil(t, result)
+	assert.NotNil(t, pagination)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrFormatDateYYYYMMDD, msg)
 }

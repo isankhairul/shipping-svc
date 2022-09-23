@@ -21,10 +21,10 @@ type responseHttp struct {
 // swagger:model MetaResponse
 type metaResponse struct {
 	// Code is the response code
-	//in: int
+	// example: 201000
 	Code int `json:"code"`
 	// Message is the response message
-	//in: string
+	// example: Success
 	Message string `json:"message"`
 }
 
@@ -64,8 +64,8 @@ func GetHttpResponse(resp interface{}) *responseHttp {
 	return nil
 }
 
-type ResponseFile struct {
-	Name string
-	Type string
-	Data interface{}
-}
+// type ResponseFile struct {
+// 	Name string
+// 	Type string
+// 	Data interface{}
+// }

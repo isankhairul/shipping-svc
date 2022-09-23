@@ -5,6 +5,7 @@ import (
 	"go-klikdokter/pkg/util/datatype"
 )
 
+// swagger:model CourierServiceDetailDTO
 type CourierServiceDetailDTO struct {
 	Uid string `gorm:"not null" json:"uid"`
 

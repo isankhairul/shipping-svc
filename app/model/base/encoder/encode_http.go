@@ -1,11 +1,8 @@
 package encoder
 
 import (
-	"bytes"
 	"context"
-	"encoding/csv"
 	"encoding/json"
-	"errors"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/helper/message"
 	"net/http"
@@ -92,26 +89,26 @@ func EncodeError(_ context.Context, err error, w http.ResponseWriter) {
 	_ = json.NewEncoder(w).Encode(result)
 }
 
-func EncodeResponseCSV(ctx context.Context, w http.ResponseWriter, resp interface{}) error {
-	result, ok := resp.(base.ResponseFile)
+// func EncodeResponseCSV(ctx context.Context, w http.ResponseWriter, resp interface{}) error {
+// 	result, ok := resp.(base.ResponseFile)
 
-	if ok {
-		w.Header().Set(contentType, "text/csv")
-		w.Header().Set(contentDisposition, "attachment;filename="+result.Name)
-		w.WriteHeader(http.StatusOK)
-		b := &bytes.Buffer{}
-		wr := csv.NewWriter(b)
+// 	if ok {
+// 		w.Header().Set(contentType, "text/csv")
+// 		w.Header().Set(contentDisposition, "attachment;filename="+result.Name)
+// 		w.WriteHeader(http.StatusOK)
+// 		b := &bytes.Buffer{}
+// 		wr := csv.NewWriter(b)
 
-		if data, ok := result.Data.([][]string); ok {
-			_ = wr.WriteAll(data)
-			wr.Flush()
-		}
+// 		if data, ok := result.Data.([][]string); ok {
+// 			_ = wr.WriteAll(data)
+// 			wr.Flush()
+// 		}
 
-		_, err := w.Write(b.Bytes())
+// 		_, err := w.Write(b.Bytes())
 
-		return err
-	}
+// 		return err
+// 	}
 
-	EncodeError(ctx, errors.New("invalid response"), w)
-	return nil
-}
+// 	EncodeError(ctx, errors.New("invalid response"), w)
+// 	return nil
+// }

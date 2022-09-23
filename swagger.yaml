@@ -554,17 +554,6 @@ definitions:
         x-go-name: UID
     type: object
     x-go-package: go-klikdokter/app/model/entity
-  CourierCoverageCodeImportResponse:
-    properties:
-      failed_data:
-        items:
-          $ref: '#/definitions/ImportStatus'
-        type: array
-        x-go-name: FailedData
-      summary:
-        $ref: '#/definitions/ImportSummary'
-    type: object
-    x-go-package: go-klikdokter/app/model/response
   CourierService:
     properties:
       cancelable:
@@ -795,6 +784,191 @@ definitions:
     type: object
     x-go-name: CourierServiceByChannelResponse
     x-go-package: go-klikdokter/app/model/response
+  CourierServiceDetailDTO:
+    properties:
+      cancelable:
+        description: |-
+          Cancelable of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Cancelable
+      cod_available:
+        description: |-
+          Cod Available of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: CodAvailable
+      courier_name:
+        description: |-
+          Courier UId of the Courier Service
+          in: string
+        type: string
+        x-go-name: CourierName
+      courier_type:
+        description: |-
+          Courier UId of the Courier Service
+          in: string
+        type: string
+        x-go-name: CourierType
+      courier_uid:
+        description: |-
+          Courier UId of the Courier Service
+          in: string
+        type: string
+        x-go-name: CourierUId
+      end_time:
+        $ref: '#/definitions/Time'
+      etd_max:
+        description: |-
+          ETD Max of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: ETD_Max
+      etd_min:
+        description: |-
+          ETD Min of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: ETD_Min
+      image_path:
+        $ref: '#/definitions/JSONB'
+      image_uid:
+        description: |-
+          Image UID
+          in: string
+        type: string
+        x-go-name: ImageUID
+      insurance:
+        description: |-
+          Insurance of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Insurance
+      insurance_fee:
+        description: |-
+          Insurance Fee of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: InsuranceFee
+      insurance_fee_type:
+        description: |-
+          Insurance Fee Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: InsuranceFeeType
+      insurance_min:
+        description: |-
+          Insurance Min of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: InsuranceMin
+      logo:
+        description: |-
+          Logo of the Courier Service
+          in: string
+        type: string
+        x-go-name: Logo
+      max_distance:
+        description: |-
+          Max Distance of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxDistance
+      max_purchase:
+        description: |-
+          Max Purchase of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxPurchase
+      max_volume:
+        description: |-
+          Max Volume of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxVolume
+      max_weight:
+        description: |-
+          Max Weight of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MaxWeight
+      min_purchase:
+        description: |-
+          Min Purchase of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: MinPurchase
+      prescription_allowed:
+        description: |-
+          Prescription Allowed of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: PrescriptionAllowed
+      repickup:
+        description: |-
+          Repickup Fee of the Courier Service
+          in: float64
+        format: double
+        type: number
+        x-go-name: Repickup
+      shipping_code:
+        description: |-
+          Shipping Code of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingCode
+      shipping_description:
+        description: |-
+          Shipping Description of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingDescription
+      shipping_name:
+        description: |-
+          Shipping Name of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingName
+      shipping_type:
+        description: |-
+          Shipping Type of the Courier Service
+          in: string
+        type: string
+        x-go-name: ShippingType
+      start_time:
+        $ref: '#/definitions/Time'
+      status:
+        description: |-
+          Status of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: Status
+      tracking_available:
+        description: |-
+          Tracking Available of the Courier Service
+          in: integer
+        format: int32
+        type: integer
+        x-go-name: TrackingAvailable
+      uid:
+        type: string
+        x-go-name: Uid
+    type: object
+    x-go-package: go-klikdokter/app/model/entity
   CourierServiceListResponse:
     properties:
       courier_name:
@@ -1505,6 +1679,18 @@ definitions:
         x-go-name: Weight
     type: object
     x-go-package: go-klikdokter/app/model/response
+  ImportCourierCoverageCode:
+    properties:
+      failed_data:
+        items:
+          $ref: '#/definitions/ImportStatus'
+        type: array
+        x-go-name: FailedData
+      summary:
+        $ref: '#/definitions/ImportSummary'
+    type: object
+    x-go-name: CourierCoverageCodeImportResponse
+    x-go-package: go-klikdokter/app/model/response
   ImportStatus:
     properties:
       code1:
@@ -1581,16 +1767,14 @@ definitions:
   MetaResponse:
     properties:
       code:
-        description: |-
-          Code is the response code
-          in: int
+        description: Code is the response code
+        example: 201000
         format: int64
         type: integer
         x-go-name: Code
       message:
-        description: |-
-          Message is the response message
-          in: string
+        description: Message is the response message
+        example: Success
         type: string
         x-go-name: Message
     type: object
@@ -2516,7 +2700,7 @@ info:
 paths:
   /channel/{channel-uid}/courier-list:
     get:
-      description: Get List of Courier and Courier Services By Channel
+      description: 'Description :'
       operationId: GetChannelCourierList
       parameters:
       - in: path
@@ -2557,14 +2741,27 @@ paths:
         x-go-name: Dir
       responses:
         "200":
-          $ref: '#/responses/CourierByChannel'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/CourierServiceByChannel'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+              pagination:
+                $ref: '#/definitions/PaginationResponse'
       security:
       - Bearer: []
+      summary: Get List of Courier and Courier Services By Channel
       tags:
       - Channel-Courier-Service
   /channel/channel-app:
     get:
-      description: List of Channel Apps
+      description: 'Description :'
       operationId: Channels
       parameters:
       - description: 'Filter : {"channel_code":["value","value"],"channel_name":["value","value"],"status":[0,1]}'
@@ -2596,20 +2793,27 @@ paths:
         type: string
         x-go-name: Sort
       responses:
-        "201":
-          description: SuccessResponse
+        "200":
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/Channel'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+              pagination:
+                $ref: '#/definitions/PaginationResponse'
       security:
       - Bearer: []
+      summary: List of Channel Apps
       tags:
       - Channel-Apps
     post:
-      description: Add Channel App
+      description: 'Description :'
       operationId: SaveChannelRequest
       parameters:
       - in: body
@@ -2618,21 +2822,24 @@ paths:
           $ref: '#/definitions/SaveChannelRequest'
         x-go-name: Body
       responses:
-        "201":
-          description: SuccessResponse
+        "200":
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/Channel'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Add Channel App
       tags:
       - Channel-Apps
   /channel/channel-app/{uid}:
     delete:
-      description: Delete Channel Apps by uid
+      description: 'Description :'
       operationId: ChannelRequestDeleteByUid
       parameters:
       - description: Uid of the Channel
@@ -2643,19 +2850,20 @@ paths:
         x-go-name: UId
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Delete Channel Apps by uid
       tags:
       - Channel-Apps
     get:
-      description: Get Detail of Channel Apps
+      description: 'Description :'
       operationId: ChannelRequestGetByUid
       parameters:
       - description: Uid of the Channel
@@ -2665,20 +2873,23 @@ paths:
         type: string
         x-go-name: UId
       responses:
-        "201":
-          description: SuccessResponse
+        "200":
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/Channel'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get Detail of Channel Apps
       tags:
       - Channel-Apps
     put:
-      description: Update Channel App by uid
+      description: 'Description :'
       operationId: UpdateChannelRequest
       parameters:
       - description: Uid of the Channel
@@ -2694,20 +2905,21 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Update Channel App by uid
       tags:
       - Channel-Apps
   /channel/channel-courier-service/:
     get:
-      description: Get List of Channel Courier Service
+      description: 'Description :'
       operationId: GetChannelCourierServiceList
       parameters:
       - description: 'Filter : {"channel_name":["value","value"],"courier_uid":["value","value"],"courier_name":["value","value"],"shipping_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"status":[0,1]}'
@@ -2734,13 +2946,26 @@ paths:
         x-go-name: Sort
       responses:
         "200":
-          $ref: '#/responses/ChannelCourierServiceList'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/ChannelCourierServiceItem'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+              pagination:
+                $ref: '#/definitions/PaginationResponse'
       security:
       - Bearer: []
+      summary: Get List of Channel Courier Service
       tags:
       - Channel-Courier-Service
     post:
-      description: Create Channel Courier Service
+      description: 'Description :'
       operationId: CreateChannelCourierService
       parameters:
       - in: body
@@ -2750,14 +2975,23 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          $ref: '#/responses/ChannelCourierServiceDetailResponse'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ChannelCourierServiceDetail'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Create Channel Courier Service
       tags:
       - Channel-Courier-Service
   /channel/channel-courier-service/{uid}:
     delete:
-      description: Delete Courier Service
+      description: 'Description :'
       operationId: DeleteChannelCourierServiceByUID
       parameters:
       - description: 'name: uid'
@@ -2768,15 +3002,20 @@ paths:
         x-go-name: UID
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Delete Courier Service
       tags:
       - Channel-Courier-Service
     get:
-      description: Get Detail of Channel Courier Service
+      description: 'Description :'
       operationId: GetChannelCourierServiceByUID
       parameters:
       - description: 'name: uid'
@@ -2787,13 +3026,22 @@ paths:
         x-go-name: UID
       responses:
         "200":
-          $ref: '#/responses/ChannelCourierServiceDetailResponse'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ChannelCourierServiceDetail'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get Detail of Channel Courier Service
       tags:
       - Channel-Courier-Service
     put:
-      description: Update a channel courier by uid
+      description: 'Description :'
       operationId: UpdateChannelCourierService
       parameters:
       - description: 'name: uid'
@@ -2809,14 +3057,23 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          $ref: '#/responses/ChannelCourierServiceDetailResponse'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ChannelCourierServiceDetail'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Update a channel courier by uid
       tags:
       - Channel-Courier-Service
   /channel/channel-courier/:
     get:
-      description: List of Assignment Channel and Courier
+      description: 'Description :'
       operationId: ChannelCourierListRequest
       parameters:
       - description: 'Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"channel_code":["value","value"],"status":[0,1]}'
@@ -2856,15 +3113,26 @@ paths:
         x-go-name: Dir
       responses:
         "200":
-          description: PaginationResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/PaginationResponse'
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/ChannelCourierDTO'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+              pagination:
+                $ref: '#/definitions/PaginationResponse'
       security:
       - Bearer: []
+      summary: List of Assignment Channel and Courier
       tags:
       - Channel-Courier-Service
     post:
-      description: Assign Courier to Channel
+      description: 'Description :'
       operationId: SaveChannelCourierRequest
       parameters:
       - in: body
@@ -2874,18 +3142,23 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          $ref: '#/responses/ChannelCourierDTO'
-        "401":
-          description: errorResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/errorResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ChannelCourierDTO'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Assign Courier to Channel
       tags:
       - Channel-Courier-Service
   /channel/channel-courier/{uid}:
     delete:
-      description: Delete Channel Courier
+      description: 'Description :'
       operationId: DeleteChannelCourierByUid
       parameters:
       - description: 'name: id'
@@ -2896,15 +3169,20 @@ paths:
         x-go-name: UId
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Delete Channel Courier
       tags:
       - Channel-Courier-Service
     get:
-      description: Get Detail of Channel Courier
+      description: 'Description :'
       operationId: GetChannelCourierByUid
       parameters:
       - description: 'name: id'
@@ -2915,13 +3193,22 @@ paths:
         x-go-name: UId
       responses:
         "200":
-          $ref: '#/responses/ChannelCourierDTO'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ChannelCourierDTO'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get Detail of Channel Courier
       tags:
       - Channel-Courier-Service
     put:
-      description: Update a channel courier by uid
+      description: 'Description :'
       operationId: UpdateChannelCourierRequest
       parameters:
       - description: 'name: id'
@@ -2936,21 +3223,24 @@ paths:
           $ref: '#/definitions/UpdateChannelCourierRequest'
         x-go-name: Body
       responses:
-        "201":
-          description: ChannelCourier
+        "200":
+          description: Success Response.
           schema:
-            $ref: '#/definitions/ChannelCourier'
-        "401":
-          description: errorResponse
-          schema:
-            $ref: '#/definitions/errorResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ChannelCourierDTO'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Update a channel courier by uid
       tags:
       - Channel-Courier-Service
   /channel/channel-status-courier-status:
     get:
-      description: Get Channel Courier Status List
+      description: 'Description :'
       operationId: GetChannelCourierStatus
       parameters:
       - description: 'Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"status_code":["value","value"],
@@ -2984,14 +3274,27 @@ paths:
         x-go-name: Sort
       responses:
         "200":
-          $ref: '#/responses/GetChannelCourierStatusResponse'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/GetChannelCourierStatusResponse'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+              pagination:
+                $ref: '#/definitions/PaginationResponse'
       security:
       - Bearer: []
+      summary: Get Channel Courier Status List
       tags:
       - Channel-Apps
   /courier/courier:
     get:
-      description: Get list of couriers
+      description: 'Description :'
       operationId: CourierListRequest
       parameters:
       - description: 'Filter : {"courier_type":["value","value"],"courier_name":["value","value"],"courier_code":["value","value"],"status":[0,1]}'
@@ -3024,19 +3327,26 @@ paths:
         x-go-name: Sort
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: errorResponse
-          schema:
-            $ref: '#/definitions/errorResponse'
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/Courier'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+              pagination:
+                $ref: '#/definitions/PaginationResponse'
       security:
       - Bearer: []
+      summary: Get list of couriers
       tags:
       - Couriers
     post:
-      description: Create a new Courier
+      description: 'Description :'
       operationId: SaveCourierRequest
       parameters:
       - in: body
@@ -3045,25 +3355,24 @@ paths:
           $ref: '#/definitions/SaveCourierRequestBody'
         x-go-name: Body
       responses:
-        "201":
-          description: Courier
+        "200":
+          description: Success Response.
           schema:
-            $ref: '#/definitions/Courier'
-        "401":
-          description: errorResponse
-          schema:
-            $ref: '#/definitions/errorResponse'
-        "500":
-          description: errorResponse
-          schema:
-            $ref: '#/definitions/errorResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/Courier'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Create a new Courier
       tags:
       - Couriers
   /courier/courier-coverage-code/:
     get:
-      description: List couriers coverage code
+      description: 'Description :'
       operationId: CourierCoverageCodeListRequest
       parameters:
       - description: |-
@@ -3098,19 +3407,26 @@ paths:
         x-go-name: Sort
       responses:
         "200":
-          description: PaginationResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/PaginationResponse'
-        "400":
-          description: errorResponse
-          schema:
-            $ref: '#/definitions/errorResponse'
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/CourierCoverageCode'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+              pagination:
+                $ref: '#/definitions/PaginationResponse'
       security:
       - Bearer: []
+      summary: List couriers coverage code
       tags:
       - Courier-Coverage-Code
     post:
-      description: Create Courier Coverage Code
+      description: 'Description :'
       operationId: SaveCourierCoverageCodeRequest
       parameters:
       - in: body
@@ -3119,17 +3435,24 @@ paths:
           $ref: '#/definitions/SaveCourierCoverageCodeRequest'
         x-go-name: Body
       responses:
-        "400":
-          description: errorResponse
+        "200":
+          description: Success Response.
           schema:
-            $ref: '#/definitions/errorResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/CourierCoverageCode'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Create Courier Coverage Code
       tags:
       - Courier-Coverage-Code
   /courier/courier-coverage-code/{uid}:
     delete:
-      description: Delete courier coverage code by UID
+      description: 'Description :'
       operationId: DeleteCourierCoverageCodeByIDParam
       parameters:
       - description: 'name: id'
@@ -3140,15 +3463,20 @@ paths:
         x-go-name: UId
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Delete courier coverage code by UID
       tags:
       - Courier-Coverage-Code
     get:
-      description: Get Courier Coverage Code by uid
+      description: 'Description :'
       operationId: CourierCoverageCodeByIDParam
       parameters:
       - description: 'name: id'
@@ -3159,15 +3487,22 @@ paths:
         x-go-name: UId
       responses:
         "200":
-          description: CourierCoverageCode
+          description: Success Response.
           schema:
-            $ref: '#/definitions/CourierCoverageCode'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/CourierCoverageCode'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get Courier Coverage Code by uid
       tags:
       - Courier-Coverage-Code
     put:
-      description: Update courier coverage by uid
+      description: 'Description :'
       operationId: UpdateCourierCoverageCodeBody
       parameters:
       - description: 'name: id'
@@ -3183,18 +3518,25 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/CourierCoverageCode'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Update courier coverage by uid
       tags:
       - Courier-Coverage-Code
   /courier/courier-coverage-code/import:
     post:
       consumes:
       - multipart/form-data
-      description: Import courier coverage code by CSV file
+      description: 'Description :'
       operationId: ImportCourierCoverageCodeRequest
       parameters:
       - in: formData
@@ -3203,14 +3545,23 @@ paths:
         x-go-name: File
       responses:
         "200":
-          $ref: '#/responses/ImportCourierCoverageCode'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ImportCourierCoverageCode'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Import courier coverage code by CSV file
       tags:
       - Courier-Coverage-Code
   /courier/courier-services:
     get:
-      description: List of Courier Services
+      description: 'Description :'
       operationId: CourierServiceListRequest
       parameters:
       - description: 'Filter : {"courier_uid":["value","value"],"courier_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"shipping_type_code":["value","value"],"status":[0,1]}'
@@ -3242,20 +3593,27 @@ paths:
         type: string
         x-go-name: Sort
       responses:
-        "201":
-          description: SuccessResponse
+        "200":
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/CourierServiceListResponse'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+              pagination:
+                $ref: '#/definitions/PaginationResponse'
       security:
       - Bearer: []
+      summary: List of Courier Services
       tags:
       - Courier-Services
     post:
-      description: Add Courier Services
+      description: 'Description :'
       operationId: SaveCourierServiceRequest
       parameters:
       - in: body
@@ -3264,21 +3622,24 @@ paths:
           $ref: '#/definitions/SaveCourierServiceRequest'
         x-go-name: Body
       responses:
-        "201":
-          description: SuccessResponse
+        "200":
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/CourierService'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Add Courier Services
       tags:
       - Courier-Services
   /courier/courier-services/{uid}:
     delete:
-      description: Delete Courier Services
+      description: 'Description :'
       operationId: CourierServiceRequestDeleteByUid
       parameters:
       - description: Uid of the Courier Service
@@ -3289,19 +3650,20 @@ paths:
         x-go-name: UId
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Delete Courier Services
       tags:
       - Courier-Services
     get:
-      description: Detail Courier Services
+      description: 'Description :'
       operationId: CourierServiceRequestGetByUid
       parameters:
       - description: Uid of the Courier Service
@@ -3311,20 +3673,23 @@ paths:
         type: string
         x-go-name: UId
       responses:
-        "201":
-          description: SuccessResponse
+        "200":
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/CourierServiceDetailDTO'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Detail Courier Services
       tags:
       - Courier-Services
     put:
-      description: Update Courier Services
+      description: 'Description :'
       operationId: UpdateCourierServiceRequest
       parameters:
       - description: Uid of the courier service.
@@ -3340,20 +3705,23 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/CourierService'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Update Courier Services
       tags:
       - Courier-Services
   /courier/courier/{uid}:
     delete:
-      description: Delete courier by uid
+      description: 'Description :'
       operationId: DeleteCourierByUIdParam
       parameters:
       - description: 'name: id'
@@ -3364,15 +3732,20 @@ paths:
         x-go-name: UId
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Delete courier by uid
       tags:
       - Couriers
     get:
-      description: Get Courier
+      description: 'Description :'
       operationId: CourierByUIdParam
       parameters:
       - description: 'name: id'
@@ -3383,19 +3756,22 @@ paths:
         x-go-name: UId
       responses:
         "200":
-          description: Courier
+          description: Success Response.
           schema:
-            $ref: '#/definitions/Courier'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/Courier'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get Courier
       tags:
       - Couriers
     put:
-      description: Update courier with specifeied id
+      description: 'Description :'
       operationId: UpdateCourierRequest
       parameters:
       - description: 'name: id'
@@ -3411,31 +3787,45 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/Courier'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Update courier with specifeied id
       tags:
       - Couriers
   /courier/shipping-type:
     get:
-      description: Get List of Shipping Type
+      description: 'Description :'
       operationId: GetCourierShippingType
       responses:
         "200":
-          $ref: '#/responses/ShippingTypeList'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/ShippingTypeItem'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get List of Shipping Type
       tags:
       - Couriers
   /other/shipment-predefined:
     get:
-      description: Get predefined
+      description: 'Description :'
       operationId: ListShipmentPredefinedRequest
       parameters:
       - description: 'Filter : {"type":["value","value"],"code":["value","value"],"title":["value","value"],"description":["value","value"],"status":[0,1]}'
@@ -3468,20 +3858,27 @@ paths:
         x-go-name: Sort
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/ShippmentPredefined'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+              pagination:
+                $ref: '#/definitions/PaginationResponse'
       security:
       - Bearer: []
+      summary: Get predefined
       tags:
       - Courier-Predefined
   /other/shipment-predefined/{uid}:
     get:
-      description: Get shipment predefined by UID
+      description: 'Description :'
       operationId: GetShipmentPredefinedByUID
       parameters:
       - in: path
@@ -3491,13 +3888,22 @@ paths:
         x-go-name: UID
       responses:
         "200":
-          $ref: '#/responses/GetShippmentPredefined'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ShippmentPredefinedDetail'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get shipment predefined by UID
       tags:
       - Courier-Predefined
     put:
-      description: Update a shipment predefined
+      description: 'Description :'
       operationId: UpdateShipmentPredefinedRequest
       parameters:
       - description: Uid of the shipmentPredefinedRequest
@@ -3512,21 +3918,24 @@ paths:
           $ref: '#/definitions/UpdateShipmentPredefinedRequest'
         x-go-name: Body
       responses:
-        "201":
-          description: SuccessResponse
+        "200":
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
-        "401":
-          description: SuccessResponse
-          schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ShippmentPredefined'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Update a shipment predefined
       tags:
       - Courier-Predefined
   /shipping/cancel-order/{uid}:
     post:
-      description: Cancel Order Shipping
+      description: 'Description :'
       operationId: CancelOrder
       parameters:
       - in: path
@@ -3541,16 +3950,21 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Cancel Order Shipping
       tags:
       - Shipping
   /shipping/cancel-pickup/{uid}:
     post:
-      description: Cancel Pickup Order
+      description: 'Description :'
       operationId: CancelPickup
       parameters:
       - in: path
@@ -3560,16 +3974,21 @@ paths:
         x-go-name: UID
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Cancel Pickup Order
       tags:
       - Shipping
   /shipping/order-shipping:
     get:
-      description: Get Order Shipping List
+      description: 'Description :'
       operationId: GetOrderShippingList
       parameters:
       - description: 'Filter : {"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":"2022-09-09","order_shipping_date_to":"2022-09-12"}'
@@ -3612,13 +4031,26 @@ paths:
         x-go-name: Dir
       responses:
         "200":
-          $ref: '#/responses/GetOrderShippingList'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/GetOrderShippingListResponse'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+              pagination:
+                $ref: '#/definitions/PaginationResponse'
       security:
       - Bearer: []
+      summary: Get Order Shipping List
       tags:
       - Shipping
     post:
-      description: Create Order Shipping
+      description: 'Description :'
       operationId: CreateDelivery
       parameters:
       - in: body
@@ -3628,14 +4060,23 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          $ref: '#/responses/CreateDelivery'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ShippmentPredefinedDetail'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Create Order Shipping
       tags:
       - Shipping
   /shipping/order-shipping/{uid}:
     get:
-      description: Get Order Shipping Detail By UID
+      description: 'Description :'
       operationId: GetOrderShippingDetail
       parameters:
       - in: path
@@ -3645,14 +4086,23 @@ paths:
         x-go-name: UID
       responses:
         "200":
-          $ref: '#/responses/GetOrderShippingDetail'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/GetOrderShippingDetailResponse'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get Order Shipping Detail By UID
       tags:
       - Shipping
   /shipping/order-tracking/{uid}:
     get:
-      description: Get Order Shipping Tracking
+      description: 'Description :'
       operationId: OrderShippingTracking
       parameters:
       - in: path
@@ -3667,14 +4117,23 @@ paths:
         x-go-name: ChannelUID
       responses:
         "200":
-          $ref: '#/responses/OrderShippingTracking'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ShippmentPredefinedDetail'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get Order Shipping Tracking
       tags:
       - Shipping
   /shipping/shipping-rate:
     post:
-      description: Get Shipping Rate
+      description: 'Description :'
       operationId: ShippingRate
       parameters:
       - in: body
@@ -3684,14 +4143,23 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          $ref: '#/responses/ShippingRate'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ShippmentPredefinedDetail'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get Shipping Rate
       tags:
       - Shipping
   /shipping/shipping-rate/{shipping-type}:
     post:
-      description: Get Shipping Rate By Shipping Type
+      description: 'Description :'
       operationId: ShippingRateByShippingType
       parameters:
       - in: path
@@ -3706,14 +4174,23 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          $ref: '#/responses/ShippingRate'
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/ShippmentPredefinedDetail'
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Get Shipping Rate By Shipping Type
       tags:
       - Shipping
   /shipping/webhook/shipper:
     post:
-      description: Update Status Shipper
+      description: 'Description :'
       operationId: WebhookUpdateStatusShipper
       parameters:
       - in: body
@@ -3723,11 +4200,16 @@ paths:
         x-go-name: Body
       responses:
         "200":
-          description: SuccessResponse
+          description: Success Response.
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
+      summary: Update Status from Shipper Webhook
       tags:
       - Shipping
 produces:
@@ -3801,7 +4283,7 @@ responses:
   ImportCourierCoverageCode:
     description: ""
     schema:
-      $ref: '#/definitions/CourierCoverageCodeImportResponse'
+      $ref: '#/definitions/ImportCourierCoverageCode'
   OrderShippingTracking:
     description: ""
     schema:

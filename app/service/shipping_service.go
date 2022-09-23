@@ -62,14 +62,26 @@ func NewShippingService(
 	}
 }
 
-// swagger:route POST /shipping/shipping-rate/{shipping-type} Shipping ShippingRateByShippingType
+// swagger:operation POST /shipping/shipping-rate/{shipping-type} Shipping ShippingRateByShippingType
 // Get Shipping Rate By Shipping Type
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: ShippingRate
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ShippmentPredefinedDetail'
 func (s *shippingServiceImpl) GetShippingRateByShippingType(input request.GetShippingRateRequest) ([]response.GetShippingRateResponse, message.Message) {
 	if input.ShippingType == "" {
 		return []response.GetShippingRateResponse{}, message.ErrShippingTypeRequired
@@ -77,14 +89,26 @@ func (s *shippingServiceImpl) GetShippingRateByShippingType(input request.GetShi
 	return s.GetShippingRate(input)
 }
 
-// swagger:route POST /shipping/shipping-rate Shipping ShippingRate
+// swagger:operation POST /shipping/shipping-rate Shipping ShippingRate
 // Get Shipping Rate
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: ShippingRate
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ShippmentPredefinedDetail'
 func (s *shippingServiceImpl) GetShippingRate(input request.GetShippingRateRequest) ([]response.GetShippingRateResponse, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "GetShippingRate")
 
@@ -418,14 +442,26 @@ func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelive
 	return courierService, orderShipping, shippingStatus, message.SuccessMsg
 }
 
-// swagger:route POST /shipping/order-shipping Shipping CreateDelivery
+// swagger:operation POST /shipping/order-shipping Shipping CreateDelivery
 // Create Order Shipping
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: CreateDelivery
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ShippmentPredefinedDetail'
 func (s *shippingServiceImpl) CreateDelivery(input *request.CreateDelivery) (*response.CreateDelivery, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "CreateDelivery")
 	var resp *response.CreateDelivery
@@ -488,14 +524,26 @@ func (s *shippingServiceImpl) createDeliveryThirdParty(bookingID string, courier
 	}
 }
 
-// swagger:route GET /shipping/order-tracking/{uid} Shipping OrderShippingTracking
+// swagger:operation GET /shipping/order-tracking/{uid} Shipping OrderShippingTracking
 // Get Order Shipping Tracking
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: OrderShippingTracking
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ShippmentPredefinedDetail'
 func (s *shippingServiceImpl) OrderShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "OrderShippingTracking")
 
@@ -534,14 +582,24 @@ func (s *shippingServiceImpl) thridPartyTracking(orderShipping *entity.OrderShip
 	return nil, message.ErrInvalidCourierCode
 }
 
-// swagger:route POST /shipping/webhook/shipper Shipping WebhookUpdateStatusShipper
-// Update Status Shipper
+// swagger:operation POST /shipping/webhook/shipper Shipping WebhookUpdateStatusShipper
+// Update Status from Shipper Webhook
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
 func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStatusShipper) (*entity.OrderShipping, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "UpdateStatusShipper")
 
@@ -587,26 +645,42 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 	return orderShipping, message.SuccessMsg
 }
 
-// swagger:route GET /shipping/order-shipping Shipping GetOrderShippingList
+// swagger:operation GET /shipping/order-shipping Shipping GetOrderShippingList
 // Get Order Shipping List
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: GetOrderShippingList
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         pagination:
+//            $ref: '#/definitions/PaginationResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/GetOrderShippingListResponse'
 func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShippingList) ([]response.GetOrderShippingList, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "GetOrderShippingList")
 
 	if len(req.Filters.OrderShippingDateFrom) > 0 {
 		if ok := util.DateValidationYYYYMMDD(req.Filters.OrderShippingDateFrom); !ok {
-			return nil, nil, message.ErrFormatDateYYYYMMDD
+			return []response.GetOrderShippingList{}, &base.Pagination{}, message.ErrFormatDateYYYYMMDD
 		}
 	}
 
 	if len(req.Filters.OrderShippingDateTo) > 0 {
 		if ok := util.DateValidationYYYYMMDD(req.Filters.OrderShippingDateTo); !ok {
-			return nil, nil, message.ErrFormatDateYYYYMMDD
+			return []response.GetOrderShippingList{}, &base.Pagination{}, message.ErrFormatDateYYYYMMDD
 		}
 	}
 
@@ -627,15 +701,26 @@ func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShipping
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route GET /shipping/order-shipping/{uid} Shipping GetOrderShippingDetail
+// swagger:operation GET /shipping/order-shipping/{uid} Shipping GetOrderShippingDetail
 // Get Order Shipping Detail By UID
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: GetOrderShippingDetail
-
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/GetOrderShippingDetailResponse'
 func (s *shippingServiceImpl) GetOrderShippingDetailByUID(uid string) (*response.GetOrderShippingDetail, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "GetOrderShippingDetailByUID")
 	var resp *response.GetOrderShippingDetail
@@ -731,14 +816,24 @@ func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *r
 	return resp
 }
 
-// swagger:route POST /shipping/cancel-pickup/{uid} Shipping CancelPickup
+// swagger:operation POST /shipping/cancel-pickup/{uid} Shipping CancelPickup
 // Cancel Pickup Order
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
 func (s *shippingServiceImpl) CancelPickup(uid string) message.Message {
 	logger := log.With(s.logger, "ShippingService", "CancelPickup")
 	orderShipping, err := s.orderShipping.FindByUID(uid)
@@ -808,14 +903,24 @@ func (s *shippingServiceImpl) cancelPickupThirdParty(orderShipping *entity.Order
 	return message.SuccessMsg
 }
 
-// swagger:route POST /shipping/cancel-order/{uid} Shipping CancelOrder
+// swagger:operation POST /shipping/cancel-order/{uid} Shipping CancelOrder
 // Cancel Order Shipping
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
 func (s *shippingServiceImpl) CancelOrder(req *request.CancelOrder) message.Message {
 	logger := log.With(s.logger, "ShippingService", "CancelOrder")
 

@@ -39,15 +39,26 @@ func NewChannelCourierService(
 	return &ChannelCourierServiceImpl{lg, br, ccr, channelCourierServices, courierServices}
 }
 
-// swagger:route POST /channel/channel-courier/ Channel-Courier-Service SaveChannelCourierRequest
+// swagger:operation POST /channel/channel-courier/ Channel-Courier-Service SaveChannelCourierRequest
 // Assign Courier to Channel
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: errorResponse
-//  200: ChannelCourierDTO
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ChannelCourierDTO'
 func (s *ChannelCourierServiceImpl) CreateChannelCourier(input request.SaveChannelCourierRequest) (*entity.ChannelCourierDTO, message.Message) {
 	ret, msg := s.createChannelCourierInTx(input)
 	return ret, msg
@@ -93,14 +104,26 @@ func (s *ChannelCourierServiceImpl) createChannelCourierInTx(input request.SaveC
 	return entity.ToChannelCourierDTO(cc), message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-courier/{uid} Channel-Courier-Service GetChannelCourierByUid
+// swagger:operation GET /channel/channel-courier/{uid} Channel-Courier-Service GetChannelCourierByUid
 // Get Detail of Channel Courier
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: ChannelCourierDTO
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ChannelCourierDTO'
 func (s *ChannelCourierServiceImpl) GetChannelCourier(uid string) (*entity.ChannelCourierDTO, message.Message) {
 	logger := log.With(s.logger, "ChannelCourierService", "Get Detail of Channel Courier")
 	cur, err := s.channelCouriers.GetChannelCourierByUID(uid)
@@ -115,14 +138,30 @@ func (s *ChannelCourierServiceImpl) GetChannelCourier(uid string) (*entity.Chann
 	return entity.ToChannelCourierDTO(cur), message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-courier/ Channel-Courier-Service ChannelCourierListRequest
+// swagger:operation GET /channel/channel-courier/ Channel-Courier-Service ChannelCourierListRequest
 // List of Assignment Channel and Courier
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: PaginationResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         pagination:
+//            $ref: '#/definitions/PaginationResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/ChannelCourierDTO'
 func (s *ChannelCourierServiceImpl) ListChannelCouriers(input request.ChannelCourierListRequest) ([]*entity.ChannelCourierDTO, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "ChannelCourierService", "ListChannelCouriers")
 
@@ -150,15 +189,26 @@ func (s *ChannelCourierServiceImpl) ListChannelCouriers(input request.ChannelCou
 	return items, pagination, message.SuccessMsg
 }
 
-// swagger:route PUT /channel/channel-courier/{uid} Channel-Courier-Service UpdateChannelCourierRequest
+// swagger:operation PUT /channel/channel-courier/{uid} Channel-Courier-Service UpdateChannelCourierRequest
 // Update a channel courier by uid
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: errorResponse
-//  201: ChannelCourier
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ChannelCourierDTO'
 func (s *ChannelCourierServiceImpl) UpdateChannelCourier(input request.UpdateChannelCourierRequest) (*entity.ChannelCourierDTO, message.Message) {
 	ret, msg := s.updateChannelCourierInTx(input)
 	return ret, msg
@@ -188,14 +238,24 @@ func (s *ChannelCourierServiceImpl) updateChannelCourierInTx(input request.Updat
 	return entity.ToChannelCourierDTO(cur), message.SuccessMsg
 }
 
-// swagger:route DELETE /channel/channel-courier/{uid} Channel-Courier-Service DeleteChannelCourierByUid
+// swagger:operation DELETE /channel/channel-courier/{uid} Channel-Courier-Service DeleteChannelCourierByUid
 // Delete Channel Courier
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
 func (s *ChannelCourierServiceImpl) DeleteChannelCourier(uid string) message.Message {
 	channelCourier, err := s.channelCouriers.GetChannelCourierByUID(uid)
 	if err != nil {
@@ -235,14 +295,30 @@ func mapInputUIDS(courierServiceUIDs []*request.CourierServiceDTO) []*string {
 	return items
 }*/
 
-// swagger:route GET /channel/{channel-uid}/courier-list Channel-Courier-Service GetChannelCourierList
+// swagger:operation GET /channel/{channel-uid}/courier-list Channel-Courier-Service GetChannelCourierList
 // Get List of Courier and Courier Services By Channel
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: CourierByChannel
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         pagination:
+//            $ref: '#/definitions/PaginationResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/CourierServiceByChannel'
 func (s *ChannelCourierServiceImpl) GetChannelCourierListByChannelUID(input request.GetChannelCourierListRequest) ([]response.CourierServiceByChannelResponse, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "ChannelCourierService", "GetChannelCourierList")
 

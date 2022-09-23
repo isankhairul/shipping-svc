@@ -73,6 +73,7 @@ type CourierCoverageCodeImportResponseBody struct {
 	Response CourierCoverageCodeImportResponse `json:"response"`
 }
 
+// swagger:model ImportCourierCoverageCode
 type CourierCoverageCodeImportResponse struct {
 	FailedData []ImportStatus `json:"failed_data"`
 	Summary    ImportSummary  `json:"summary"`
