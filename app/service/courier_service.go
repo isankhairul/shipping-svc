@@ -49,16 +49,26 @@ func NewCourierService(
 	return &courierServiceImpl{lg, br, pr, pcrp, sprp}
 }
 
-// swagger:route POST /courier/courier Couriers SaveCourierRequest
+// swagger:operation POST /courier/courier Couriers SaveCourierRequest
 // Create a new Courier
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: errorResponse
-//  500: errorResponse
-//  201: Courier
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/Courier'
 func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*entity.Courier, message.Message) {
 	logger := log.With(s.logger, "CourierService", "CreateCourier")
 	courier, err := s.courierRepo.FindByCode(input.Code)
@@ -99,15 +109,26 @@ func (s *courierServiceImpl) CreateCourier(input request.SaveCourierRequest) (*e
 	return result, message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier/{uid} Couriers CourierByUIdParam
+// swagger:operation GET /courier/courier/{uid} Couriers CourierByUIdParam
 // Get Courier
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  200: Courier
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/Courier'
 func (s *courierServiceImpl) GetCourier(uid string) (*entity.Courier, message.Message) {
 	logger := log.With(s.logger, "CourierService", "GetCourier")
 
@@ -124,15 +145,30 @@ func (s *courierServiceImpl) GetCourier(uid string) (*entity.Courier, message.Me
 	return result, message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier Couriers CourierListRequest
+// swagger:operation GET /courier/courier Couriers CourierListRequest
 // Get list of couriers
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: errorResponse
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         pagination:
+//            $ref: '#/definitions/PaginationResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/Courier'
 func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]response.CourierListResponse, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierService", "GetList")
 
@@ -165,15 +201,26 @@ func (s *courierServiceImpl) GetList(input request.CourierListRequest) ([]respon
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route PUT /courier/courier/{uid} Couriers UpdateCourierRequest
+// swagger:operation PUT /courier/courier/{uid} Couriers UpdateCourierRequest
 // Update courier with specifeied id
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/Courier'
 func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCourierRequest) (*entity.Courier, message.Message) {
 	logger := log.With(s.logger, "CourierService", "UpdateCourier")
 
@@ -206,14 +253,24 @@ func (s *courierServiceImpl) UpdateCourier(uid string, input request.UpdateCouri
 	return s.GetCourier(uid)
 }
 
-// swagger:route DELETE /courier/courier/{uid} Couriers DeleteCourierByUIdParam
+// swagger:operation DELETE /courier/courier/{uid} Couriers DeleteCourierByUIdParam
 // Delete courier by uid
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
 func (s *courierServiceImpl) DeleteCourier(uid string) message.Message {
 	logger := log.With(s.logger, "CourierService", "DeleteCourier")
 
@@ -250,15 +307,26 @@ func (s *courierServiceImpl) DeleteCourier(uid string) message.Message {
 	return message.SuccessMsg
 }
 
-// swagger:route POST /courier/courier-services Courier-Services SaveCourierServiceRequest
+// swagger:operation POST /courier/courier-services Courier-Services SaveCourierServiceRequest
 // Add Courier Services
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  201: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/CourierService'
 func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServiceRequest) (*entity.CourierService, message.Message) {
 	logger := log.With(s.logger, "CourierServiceService", "CreateCourierService")
 	//Check exist courier_uid update
@@ -333,15 +401,26 @@ func (s *courierServiceImpl) CreateCourierService(input request.SaveCourierServi
 	return resultInsert, message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier-services/{uid} Courier-Services CourierServiceRequestGetByUid
+// swagger:operation GET /courier/courier-services/{uid} Courier-Services CourierServiceRequestGetByUid
 // Detail Courier Services
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  201: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/CourierServiceDetailDTO'
 func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierServiceDetailDTO, message.Message) {
 	logger := log.With(s.logger, "CourierServiceService", "GetCourierService")
 
@@ -360,15 +439,30 @@ func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierServi
 	return ToCourierServiceDetailDTO(result), message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier-services Courier-Services CourierServiceListRequest
+// swagger:operation GET /courier/courier-services Courier-Services CourierServiceListRequest
 // List of Courier Services
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  201: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         pagination:
+//            $ref: '#/definitions/PaginationResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/CourierServiceListResponse'
 func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceListRequest) ([]response.CourierServiceListResponse, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierServiceService", "GetList")
 
@@ -402,15 +496,26 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route PUT /courier/courier-services/{uid} Courier-Services UpdateCourierServiceRequest
+// swagger:operation PUT /courier/courier-services/{uid} Courier-Services UpdateCourierServiceRequest
 // Update Courier Services
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/CourierService'
 func (s *courierServiceImpl) UpdateCourierService(uid string, input request.UpdateCourierServiceRequest) (*entity.CourierService, message.Message) {
 	logger := log.With(s.logger, "CourierServiceService", "UpdateCourierService")
 	//Check exist courierServiceUId
@@ -501,15 +606,24 @@ func (s *courierServiceImpl) UpdateCourierService(uid string, input request.Upda
 	return result, message.SuccessMsg
 }
 
-// swagger:route DELETE /courier/courier-services/{uid} Courier-Services CourierServiceRequestDeleteByUid
+// swagger:operation DELETE /courier/courier-services/{uid} Courier-Services CourierServiceRequestDeleteByUid
 // Delete Courier Services
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
 func (s *courierServiceImpl) DeleteCourierService(uid string) message.Message {
 	logger := log.With(s.logger, "CourierServiceService", "DeleteCourierService")
 	courierService, err := s.courierServiceRepo.FindByUid(&uid)
@@ -538,14 +652,28 @@ func (s *courierServiceImpl) DeleteCourierService(uid string) message.Message {
 	return message.SuccessMsg
 }
 
-// swagger:route GET /courier/shipping-type Couriers GetCourierShippingType
+// swagger:operation GET /courier/shipping-type Couriers GetCourierShippingType
 // Get List of Shipping Type
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: ShippingTypeList
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/ShippingTypeItem'
 func (s *courierServiceImpl) GetCourierShippingType() ([]response.ShippingTypeItem, message.Message) {
 	logger := log.With(s.logger, "CourierService", "GetCourierShippingType")
 

@@ -36,14 +36,26 @@ func NewCourierCoverageCodeService(
 	return &CourierCoverageCodeServiceImpl{lg, br, pr}
 }
 
-// swagger:route POST /courier/courier-coverage-code/ Courier-Coverage-Code SaveCourierCoverageCodeRequest
+// swagger:operation POST /courier/courier-coverage-code/ Courier-Coverage-Code SaveCourierCoverageCodeRequest
 // Create Courier Coverage Code
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  400: errorResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/CourierCoverageCode'
 func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Create Courier Coverage Code")
 
@@ -94,15 +106,30 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 
 }
 
-// swagger:route GET /courier/courier-coverage-code/ Courier-Coverage-Code CourierCoverageCodeListRequest
+// swagger:operation GET /courier/courier-coverage-code/ Courier-Coverage-Code CourierCoverageCodeListRequest
 // List couriers coverage code
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: PaginationResponse
-//  400: errorResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         pagination:
+//            $ref: '#/definitions/PaginationResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/CourierCoverageCode'
 func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCodeListRequest) ([]*entity.CourierCoverageCode, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Codes")
 
@@ -140,14 +167,24 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route DELETE /courier/courier-coverage-code/{uid} Courier-Coverage-Code DeleteCourierCoverageCodeByIDParam
+// swagger:operation DELETE /courier/courier-coverage-code/{uid} Courier-Coverage-Code DeleteCourierCoverageCodeByIDParam
 // Delete courier coverage code by UID
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
 func (s *CourierCoverageCodeServiceImpl) DeleteCourierCoverageCode(uid string) message.Message {
 	err := s.courierCoverageCodeRepo.DeleteByUid(uid)
 	if err != nil {
@@ -156,14 +193,26 @@ func (s *CourierCoverageCodeServiceImpl) DeleteCourierCoverageCode(uid string) m
 	return message.SuccessMsg
 }
 
-// swagger:route GET /courier/courier-coverage-code/{uid} Courier-Coverage-Code CourierCoverageCodeByIDParam
+// swagger:operation GET /courier/courier-coverage-code/{uid} Courier-Coverage-Code CourierCoverageCodeByIDParam
 // Get Courier Coverage Code by uid
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: CourierCoverageCode
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/CourierCoverageCode'
 func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*entity.CourierCoverageCode, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Get Courier Coverage Code")
 
@@ -178,14 +227,26 @@ func (s *CourierCoverageCodeServiceImpl) GetCourierCoverageCode(uid string) (*en
 	return result, message.SuccessMsg
 }
 
-// swagger:route PUT /courier/courier-coverage-code/{uid} Courier-Coverage-Code UpdateCourierCoverageCodeBody
+// swagger:operation PUT /courier/courier-coverage-code/{uid} Courier-Coverage-Code UpdateCourierCoverageCodeBody
 // Update courier coverage by uid
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/CourierCoverageCode'
 func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request.SaveCourierCoverageCodeRequest) (*entity.CourierCoverageCode, message.Message) {
 	logger := log.With(s.logger, "CourierCoverageCodeService", "UpdateCourierCoverageCode")
 
@@ -241,16 +302,29 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 	return result, message.SuccessMsg
 }
 
-// swagger:route POST /courier/courier-coverage-code/import Courier-Coverage-Code ImportCourierCoverageCodeRequest
+// swagger:operation POST /courier/courier-coverage-code/import Courier-Coverage-Code ImportCourierCoverageCodeRequest
 // Import courier coverage code by CSV file
+//
+// Description :
+//
+// ---
 // consumes:
 // - multipart/form-data
 //
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: ImportCourierCoverageCode
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ImportCourierCoverageCode'
 func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request.ImportCourierCoverageCodeRequest) (*response.CourierCoverageCodeImportResponse, message.Message) {
 
 	logger := log.With(s.logger, "CourierCoverageCodeService", "Import Courier Coverage Codes")

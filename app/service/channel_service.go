@@ -37,15 +37,30 @@ func NewChannelService(
 	return &ChannelServiceImpl{lg, br, pr, scs}
 }
 
-// swagger:route GET /channel/channel-app Channel-Apps Channels
+// swagger:operation GET /channel/channel-app Channel-Apps Channels
 // List of Channel Apps
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  201: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         pagination:
+//            $ref: '#/definitions/PaginationResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/Channel'
 func (s *ChannelServiceImpl) GetList(input request.ChannelListRequest) ([]entity.Channel, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "ChannelService", "GetList")
 
@@ -74,15 +89,26 @@ func (s *ChannelServiceImpl) GetList(input request.ChannelListRequest) ([]entity
 	return result, pagination, message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-app/{uid} Channel-Apps ChannelRequestGetByUid
+// swagger:operation GET /channel/channel-app/{uid} Channel-Apps ChannelRequestGetByUid
 // Get Detail of Channel Apps
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  201: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/Channel'
 func (s *ChannelServiceImpl) GetChannel(uid string) (*entity.Channel, message.Message) {
 	logger := log.With(s.logger, "ChannelService", "GetChannel")
 	result, err := s.channelRepo.FindByUid(&uid)
@@ -98,15 +124,26 @@ func (s *ChannelServiceImpl) GetChannel(uid string) (*entity.Channel, message.Me
 	return result, message.SuccessMsg
 }
 
-// swagger:route POST /channel/channel-app Channel-Apps SaveChannelRequest
+// swagger:operation POST /channel/channel-app Channel-Apps SaveChannelRequest
 // Add Channel App
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  201: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/Channel'
 func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*entity.Channel, message.Message) {
 	logger := log.With(s.logger, "ChannelService", "CreateChannel")
 	//Check exits `channel_code`
@@ -148,15 +185,24 @@ func (s *ChannelServiceImpl) CreateChannel(input request.SaveChannelRequest) (*e
 	return resultInsert, message.SuccessMsg
 }
 
-// swagger:route PUT /channel/channel-app/{uid} Channel-Apps UpdateChannelRequest
+// swagger:operation PUT /channel/channel-app/{uid} Channel-Apps UpdateChannelRequest
 // Update Channel App by uid
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
 func (s *ChannelServiceImpl) UpdateChannel(input request.UpdateChannelRequest) message.Message {
 	uid := input.Uid
 	logger := log.With(s.logger, "ChannelService", "UpdateChannel")
@@ -201,15 +247,24 @@ func (s *ChannelServiceImpl) UpdateChannel(input request.UpdateChannelRequest) m
 	return message.SuccessMsg
 }
 
-// swagger:route DELETE /channel/channel-app/{uid} Channel-Apps ChannelRequestDeleteByUid
+// swagger:operation DELETE /channel/channel-app/{uid} Channel-Apps ChannelRequestDeleteByUid
 // Delete Channel Apps by uid
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
 func (s *ChannelServiceImpl) DeleteChannel(uid string) message.Message {
 	logger := log.With(s.logger, "ChannelService", "DeleteChannel")
 	channel, err := s.channelRepo.FindByUid(&uid)
@@ -241,14 +296,30 @@ func (s *ChannelServiceImpl) DeleteChannel(uid string) message.Message {
 	return message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-status-courier-status Channel-Apps GetChannelCourierStatus
+// swagger:operation GET /channel/channel-status-courier-status Channel-Apps GetChannelCourierStatus
 // Get Channel Courier Status List
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: GetChannelCourierStatusResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         pagination:
+//            $ref: '#/definitions/PaginationResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/GetChannelCourierStatusResponse'
 func (s *ChannelServiceImpl) GetListStatus(input request.GetChannelCourierStatusRequest) ([]response.GetChannelCourierStatusResponseItem, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "ChannelService", "GetListStatus")
 

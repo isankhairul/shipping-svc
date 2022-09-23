@@ -38,14 +38,26 @@ func NewChannelCourierServiceService(
 	return &channelCourierServiceServiceImpl{lg, br, ccr, channelCourierServices, courierServices}
 }
 
-// swagger:route POST /channel/channel-courier-service/ Channel-Courier-Service CreateChannelCourierService
+// swagger:operation POST /channel/channel-courier-service/ Channel-Courier-Service CreateChannelCourierService
 // Create Channel Courier Service
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: ChannelCourierServiceDetailResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ChannelCourierServiceDetail'
 func (s *channelCourierServiceServiceImpl) CreateChannelCourierService(input request.SaveChannelCourierServiceRequest) (*response.ChannelCourierServiceDetail, message.Message) {
 	logger := log.With(s.logger, "ChannelCourierService", "CreateChannelCourierService")
 
@@ -108,14 +120,30 @@ func (s *channelCourierServiceServiceImpl) CreateChannelCourierService(input req
 	return response.NewChannelCourierServiceDetail(*channelCourierService), message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-courier-service/ Channel-Courier-Service GetChannelCourierServiceList
+// swagger:operation GET /channel/channel-courier-service/ Channel-Courier-Service GetChannelCourierServiceList
 // Get List of Channel Courier Service
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: ChannelCourierServiceList
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         pagination:
+//            $ref: '#/definitions/PaginationResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/ChannelCourierServiceItem'
 func (s *channelCourierServiceServiceImpl) ListChannelCouriersService(input request.ChannelCourierServiceListRequest) ([]response.ChannelCourierServiceItem, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "ChannelCourierService", "ListChannelCouriersService")
 	filters := map[string]interface{}{
@@ -138,14 +166,26 @@ func (s *channelCourierServiceServiceImpl) ListChannelCouriersService(input requ
 	return response.NewChannelCourierServiceList(result), paging, message.SuccessMsg
 }
 
-// swagger:route GET /channel/channel-courier-service/{uid} Channel-Courier-Service GetChannelCourierServiceByUID
+// swagger:operation GET /channel/channel-courier-service/{uid} Channel-Courier-Service GetChannelCourierServiceByUID
 // Get Detail of Channel Courier Service
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: ChannelCourierServiceDetailResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ChannelCourierServiceDetail'
 func (s *channelCourierServiceServiceImpl) GetChannelCourierService(uid string) (*response.ChannelCourierServiceDetail, message.Message) {
 	logger := log.With(s.logger, "ChannelCourierService", "GetChannelCourierService")
 
@@ -163,14 +203,26 @@ func (s *channelCourierServiceServiceImpl) GetChannelCourierService(uid string) 
 	return response.NewChannelCourierServiceDetail(*result), message.SuccessMsg
 }
 
-// swagger:route PUT /channel/channel-courier-service/{uid} Channel-Courier-Service UpdateChannelCourierService
+// swagger:operation PUT /channel/channel-courier-service/{uid} Channel-Courier-Service UpdateChannelCourierService
 // Update a channel courier by uid
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: ChannelCourierServiceDetailResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ChannelCourierServiceDetail'
 func (s *channelCourierServiceServiceImpl) UpdateChannelCourierService(input request.UpdateChannelCourierServiceRequest) (*response.ChannelCourierServiceDetail, message.Message) {
 	logger := log.With(s.logger, "ChannelCourierService", "UpdateChannelCourierService")
 
@@ -199,14 +251,24 @@ func (s *channelCourierServiceServiceImpl) UpdateChannelCourierService(input req
 	return s.GetChannelCourierService(input.UID)
 }
 
-// swagger:route DELETE /channel/channel-courier-service/{uid} Channel-Courier-Service DeleteChannelCourierServiceByUID
+// swagger:operation DELETE /channel/channel-courier-service/{uid} Channel-Courier-Service DeleteChannelCourierServiceByUID
 // Delete Courier Service
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
 func (s *channelCourierServiceServiceImpl) DeleteChannelCourierService(uid string) message.Message {
 	logger := log.With(s.logger, "ChannelCourierService", "DeleteChannelCourierService")
 

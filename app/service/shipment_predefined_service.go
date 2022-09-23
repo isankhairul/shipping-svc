@@ -50,15 +50,26 @@ func (s *ShipmentPredefinedServiceImpl) CreateShipmentPredefined(input request.C
 	return predefined, message.SuccessMsg
 }
 
-// swagger:route PUT /other/shipment-predefined/{uid} Courier-Predefined UpdateShipmentPredefinedRequest
+// swagger:operation PUT /other/shipment-predefined/{uid} Courier-Predefined UpdateShipmentPredefinedRequest
 // Update a shipment predefined
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  201: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ShippmentPredefined'
 func (s *ShipmentPredefinedServiceImpl) UpdateShipmentPredefined(input request.UpdateShipmentPredefinedRequest) (*entity.ShippmentPredefined, message.Message) {
 	logger := log.With(s.logger, "ShipmentPredefinedService", "Update")
 
@@ -86,15 +97,30 @@ func (s *ShipmentPredefinedServiceImpl) UpdateShipmentPredefined(input request.U
 	return ret, message.SuccessMsg
 }
 
-// swagger:route GET /other/shipment-predefined Courier-Predefined ListShipmentPredefinedRequest
+// swagger:operation GET /other/shipment-predefined Courier-Predefined ListShipmentPredefinedRequest
 // Get predefined
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  401: SuccessResponse
-//  200: SuccessResponse
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         pagination:
+//            $ref: '#/definitions/PaginationResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/ShippmentPredefined'
 func (s *ShipmentPredefinedServiceImpl) GetAll(input request.ListShipmentPredefinedRequest) ([]*entity.ShippmentPredefined, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "ShipmentPredefinedService", "GetAll")
 
@@ -120,14 +146,26 @@ func (s *ShipmentPredefinedServiceImpl) GetAll(input request.ListShipmentPredefi
 	return items, pagination, message.SuccessMsg
 }
 
-// swagger:route GET /other/shipment-predefined/{uid} Courier-Predefined GetShipmentPredefinedByUID
+// swagger:operation GET /other/shipment-predefined/{uid} Courier-Predefined GetShipmentPredefinedByUID
 // Get shipment predefined by UID
 //
+// Description :
+//
+// ---
 // security:
-// - Bearer:
+// - Bearer: []
 //
 // responses:
-//  200: GetShippmentPredefined
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/ShippmentPredefinedDetail'
 func (s *ShipmentPredefinedServiceImpl) GetByUID(uid string) (*response.ShippmentPredefined, message.Message) {
 	logger := log.With(s.logger, "ShipmentPredefinedService", "GetByUID")
 
