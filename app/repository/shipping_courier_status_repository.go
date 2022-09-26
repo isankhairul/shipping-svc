@@ -35,20 +35,20 @@ func (r *shippingCourierStatusRepositoryImpl) FindByParams(limit int, page int, 
 		Preload("ShippingStatus.Channel").
 		Preload("Courier").
 		Preload("ShippingStatus").
-		Joins("ShippingStatus").
-		Joins("INNER JOIN channel ch ON ch.ID = \"ShippingStatus\".channel_id").
-		Joins("Courier")
+		Joins("INNER JOIN shipping_status ss ON ss.id = shipping_courier_status.shipping_status_id").
+		Joins("INNER JOIN channel ch ON ch.ID = ss.channel_id").
+		Joins("INNER JOIN courier co ON co.id = shipping_courier_status.courier_id")
 
 	for k, v := range filters {
 
 		if util.IsSliceAndNotEmpty(v) {
 
 			switch k {
-			case "channel_name", "courier_name":
+			case "channel_name", "courier_name", "channel_code":
 				query = query.Where(fmt.Sprint(k, " IN ?"), v.([]string))
 
 			case "status_code":
-				query = query.Where("\"ShippingStatus\".status_code IN ?", v.([]string))
+				query = query.Where("ss.status_code IN ?", v.([]string))
 
 			case "status_name":
 				query = query.Where(global.AddLike(k, v.([]string)))
