@@ -1162,6 +1162,10 @@ definitions:
     x-go-package: go-klikdokter/app/model/base
   GetChannelCourierStatusResponse:
     properties:
+      channel_code:
+        description: Channel code
+        type: string
+        x-go-name: ChannelCode
       channel_name:
         description: Channel name
         type: string
@@ -3243,7 +3247,7 @@ paths:
       description: 'Description :'
       operationId: GetChannelCourierStatus
       parameters:
-      - description: 'Filter : {"channel_name":["value","value"],"courier_name":["value","value"],"status_code":["value","value"],
+      - description: 'Filter : {"channel_code":["value","value"],"channel_name":["value","value"],"courier_name":["value","value"],"status_title":["value","value"],
           "status_code":["value","value"], "courier_status":["value","value"]}'
         in: query
         name: filter

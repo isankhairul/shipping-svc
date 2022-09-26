@@ -324,6 +324,7 @@ func (s *ChannelServiceImpl) GetListStatus(input request.GetChannelCourierStatus
 	logger := log.With(s.logger, "ChannelService", "GetListStatus")
 
 	filters := map[string]interface{}{
+		"channel_code":   input.Filters.ChannelCode,
 		"channel_name":   input.Filters.ChannelName,
 		"courier_name":   input.Filters.CourierName,
 		"status_code":    input.Filters.StatusCode,

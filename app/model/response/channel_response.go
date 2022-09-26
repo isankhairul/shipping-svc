@@ -13,6 +13,9 @@ type GetChannelCourierStatusResponse struct {
 
 // swagger:model GetChannelCourierStatusResponse
 type GetChannelCourierStatusResponseItem struct {
+	// Channel code
+	ChannelCode string `json:"channel_code"`
+
 	// Channel name
 	ChannelName string `json:"channel_name"`
 
@@ -38,6 +41,7 @@ func NewGetChannelCourierStatusResponseItem(input entity.ShippingCourierStatus) 
 
 		if input.ShippingStatus.Channel != nil {
 			resp.ChannelName = input.ShippingStatus.Channel.ChannelName
+			resp.ChannelCode = input.ShippingStatus.Channel.ChannelCode
 		}
 
 		resp.StatusCode = input.ShippingStatus.StatusCode
