@@ -70,7 +70,7 @@ func EncodeResponseHTTP(ctx context.Context, w http.ResponseWriter, resp interfa
 		w.WriteHeader(http.StatusUnauthorized)
 	case message.ErrDB.Code, message.ErrBadRouting.Code, message.ErrReq.Code:
 		w.WriteHeader(http.StatusBadRequest)
-	case message.SuccessMsg.Code:
+	case message.SuccessMsg.Code, message.ShippingProviderMsg.Code:
 		w.WriteHeader(http.StatusOK)
 	default:
 		w.WriteHeader(http.StatusInternalServerError)

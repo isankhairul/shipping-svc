@@ -163,9 +163,8 @@ func (h *shipper) CreateOrder(req *request.CreateOrderShipper) (*response.Create
 	}
 
 	if response.Metadata.HTTPStatusCode != 200 && response.Metadata.HTTPStatusCode != 201 {
-		return nil, errors.New(response.Metadata.HTTPStatus)
+		return nil, errors.New(response.Metadata.Errors[0].Message)
 	}
-
 	return &response, nil
 }
 
@@ -261,10 +260,8 @@ func (h *shipper) CreateDelivery(shipperOrderID string, courierService *entity.C
 	logger := log.With(h.Logger, "Shipper", "CreateDelivery")
 	resp := &response.CreateDeliveryThirdPartyData{}
 	order := &response.CreateOrderShipperResponse{Data: response.CreateOrderShipper{OrderID: shipperOrderID}}
-
 	var err error
 	if len(shipperOrderID) == 0 {
-
 		input := request.GetShippingRateRequest{
 			Origin: request.AreaDetailPayload{
 				CountryCode: req.Origin.CountryCode,
@@ -292,7 +289,9 @@ func (h *shipper) CreateDelivery(shipperOrderID string, courierService *entity.C
 
 		if err != nil {
 			_ = level.Error(logger).Log("h.CreateOrder", err.Error())
-			return nil, message.ErrCreateOrder
+			msg = message.ShippingProviderMsg
+			msg.Message = err.Error()
+			return nil, msg
 		}
 
 		resp.Insurance = order.Data.Courier.UseInsurance

@@ -477,7 +477,7 @@ func TestCreateDeliveryThridPartyCourierInvalid(t *testing.T) {
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrInvalidCourierCode, msg)
 }
@@ -583,7 +583,7 @@ func TestCreateDeliveryShipperFailed(t *testing.T) {
 	shipper.Mock.On("CreateDelivery", mock.Anything).Return(order, message.FailedMsg).Once()
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.FailedMsg, msg)
 }

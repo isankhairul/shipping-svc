@@ -39,10 +39,11 @@ type MetadataResponse struct {
 }
 
 type ShipperMetaData struct {
-	Path           string `json:"path"`
-	HTTPStatusCode int    `json:"http_status_code"`
-	HTTPStatus     string `json:"http_status"`
-	Timestamp      uint64 `json:"timestamp"`
+	Path           string            `json:"path"`
+	HTTPStatusCode int               `json:"http_status_code"`
+	HTTPStatus     string            `json:"http_status"`
+	Timestamp      uint64            `json:"timestamp"`
+	Errors         []message.Message `json:"errors"`
 }
 
 type ShipperPagination struct {

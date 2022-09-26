@@ -476,7 +476,7 @@ func (s *shippingServiceImpl) CreateDelivery(input *request.CreateDelivery) (*re
 
 		orderData, msg := s.createDeliveryThirdParty(orderShipping.BookingID, courierService, input)
 		if msg != message.SuccessMsg {
-			return nil, msg
+			return &response.CreateDelivery{}, msg
 		}
 
 		if orderShipping.ID == 0 {
@@ -488,6 +488,7 @@ func (s *shippingServiceImpl) CreateDelivery(input *request.CreateDelivery) (*re
 			orderShipping.BookingID = orderData.BookingID
 		}
 
+		orderShipping.PickupCode = orderData.PickUpCode
 		orderShipping.Status = orderData.Status
 
 	case shipping_provider.InternalCourier:
