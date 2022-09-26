@@ -63,6 +63,7 @@ var ErrFormatDateYYYYMMDD = Message{Code: 34602, Message: "date format must be Y
 var ErrCancelPickup = Message{Code: 34602, Message: "failed when trying to cancel pickup"}
 var ErrCantCancelOrderShipping = Message{Code: 34602, Message: "can't cancel this order"}
 var ErrCantCancelOrderCourierService = Message{Code: 34602, Message: "courier service is not cancelable"}
+var ShippingProviderMsg = Message{Code: 34602, Message: ""}
 
 //channel : 342xx
 var ErrChannelNotFound = Message{Code: 34201, Message: "Channel not found"}

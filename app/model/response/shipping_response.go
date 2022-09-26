@@ -198,8 +198,8 @@ type CreateDeliveryResponse struct {
 
 //swagger:model CreateDeliveryResponse
 type CreateDelivery struct {
-	OrderShippingUID string `json:"order_shipping_uid"`
-	OrderNoAPI       string `json:"order_no_api"`
+	OrderShippingUID string `json:"order_shipping_uid,omitempty"`
+	OrderNoAPI       string `json:"order_no_api,omitempty"`
 }
 
 type CreateDeliveryThirdPartyData struct {
@@ -253,6 +253,7 @@ type GetOrderShippingList struct {
 	ShippingStatus     string `gorm:"column:shipping_status" json:"shipping_status"`
 	ShippingStatusName string `gorm:"column:shipping_status_name" json:"shipping_status_name"`
 }
+
 //swagger:response GetOrderShippingDetail
 type GetOrderShippingDetailResponse struct {
 	//in:body
