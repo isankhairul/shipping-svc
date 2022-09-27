@@ -69,7 +69,7 @@ func (h *shipper) GetPricingDomestic(req *request.GetPricingDomestic) (*response
 	}
 
 	if response.Metadata.HTTPStatusCode != 200 {
-		return nil, errors.New(response.Metadata.HTTPStatus)
+		return nil, errors.New(response.Metadata.Errors[0].Message)
 	}
 
 	return &response, nil
@@ -120,19 +120,22 @@ func (h *shipper) GetShippingRate(courierID *uint64, input *request.GetShippingR
 	//if origin or destination not found
 	if msg.Code != message.SuccessMsg.Code {
 		return &response.ShippingRateCommonResponse{
-			Rate: make(map[string]response.ShippingRateData),
-			Msg:  msg,
+			Rate:       make(map[string]response.ShippingRateData),
+			CourierMsg: map[string]message.Message{ShipperCode: msg},
 		}, errors.New(msg.Message)
 	}
 
-	payload := request.NewGetPricingDomesticRequest(origin, destination, input)
+	_ = request.NewGetPricingDomesticRequest(origin, destination, input)
 
-	shipperResponse, err := h.GetPricingDomestic(payload)
+	shipperResponse, err := h.GetPricingDomestic(&request.GetPricingDomestic{})
 
 	//if failed to get pricing from shipper api
 	if err != nil {
+		msg = message.ShippingProviderMsg
+		msg.Message = err.Error()
 		return &response.ShippingRateCommonResponse{
-			Rate: make(map[string]response.ShippingRateData),
+			Rate:       make(map[string]response.ShippingRateData),
+			CourierMsg: map[string]message.Message{ShipperCode: msg},
 		}, err
 	}
 

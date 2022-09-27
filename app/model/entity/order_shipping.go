@@ -133,10 +133,10 @@ func (o *OrderShipping) FromCreateDeliveryRequest(req *request.CreateDelivery) {
 }
 func (o *OrderShipping) AddHistoryStatus(s *ShippingCourierStatus, note string) {
 	o.OrderShippingHistory = append(o.OrderShippingHistory, OrderShippingHistory{
-		OrderShippingID:  o.ID,
-		ShippingStatusID: s.ID,
-		StatusCode:       s.StatusCode,
-		Note:             note,
+		OrderShippingID:         o.ID,
+		ShippingCourierStatusID: s.ID,
+		StatusCode:              s.StatusCode,
+		Note:                    note,
 		BaseIDModel: base.BaseIDModel{
 			CreatedBy: o.UpdatedBy,
 		},

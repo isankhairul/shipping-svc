@@ -150,9 +150,9 @@ func (g *GetPricingDomestic) ToShippingRate() *ShippingRateCommonResponse {
 	}
 
 	return &ShippingRateCommonResponse{
-		Rate:    data,
-		Summary: make(map[string]ShippingRateSummary),
-		Msg:     message.SuccessMsg,
+		Rate:       data,
+		Summary:    make(map[string]ShippingRateSummary),
+		CourierMsg: make(map[string]message.Message),
 	}
 }
 

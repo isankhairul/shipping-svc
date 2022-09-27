@@ -1,6 +1,8 @@
 package response
 
 import (
+	"fmt"
+	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
 	"time"
@@ -85,29 +87,37 @@ type GetShippingRateResponseList struct {
 }
 
 type ShippingRateCommonResponse struct {
-	Rate    map[string]ShippingRateData
-	Summary map[string]ShippingRateSummary
-	Msg     message.Message
+	Rate       map[string]ShippingRateData
+	Summary    map[string]ShippingRateSummary
+	CourierMsg map[string]message.Message
 }
 
-func (s *ShippingRateCommonResponse) Add(data map[string]ShippingRateData) {
-	for k, v := range data {
+func (s *ShippingRateCommonResponse) Add(data *ShippingRateCommonResponse) {
+	for k, v := range data.Rate {
 		s.Rate[k] = v
+	}
+
+	for k, v := range data.CourierMsg {
+		s.CourierMsg[k] = v
 	}
 }
 
-func (s *ShippingRateCommonResponse) FindShippingCode(shippingCode string) ShippingRateData {
-	data, ok := s.Rate[shippingCode]
+func (s *ShippingRateCommonResponse) FindShippingCode(courierCode, shippingCode string) ShippingRateData {
+	courierShippingCode := global.CourierShippingCodeKey(courierCode, shippingCode)
 
-	if s.Msg.Code != message.SuccessMsg.Code && s.Msg.Code != 0 {
+	//check message from shipping provider
+	msg, ok := s.CourierMsg[courierCode]
+	if ok && msg != message.SuccessMsg {
 		return ShippingRateData{
 			AvailableCode: 400,
 			Error: GetShippingRateError{
-				Message: s.Msg.Message,
+				ID:      fmt.Sprint(msg.Code),
+				Message: msg.Message,
 			},
 		}
 	}
 
+	data, ok := s.Rate[courierShippingCode]
 	if !ok {
 		return ShippingRateData{
 			AvailableCode: 400,
@@ -116,6 +126,7 @@ func (s *ShippingRateCommonResponse) FindShippingCode(shippingCode string) Shipp
 			},
 		}
 	}
+
 	return data
 }
 
@@ -182,6 +193,17 @@ func (s *ShippingRateData) SetMessage(isErr bool, msg message.Message) {
 
 	s.AvailableCode = 400
 	s.Error = GetShippingRateError{Message: msg.Message}
+}
+
+func (s *GetShippingRateService) SetMessage(isErr bool, msg message.Message) {
+	if !isErr {
+		s.AvailableCode = 200
+		s.Error = GetShippingRateError{ID: fmt.Sprint(message.SuccessMsg.Code), Message: message.SuccessMsg.Message}
+		return
+	}
+
+	s.AvailableCode = 400
+	s.Error = GetShippingRateError{ID: fmt.Sprint(msg.Code), Message: msg.Message}
 }
 
 type ShippingRateSummary struct {
@@ -262,6 +284,8 @@ type GetOrderShippingDetailResponse struct {
 
 //swagger:model GetOrderShippingDetailResponse
 type GetOrderShippingDetail struct {
+	//example: hh6845hjjisdfhidsf
+	ChannelUID string `json:"channel_uid"`
 	//example: kd
 	ChannelCode string `json:"channel_code"`
 	//example: Klikdokter
@@ -371,4 +395,8 @@ type GetOrderShippingDetailHistory struct {
 	Status string `json:"status"`
 	//example: Pickup Request with Airwaybill No : 1077400000002
 	Notes string `json:"notes"`
+	//example: username
+	CreatedBy string `json:"created_by"`
+	//example: request_pickup
+	StatusName string `json:"status_name"`
 }

@@ -100,8 +100,10 @@ func TestGetShippingRate_InternalSuccess(t *testing.T) {
 
 	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
 		Return([]entity.ChannelCourierServiceForShippingRate{
-			{CourierID: 1, CourierCode: "aa", CourierTypeCode: "internal"},
-			{CourierID: 2, CourierCode: "bb", CourierTypeCode: "merchant"},
+			{CourierID: 1, CourierCode: "aa", CourierTypeCode: "internal",
+				CourierStatus: 1, CourierServiceStatus: 1, ChannelCourierStatus: 1, ChannelCourierServiceStatus: 1, HidePurpose: 0, PrescriptionAllowed: 1},
+			{CourierID: 2, CourierCode: "bb", CourierTypeCode: "merchant",
+				CourierStatus: 1, CourierServiceStatus: 1, ChannelCourierStatus: 1, ChannelCourierServiceStatus: 1, HidePurpose: 0, PrescriptionAllowed: 1},
 		}).Once()
 
 	courierCoverageCodeRepository.Mock.On("FindInternalAndMerchantCourierCoverage").Return(map[string]bool{"aa": true, "bb": true}).Twice()
@@ -124,8 +126,10 @@ func TestGetShippingRate_Internal_CoverageNotExistSuccess(t *testing.T) {
 
 	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
 		Return([]entity.ChannelCourierServiceForShippingRate{
-			{CourierID: 1, CourierCode: "aa", CourierTypeCode: "internal"},
-			{CourierID: 2, CourierCode: "bb", CourierTypeCode: "merchant"},
+			{CourierID: 1, CourierCode: "aa", CourierTypeCode: "internal",
+				CourierStatus: 1, CourierServiceStatus: 1, ChannelCourierStatus: 1, ChannelCourierServiceStatus: 1, HidePurpose: 0, PrescriptionAllowed: 1},
+			{CourierID: 2, CourierCode: "bb", CourierTypeCode: "merchant",
+				CourierStatus: 1, CourierServiceStatus: 1, ChannelCourierStatus: 1, ChannelCourierServiceStatus: 1, HidePurpose: 0, PrescriptionAllowed: 1},
 		}).Once()
 
 	courierCoverageCodeRepository.Mock.On("FindInternalAndMerchantCourierCoverage").Return(map[string]bool{"aa": true}).Twice()
@@ -148,8 +152,10 @@ func TestGetShippingRate_Internal_WieghtExceedSuccess(t *testing.T) {
 
 	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
 		Return([]entity.ChannelCourierServiceForShippingRate{
-			{CourierID: 1, CourierCode: "aa", CourierTypeCode: "internal", MaxWeight: 1},
-			{CourierID: 2, CourierCode: "bb", CourierTypeCode: "merchant"},
+			{CourierID: 1, CourierCode: "aa", CourierTypeCode: "internal", MaxWeight: 1,
+				CourierStatus: 1, CourierServiceStatus: 1, ChannelCourierStatus: 1, ChannelCourierServiceStatus: 1, HidePurpose: 0, PrescriptionAllowed: 1},
+			{CourierID: 2, CourierCode: "bb", CourierTypeCode: "merchant",
+				CourierStatus: 1, CourierServiceStatus: 1, ChannelCourierStatus: 1, ChannelCourierServiceStatus: 1, HidePurpose: 0, PrescriptionAllowed: 1},
 		}).Once()
 
 	courierCoverageCodeRepository.Mock.On("FindInternalAndMerchantCourierCoverage").Return(map[string]bool{"aa": true}).Twice()
@@ -170,7 +176,8 @@ func TestGetShippingRate_ShipperFailed(t *testing.T) {
 		Return(entity.Channel{BaseIDModel: base.BaseIDModel{UID: "1"}}).Once()
 
 	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
-		Return([]entity.ChannelCourierServiceForShippingRate{{CourierCode: shipping_provider.ShipperCode}}).Once()
+		Return([]entity.ChannelCourierServiceForShippingRate{{CourierCode: shipping_provider.ShipperCode,
+			CourierStatus: 1, CourierServiceStatus: 1, ChannelCourierStatus: 1, ChannelCourierServiceStatus: 1, HidePurpose: 0, PrescriptionAllowed: 1}}).Once()
 
 	redis.Mock.On("GetJsonStruct", mock.Anything).
 		Return(nil).Once()
@@ -200,7 +207,7 @@ func TestGetShippingRate_CourierServiceNotFound(t *testing.T) {
 
 	result, msg := shippingService.GetShippingRate(input)
 	assert.NotNil(t, result)
-	assert.Equal(t, message.ErrCourierServiceNotFound, msg, codeIsNotCorrect)
+	assert.Equal(t, message.CourierServiceNotFoundMsg, msg, codeIsNotCorrect)
 }
 
 func TestGetShippingRate_ChannelNotFound(t *testing.T) {

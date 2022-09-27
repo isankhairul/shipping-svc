@@ -133,31 +133,35 @@ func (s *shippingServiceImpl) GetShippingRate(input request.GetShippingRateReque
 
 	if err != nil {
 		_ = level.Error(logger).Log("s.courierServiceRepo.FindCourierServiceByChannelAndUIDs", err.Error())
-		return []response.GetShippingRateResponse{}, message.ErrCourierServiceNotFound
+		return []response.GetShippingRateResponse{}, message.CourierServiceNotFoundMsg
 	}
 
 	if len(courierServices) == 0 {
-		return []response.GetShippingRateResponse{}, message.ErrCourierServiceNotFound
+		return []response.GetShippingRateResponse{}, message.CourierServiceNotFoundMsg
 	}
 
 	price := s.getAllCourierPrice(courierServices, &input)
 
-	return toGetShippingRateResponseList(courierServices, price), message.SuccessMsg
+	return toGetShippingRateResponseList(&input, courierServices, price), message.SuccessMsg
 }
 
 // function to populate price data
 func (s *shippingServiceImpl) getAllCourierPrice(courierServices []entity.ChannelCourierServiceForShippingRate, req *request.GetShippingRateRequest) *response.ShippingRateCommonResponse {
 	var resp = &response.ShippingRateCommonResponse{
-		Rate:    make(map[string]response.ShippingRateData),
-		Summary: map[string]response.ShippingRateSummary{},
+		Rate:       make(map[string]response.ShippingRateData),
+		Summary:    make(map[string]response.ShippingRateSummary),
+		CourierMsg: make(map[string]message.Message),
 	}
 
-	// Populate requested courier list distinct
+	// Populate valid courier list distinct
 	var courierList []entity.Courier
 	courier := make(map[uint64]string)
 	for _, v := range courierServices {
-		_, ok := courier[v.CourierID]
-		if !ok {
+
+		_, isValid := v.IsValidCourier()
+		_, isExist := courier[v.CourierID]
+
+		if isValid && !isExist {
 			courier[v.CourierID] = v.CourierCode
 			courierList = append(courierList, entity.Courier{
 				BaseIDModel: base.BaseIDModel{
@@ -176,8 +180,8 @@ func (s *shippingServiceImpl) getAllCourierPrice(courierServices []entity.Channe
 	// Get third party price if any
 	thirdPartyPrice := s.getThirdPartyPrice(courierList, req)
 
-	resp.Add(internalAndMerchantPrice.Rate)
-	resp.Add(thirdPartyPrice.Rate)
+	resp.Add(internalAndMerchantPrice)
+	resp.Add(thirdPartyPrice)
 	return resp
 }
 
@@ -192,6 +196,7 @@ func (s *shippingServiceImpl) internalAndMerchantPrice(courierList []entity.Cour
 		if v.CourierType != shipping_provider.InternalCourier && v.CourierType != shipping_provider.MerchantCourier {
 			continue
 		}
+
 		courierIDs = append(courierIDs, v.ID)
 	}
 
@@ -251,10 +256,6 @@ func (s *shippingServiceImpl) internalAndMerchantPrice(courierList []entity.Cour
 		isErr := !(originOK && destinationOK)
 		value.SetMessage(isErr, message.ErrCourierCoverageCodeUidNotExist)
 
-		// check if weight exceeds the maximum weight allowed
-		isErr = finalWeight > v.MaxWeight && v.MaxWeight > 0
-		value.SetMessage(isErr, message.ErrWeightExceeds)
-
 		price.Rate[key] = value
 	}
 
@@ -263,17 +264,16 @@ func (s *shippingServiceImpl) internalAndMerchantPrice(courierList []entity.Cour
 
 // function to get shipping rate from third party shipping provider
 func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input *request.GetShippingRateRequest) *response.ShippingRateCommonResponse {
-	logger := log.With(s.logger, "ShippingService", "getAllCourierPrice")
 	var resp = &response.ShippingRateCommonResponse{
-		Rate:    make(map[string]response.ShippingRateData),
-		Summary: map[string]response.ShippingRateSummary{},
+		Rate:       make(map[string]response.ShippingRateData),
+		Summary:    map[string]response.ShippingRateSummary{},
+		CourierMsg: map[string]message.Message{},
 	}
 
 	for _, v := range courier {
 		var (
-			couriePrice *response.ShippingRateCommonResponse
-			err         error
-			log         string
+			courierPrice *response.ShippingRateCommonResponse
+			err          error
 		)
 
 		if v.CourierType != shipping_provider.ThirPartyCourier {
@@ -292,27 +292,26 @@ func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input
 			input.TotalHeight,
 		)
 
-		_ = s.redis.GetJsonStruct(key, &couriePrice)
+		_ = s.redis.GetJsonStruct(key, &courierPrice)
 		// if cache doesn't exist
-		if couriePrice == nil {
+		if courierPrice == nil {
 			switch v.Code {
 			case shipping_provider.ShipperCode:
-				couriePrice, err = s.shipper.GetShippingRate(&v.ID, input)
+				courierPrice, err = s.shipper.GetShippingRate(&v.ID, input)
 			default:
+				resp.CourierMsg[v.Code] = message.InvalidCourierCodeMsg
 				continue
 			}
 
-			if err != nil {
-				_ = level.Error(logger).Log(log, err.Error())
-				continue
+			if err == nil {
+				// save price to redis cache
+				s.redis.SetJsonStruct(key, courierPrice, viper.GetInt("cache.redis.expired-in-minute.shipping-rate"))
 			}
 
-			// save price to redis cache
-			s.redis.SetJsonStruct(key, couriePrice, viper.GetInt("cache.redis.expired-in-minute.shipping-rate"))
 		}
 
-		if couriePrice != nil {
-			resp.Add(couriePrice.Rate)
+		if courierPrice != nil {
+			resp.Add(courierPrice)
 		}
 	}
 
@@ -320,13 +319,12 @@ func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input
 }
 
 // function to generate ShippingRateResponseList
-func toGetShippingRateResponseList(input []entity.ChannelCourierServiceForShippingRate, price *response.ShippingRateCommonResponse) []response.GetShippingRateResponse {
+func toGetShippingRateResponseList(req *request.GetShippingRateRequest, courierServices []entity.ChannelCourierServiceForShippingRate, price *response.ShippingRateCommonResponse) []response.GetShippingRateResponse {
 	shippingTypeMap := make(map[string][]response.GetShippingRateService)
 	var resp []response.GetShippingRateResponse
 
-	for _, v := range input {
-		courierShippingCode := global.CourierShippingCodeKey(v.CourierCode, v.ShippingCode)
-		p := price.FindShippingCode(courierShippingCode)
+	for _, v := range courierServices {
+		p := price.FindShippingCode(v.CourierCode, v.ShippingCode)
 		service := response.GetShippingRateService{
 			Courier: response.GetShippingRateCourir{
 				CourierUID:      v.CourierUID,
@@ -358,6 +356,10 @@ func toGetShippingRateResponseList(input []entity.ChannelCourierServiceForShippi
 			MustUseInsurance:        p.MustUseInsurance,
 			InsuranceApplied:        p.InsuranceApplied,
 			Distance:                p.Distance,
+		}
+
+		if msg := v.Validate(&service.FinalWeight, &req.ContainPrescription); msg != message.SuccessMsg {
+			service.SetMessage(true, msg)
 		}
 
 		price.SummaryPerShippingType(v.ShippingTypeCode, p.TotalPrice, v.EtdMax, v.EtdMin)
@@ -753,10 +755,13 @@ func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *r
 	}
 
 	resp := &response.GetOrderShippingDetail{}
+	resp.ChannelUID = orderShipping.Channel.UID
 	resp.ChannelCode = orderShipping.Channel.ChannelCode
 	resp.ChannelName = orderShipping.Channel.ChannelName
 	resp.CourierName = orderShipping.Courier.CourierName
 	resp.CourierServiceName = orderShipping.CourierService.ShippingName
+	resp.OrderShippingUID = orderShipping.UID
+	resp.OrderShippingDate = orderShipping.OrderShippingDate
 	resp.Airwaybill = orderShipping.Airwaybill
 	resp.BookingID = orderShipping.BookingID
 	resp.OrderNo = orderShipping.OrderNo
@@ -808,9 +813,11 @@ func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *r
 
 	for _, v := range orderShipping.OrderShippingHistory {
 		resp.OrderShippingHistory = append(resp.OrderShippingHistory, response.GetOrderShippingDetailHistory{
-			CreatedAt: v.CreatedAt,
-			Status:    v.StatusCode,
-			Notes:     v.Note,
+			CreatedAt:  v.CreatedAt,
+			Status:     v.StatusCode,
+			Notes:      v.Note,
+			CreatedBy:  v.CreatedBy,
+			StatusName: v.ShippingCourierStatus.ShippingStatus.StatusName,
 		})
 	}
 

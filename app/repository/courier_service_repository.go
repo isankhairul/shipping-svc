@@ -251,6 +251,12 @@ func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid stri
 			"cs.insurance AS use_insurance",
 			"channel_courier_service.price_internal AS price",
 			"cs.max_weight AS max_weight",
+			"c.status AS courier_status",
+			"cs.status AS courier_service_status",
+			"cc.status AS channel_courier_status",
+			"channel_courier_service.status AS channel_courier_service_status",
+			"c.hide_purpose AS hide_purpose",
+			"cs.prescription_allowed AS prescription_allowed",
 		).
 		Joins("INNER JOIN channel_courier cc ON cc.id = channel_courier_service.channel_courier_id").
 		Joins("INNER JOIN courier_service cs ON cs.id = channel_courier_service.courier_service_id").
@@ -259,22 +265,21 @@ func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid stri
 		Joins("INNER JOIN shippment_predefined ct ON ct.code = c.courier_type AND ct.type = 'courier_type'").
 		Joins("INNER JOIN shippment_predefined st ON st.code = cs.shipping_type AND st.type = 'shipping_type'").
 		Where("ch.uid = ?", channel_uid).
-		Where("channel_courier_service.status = 1").
-		Where("cc.status = 1").
-		Where("c.status = 1").
-		Where("cs.status = 1").
-		Where("c.hide_purpose = 0")
+		Where("cs.uid IN ?", uids)
+		/*
+				Where("channel_courier_service.status = 1").
+				Where("cc.status = 1").
+				Where("c.status = 1").
+				Where("cs.status = 1").
+				Where("c.hide_purpose = 0")
 
-	if containPrescription {
-		query = query.Where("cs.prescription_allowed = 1")
-	}
+			if containPrescription {
+				query = query.Where("cs.prescription_allowed = 1")
+			}
+		*/
 
 	if shippingType != "" {
 		query = query.Where("cs.shipping_type = ?", shippingType)
-	}
-
-	if len(uids) > 0 {
-		query = query.Where("cs.uid IN ?", uids)
 	}
 
 	err := query.Find(&courierService).Error
