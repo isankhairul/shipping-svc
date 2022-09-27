@@ -18,8 +18,3 @@ type ShippingCourierStatus struct {
 func (ShippingCourierStatus) TableName() string {
 	return "shipping_courier_status"
 }
-
-// id bigserial Y Primary Key , autoincrement
-// shipping_status_id bigint Y shipping_status.id
-// status_code varchar(100) Y
-// status_courier text Y JSON value of third party

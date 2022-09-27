@@ -63,7 +63,6 @@ var ErrFormatDateYYYYMMDD = Message{Code: 34602, Message: "date format must be Y
 var ErrCancelPickup = Message{Code: 34602, Message: "failed when trying to cancel pickup"}
 var ErrCantCancelOrderShipping = Message{Code: 34602, Message: "can't cancel this order"}
 var ErrCantCancelOrderCourierService = Message{Code: 34602, Message: "courier service is not cancelable"}
-var ShippingProviderMsg = Message{Code: 34602, Message: ""}
 
 //channel : 342xx
 var ErrChannelNotFound = Message{Code: 34201, Message: "Channel not found"}
@@ -92,4 +91,18 @@ var (
 	ErrChannelHasCourierAssigned      = Message{Code: 209007, Message: "Can not delete Channel that has already assigned to Courier"}
 	ErrChannelHasChildShippingStatus  = Message{Code: 209008, Message: "Can not delete Channel that has one or more Shipping Status"}
 	ErrChannelCourierHasChild         = Message{Code: 209009, Message: "Can not delete Channel Courier that has one or more Channel Courier Service(s)"}
+)
+
+var (
+	ShippingProviderMsg               = Message{Code: 209002, Message: ""}
+	CourierNotActiveMsg               = Message{Code: 209002, Message: "courier is not active"}
+	CourierServiceNotActiveMsg        = Message{Code: 209002, Message: "courier service is not active"}
+	ChannelCourierNotActiveMsg        = Message{Code: 209002, Message: "channel courier is not active"}
+	ChannelCourierServiceNotActiveMsg = Message{Code: 209002, Message: "channel courier service is not active"}
+	CourierHiddenInPurposeMsg         = Message{Code: 209002, Message: "courier is hidden in purpose"}
+	PrescriptionNotAllowedMsg         = Message{Code: 209002, Message: "prescription is not allowed"}
+	WeightExceedsmsg                  = Message{Code: 209002, Message: "final weight exceeds the maximum weight allowed"}
+	InvalidCourierTypeMsg             = Message{Code: 209002, Message: "courier type is not valid"}
+	InvalidCourierCodeMsg             = Message{Code: 209002, Message: "courier code is not valid"}
+	CourierServiceNotFoundMsg         = Message{Code: 209002, Message: "courier service not found"}
 )

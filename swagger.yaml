@@ -1205,6 +1205,10 @@ definitions:
         example: Klikdokter
         type: string
         x-go-name: ChannelName
+      channel_uid:
+        example: hh6845hjjisdfhidsf
+        type: string
+        x-go-name: ChannelUID
       courier_name:
         example: Shipper
         type: string
@@ -1376,6 +1380,10 @@ definitions:
         format: date-time
         type: string
         x-go-name: CreatedAt
+      created_by:
+        example: username
+        type: string
+        x-go-name: CreatedBy
       notes:
         example: 'Pickup Request with Airwaybill No : 1077400000002'
         type: string
@@ -1384,6 +1392,10 @@ definitions:
         example: request_pickup
         type: string
         x-go-name: Status
+      status_name:
+        example: request_pickup
+        type: string
+        x-go-name: StatusName
     type: object
     x-go-name: GetOrderShippingDetailHistory
     x-go-package: go-klikdokter/app/model/response

@@ -35,6 +35,11 @@ func DbInit(logger log.Logger) (*gorm.DB, error) {
 	_ = db.AutoMigrate(&entity.ChannelCourierService{})
 	_ = db.AutoMigrate(&entity.ShippingStatus{})
 	_ = db.AutoMigrate(&entity.ShippingCourierStatus{})
+
+	if db.Migrator().HasColumn(&entity.OrderShippingHistory{}, "shipping_status_id") {
+		_ = db.Migrator().RenameColumn(&entity.OrderShippingHistory{}, "shipping_status_id", "shipping_courier_status_id")
+	}
+
 	_ = db.AutoMigrate(&entity.OrderShipping{})
 	_ = db.AutoMigrate(&entity.OrderShippingItem{})
 	_ = db.AutoMigrate(&entity.OrderShippingHistory{})

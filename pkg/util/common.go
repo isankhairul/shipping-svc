@@ -1,6 +1,8 @@
 package util
 
-import "reflect"
+import (
+	"reflect"
+)
 
 func IsSliceAndNotEmpty(input interface{}) bool {
 	if reflect.ValueOf(input).Kind() == reflect.Slice {

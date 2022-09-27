@@ -100,6 +100,7 @@ func (r *orderShippingRepository) FindByUID(uid string) (*entity.OrderShipping, 
 		Preload("OrderShippingItem").
 		Preload("CourierService").
 		Preload("OrderShippingHistory.ShippingCourierStatus").
+		Preload("OrderShippingHistory.ShippingCourierStatus.ShippingStatus").
 		Model(&entity.OrderShipping{}).
 		Where(&entity.OrderShipping{BaseIDModel: base.BaseIDModel{UID: uid}})
 
