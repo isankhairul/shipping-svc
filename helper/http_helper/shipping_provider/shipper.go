@@ -125,9 +125,9 @@ func (h *shipper) GetShippingRate(courierID *uint64, input *request.GetShippingR
 		}, errors.New(msg.Message)
 	}
 
-	_ = request.NewGetPricingDomesticRequest(origin, destination, input)
+	payload := request.NewGetPricingDomesticRequest(origin, destination, input)
 
-	shipperResponse, err := h.GetPricingDomestic(&request.GetPricingDomestic{})
+	shipperResponse, err := h.GetPricingDomestic(payload)
 
 	//if failed to get pricing from shipper api
 	if err != nil {
