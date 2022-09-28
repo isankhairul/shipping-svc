@@ -307,7 +307,7 @@ func (r *courierServiceRepo) FindCourierService(channelUID, courierServiceUID st
 		Where("courier_service.uid = ?", courierServiceUID).
 		Where("ch.uid = ?", channelUID)
 
-	err := query.Find(&courierService).Error
+	err := query.First(&courierService).Error
 
 	if err != nil {
 		if errors.Is(gorm.ErrRecordNotFound, err) {
