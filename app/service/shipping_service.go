@@ -244,17 +244,18 @@ func (s *shippingServiceImpl) internalAndMerchantPrice(courierList []entity.Cour
 			MinDay:           0,
 			MaxDay:           0,
 			UnitPrice:        0,
+			AvailableCode:    200,
+			Error:            response.SetShippingRateErrorMessage(message.SuccessMsg),
 		}
 
 		if v.CourierTypeCode == shipping_provider.MerchantCourier {
 			value.TotalPrice = 0
 		}
 
-		value.SetMessage(false, message.SuccessMsg)
-
 		// check if origin or destination not available
-		isErr := !(originOK && destinationOK)
-		value.SetMessage(isErr, message.ErrCourierCoverageCodeUidNotExist)
+		if !(originOK && destinationOK) {
+			value.UpdateMessage(message.ErrCourierCoverageCodeUidNotExist)
+		}
 
 		price.Rate[key] = value
 	}
@@ -281,10 +282,12 @@ func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input
 		}
 
 		// try to get price data from cache
-		key := fmt.Sprintf("%s:%s:%s:%s:%s:%s:%s:%f",
+		key := fmt.Sprintf("%s:%s:%s:%s:%s:%s:%s:%s:%s:%f",
 			v.Code,
 			input.Origin.PostalCode,
 			input.Destination.PostalCode,
+			input.Origin.Subdistrict,
+			input.Destination.Subdistrict,
 			input.Origin.Latitude,
 			input.Origin.Longitude,
 			input.Destination.Latitude,
@@ -325,6 +328,16 @@ func toGetShippingRateResponseList(req *request.GetShippingRateRequest, courierS
 
 	for _, v := range courierServices {
 		p := price.FindShippingCode(v.CourierCode, v.ShippingCode)
+
+		if msg := v.Validate(&p.FinalWeight, &req.ContainPrescription); msg != message.SuccessMsg {
+			p.UpdateMessage(msg)
+		}
+
+		if p.AvailableCode != 200 {
+			v.EtdMin = 0
+			v.EtdMax = 0
+		}
+
 		service := response.GetShippingRateService{
 			Courier: response.GetShippingRateCourir{
 				CourierUID:      v.CourierUID,
@@ -356,10 +369,6 @@ func toGetShippingRateResponseList(req *request.GetShippingRateRequest, courierS
 			MustUseInsurance:        p.MustUseInsurance,
 			InsuranceApplied:        p.InsuranceApplied,
 			Distance:                p.Distance,
-		}
-
-		if msg := v.Validate(&service.FinalWeight, &req.ContainPrescription); msg != message.SuccessMsg {
-			service.SetMessage(true, msg)
 		}
 
 		price.SummaryPerShippingType(v.ShippingTypeCode, p.TotalPrice, v.EtdMax, v.EtdMin)

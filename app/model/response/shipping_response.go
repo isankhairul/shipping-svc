@@ -18,6 +18,10 @@ type GetShippingRateError struct {
 	Message string `json:"message"`
 }
 
+func SetShippingRateErrorMessage(msg message.Message) GetShippingRateError {
+	return GetShippingRateError{fmt.Sprint(msg.Code), msg.Message}
+}
+
 type GetShippingRateCourir struct {
 	CourierID       uint64 `json:"-"`
 	CourierUID      string `json:"courier_uid"`
@@ -110,10 +114,7 @@ func (s *ShippingRateCommonResponse) FindShippingCode(courierCode, shippingCode 
 	if ok && msg != message.SuccessMsg {
 		return ShippingRateData{
 			AvailableCode: 400,
-			Error: GetShippingRateError{
-				ID:      fmt.Sprint(msg.Code),
-				Message: msg.Message,
-			},
+			Error:         SetShippingRateErrorMessage(msg),
 		}
 	}
 
@@ -121,9 +122,7 @@ func (s *ShippingRateCommonResponse) FindShippingCode(courierCode, shippingCode 
 	if !ok {
 		return ShippingRateData{
 			AvailableCode: 400,
-			Error: GetShippingRateError{
-				Message: message.ErrShippingRateNotFound.Message,
-			},
+			Error:         SetShippingRateErrorMessage(message.ErrShippingRateNotFound),
 		}
 	}
 
@@ -180,30 +179,28 @@ type ShippingRateData struct {
 	Distance         float64
 }
 
-func (s *ShippingRateData) SetMessage(isErr bool, msg message.Message) {
-	if s.AvailableCode == 400 {
-		return
-	}
+func (s *ShippingRateData) UpdateMessage(msg message.Message) {
 
-	if !isErr {
+	if msg == message.SuccessMsg {
 		s.AvailableCode = 200
-		s.Error = GetShippingRateError{Message: message.SuccessMsg.Message}
+		s.Error = SetShippingRateErrorMessage(message.SuccessMsg)
 		return
 	}
 
 	s.AvailableCode = 400
-	s.Error = GetShippingRateError{Message: msg.Message}
-}
-
-func (s *GetShippingRateService) SetMessage(isErr bool, msg message.Message) {
-	if !isErr {
-		s.AvailableCode = 200
-		s.Error = GetShippingRateError{ID: fmt.Sprint(message.SuccessMsg.Code), Message: message.SuccessMsg.Message}
-		return
-	}
-
-	s.AvailableCode = 400
-	s.Error = GetShippingRateError{ID: fmt.Sprint(msg.Code), Message: msg.Message}
+	s.Error = SetShippingRateErrorMessage(msg)
+	s.Weight = 0
+	s.Volume = 0
+	s.VolumeWeight = 0
+	s.FinalWeight = 0
+	s.MinDay = 0
+	s.MaxDay = 0
+	s.UnitPrice = 0
+	s.TotalPrice = 0
+	s.InsuranceFee = 0
+	s.MustUseInsurance = false
+	s.InsuranceApplied = false
+	s.Distance = 0
 }
 
 type ShippingRateSummary struct {
