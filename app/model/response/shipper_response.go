@@ -130,7 +130,7 @@ func (g *GetPricingDomestic) ToShippingRate() *ShippingRateCommonResponse {
 		courierShippingCode := global.CourierShippingCodeKey("shipper", fmt.Sprint(v.Rate.ID))
 		data[courierShippingCode] = ShippingRateData{
 			AvailableCode:    200,
-			Error:            GetShippingRateError{Message: message.SuccessMsg.Message},
+			Error:            SetShippingRateErrorMessage(message.SuccessMsg),
 			Weight:           v.Weight,
 			Volume:           v.Volume,
 			VolumeWeight:     v.VolumeWeight,

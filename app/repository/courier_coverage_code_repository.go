@@ -197,10 +197,10 @@ func (r *CourierCoverageCodeRepo) FindShipperCourierCoverage(input *request.Find
 	var courierCoverageCode entity.CourierCoverageCode
 	err := r.base.GetDB().
 		Preload("Courier").
-		Where(&entity.CourierCoverageCode{CourierID: input.CourierID}).
-		Where(&entity.CourierCoverageCode{CountryCode: input.CountryCode}).
-		Where(&entity.CourierCoverageCode{PostalCode: input.PostalCode}).
-		Where(&entity.CourierCoverageCode{Subdistrict: input.Subdistrict}).
+		Where("courier_id = ?", input.CourierID).
+		Where("country_code = ?", input.CountryCode).
+		Where("postal_code = ?", input.PostalCode).
+		Where("subdistrict = ?", input.Subdistrict).
 		First(&courierCoverageCode).Error
 	if err != nil {
 		return nil, err
