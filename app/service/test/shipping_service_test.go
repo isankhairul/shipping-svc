@@ -781,43 +781,6 @@ func TestCreateDeliveryShipperCoureirNotActive(t *testing.T) {
 	assert.Equal(t, message.CourierNotActiveMsg, msg)
 }
 
-func TestCreateDeliveryShipperCoureirHiddenInPurpose(t *testing.T) {
-
-	channel := entity.Channel{BaseIDModel: base.BaseIDModel{ID: 1, UID: createDeliveryRequest.ChannelUID}}
-	channelRepository.Mock.On("FindByUid", mock.Anything).
-		Return(channel).Once()
-
-	courier := &entity.Courier{
-		BaseIDModel: base.BaseIDModel{
-			ID:  3,
-			UID: "cuid",
-		},
-		CourierType: shipping_provider.ThirPartyCourier,
-		Code:        shipping_provider.ShipperCode,
-		Status:      &active,
-		HidePurpose: 1,
-	}
-
-	courierService := &entity.CourierService{
-		BaseIDModel: base.BaseIDModel{
-			ID:  3,
-			UID: createDeliveryRequest.CouirerServiceUID,
-		},
-		CourierID: 2,
-		Courier:   courier,
-		Status:    &active,
-	}
-
-	courierServiceRepo.Mock.On("FindCourierService", mock.Anything).
-		Return(courierService).Once()
-
-	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
-
-	assert.Nil(t, result)
-	assert.NotNil(t, msg)
-	assert.Equal(t, message.CourierHiddenInPurposeMsg, msg)
-}
-
 func TestCreateDeliveryShipperCoureirServiceNotActive(t *testing.T) {
 
 	channel := entity.Channel{BaseIDModel: base.BaseIDModel{ID: 1, UID: createDeliveryRequest.ChannelUID}}
