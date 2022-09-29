@@ -1317,6 +1317,7 @@ definitions:
         type: string
         x-go-name: OrderNoAPI
       order_shipping_date:
+        example: "2022-09-28"
         format: date-time
         type: string
         x-go-name: OrderShippingDate
@@ -1466,6 +1467,10 @@ definitions:
       order_no:
         type: string
         x-go-name: OrderNo
+      order_shipping_date:
+        format: date-time
+        type: string
+        x-go-name: OrderShippingDate
       order_shipping_uid:
         type: string
         x-go-name: OrderShippingUID
@@ -1780,7 +1785,7 @@ definitions:
   JWTInfo:
     type: object
     x-go-package: go-klikdokter/helper/global
-  MetaResponse:
+  MetaPaginationResponse:
     properties:
       code:
         description: Code is the response code
@@ -1793,9 +1798,31 @@ definitions:
         example: Success
         type: string
         x-go-name: Message
+      pagination:
+        $ref: '#/definitions/PaginationResponse'
     type: object
     x-go-name: metaResponse
     x-go-package: go-klikdokter/app/model/base
+  MetaResponse:
+    properties:
+      code:
+        description: |-
+          Code of Response
+          in: int
+        example: 1000
+        format: int64
+        type: integer
+        x-go-name: Code
+      message:
+        description: |-
+          Message of Response
+          in: string
+        example: Success
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-name: MetaSingleSuccessResponse
+    x-go-package: go-klikdokter/app/model/response
   PaginationResponse:
     properties:
       limit:
@@ -2428,9 +2455,7 @@ definitions:
         type: object
         x-go-name: Errors
       meta:
-        $ref: '#/definitions/MetaResponse'
-      pagination:
-        $ref: '#/definitions/PaginationResponse'
+        $ref: '#/definitions/MetaPaginationResponse'
     type: object
     x-go-name: responseHttp
     x-go-package: go-klikdokter/app/model/base
@@ -2767,9 +2792,7 @@ paths:
                       $ref: '#/definitions/CourierServiceByChannel'
                     type: array
               meta:
-                $ref: '#/definitions/MetaResponse'
-              pagination:
-                $ref: '#/definitions/PaginationResponse'
+                $ref: '#/definitions/MetaPaginationResponse'
       security:
       - Bearer: []
       summary: Get List of Courier and Courier Services By Channel
@@ -2820,9 +2843,7 @@ paths:
                       $ref: '#/definitions/Channel'
                     type: array
               meta:
-                $ref: '#/definitions/MetaResponse'
-              pagination:
-                $ref: '#/definitions/PaginationResponse'
+                $ref: '#/definitions/MetaPaginationResponse'
       security:
       - Bearer: []
       summary: List of Channel Apps
@@ -2972,9 +2993,7 @@ paths:
                       $ref: '#/definitions/ChannelCourierServiceItem'
                     type: array
               meta:
-                $ref: '#/definitions/MetaResponse'
-              pagination:
-                $ref: '#/definitions/PaginationResponse'
+                $ref: '#/definitions/MetaPaginationResponse'
       security:
       - Bearer: []
       summary: Get List of Channel Courier Service
@@ -3139,9 +3158,7 @@ paths:
                       $ref: '#/definitions/ChannelCourierDTO'
                     type: array
               meta:
-                $ref: '#/definitions/MetaResponse'
-              pagination:
-                $ref: '#/definitions/PaginationResponse'
+                $ref: '#/definitions/MetaPaginationResponse'
       security:
       - Bearer: []
       summary: List of Assignment Channel and Courier
@@ -3300,9 +3317,7 @@ paths:
                       $ref: '#/definitions/GetChannelCourierStatusResponse'
                     type: array
               meta:
-                $ref: '#/definitions/MetaResponse'
-              pagination:
-                $ref: '#/definitions/PaginationResponse'
+                $ref: '#/definitions/MetaPaginationResponse'
       security:
       - Bearer: []
       summary: Get Channel Courier Status List
@@ -3353,9 +3368,7 @@ paths:
                       $ref: '#/definitions/Courier'
                     type: array
               meta:
-                $ref: '#/definitions/MetaResponse'
-              pagination:
-                $ref: '#/definitions/PaginationResponse'
+                $ref: '#/definitions/MetaPaginationResponse'
       security:
       - Bearer: []
       summary: Get list of couriers
@@ -3433,9 +3446,7 @@ paths:
                       $ref: '#/definitions/CourierCoverageCode'
                     type: array
               meta:
-                $ref: '#/definitions/MetaResponse'
-              pagination:
-                $ref: '#/definitions/PaginationResponse'
+                $ref: '#/definitions/MetaPaginationResponse'
       security:
       - Bearer: []
       summary: List couriers coverage code
@@ -3620,9 +3631,7 @@ paths:
                       $ref: '#/definitions/CourierServiceListResponse'
                     type: array
               meta:
-                $ref: '#/definitions/MetaResponse'
-              pagination:
-                $ref: '#/definitions/PaginationResponse'
+                $ref: '#/definitions/MetaPaginationResponse'
       security:
       - Bearer: []
       summary: List of Courier Services
@@ -3884,9 +3893,7 @@ paths:
                       $ref: '#/definitions/ShippmentPredefined'
                     type: array
               meta:
-                $ref: '#/definitions/MetaResponse'
-              pagination:
-                $ref: '#/definitions/PaginationResponse'
+                $ref: '#/definitions/MetaPaginationResponse'
       security:
       - Bearer: []
       summary: Get predefined
@@ -4007,7 +4014,7 @@ paths:
       description: 'Description :'
       operationId: GetOrderShippingList
       parameters:
-      - description: 'Filter : {"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":"2022-09-09","order_shipping_date_to":"2022-09-12"}'
+      - description: 'Filter : {"order_no":["001","002"],"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":"2022-09-09","order_shipping_date_to":"2022-09-12"}'
         in: query
         name: filter
         type: string
@@ -4057,9 +4064,7 @@ paths:
                       $ref: '#/definitions/GetOrderShippingListResponse'
                     type: array
               meta:
-                $ref: '#/definitions/MetaResponse'
-              pagination:
-                $ref: '#/definitions/PaginationResponse'
+                $ref: '#/definitions/MetaPaginationResponse'
       security:
       - Bearer: []
       summary: Get Order Shipping List

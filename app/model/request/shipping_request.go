@@ -219,7 +219,7 @@ type ShipperStatus struct {
 
 // swagger:parameters GetOrderShippingList
 type GetOrderShippingList struct {
-	// Filter : {"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":"2022-09-09","order_shipping_date_to":"2022-09-12"}
+	// Filter : {"order_no":["001","002"],"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":"2022-09-09","order_shipping_date_to":"2022-09-12"}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -247,6 +247,7 @@ type GetOrderShippingFilter struct {
 	ChannelCode           []string `json:"channel_code"`
 	ChannelName           []string `json:"channel_name"`
 	CourierName           []string `json:"courier_name"`
+	OrderNo               []string `json:"order_no"`
 	ShippingStatus        []string `json:"shipping_status"`
 	OrderShippingDateFrom string   `json:"order_shipping_date_from"`
 	OrderShippingDateTo   string   `json:"order_shipping_date_to"`

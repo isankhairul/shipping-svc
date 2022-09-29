@@ -121,9 +121,7 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 //     schema:
 //       properties:
 //         meta:
-//            $ref: '#/definitions/MetaResponse'
-//         pagination:
-//            $ref: '#/definitions/PaginationResponse'
+//           $ref: '#/definitions/MetaPaginationResponse'
 //         data:
 //           properties:
 //             records:

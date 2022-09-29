@@ -153,9 +153,7 @@ func (s *ChannelCourierServiceImpl) GetChannelCourier(uid string) (*entity.Chann
 //     schema:
 //       properties:
 //         meta:
-//            $ref: '#/definitions/MetaResponse'
-//         pagination:
-//            $ref: '#/definitions/PaginationResponse'
+//           $ref: '#/definitions/MetaPaginationResponse'
 //         data:
 //           properties:
 //             records:
@@ -310,9 +308,7 @@ func mapInputUIDS(courierServiceUIDs []*request.CourierServiceDTO) []*string {
 //     schema:
 //       properties:
 //         meta:
-//            $ref: '#/definitions/MetaResponse'
-//         pagination:
-//            $ref: '#/definitions/PaginationResponse'
+//           $ref: '#/definitions/MetaPaginationResponse'
 //         data:
 //           properties:
 //             records:

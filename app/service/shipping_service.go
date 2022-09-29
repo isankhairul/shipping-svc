@@ -577,12 +577,16 @@ func (s *shippingServiceImpl) OrderShippingTracking(req *request.GetOrderShippin
 		return nil, message.ErrOrderBelongToAnotherChannel
 	}
 
+	var orderStatus []response.GetOrderShippingTracking
+	var msg message.Message
 	switch orderShipping.Courier.CourierType {
 	case shipping_provider.ThirPartyCourier:
-		return s.thridPartyTracking(orderShipping)
+		orderStatus, msg = s.thridPartyTracking(orderShipping)
+	default:
+		return []response.GetOrderShippingTracking{}, message.ErrInvalidCourierType
 	}
 
-	return nil, message.ErrInvalidCourierType
+	return response.SortOrderStatusByTimeDesc(orderStatus), msg
 }
 
 func (s *shippingServiceImpl) thridPartyTracking(orderShipping *entity.OrderShipping) ([]response.GetOrderShippingTracking, message.Message) {
@@ -672,9 +676,7 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 //     schema:
 //       properties:
 //         meta:
-//            $ref: '#/definitions/MetaResponse'
-//         pagination:
-//            $ref: '#/definitions/PaginationResponse'
+//           $ref: '#/definitions/MetaPaginationResponse'
 //         data:
 //           properties:
 //             records:
@@ -697,6 +699,7 @@ func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShipping
 	}
 
 	filter := make(map[string]interface{})
+	filter["order_no"] = req.Filters.OrderNo
 	filter["channel_code"] = req.Filters.ChannelCode
 	filter["channel_name"] = req.Filters.ChannelName
 	filter["courier_name"] = req.Filters.CourierName

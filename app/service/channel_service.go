@@ -52,9 +52,7 @@ func NewChannelService(
 //     schema:
 //       properties:
 //         meta:
-//            $ref: '#/definitions/MetaResponse'
-//         pagination:
-//            $ref: '#/definitions/PaginationResponse'
+//           $ref: '#/definitions/MetaPaginationResponse'
 //         data:
 //           properties:
 //             records:
@@ -311,9 +309,7 @@ func (s *ChannelServiceImpl) DeleteChannel(uid string) message.Message {
 //     schema:
 //       properties:
 //         meta:
-//            $ref: '#/definitions/MetaResponse'
-//         pagination:
-//            $ref: '#/definitions/PaginationResponse'
+//           $ref: '#/definitions/MetaPaginationResponse'
 //         data:
 //           properties:
 //             records:

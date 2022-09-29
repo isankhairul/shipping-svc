@@ -921,7 +921,7 @@ func TestOrderShippingTrackingInvalidCourierType(t *testing.T) {
 		}).Once()
 
 	result, msg := shippingService.OrderShippingTracking(getOrderTrackingRequest)
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrInvalidCourierType, msg)
 }

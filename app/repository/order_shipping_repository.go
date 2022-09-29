@@ -99,7 +99,9 @@ func (r *orderShippingRepository) FindByUID(uid string) (*entity.OrderShipping, 
 		Preload("Courier").
 		Preload("OrderShippingItem").
 		Preload("CourierService").
-		Preload("OrderShippingHistory.ShippingCourierStatus").
+		Preload("OrderShippingHistory", func(db *gorm.DB) *gorm.DB {
+			return db.Order("order_shipping_history.created_at DESC")
+		}).
 		Preload("OrderShippingHistory.ShippingCourierStatus.ShippingStatus").
 		Model(&entity.OrderShipping{}).
 		Where(&entity.OrderShipping{BaseIDModel: base.BaseIDModel{UID: uid}})
@@ -128,6 +130,7 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort, dir string
 			"ch.channel_code AS channel_code",
 			"ch.channel_name AS channel_name",
 			"order_shipping.uid AS order_shipping_uid",
+			"order_shipping.order_shipping_date AS order_shipping_date",
 			"order_shipping.order_no AS order_no",
 			"c.courier_name AS courier_name",
 			"cs.shipping_name AS courier_services_name",
@@ -145,9 +148,12 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort, dir string
 
 	for k, v := range filter {
 
-		if util.IsSliceAndNotEmpty(v) {
+		if !util.IsNilOrEmpty(v) {
 
 			switch k {
+			case "order_no":
+				query = query.Where(like(k, v.([]string)))
+
 			case "courier_name":
 				query = query.Where(like("c.courier_name", v.([]string)))
 
@@ -159,15 +165,13 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort, dir string
 
 			case "shipping_status":
 				query = query.Where("order_shipping.status IN ?", v.([]string))
+
+			case "order_shipping_date_from":
+				query = query.Where("CAST(order_shipping_date AS DATE) >= CAST(? AS DATE)", v)
+
+			case "order_shipping_date_to":
+				query = query.Where("CAST(order_shipping_date AS DATE) <= CAST(? AS DATE)", v)
 			}
-		}
-
-		if k == "order_shipping_date_from" && len(v.(string)) > 0 {
-			query.Where("CAST(order_shipping_date AS DATE) >= CAST(? AS DATE)", v)
-		}
-
-		if k == "order_shipping_date_to" && len(v.(string)) > 0 {
-			query.Where("CAST(order_shipping_date AS DATE) <= CAST(? AS DATE)", v)
 		}
 	}
 

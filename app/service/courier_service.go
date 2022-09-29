@@ -160,9 +160,7 @@ func (s *courierServiceImpl) GetCourier(uid string) (*entity.Courier, message.Me
 //     schema:
 //       properties:
 //         meta:
-//            $ref: '#/definitions/MetaResponse'
-//         pagination:
-//            $ref: '#/definitions/PaginationResponse'
+//           $ref: '#/definitions/MetaPaginationResponse'
 //         data:
 //           properties:
 //             records:
@@ -454,9 +452,7 @@ func (s *courierServiceImpl) GetCourierService(uid string) (*entity.CourierServi
 //     schema:
 //       properties:
 //         meta:
-//            $ref: '#/definitions/MetaResponse'
-//         pagination:
-//            $ref: '#/definitions/PaginationResponse'
+//           $ref: '#/definitions/MetaPaginationResponse'
 //         data:
 //           properties:
 //             records:

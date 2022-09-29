@@ -7,9 +7,6 @@ type responseHttp struct {
 	// Meta is the API response information
 	// in: MetaResponse
 	Meta metaResponse `json:"meta"`
-	// Pagination of the paginate respons
-	// in: PaginationResponse
-	Pagination *Pagination `json:"pagination,omitempty"`
 	// Data is our data
 	// in: DataResponse
 	Data data `json:"data"`
@@ -18,7 +15,7 @@ type responseHttp struct {
 	Errors interface{} `json:"errors,omitempty"`
 }
 
-// swagger:model MetaResponse
+// swagger:model MetaPaginationResponse
 type metaResponse struct {
 	// Code is the response code
 	// example: 201000
@@ -26,6 +23,9 @@ type metaResponse struct {
 	// Message is the response message
 	// example: Success
 	Message string `json:"message"`
+	// Pagination of the paginate respons
+	// in: PaginationResponse
+	Pagination *Pagination `json:"pagination,omitempty"`
 }
 
 // swagger:model DataResponse
@@ -47,11 +47,11 @@ func SetHttpResponse(code int, message string, result interface{}, paging *Pagin
 
 	return responseHttp{
 		Meta: metaResponse{
-			Code:    code,
-			Message: message,
+			Code:       code,
+			Message:    message,
+			Pagination: paging,
 		},
-		Pagination: paging,
-		Data:       dt,
+		Data: dt,
 	}
 }
 
