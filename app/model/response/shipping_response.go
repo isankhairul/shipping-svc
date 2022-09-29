@@ -5,6 +5,7 @@ import (
 	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
+	"sort"
 	"time"
 )
 
@@ -243,12 +244,48 @@ type GetOrderShippingTrackingResponse struct {
 
 //swagger:model GetOrderShippingTrackingResponse
 type GetOrderShippingTracking struct {
+	DateTime time.Time `json:"-"`
 	//example: 2022-01-31
 	Date string `json:"date"`
 	//example: 12:30
 	Time string `json:"time"`
 	//example: Order Masuk ke sistem
 	Note string `json:"note"`
+}
+
+type trackingOrderSorter struct {
+	data []GetOrderShippingTracking
+	by   trackingOrderSorterBy
+}
+
+func (t *trackingOrderSorter) Len() int {
+	return len(t.data)
+}
+
+func (t *trackingOrderSorter) Swap(i, j int) {
+	t.data[i], t.data[j] = t.data[j], t.data[i]
+}
+
+func (t *trackingOrderSorter) Less(i, j int) bool {
+	return t.by(&t.data[i], &t.data[j])
+}
+
+type trackingOrderSorterBy func(arg1, arg2 *GetOrderShippingTracking) bool
+
+func (b trackingOrderSorterBy) Sort(data []GetOrderShippingTracking) {
+	d := &trackingOrderSorter{
+		data: data,
+		by:   b,
+	}
+
+	sort.Sort(d)
+}
+
+func SortOrderStatusByTimeDesc(data []GetOrderShippingTracking) []GetOrderShippingTracking {
+	trackingOrderSorterBy(func(data1, data2 *GetOrderShippingTracking) bool {
+		return data2.DateTime.Before(data1.DateTime)
+	}).Sort(data)
+	return data
 }
 
 //swagger:response GetOrderShippingList
@@ -259,18 +296,19 @@ type GetOrderShippingListResponse struct {
 
 //swagger:model GetOrderShippingListResponse
 type GetOrderShippingList struct {
-	ChannelCode        string `gorm:"column:channel_code" json:"channel_code"`
-	ChannelName        string `gorm:"column:channel_name" json:"channel_name"`
-	OrderShippingUID   string `gorm:"column:order_shipping_uid" json:"order_shipping_uid"`
-	OrderNo            string `gorm:"column:order_no" json:"order_no"`
-	CourierName        string `gorm:"column:courier_name" json:"courier_name"`
-	CourierServiceName string `gorm:"column:courier_services_name" json:"courier_services_name"`
-	Airwaybill         string `gorm:"column:airwaybill" json:"airwaybill"`
-	BookingID          string `gorm:"column:booking_id" json:"booking_id"`
-	MerchantName       string `gorm:"column:merchant_name" json:"merchant_name"`
-	CustomerName       string `gorm:"column:customer_name" json:"customer_name"`
-	ShippingStatus     string `gorm:"column:shipping_status" json:"shipping_status"`
-	ShippingStatusName string `gorm:"column:shipping_status_name" json:"shipping_status_name"`
+	ChannelCode        string    `gorm:"column:channel_code" json:"channel_code"`
+	OrderShippingDate  time.Time `gorm:"column:order_shipping_date" json:"order_shipping_date"`
+	ChannelName        string    `gorm:"column:channel_name" json:"channel_name"`
+	OrderShippingUID   string    `gorm:"column:order_shipping_uid" json:"order_shipping_uid"`
+	OrderNo            string    `gorm:"column:order_no" json:"order_no"`
+	CourierName        string    `gorm:"column:courier_name" json:"courier_name"`
+	CourierServiceName string    `gorm:"column:courier_services_name" json:"courier_services_name"`
+	Airwaybill         string    `gorm:"column:airwaybill" json:"airwaybill"`
+	BookingID          string    `gorm:"column:booking_id" json:"booking_id"`
+	MerchantName       string    `gorm:"column:merchant_name" json:"merchant_name"`
+	CustomerName       string    `gorm:"column:customer_name" json:"customer_name"`
+	ShippingStatus     string    `gorm:"column:shipping_status" json:"shipping_status"`
+	ShippingStatusName string    `gorm:"column:shipping_status_name" json:"shipping_status_name"`
 }
 
 //swagger:response GetOrderShippingDetail
@@ -289,7 +327,7 @@ type GetOrderShippingDetail struct {
 	ChannelName string `json:"channel_name"`
 	//example: hh6845hjjisdfhidsf
 	OrderShippingUID string `json:"order_shipping_uid"`
-
+	//example: 2022-09-28
 	OrderShippingDate time.Time `json:"order_shipping_date"`
 	//example: 1000363553.1
 	OrderNo string `json:"order_no"`

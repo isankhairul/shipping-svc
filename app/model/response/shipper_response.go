@@ -285,9 +285,10 @@ func (g *GetOrderDetail) ToOrderShippingTracking() []GetOrderShippingTracking {
 		}
 		codes[v.LogisticStatus.Name] = true
 		resp = append(resp, GetOrderShippingTracking{
-			Note: v.LogisticStatus.Name,
-			Date: v.CreatedDate.In(util.Loc).Format(util.LayoutDateOnly),
-			Time: v.CreatedDate.In(util.Loc).Format(util.LayoutTimeOnly),
+			DateTime: v.CreatedDate,
+			Note:     v.LogisticStatus.Name,
+			Date:     v.CreatedDate.In(util.Loc).Format(util.LayoutDateOnly),
+			Time:     v.CreatedDate.In(util.Loc).Format(util.LayoutTimeOnly),
 		})
 	}
 	return resp

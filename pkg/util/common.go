@@ -11,6 +11,24 @@ func IsSliceAndNotEmpty(input interface{}) bool {
 	return false
 }
 
+func IsNilOrEmpty(input interface{}) bool {
+
+	if input == nil {
+		return true
+	}
+
+	if reflect.ValueOf(input).IsZero() {
+		return true
+	}
+
+	switch reflect.ValueOf(input).Kind() {
+	case reflect.Slice, reflect.Array, reflect.Chan, reflect.Map, reflect.String:
+		return reflect.ValueOf(input).Len() == 0
+	}
+
+	return true
+}
+
 // Replace empty string with default value
 func ReplaceEmptyString(str string, defaultValue string) string {
 	if len(str) == 0 {

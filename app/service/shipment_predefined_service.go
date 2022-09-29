@@ -112,9 +112,7 @@ func (s *ShipmentPredefinedServiceImpl) UpdateShipmentPredefined(input request.U
 //     schema:
 //       properties:
 //         meta:
-//            $ref: '#/definitions/MetaResponse'
-//         pagination:
-//            $ref: '#/definitions/PaginationResponse'
+//           $ref: '#/definitions/MetaPaginationResponse'
 //         data:
 //           properties:
 //             records:
