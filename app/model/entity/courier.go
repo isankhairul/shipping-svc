@@ -2,6 +2,7 @@ package entity
 
 import (
 	"go-klikdokter/app/model/base"
+	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
 )
 
@@ -56,6 +57,19 @@ type Courier struct {
 	// in: string
 	// example: [{"path": "image_path", "size": "thumbnail"},{"path": "{image_path}", "size": "original"}]
 	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
+}
+
+func (c *Courier) Validate() message.Message {
+
+	if *c.Status != 1 {
+		return message.CourierNotActiveMsg
+	}
+
+	if c.HidePurpose == 1 {
+		return message.CourierHiddenInPurposeMsg
+	}
+
+	return message.SuccessMsg
 }
 
 type CourierHasChildFlag struct {
