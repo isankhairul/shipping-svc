@@ -406,22 +406,26 @@ func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelive
 	channel, err := s.channelRepo.FindByUid(&input.ChannelUID)
 	if err != nil {
 		_ = level.Error(logger).Log("s.channelRepo.FindByUid", err.Error())
-		return nil, nil, nil, message.ErrChannelNotFound
+		return nil, nil, nil, message.ChannelNotFoundMsg
 	}
 
 	if channel == nil {
-		return nil, nil, nil, message.ErrChannelNotFound
+		return nil, nil, nil, message.ChannelNotFoundMsg
 	}
 
 	// find Courier Service By UID
 	courierService, err := s.courierServiceRepo.FindCourierService(input.ChannelUID, input.CouirerServiceUID)
 	if err != nil {
 		_ = level.Error(logger).Log("s.courierServiceRepo.FindCourierService", err.Error())
-		return nil, nil, nil, message.ErrCourierServiceNotFound
+		return nil, nil, nil, message.CourierServiceNotFoundMsg
 	}
 
 	if courierService == nil {
-		return nil, nil, nil, message.ErrCourierServiceNotFound
+		return nil, nil, nil, message.CourierServiceNotFoundMsg
+	}
+
+	if msg := courierService.Validate(input.Package.TotalWeight, input.Package.ContainPrescription > 0); msg != message.SuccessMsg {
+		return nil, nil, nil, msg
 	}
 
 	// check if order no already exist with status created
@@ -432,13 +436,13 @@ func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelive
 	}
 
 	if orderShipping != nil && orderShipping.Status != shipping_provider.StatusCreated {
-		return nil, nil, nil, message.ErrOrderNoAlreadyExists
+		return nil, nil, nil, message.OrderNoAlreadyExistsMsg
 	}
 
 	// get shipping status
 	shippingStatus, _ := s.shippingCourierStatusRepo.FindByCode(channel.ID, courierService.CourierID, shipping_provider.StatusRequestPickup)
 	if shippingStatus == nil {
-		return nil, nil, nil, message.ErrShippingStatus
+		return nil, nil, nil, message.ShippingStatusNotFoundMsg
 	}
 
 	// if order no doesn't exist create new one
@@ -636,11 +640,11 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 
 	if err != nil {
 		_ = level.Error(logger).Log("s.shippingCourierStatusRepo.FindByCourierStatus", err.Error())
-		return nil, message.ErrShippingStatus
+		return nil, message.ShippingStatusNotFoundMsg
 	}
 
 	if shippingStatus == nil {
-		return nil, message.ErrShippingStatus
+		return nil, message.ShippingStatusNotFoundMsg
 	}
 
 	orderShipping.Status = shippingStatus.StatusCode
@@ -880,7 +884,7 @@ func (s *shippingServiceImpl) CancelPickup(uid string) message.Message {
 	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, shipping_provider.StatusCancelled)
 
 	if shipperStatus == nil {
-		return message.ErrShippingStatus
+		return message.ShippingStatusNotFoundMsg
 	}
 
 	orderShipping.AddHistoryStatus(shipperStatus, "")
@@ -968,7 +972,7 @@ func (s *shippingServiceImpl) CancelOrder(req *request.CancelOrder) message.Mess
 	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, shipping_provider.StatusCancelled)
 
 	if shipperStatus == nil {
-		return message.ErrShippingStatus
+		return message.ShippingStatusNotFoundMsg
 	}
 
 	orderShipping.Status = shipping_provider.StatusCancelled

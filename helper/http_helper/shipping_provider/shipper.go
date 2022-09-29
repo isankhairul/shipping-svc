@@ -85,12 +85,12 @@ func (h *shipper) GetOriginAndDestination(courierID *uint64, input *request.GetS
 
 	origin, _ := h.courierCoverage.FindShipperCourierCoverage(originReq)
 	if origin == nil {
-		return 0, 0, message.ErrOriginNotFound
+		return 0, 0, message.OriginNotFoundMsg
 	}
 
 	originAreaID, _ := strconv.Atoi(origin.Code1)
 	if originAreaID == 0 {
-		return 0, 0, message.ErrOriginNotFound
+		return 0, 0, message.OriginNotFoundMsg
 	}
 
 	destinationReq := &request.FindShipperCourierCoverage{
@@ -102,12 +102,12 @@ func (h *shipper) GetOriginAndDestination(courierID *uint64, input *request.GetS
 
 	destination, _ := h.courierCoverage.FindShipperCourierCoverage(destinationReq)
 	if destination == nil {
-		return 0, 0, message.ErrDestinationNotFound
+		return 0, 0, message.DestinationNotFoundMsg
 	}
 
 	destinationAreaID, _ := strconv.Atoi(destination.Code1)
 	if destinationAreaID == 0 {
-		return 0, 0, message.ErrDestinationNotFound
+		return 0, 0, message.DestinationNotFoundMsg
 	}
 
 	return originAreaID, destinationAreaID, message.SuccessMsg

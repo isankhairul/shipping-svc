@@ -41,28 +41,8 @@ var ErrDataCourierUIdNotExist = Message{Code: 34001, Message: "CourierUID not ex
 // courier coverage code : 346xx
 var ErrCourierCoverageCodeUidNotExist = Message{Code: 34601, Message: "Courier Coverage Code not exist"}
 var ErrCourierCoverageCodeUidExist = Message{Code: 34602, Message: "Courier Coverage Code exists"}
-var ErrOriginNotFound = Message{Code: 34602, Message: "Origin not in Courier Coverage"}
-var ErrDestinationNotFound = Message{Code: 34602, Message: "Destination not in Courier Coverage"}
-var ErrShippingRateNotFound = Message{Code: 34602, Message: "shipping rate not found"}
 var ErrCourierCoverageCodeExist = Message{Code: 34005, Message: "The combination of courier_uid, country_code postal_code, and subdistrict is exist in database"}
 var ErrShippingTypeRequired = Message{Code: 34602, Message: "shipping type is required"}
-var ErrWeightExceeds = Message{Code: 34602, Message: "final weight exceeds the maximum weight allowed"}
-var ErrInvalidCourierType = Message{Code: 34602, Message: "courier type is not valid"}
-var ErrInvalidCourierCode = Message{Code: 34602, Message: "courier code is not valid"}
-var ErrCreateOrder = Message{Code: 34602, Message: "failed when trying to create order"}
-var ErrGetPickUpTimeslot = Message{Code: 34602, Message: "failed when trying to get pickup timeslot"}
-var ErrCreatePickUpOrder = Message{Code: 34602, Message: "failed when trying to create pickup order"}
-var ErrShippingStatus = Message{Code: 34602, Message: "shipping status not found"}
-var ErrOrderNoAlreadyExists = Message{Code: 34602, Message: "order no already exists"}
-var ErrOrderShippingNotFound = Message{Code: 34602, Message: "order shipping not found"}
-var ErrGetOrderDetail = Message{Code: 34602, Message: "failed when trying to get order detail"}
-var ErrOrderBelongToAnotherChannel = Message{Code: 34602, Message: "the order is belong to another channel"}
-var ErrChannelUIDRequired = Message{Code: 34602, Message: "channel_uid is required"}
-var ErrSaveOrderShipping = Message{Code: 34602, Message: "failed when trying to save order shipping"}
-var ErrFormatDateYYYYMMDD = Message{Code: 34602, Message: "date format must be YYYY-MM-DD"}
-var ErrCancelPickup = Message{Code: 34602, Message: "failed when trying to cancel pickup"}
-var ErrCantCancelOrderShipping = Message{Code: 34602, Message: "can't cancel this order"}
-var ErrCantCancelOrderCourierService = Message{Code: 34602, Message: "courier service is not cancelable"}
 
 //channel : 342xx
 var ErrChannelNotFound = Message{Code: 34201, Message: "Channel not found"}
@@ -93,6 +73,22 @@ var (
 	ErrChannelCourierHasChild         = Message{Code: 209009, Message: "Can not delete Channel Courier that has one or more Channel Courier Service(s)"}
 )
 
+var ErrShippingRateNotFound = Message{Code: 34602, Message: "shipping rate not found"}
+var ErrInvalidCourierType = Message{Code: 34602, Message: "courier type is not valid"}
+var ErrInvalidCourierCode = Message{Code: 34602, Message: "courier code is not valid"}
+var ErrCreateOrder = Message{Code: 34602, Message: "failed when trying to create order"}
+var ErrGetPickUpTimeslot = Message{Code: 34602, Message: "failed when trying to get pickup timeslot"}
+var ErrCreatePickUpOrder = Message{Code: 34602, Message: "failed when trying to create pickup order"}
+var ErrOrderShippingNotFound = Message{Code: 34602, Message: "order shipping not found"}
+var ErrGetOrderDetail = Message{Code: 34602, Message: "failed when trying to get order detail"}
+var ErrOrderBelongToAnotherChannel = Message{Code: 34602, Message: "the order is belong to another channel"}
+var ErrChannelUIDRequired = Message{Code: 34602, Message: "channel_uid is required"}
+var ErrSaveOrderShipping = Message{Code: 34602, Message: "failed when trying to save order shipping"}
+var ErrFormatDateYYYYMMDD = Message{Code: 34602, Message: "date format must be YYYY-MM-DD"}
+var ErrCancelPickup = Message{Code: 34602, Message: "failed when trying to cancel pickup"}
+var ErrCantCancelOrderShipping = Message{Code: 34602, Message: "can't cancel this order"}
+var ErrCantCancelOrderCourierService = Message{Code: 34602, Message: "courier service is not cancelable"}
+
 var (
 	ShippingProviderMsg               = Message{Code: 209002, Message: ""}
 	CourierNotActiveMsg               = Message{Code: 209002, Message: "courier is not active"}
@@ -104,5 +100,11 @@ var (
 	WeightExceedsmsg                  = Message{Code: 209002, Message: "final weight exceeds the maximum weight allowed"}
 	InvalidCourierTypeMsg             = Message{Code: 209002, Message: "courier type is not valid"}
 	InvalidCourierCodeMsg             = Message{Code: 209002, Message: "courier code is not valid"}
-	CourierServiceNotFoundMsg         = Message{Code: 209002, Message: "courier service not found"}
+	CourierServiceNotFoundMsg         = Message{Code: 209002, Message: "courier service is not found"}
+	ChannelNotFoundMsg                = Message{Code: 209002, Message: "channel not found"}
+	WeightExceedsMsg                  = Message{Code: 209002, Message: "final weight exceeds the maximum weight allowed"}
+	ShippingStatusNotFoundMsg         = Message{Code: 209002, Message: "shipping status not found"}
+	OrderNoAlreadyExistsMsg           = Message{Code: 209002, Message: "order no already exists"}
+	OriginNotFoundMsg                 = Message{Code: 209002, Message: "origin is not in courier coverage"}
+	DestinationNotFoundMsg            = Message{Code: 209002, Message: "destination not in courier coverage"}
 )

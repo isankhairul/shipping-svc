@@ -2,6 +2,7 @@ package entity
 
 import (
 	"go-klikdokter/app/model/base"
+	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/util/datatype"
 )
 
@@ -245,4 +246,27 @@ type CourierService struct {
 	ImagePath datatype.JSONB `gorm:"type:jsonb;null" json:"image_path"`
 
 	Courier *Courier `json:"-" gorm:"foreignKey:courier_id"`
+}
+
+func (c *CourierService) Validate(weight float64, isPrescription bool) message.Message {
+
+	if c.Courier != nil {
+		if msg := c.Courier.Validate(); msg != message.SuccessMsg {
+			return msg
+		}
+	}
+
+	if *c.Status != 1 {
+		return message.CourierServiceNotActiveMsg
+	}
+
+	if c.MaxWeight > 0 && c.MaxWeight < weight {
+		return message.WeightExceedsMsg
+	}
+
+	if isPrescription && c.PrescriptionAllowed == 0 {
+		return message.PrescriptionNotAllowedMsg
+	}
+
+	return message.SuccessMsg
 }
