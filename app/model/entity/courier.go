@@ -65,9 +65,11 @@ func (c *Courier) Validate() message.Message {
 		return message.CourierNotActiveMsg
 	}
 
-	if c.HidePurpose == 1 {
-		return message.CourierHiddenInPurposeMsg
-	}
+	/*
+		if c.HidePurpose == 1 {
+			return message.CourierHiddenInPurposeMsg
+		}
+	*/
 
 	return message.SuccessMsg
 }
