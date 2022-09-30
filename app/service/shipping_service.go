@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"go-klikdokter/app/model/base"
 	"go-klikdokter/app/model/entity"
@@ -622,6 +623,10 @@ func (s *shippingServiceImpl) thridPartyTracking(orderShipping *entity.OrderShip
 //           type: object
 func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStatusShipper) (*entity.OrderShipping, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "UpdateStatusShipper")
+
+	if jsonReq, err := json.Marshal(req); err == nil {
+		_ = level.Info(logger).Log("shipper_webhook", string(jsonReq))
+	}
 
 	orderShipping, err := s.orderShipping.FindByOrderNo(req.ExternalID)
 	if err != nil {
