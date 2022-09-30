@@ -132,6 +132,10 @@ func (o *OrderShipping) FromCreateDeliveryRequest(req *request.CreateDelivery) {
 	}
 }
 func (o *OrderShipping) AddHistoryStatus(s *ShippingCourierStatus, note string) {
+	if o.isHistoryStatusExist(s.StatusCode, note) {
+		return
+	}
+
 	o.OrderShippingHistory = append(o.OrderShippingHistory, OrderShippingHistory{
 		OrderShippingID:         o.ID,
 		ShippingCourierStatusID: s.ID,
@@ -141,6 +145,16 @@ func (o *OrderShipping) AddHistoryStatus(s *ShippingCourierStatus, note string) 
 			CreatedBy: o.UpdatedBy,
 		},
 	})
+}
+
+func (o *OrderShipping) isHistoryStatusExist(statusCode, note string) bool {
+	for _, v := range o.OrderShippingHistory {
+		if v.StatusCode == statusCode && v.Note == note {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (OrderShipping) TableName() string {
