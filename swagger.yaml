@@ -4228,8 +4228,6 @@ paths:
                 type: object
               meta:
                 $ref: '#/definitions/MetaResponse'
-      security:
-      - Bearer: []
       summary: Update Status from Shipper Webhook
       tags:
       - Shipping

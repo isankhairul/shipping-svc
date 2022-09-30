@@ -100,15 +100,8 @@ func makeGetOrderShippingTracking(s service.ShippingService) endpoint.Endpoint {
 func makeUpdateStatusShipper(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
 
-		// Retrieve JWT Info
-		jwtInfo, msg := global.SetJWTInfoFromContext(ctx)
-		if msg.Code != message.SuccessMsg.Code {
-			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
-		}
-
 		req := rqst.(request.WebhookUpdateStatusShipper)
-		req.JWTInfo = *jwtInfo
-		_, msg = s.UpdateStatusShipper(&req)
+		_, msg := s.UpdateStatusShipper(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 	}
 }
