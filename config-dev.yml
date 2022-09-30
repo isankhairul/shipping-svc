@@ -65,3 +65,5 @@ shipper:
     cancel-pickup: /v3/pickup/cancel
   setting:
     package-type: 3
+  webhook:
+    update_status_endpoint: https://shipping-api.medkomtek-stg.com/shipment-svc/api/v1/shipping/webhook/shipper

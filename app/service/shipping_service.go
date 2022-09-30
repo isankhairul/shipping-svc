@@ -626,6 +626,10 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 		_ = level.Info(logger).Log("shipper_webhook", string(jsonReq))
 	}
 
+	if req.Auth != shipping_provider.ShipperWebhookAuth() {
+		return nil, message.ErrUnAuth
+	}
+
 	orderShipping, err := s.orderShipping.FindByOrderNo(req.ExternalID)
 	if err != nil {
 		_ = level.Error(logger).Log("s.orderShipping.FindByOrderNo", err.Error())

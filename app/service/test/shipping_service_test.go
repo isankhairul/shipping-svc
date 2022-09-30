@@ -1163,7 +1163,8 @@ var updateStatusReq = &request.WebhookUpdateStatusShipper{
 		Name:        "Name",
 		Description: "Desc",
 	},
-	Awb: "AWB-00001",
+	Awb:  "AWB-00001",
+	Auth: "466deec76ecdf5fca6d38571f6324d54",
 }
 
 func TestUpdateStatusShipper(t *testing.T) {
