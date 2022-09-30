@@ -3,8 +3,10 @@ package util
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/md5"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/hex"
 	"io"
 )
 
@@ -63,4 +65,9 @@ func AESDecryption(cipherText string, key string) (string, error) {
 	}
 
 	return string(plaintext), err
+}
+
+func MD5Hash(key string) string {
+	keyByte := md5.Sum([]byte(key))
+	return hex.EncodeToString(keyByte[:])
 }

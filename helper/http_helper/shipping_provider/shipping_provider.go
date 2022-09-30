@@ -1,6 +1,11 @@
 package shipping_provider
 
-import "strings"
+import (
+	"go-klikdokter/pkg/util"
+	"strings"
+
+	"github.com/spf13/viper"
+)
 
 const (
 	ShipperCode      = "shipper"
@@ -54,4 +59,13 @@ func IsOrderCancelable(courierCode, status string) bool {
 	}
 
 	return false
+}
+
+func ShipperWebhookAuth() string {
+	// <api_key> + <endpoint_url> + <response_format>
+	apiKey := viper.GetString("shipper.auth.value")
+	endpoint := viper.GetString("shipper.webhook.update_status_endpoint")
+	format := "json"
+
+	return util.MD5Hash(apiKey + endpoint + format)
 }
