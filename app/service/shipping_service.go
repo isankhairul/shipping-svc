@@ -609,8 +609,6 @@ func (s *shippingServiceImpl) thridPartyTracking(orderShipping *entity.OrderShip
 // Description :
 //
 // ---
-// security:
-// - Bearer: []
 //
 // responses:
 //   '200':
