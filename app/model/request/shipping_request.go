@@ -100,9 +100,7 @@ type CreateDelivery struct {
 	Origin            CreateDeiveryArea     `json:"origin"`
 	Destination       CreateDeiveryArea     `json:"destination"`
 	Package           CreateDeliveryPackage `json:"package"`
-
-	// Extend Jwt Info
-	global.JWTInfo
+	Username          string                `json:"username"`
 }
 
 func (c *CreateDelivery) ToCreateOrderShipperPackage() *CreateOrderShipperPackage {
@@ -259,7 +257,7 @@ func (m *GetOrderShippingList) GetFilter() {
 	}
 }
 
-// swagger:parameters GetOrderShippingDetail CancelPickup
+// swagger:parameters GetOrderShippingDetail
 type GetOrderShippingDetail struct {
 	// in: path
 	// required: true
@@ -279,8 +277,21 @@ type CancelOrder struct {
 // swagger:model CancelOrderBodyRequest
 type CancelOrderBodyRequest struct {
 	// example: Stok barang habis
-	Reason string `json:"reason"`
+	Reason   string `json:"reason"`
+	Username string `json:"username"`
+}
 
-	// Extend Jwt Info
-	global.JWTInfo
+// swagger:parameters CancelPickup
+type CancelPickup struct {
+	// in: path
+	// required: true
+	UID string `json:"uid"`
+
+	// in: body
+	Body CancelPickupBodyRequest `json:"body"`
+}
+
+// swagger:model CancelPickupBodyRequest
+type CancelPickupBodyRequest struct {
+	Username string `json:"username"`
 }

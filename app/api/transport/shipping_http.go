@@ -76,7 +76,7 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 
 	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathCancelPickupUID)).Handler(httptransport.NewServer(
 		ep.CancelPickUp,
-		encoder.UIDRequestHTTP,
+		decodeCancelPickup,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
@@ -137,6 +137,20 @@ func decodeGetOrderShippingList(ctx context.Context, r *http.Request) (rqst inte
 }
 func decodeCancelOrder(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
 	var params request.CancelOrder
+	if err := r.ParseForm(); err != nil {
+		return nil, err
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&params.Body); err != nil {
+		return nil, err
+	}
+
+	params.UID = mux.Vars(r)[pathUID]
+	return params, nil
+}
+
+func decodeCancelPickup(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var params request.CancelPickup
 	if err := r.ParseForm(); err != nil {
 		return nil, err
 	}

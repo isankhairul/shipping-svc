@@ -29,7 +29,7 @@ type ShippingService interface {
 	UpdateStatusShipper(req *request.WebhookUpdateStatusShipper) (*entity.OrderShipping, message.Message)
 	GetOrderShippingList(req *request.GetOrderShippingList) ([]response.GetOrderShippingList, *base.Pagination, message.Message)
 	GetOrderShippingDetailByUID(uid string) (*response.GetOrderShippingDetail, message.Message)
-	CancelPickup(uid string) message.Message
+	CancelPickup(req *request.CancelPickup) message.Message
 	CancelOrder(req *request.CancelOrder) message.Message
 }
 
@@ -454,7 +454,7 @@ func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelive
 		orderShipping.CourierID = courierService.CourierID
 		orderShipping.CourierServiceID = courierService.ID
 	}
-	orderShipping.UpdatedBy = input.ActorName
+	orderShipping.UpdatedBy = input.Username
 	return courierService, orderShipping, shippingStatus, message.SuccessMsg
 }
 
@@ -464,8 +464,6 @@ func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelive
 // Description :
 //
 // ---
-// security:
-// - Bearer: []
 //
 // responses:
 //   '200':
@@ -641,7 +639,7 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 	}
 
 	statusCode := req.ExternalStatus.Code
-	statusDescription := req.InternalStatus.Description
+	statusDescription := req.ExternalStatus.Description
 
 	shippingStatus, err := s.shippingCourierStatusRepo.FindByCourierStatus(orderShipping.CourierID, fmt.Sprint(statusCode))
 
@@ -853,8 +851,6 @@ func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *r
 // Description :
 //
 // ---
-// security:
-// - Bearer: []
 //
 // responses:
 //   '200':
@@ -865,9 +861,9 @@ func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *r
 //            $ref: '#/definitions/MetaResponse'
 //         data:
 //           type: object
-func (s *shippingServiceImpl) CancelPickup(uid string) message.Message {
+func (s *shippingServiceImpl) CancelPickup(req *request.CancelPickup) message.Message {
 	logger := log.With(s.logger, "ShippingService", "CancelPickup")
-	orderShipping, err := s.orderShipping.FindByUID(uid)
+	orderShipping, err := s.orderShipping.FindByUID(req.UID)
 	if err != nil {
 		_ = level.Error(logger).Log("s.orderShipping.FindByUID", err.Error())
 		return message.ErrOrderShippingNotFound
@@ -896,6 +892,7 @@ func (s *shippingServiceImpl) CancelPickup(uid string) message.Message {
 
 	orderShipping.AddHistoryStatus(shipperStatus, "")
 	orderShipping.Status = shipping_provider.StatusCancelled
+	orderShipping.UpdatedBy = req.Body.Username
 	_, err = s.orderShipping.Upsert(orderShipping)
 	if err != nil {
 		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
@@ -940,8 +937,6 @@ func (s *shippingServiceImpl) cancelPickupThirdParty(orderShipping *entity.Order
 // Description :
 //
 // ---
-// security:
-// - Bearer: []
 //
 // responses:
 //   '200':
@@ -983,7 +978,7 @@ func (s *shippingServiceImpl) CancelOrder(req *request.CancelOrder) message.Mess
 	}
 
 	orderShipping.Status = shipping_provider.StatusCancelled
-	orderShipping.UpdatedBy = req.Body.ActorName
+	orderShipping.UpdatedBy = req.Body.Username
 	orderShipping.AddHistoryStatus(shipperStatus, req.Body.Reason)
 
 	_, err = s.orderShipping.Upsert(orderShipping)
