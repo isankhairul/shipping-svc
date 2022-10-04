@@ -42,7 +42,7 @@ type GetPricingDomestic struct {
 type AreaDetail struct {
 	AreaID    int    `json:"area_id"`
 	Latitude  string `json:"lat"`
-	Longitude string `json:"long"`
+	Longitude string `json:"lng"`
 }
 
 type FindShipperCourierCoverage struct {

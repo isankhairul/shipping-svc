@@ -13,8 +13,8 @@ type errorer interface {
 }
 
 const (
-	contentType        = "Content-Type"
-	contentDisposition = "Content-Disposition"
+	contentType = "Content-Type"
+	//contentDisposition = "Content-Disposition"
 )
 
 /*
