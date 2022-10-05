@@ -245,10 +245,15 @@ type GetOrderShippingFilter struct {
 	ChannelCode           []string `json:"channel_code"`
 	ChannelName           []string `json:"channel_name"`
 	CourierName           []string `json:"courier_name"`
+	CourierServicesName   []string `json:"courier_services_name"`
 	OrderNo               []string `json:"order_no"`
+	Airwaybill            []string `json:"airwaybill"`
 	ShippingStatus        []string `json:"shipping_status"`
 	OrderShippingDateFrom string   `json:"order_shipping_date_from"`
 	OrderShippingDateTo   string   `json:"order_shipping_date_to"`
+	BookingID             []string `json:"booking_id"`
+	MerchantName          []string `json:"merchant_name"`
+	CustomerName          []string `json:"customer_name"`
 }
 
 func (m *GetOrderShippingList) GetFilter() {

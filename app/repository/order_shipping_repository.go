@@ -175,17 +175,38 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort, dir string
 
 			case "order_shipping_date_to":
 				query = query.Where("CAST(order_shipping_date AS DATE) <= CAST(? AS DATE)", v)
+
+			case "courier_services_name":
+				query = query.Where(like("cs.shipping_name", v.([]string)))
+
+			case "airwaybill":
+				query = query.Where(like("order_shipping.airwaybill", v.([]string)))
+
+			case "booking_id":
+				query = query.Where(like("order_shipping.booking_id", v.([]string)))
+			case "merchant_name":
+				query = query.Where(like("order_shipping.merchant_name", v.([]string)))
+			case "customer_name":
+				query = query.Where(like("order_shipping.customer_name", v.([]string)))
+
 			}
+
 		}
 	}
 
 	m := map[string]string{
-		"channel_code":    "ch.channel_code",
-		"channel_name":    "ch.channel_name",
-		"courier_code":    "c.code",
-		"courier_name":    "c.courier_name",
-		"shipping_status": "order_shipping.status",
+		"channel_code":          "ch.channel_code",
+		"channel_name":          "ch.channel_name",
+		"courier_code":          "c.code",
+		"courier_name":          "c.courier_name",
+		"shipping_status":       "order_shipping.status",
+		"courier_services_name": "cs.shipping_name",
+		"airwaybill":            "order_shipping.airwaybill",
+		"booking_id":            "order_shipping.booking_id",
+		"merchant_name":         "order_shipping.merchant_name",
+		"customer_name":         "order_shipping.customer_name",
 	}
+
 	sort = m[sort]
 	sort = util.ReplaceEmptyString(sort, "order_shipping.updated_at")
 

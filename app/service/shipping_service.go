@@ -740,9 +740,14 @@ func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShipping
 	filter["channel_code"] = req.Filters.ChannelCode
 	filter["channel_name"] = req.Filters.ChannelName
 	filter["courier_name"] = req.Filters.CourierName
+	filter["courier_services_name"] = req.Filters.CourierServicesName
+	filter["airwaybill"] = req.Filters.Airwaybill
 	filter["shipping_status"] = req.Filters.ShippingStatus
 	filter["order_shipping_date_from"] = req.Filters.OrderShippingDateFrom
 	filter["order_shipping_date_to"] = req.Filters.OrderShippingDateTo
+	filter["booking_id"] = req.Filters.BookingID
+	filter["merchant_name"] = req.Filters.MerchantName
+	filter["customer_name"] = req.Filters.CustomerName
 
 	result, pagination, err := s.orderShipping.FindByParams(req.Limit, req.Page, req.Sort, req.Dir, filter)
 	if err != nil {
