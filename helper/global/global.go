@@ -48,6 +48,7 @@ var (
 	PathOrderShippingUID         = "order-shipping/{uid}"
 	PathCancelPickupUID          = "cancel-pickup/{uid}"
 	PathCancelOrderUID           = "cancel-order/{uid}"
+	PathUpdateOrderTopicName     = "update-order-shipping/{topic-name}"
 
 	ServerPort = "server.port"
 )

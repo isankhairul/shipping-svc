@@ -20,6 +20,7 @@ import (
 
 const (
 	shippingTypePath = "shipping-type"
+	topicName        = "topic-name"
 )
 
 func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Handler {
@@ -84,6 +85,13 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathCancelOrderUID)).Handler(httptransport.NewServer(
 		ep.CancelOrder,
 		decodeCancelOrder,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathUpdateOrderTopicName)).Handler(httptransport.NewServer(
+		ep.UpdateOrderShipping,
+		decodeUpdateOrderShipping,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
@@ -160,5 +168,19 @@ func decodeCancelPickup(ctx context.Context, r *http.Request) (rqst interface{},
 	}
 
 	params.UID = mux.Vars(r)[pathUID]
+	return params, nil
+}
+
+func decodeUpdateOrderShipping(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var params request.UpdateOrderShipping
+	if err := r.ParseForm(); err != nil {
+		return nil, err
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&params.Body); err != nil {
+		return nil, err
+	}
+
+	params.TopicName = mux.Vars(r)[topicName]
 	return params, nil
 }

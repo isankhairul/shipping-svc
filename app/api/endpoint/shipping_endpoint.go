@@ -22,6 +22,7 @@ type ShippingEndpoint struct {
 	GetOrderShippingDetail        endpoint.Endpoint
 	CancelPickUp                  endpoint.Endpoint
 	CancelOrder                   endpoint.Endpoint
+	UpdateOrderShipping           endpoint.Endpoint
 }
 
 func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
@@ -35,6 +36,7 @@ func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
 		GetOrderShippingDetail:        makeGetOrderShippingDetail(s),
 		CancelPickUp:                  makeCancelPickup(s),
 		CancelOrder:                   makeCancelOrder(s),
+		UpdateOrderShipping:           makeUpdateOrderShipping(s),
 	}
 }
 
@@ -164,5 +166,14 @@ func makeCancelOrder(s service.ShippingService) endpoint.Endpoint {
 		// req.Body.JWTInfo = *jwtInfo
 		msg := s.CancelOrder(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+	}
+}
+
+func makeUpdateOrderShipping(s service.ShippingService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		req := rqst.(request.UpdateOrderShipping)
+		result, msg := s.UpdateOrderShipping(&req)
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }

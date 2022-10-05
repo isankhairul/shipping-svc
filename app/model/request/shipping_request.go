@@ -295,3 +295,32 @@ type CancelPickup struct {
 type CancelPickupBodyRequest struct {
 	Username string `json:"username"`
 }
+
+// swagger:parameters UpdateOrderShipping
+type UpdateOrderShipping struct {
+	// in: path
+	// required: true
+	TopicName string `json:"topic-name"`
+	// in: body
+	Body UpdateOrderShippingBody `json:"body"`
+}
+
+type UpdateOrderShippingBody struct {
+	ChannelUID         string                        `json:"channel_uid"`
+	CourierCode        string                        `json:"courier_code"`
+	CourierServiceUID  string                        `json:"courier_service_uid"`
+	OrderNo            string                        `json:"order_no"`
+	OrderShippingUID   string                        `json:"order_shipping_uid"`
+	Airwaybill         string                        `json:"airwaybill"`
+	ShippingStatus     string                        `json:"shipping_status"`
+	ShippingStatusName string                        `json:"shipping_status_name"`
+	Details            UpdateOrderShippingBodyDetail `json:"details"`
+	UpdatedBy          string                        `json:"update_by"`
+	Timestamp          time.Time                     `json:"timestamp"`
+}
+
+type UpdateOrderShippingBodyDetail struct {
+	ExternalStatusCode        string `json:"external_status_code"`
+	ExternalStatusName        string `json:"external_status_name"`
+	ExternalStatusDescription string `json:"external_status_description"`
+}

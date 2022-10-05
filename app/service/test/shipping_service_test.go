@@ -10,6 +10,7 @@ import (
 	"go-klikdokter/app/service"
 	"testing"
 
+	"go-klikdokter/helper/http_helper/http_helper_mock"
 	"go-klikdokter/helper/http_helper/shipping_provider"
 	"go-klikdokter/helper/http_helper/shipping_provider/shipping_provider_mock"
 	"go-klikdokter/helper/message"
@@ -23,6 +24,7 @@ var shippingService service.ShippingService
 var shipper = &shipping_provider_mock.ShipperMock{Mock: mock.Mock{}}
 var redis = &cache_mock.Redis_Mock{Mock: mock.Mock{}}
 var orderShippingRepository = &repository_mock.OrderShippingRepositoryMock{Mock: mock.Mock{}}
+var dapr = &http_helper_mock.DaprEndpointMock{Mock: mock.Mock{}}
 
 func init() {
 	shippingService = service.NewShippingService(
@@ -36,6 +38,7 @@ func init() {
 		orderShippingRepository,
 		courierRepository,
 		shippingCourierStatusRepository,
+		dapr,
 	)
 }
 
@@ -1168,9 +1171,19 @@ var updateStatusReq = &request.WebhookUpdateStatusShipper{
 }
 
 func TestUpdateStatusShipper(t *testing.T) {
-	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{}).Once()
-	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(&entity.ShippingCourierStatus{}).Once()
-	orderShippingRepository.Mock.On("Upsert").Return(&entity.OrderShipping{}).Once()
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{
+		Channel:        &entity.Channel{},
+		Courier:        &entity.Courier{},
+		CourierService: &entity.CourierService{},
+	}).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(&entity.OrderShipping{
+		Channel:        &entity.Channel{},
+		Courier:        &entity.Courier{},
+		CourierService: &entity.CourierService{},
+	}).Once()
 
 	result, msg := shippingService.UpdateStatusShipper(updateStatusReq)
 

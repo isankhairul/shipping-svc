@@ -88,6 +88,7 @@ var ErrFormatDateYYYYMMDD = Message{Code: 34602, Message: "date format must be Y
 var ErrCancelPickup = Message{Code: 34602, Message: "failed when trying to cancel pickup"}
 var ErrCantCancelOrderShipping = Message{Code: 34602, Message: "can't cancel this order"}
 var ErrCantCancelOrderCourierService = Message{Code: 34602, Message: "courier service is not cancelable"}
+var ErrUpdateOrderShipping = Message{Code: 34602, Message: "error update order shipping"}
 
 var (
 	ShippingProviderMsg               = Message{Code: 209002, Message: ""}

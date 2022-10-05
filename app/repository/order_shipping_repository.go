@@ -75,6 +75,9 @@ func (r *orderShippingRepository) FindByOrderNo(orderNo string) (*entity.OrderSh
 	var result entity.OrderShipping
 	query := r.base.GetDB().
 		Model(&entity.OrderShipping{}).
+		Preload("Channel").
+		Preload("Courier").
+		Preload("CourierService").
 		Preload("OrderShippingItem").
 		Preload("OrderShippingHistory").
 		Where(&entity.OrderShipping{OrderNo: orderNo})

@@ -9,12 +9,14 @@ import (
 	"go-klikdokter/app/model/response"
 	"go-klikdokter/app/repository"
 	"go-klikdokter/helper/global"
+	"go-klikdokter/helper/http_helper"
 	"go-klikdokter/helper/http_helper/shipping_provider"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/cache"
 	"go-klikdokter/pkg/util"
 	"math"
 	"strconv"
+	"time"
 
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -31,6 +33,7 @@ type ShippingService interface {
 	GetOrderShippingDetailByUID(uid string) (*response.GetOrderShippingDetail, message.Message)
 	CancelPickup(req *request.CancelPickup) message.Message
 	CancelOrder(req *request.CancelOrder) message.Message
+	UpdateOrderShipping(req *request.UpdateOrderShipping) (*response.UpdateOrderShippingResponse, message.Message)
 }
 
 type shippingServiceImpl struct {
@@ -44,6 +47,7 @@ type shippingServiceImpl struct {
 	orderShipping             repository.OrderShippingRepository
 	courierRepo               repository.CourierRepository
 	shippingCourierStatusRepo repository.ShippingCourierStatusRepository
+	daprEndpoint              http_helper.DaprEndpoint
 }
 
 func NewShippingService(
@@ -57,9 +61,10 @@ func NewShippingService(
 	osr repository.OrderShippingRepository,
 	cr repository.CourierRepository,
 	scs repository.ShippingCourierStatusRepository,
+	de http_helper.DaprEndpoint,
 ) ShippingService {
 	return &shippingServiceImpl{
-		l, br, chrp, csrp, cccrp, sh, rc, osr, cr, scs,
+		l, br, chrp, csrp, cccrp, sh, rc, osr, cr, scs, de,
 	}
 }
 
@@ -667,6 +672,28 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 		return nil, message.ErrSaveOrderShipping
 	}
 
+	topic := "queueing.shipment.order_shipping_update." + orderShipping.Channel.ChannelCode
+	updateOrderRequest := request.UpdateOrderShipping{
+		TopicName: topic,
+		Body: request.UpdateOrderShippingBody{
+			ChannelUID:         orderShipping.Channel.UID,
+			CourierCode:        orderShipping.Courier.Code,
+			CourierServiceUID:  orderShipping.CourierService.UID,
+			OrderNo:            orderShipping.OrderNo,
+			OrderShippingUID:   orderShipping.UID,
+			Airwaybill:         orderShipping.Airwaybill,
+			ShippingStatus:     shippingStatus.StatusCode,
+			ShippingStatusName: shippingStatus.ShippingStatus.StatusName,
+			UpdatedBy:          "shipping_service",
+			Timestamp:          time.Now(),
+			Details: request.UpdateOrderShippingBodyDetail{
+				ExternalStatusCode:        fmt.Sprint(req.ExternalStatus.Code),
+				ExternalStatusName:        req.ExternalStatus.Name,
+				ExternalStatusDescription: req.ExternalStatus.Description,
+			},
+		},
+	}
+	s.daprEndpoint.UpdateOrderShipping(&updateOrderRequest)
 	return orderShipping, message.SuccessMsg
 }
 
@@ -1017,4 +1044,30 @@ func (s *shippingServiceImpl) cancelOrderThirdParty(orderShipping *entity.OrderS
 	}
 
 	return message.SuccessMsg
+}
+
+// swagger:operation POST /shipping/update-order-shipping/{topic-name} Shipping UpdateOrderShipping
+// Update Order Shipping
+//
+// Description :
+//
+// ---
+//
+// responses:
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/UpdateOrderShipping'
+func (s *shippingServiceImpl) UpdateOrderShipping(req *request.UpdateOrderShipping) (*response.UpdateOrderShippingResponse, message.Message) {
+	return &response.UpdateOrderShippingResponse{
+		OrderShippingUID: req.Body.OrderShippingUID,
+		OrderNoAPI:       req.Body.OrderNo,
+		ShippingStatus:   req.Body.ShippingStatus,
+	}, message.SuccessMsg
 }
