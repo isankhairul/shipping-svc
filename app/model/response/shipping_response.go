@@ -420,7 +420,7 @@ type GetOrderShippingDetailItem struct {
 	//example: 2.5
 	Volume float64 `json:"volume"`
 	//example: 1
-	Prescrition int `json:"prescription"`
+	Prescription int `json:"prescription"`
 }
 
 //swagger:model GetOrderShippingDetailResponseHistory
@@ -441,4 +441,50 @@ type UpdateOrderShippingResponse struct {
 	OrderShippingUID string `json:"order_shipping_uid"`
 	OrderNoAPI       string `json:"order_no_api"`
 	ShippingStatus   string `json:"shipping_status"`
+}
+
+//swagger:model GetOrderShippingLabelResponse
+type GetOrderShippingLabelResponse struct {
+	ChannelCode          string                       `json:"channel_code"`
+	ChannelName          string                       `json:"channel_name"`
+	ChannelImage         datatype.JSONB               `json:"channel_image"`
+	OrderShippingUID     string                       `json:"order_shipping_uid"`
+	OrderShippingDate    time.Time                    `json:"order_shipping_date"`
+	OrderNo              string                       `json:"order_no"`
+	OrderNoAPI           string                       `json:"order_no_api"`
+	CourierName          string                       `json:"courier_name"`
+	CourierImage         datatype.JSONB               `json:"courier_image"`
+	CourierServiceName   string                       `json:"courier_service_name"`
+	CourierServiceImage  datatype.JSONB               `json:"courier_service_image"`
+	Airwaybill           string                       `json:"airwaybill"`
+	BookingID            string                       `json:"booking_id"`
+	TotalProductPrice    float64                      `json:"total_product_price"`
+	TotalWeight          float64                      `json:"total_weight"`
+	TotalVolume          float64                      `json:"total_volume"`
+	FinalWeight          float64                      `json:"final_weight"`
+	ShippingCost         float64                      `json:"shipping_cost"`
+	Insurance            bool                         `json:"insurance"`
+	InsuranceCost        float64                      `json:"insurance_cost"`
+	TotalShippingCost    float64                      `json:"total_shipping_cost"`
+	ShippingNotes        string                       `json:"shipping_notes"`
+	MerchantUID          string                       `json:"merchant_uid"`
+	MerchantName         string                       `json:"merchant_name"`
+	MerchantEmail        string                       `json:"merchant_email"`
+	MerchantPhone        string                       `json:"merchant_phone"`
+	MerchantAddress      string                       `json:"merchant_address"`
+	MerchantDistrictName string                       `json:"merchant_district_name"`
+	MerchantCityName     string                       `json:"merchant_city_name"`
+	MerchantProvinceName string                       `json:"merchant_province_name"`
+	MerchantPostalCode   string                       `json:"merchant_postal_code"`
+	CustomerUID          string                       `json:"customer_uid"`
+	CustomerName         string                       `json:"customer_name"`
+	CustomerEmail        string                       `json:"customer_email"`
+	CustomerPhone        string                       `json:"customer_phone"`
+	CustomerAddress      string                       `json:"customer_address"`
+	CustomerDistrictName string                       `json:"customer_district_name"`
+	CustomerCityName     string                       `json:"customer_city_name"`
+	CustomerProvinceName string                       `json:"customer_province_name"`
+	CustomerPostalCode   string                       `json:"customer_postal_code"`
+	CustomerNotes        string                       `json:"customer_notes"`
+	OrderShippingItems   []GetOrderShippingDetailItem `json:"order_shipping_items"`
 }

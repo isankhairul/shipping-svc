@@ -103,3 +103,19 @@ func (r *OrderShippingRepositoryMock) FindByParams(limit, page int, sort, dir st
 
 	return arguments.Get(0).([]response.GetOrderShippingList), arguments.Get(1).(*base.Pagination), nil
 }
+
+func (r *OrderShippingRepositoryMock) FindByUIDs(channelUID string, uid []string) ([]entity.OrderShipping, error) {
+	arguments := r.Mock.Called()
+
+	if len(arguments) > 1 {
+		if arguments.Get(1) != nil {
+			return nil, arguments.Get(1).(error)
+		}
+	}
+
+	if arguments.Get(0) == nil {
+		return nil, nil
+	}
+
+	return arguments.Get(0).([]entity.OrderShipping), nil
+}

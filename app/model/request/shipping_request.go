@@ -324,3 +324,17 @@ type UpdateOrderShippingBodyDetail struct {
 	ExternalStatusName        string `json:"external_status_name"`
 	ExternalStatusDescription string `json:"external_status_description"`
 }
+
+// swagger:parameters GetOrderShippingLabel
+type GetOrderShippingLabel struct {
+	// in: path
+	// required: true
+	ChannelUID string `json:"channel-uid"`
+	// in: body
+	Body GetOrderShippingLabelBody `json:"body"`
+}
+
+type GetOrderShippingLabelBody struct {
+	OrderShippingUID []string `json:"order_shipping_uid"`
+	HideProduct      bool     `json:"hide_product"`
+}

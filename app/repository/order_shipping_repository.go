@@ -18,6 +18,7 @@ type OrderShippingRepository interface {
 	FindByOrderNo(orderNo string) (*entity.OrderShipping, error)
 	FindByUID(uid string) (*entity.OrderShipping, error)
 	FindByParams(limit, page int, sort, dir string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error)
+	FindByUIDs(channelUID string, uid []string) ([]entity.OrderShipping, error)
 }
 
 type orderShippingRepository struct {
@@ -208,4 +209,28 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort, dir string
 	}
 
 	return result, pagination, nil
+}
+
+func (r *orderShippingRepository) FindByUIDs(channelUID string, uid []string) ([]entity.OrderShipping, error) {
+	var result []entity.OrderShipping
+	query := r.base.GetDB().
+		Preload("Channel").
+		Preload("Courier").
+		Preload("OrderShippingItem").
+		Preload("CourierService").
+		Model(&entity.OrderShipping{}).
+		Where("order_shipping.uid IN ?", uid).
+		Joins("INNER JOIN channel c ON c.id = order_shipping.channel_id AND c.uid = ?", channelUID)
+
+	err := query.Find(&result).Error
+
+	if err != nil {
+		if errors.Is(gorm.ErrRecordNotFound, err) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return result, nil
 }
