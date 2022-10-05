@@ -640,7 +640,7 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 		return nil, message.ErrOrderShippingNotFound
 	}
 
-	statusCode := req.InternalStatus.Code
+	statusCode := req.ExternalStatus.Code
 	statusDescription := req.InternalStatus.Description
 
 	shippingStatus, err := s.shippingCourierStatusRepo.FindByCourierStatus(orderShipping.CourierID, fmt.Sprint(statusCode))
