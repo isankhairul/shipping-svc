@@ -138,7 +138,7 @@ func (s *ChannelCourierServiceImpl) GetChannelCourier(uid string) (*entity.Chann
 	return entity.ToChannelCourierDTO(cur), message.SuccessMsg
 }
 
-// swagger:operation GET /channel/channel-courier/ Channel-Courier-Service ChannelCourierListRequest
+// swagger:operation GET /channel/channel-courier Channel-Courier-Service ChannelCourierListRequest
 // List of Assignment Channel and Courier
 //
 // Description :

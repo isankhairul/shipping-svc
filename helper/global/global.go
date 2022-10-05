@@ -15,7 +15,7 @@ var (
 	PrefixChannel               = "/channel/"
 	PrefixCourier               = "/courier/"
 	PrefixCourierCoverageCode   = "/courier/courier-coverage-code/"
-	PrefixChannelCourier        = "/channel/channel-courier/"
+	PrefixChannelCourier        = "/channel/channel-courier"
 	PrefixChannelCourierService = "/channel/channel-courier-service/"
 	PrefixShipping              = "/shipping/"
 	PrefixWebhook               = "/shipping/webhook/"
