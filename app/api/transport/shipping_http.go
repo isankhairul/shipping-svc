@@ -21,6 +21,7 @@ import (
 const (
 	shippingTypePath = "shipping-type"
 	topicName        = "topic-name"
+	channelUID       = "channel-uid"
 )
 
 func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Handler {
@@ -92,6 +93,13 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathUpdateOrderTopicName)).Handler(httptransport.NewServer(
 		ep.UpdateOrderShipping,
 		decodeUpdateOrderShipping,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathOrderShippingLabel)).Handler(httptransport.NewServer(
+		ep.GetOrderShippingLabel,
+		decodeOrderShippingLabel,
 		encoder.EncodeResponseHTTP,
 		options...,
 	))
@@ -182,5 +190,19 @@ func decodeUpdateOrderShipping(ctx context.Context, r *http.Request) (rqst inter
 	}
 
 	params.TopicName = mux.Vars(r)[topicName]
+	return params, nil
+}
+
+func decodeOrderShippingLabel(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var params request.GetOrderShippingLabel
+	if err := r.ParseForm(); err != nil {
+		return nil, err
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&params.Body); err != nil {
+		return nil, err
+	}
+
+	params.ChannelUID = mux.Vars(r)[channelUID]
 	return params, nil
 }

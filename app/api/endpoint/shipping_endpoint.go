@@ -23,6 +23,7 @@ type ShippingEndpoint struct {
 	CancelPickUp                  endpoint.Endpoint
 	CancelOrder                   endpoint.Endpoint
 	UpdateOrderShipping           endpoint.Endpoint
+	GetOrderShippingLabel         endpoint.Endpoint
 }
 
 func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
@@ -37,6 +38,7 @@ func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
 		CancelPickUp:                  makeCancelPickup(s),
 		CancelOrder:                   makeCancelOrder(s),
 		UpdateOrderShipping:           makeUpdateOrderShipping(s),
+		GetOrderShippingLabel:         makeGetOrderShippingLabel(s),
 	}
 }
 
@@ -174,6 +176,21 @@ func makeUpdateOrderShipping(s service.ShippingService) endpoint.Endpoint {
 
 		req := rqst.(request.UpdateOrderShipping)
 		result, msg := s.UpdateOrderShipping(&req)
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
+	}
+}
+
+func makeGetOrderShippingLabel(s service.ShippingService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		req := rqst.(request.GetOrderShippingLabel)
+		result, msg := s.GetOrderShippingLabel(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }

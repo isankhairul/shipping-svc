@@ -34,6 +34,7 @@ type ShippingService interface {
 	CancelPickup(req *request.CancelPickup) message.Message
 	CancelOrder(req *request.CancelOrder) message.Message
 	UpdateOrderShipping(req *request.UpdateOrderShipping) (*response.UpdateOrderShippingResponse, message.Message)
+	GetOrderShippingLabel(req *request.GetOrderShippingLabel) ([]response.GetOrderShippingLabelResponse, message.Message)
 }
 
 type shippingServiceImpl struct {
@@ -849,13 +850,13 @@ func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *r
 
 	for _, v := range orderShipping.OrderShippingItem {
 		resp.OrderShippingItem = append(resp.OrderShippingItem, response.GetOrderShippingDetailItem{
-			ItemName:    v.ItemName,
-			ProductUID:  v.ProductUID,
-			Qty:         v.Quantity,
-			Price:       v.Price,
-			Weight:      v.Weight,
-			Volume:      v.Volume,
-			Prescrition: v.Prescription,
+			ItemName:     v.ItemName,
+			ProductUID:   v.ProductUID,
+			Qty:          v.Quantity,
+			Price:        v.Price,
+			Weight:       v.Weight,
+			Volume:       v.Volume,
+			Prescription: v.Prescription,
 		})
 	}
 
@@ -1070,4 +1071,107 @@ func (s *shippingServiceImpl) UpdateOrderShipping(req *request.UpdateOrderShippi
 		OrderNoAPI:       req.Body.OrderNo,
 		ShippingStatus:   req.Body.ShippingStatus,
 	}, message.SuccessMsg
+}
+
+// swagger:operation POST /shipping/order-shipping-label/{channel-uid} Shipping GetOrderShippingLabel
+// Order Shipping Label
+//
+// Description :
+//
+// ---
+// security:
+// - Bearer: []
+//
+// responses:
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//           $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             records:
+//               type: array
+//               items:
+//                 $ref: '#/definitions/GetOrderShippingLabelResponse'
+func (s *shippingServiceImpl) GetOrderShippingLabel(req *request.GetOrderShippingLabel) ([]response.GetOrderShippingLabelResponse, message.Message) {
+	logger := log.With(s.logger, "ShippingService", "GetOrderShippingLabel")
+
+	result, err := s.orderShipping.FindByUIDs(req.ChannelUID, req.Body.OrderShippingUID)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.FindByUIDs", err.Error())
+		return []response.GetOrderShippingLabelResponse{}, message.ErrOrderShippingNotFound
+	}
+
+	return getOrderShippingLabelResponse(result, req.Body.HideProduct), message.SuccessMsg
+}
+
+func getOrderShippingLabelResponse(orderShipping []entity.OrderShipping, isHideProduct bool) []response.GetOrderShippingLabelResponse {
+	result := []response.GetOrderShippingLabelResponse{}
+	for _, v := range orderShipping {
+		data := response.GetOrderShippingLabelResponse{
+			OrderShippingItems:   []response.GetOrderShippingDetailItem{},
+			ChannelCode:          v.Channel.ChannelCode,
+			ChannelName:          v.Channel.ChannelName,
+			ChannelImage:         v.Channel.ImagePath,
+			OrderShippingUID:     v.UID,
+			OrderShippingDate:    v.OrderShippingDate,
+			OrderNo:              v.OrderNo,
+			OrderNoAPI:           v.OrderNoAPI,
+			CourierName:          v.Courier.CourierName,
+			CourierImage:         v.Courier.ImagePath,
+			CourierServiceName:   v.CourierService.ShippingName,
+			CourierServiceImage:  v.CourierService.ImagePath,
+			Airwaybill:           v.Airwaybill,
+			BookingID:            v.BookingID,
+			TotalProductPrice:    v.TotalProductPrice,
+			TotalWeight:          v.TotalWeight,
+			TotalVolume:          v.TotalVolume,
+			FinalWeight:          v.TotalFinalWeight,
+			ShippingCost:         v.ShippingCost,
+			Insurance:            v.Insurance,
+			InsuranceCost:        v.InsuranceCost,
+			TotalShippingCost:    v.TotalShippingCost,
+			ShippingNotes:        v.ShippingNotes,
+			MerchantUID:          v.MerchantUID,
+			MerchantName:         v.MerchantName,
+			MerchantEmail:        v.MerchantEmail,
+			MerchantPhone:        v.MerchantPhoneNumber,
+			MerchantAddress:      v.MerchantAddress,
+			MerchantDistrictName: v.MerchantDistrictCode,
+			MerchantCityName:     v.MerchantCityCode,
+			MerchantProvinceName: v.MerchantProvinceCode,
+			MerchantPostalCode:   v.MerchantPostalCode,
+			CustomerUID:          v.CustomerUID,
+			CustomerName:         v.CustomerName,
+			CustomerEmail:        v.CustomerEmail,
+			CustomerPhone:        v.CustomerPhoneNumber,
+			CustomerAddress:      v.CustomerAddress,
+			CustomerDistrictName: v.CustomerDistrictCode,
+			CustomerCityName:     v.CustomerCityCode,
+			CustomerProvinceName: v.CustomerProvinceCode,
+			CustomerPostalCode:   v.CustomerPostalCode,
+			CustomerNotes:        v.CustomerNotes,
+		}
+
+		if !isHideProduct {
+			items := []response.GetOrderShippingDetailItem{}
+			for _, v := range v.OrderShippingItem {
+				items = append(items, response.GetOrderShippingDetailItem{
+					ItemName:     v.ItemName,
+					ProductUID:   v.ProductUID,
+					Qty:          v.Quantity,
+					Price:        v.Price,
+					Weight:       v.Weight,
+					Volume:       v.Volume,
+					Prescription: v.Prescription,
+				})
+			}
+			data.OrderShippingItems = items
+		}
+
+		result = append(result, data)
+	}
+	return result
 }

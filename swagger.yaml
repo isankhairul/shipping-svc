@@ -1423,7 +1423,7 @@ definitions:
         example: 1
         format: int64
         type: integer
-        x-go-name: Prescrition
+        x-go-name: Prescription
       price:
         example: 110000
         format: double
@@ -1450,6 +1450,155 @@ definitions:
         x-go-name: Weight
     type: object
     x-go-name: GetOrderShippingDetailItem
+    x-go-package: go-klikdokter/app/model/response
+  GetOrderShippingLabelBody:
+    properties:
+      hide_product:
+        type: boolean
+        x-go-name: HideProduct
+      order_shipping_uid:
+        items:
+          type: string
+        type: array
+        x-go-name: OrderShippingUID
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  GetOrderShippingLabelResponse:
+    properties:
+      airwaybill:
+        type: string
+        x-go-name: Airwaybill
+      booking_id:
+        type: string
+        x-go-name: BookingID
+      channel_code:
+        type: string
+        x-go-name: ChannelCode
+      channel_image:
+        $ref: '#/definitions/JSONB'
+      channel_name:
+        type: string
+        x-go-name: ChannelName
+      courier_image:
+        $ref: '#/definitions/JSONB'
+      courier_name:
+        type: string
+        x-go-name: CourierName
+      courier_service_image:
+        $ref: '#/definitions/JSONB'
+      courier_service_name:
+        type: string
+        x-go-name: CourierServiceName
+      customer_address:
+        type: string
+        x-go-name: CustomerAddress
+      customer_city_name:
+        type: string
+        x-go-name: CustomerCityName
+      customer_district_name:
+        type: string
+        x-go-name: CustomerDistrictName
+      customer_email:
+        type: string
+        x-go-name: CustomerEmail
+      customer_name:
+        type: string
+        x-go-name: CustomerName
+      customer_notes:
+        type: string
+        x-go-name: CustomerNotes
+      customer_phone:
+        type: string
+        x-go-name: CustomerPhone
+      customer_postal_code:
+        type: string
+        x-go-name: CustomerPostalCode
+      customer_province_name:
+        type: string
+        x-go-name: CustomerProvinceName
+      customer_uid:
+        type: string
+        x-go-name: CustomerUID
+      final_weight:
+        format: double
+        type: number
+        x-go-name: FinalWeight
+      insurance:
+        type: boolean
+        x-go-name: Insurance
+      insurance_cost:
+        format: double
+        type: number
+        x-go-name: InsuranceCost
+      merchant_address:
+        type: string
+        x-go-name: MerchantAddress
+      merchant_city_name:
+        type: string
+        x-go-name: MerchantCityName
+      merchant_district_name:
+        type: string
+        x-go-name: MerchantDistrictName
+      merchant_email:
+        type: string
+        x-go-name: MerchantEmail
+      merchant_name:
+        type: string
+        x-go-name: MerchantName
+      merchant_phone:
+        type: string
+        x-go-name: MerchantPhone
+      merchant_postal_code:
+        type: string
+        x-go-name: MerchantPostalCode
+      merchant_province_name:
+        type: string
+        x-go-name: MerchantProvinceName
+      merchant_uid:
+        type: string
+        x-go-name: MerchantUID
+      order_no:
+        type: string
+        x-go-name: OrderNo
+      order_no_api:
+        type: string
+        x-go-name: OrderNoAPI
+      order_shipping_date:
+        format: date-time
+        type: string
+        x-go-name: OrderShippingDate
+      order_shipping_items:
+        items:
+          $ref: '#/definitions/GetOrderShippingDetailResponseItem'
+        type: array
+        x-go-name: OrderShippingItems
+      order_shipping_uid:
+        type: string
+        x-go-name: OrderShippingUID
+      shipping_cost:
+        format: double
+        type: number
+        x-go-name: ShippingCost
+      shipping_notes:
+        type: string
+        x-go-name: ShippingNotes
+      total_product_price:
+        format: double
+        type: number
+        x-go-name: TotalProductPrice
+      total_shipping_cost:
+        format: double
+        type: number
+        x-go-name: TotalShippingCost
+      total_volume:
+        format: double
+        type: number
+        x-go-name: TotalVolume
+      total_weight:
+        format: double
+        type: number
+        x-go-name: TotalWeight
+    type: object
     x-go-package: go-klikdokter/app/model/response
   GetOrderShippingListResponse:
     properties:
@@ -2657,15 +2806,15 @@ definitions:
     x-go-package: go-klikdokter/app/model/response
   UpdateOrderShippingBody:
     properties:
-      .courier_code:
-        type: string
-        x-go-name: CourierCode
       airwaybill:
         type: string
         x-go-name: Airwaybill
       channel_uid:
         type: string
         x-go-name: ChannelUID
+      courier_code:
+        type: string
+        x-go-name: CourierCode
       courier_service_uid:
         type: string
         x-go-name: CourierServiceUID
@@ -4170,6 +4319,39 @@ paths:
               meta:
                 $ref: '#/definitions/MetaResponse'
       summary: Create Order Shipping
+      tags:
+      - Shipping
+  /shipping/order-shipping-label/{channel-uid}:
+    post:
+      description: 'Description :'
+      operationId: GetOrderShippingLabel
+      parameters:
+      - in: path
+        name: channel-uid
+        required: true
+        type: string
+        x-go-name: ChannelUID
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/GetOrderShippingLabelBody'
+        x-go-name: Body
+      responses:
+        "200":
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  records:
+                    items:
+                      $ref: '#/definitions/GetOrderShippingLabelResponse'
+                    type: array
+              meta:
+                $ref: '#/definitions/MetaResponse'
+      security:
+      - Bearer: []
+      summary: Order Shipping Label
       tags:
       - Shipping
   /shipping/order-shipping/{uid}:

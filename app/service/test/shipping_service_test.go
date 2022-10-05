@@ -1556,3 +1556,80 @@ func TestCancelOrderShippingOrderServiceNotFoundError(t *testing.T) {
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
 }
+
+func TestGetOrderShippingLabelSuccess(t *testing.T) {
+	req := request.GetOrderShippingLabel{
+		ChannelUID: "",
+		Body:       request.GetOrderShippingLabelBody{OrderShippingUID: []string{"", ""}},
+	}
+	orderShippingRepository.Mock.On("FindByUIDs", mock.Anything).Return([]entity.OrderShipping{
+		{
+			OrderShippingItem: []entity.OrderShippingItem{
+				{}, {}, {},
+			},
+			Channel:        &entity.Channel{},
+			Courier:        &entity.Courier{},
+			CourierService: &entity.CourierService{},
+		},
+		{
+			OrderShippingItem: []entity.OrderShippingItem{
+				{},
+			},
+			Channel:        &entity.Channel{},
+			Courier:        &entity.Courier{},
+			CourierService: &entity.CourierService{},
+		},
+	}).Once()
+
+	result, msg := shippingService.GetOrderShippingLabel(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Len(t, result, 2)
+	assert.Len(t, result[0].OrderShippingItems, 3)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestGetOrderShippingLabelHideItemsSuccess(t *testing.T) {
+	req := request.GetOrderShippingLabel{
+		ChannelUID: "",
+		Body:       request.GetOrderShippingLabelBody{OrderShippingUID: []string{"", ""}, HideProduct: true},
+	}
+	orderShippingRepository.Mock.On("FindByUIDs", mock.Anything).Return([]entity.OrderShipping{
+		{
+			OrderShippingItem: []entity.OrderShippingItem{
+				{}, {}, {},
+			},
+			Channel:        &entity.Channel{},
+			Courier:        &entity.Courier{},
+			CourierService: &entity.CourierService{},
+		},
+		{
+			OrderShippingItem: []entity.OrderShippingItem{
+				{},
+			},
+			Channel:        &entity.Channel{},
+			Courier:        &entity.Courier{},
+			CourierService: &entity.CourierService{},
+		},
+	}).Once()
+
+	result, msg := shippingService.GetOrderShippingLabel(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Len(t, result, 2)
+	assert.Len(t, result[0].OrderShippingItems, 0)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestGetOrderShippingLabelError(t *testing.T) {
+	req := request.GetOrderShippingLabel{
+		ChannelUID: "",
+		Body:       request.GetOrderShippingLabelBody{OrderShippingUID: []string{"", ""}, HideProduct: true},
+	}
+	orderShippingRepository.Mock.On("FindByUIDs", mock.Anything).Return(nil, errors.New("")).Once()
+
+	result, msg := shippingService.GetOrderShippingLabel(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
