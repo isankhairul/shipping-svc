@@ -46,6 +46,16 @@ definitions:
         example: Stok barang habis
         type: string
         x-go-name: Reason
+      username:
+        type: string
+        x-go-name: Username
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  CancelPickupBodyRequest:
+    properties:
+      username:
+        type: string
+        x-go-name: Username
     type: object
     x-go-package: go-klikdokter/app/model/request
   Channel:
@@ -1069,6 +1079,9 @@ definitions:
       use_insurance:
         type: boolean
         x-go-name: UseInsurance
+      username:
+        type: string
+        x-go-name: Username
     type: object
     x-go-package: go-klikdokter/app/model/request
   CreateDeliveryPackage:
@@ -2628,6 +2641,70 @@ definitions:
         x-go-name: UseGeocoodinate
     type: object
     x-go-package: go-klikdokter/app/model/request
+  UpdateOrderShipping:
+    properties:
+      order_no_api:
+        type: string
+        x-go-name: OrderNoAPI
+      order_shipping_uid:
+        type: string
+        x-go-name: OrderShippingUID
+      shipping_status:
+        type: string
+        x-go-name: ShippingStatus
+    type: object
+    x-go-name: UpdateOrderShippingResponse
+    x-go-package: go-klikdokter/app/model/response
+  UpdateOrderShippingBody:
+    properties:
+      .courier_code:
+        type: string
+        x-go-name: CourierCode
+      airwaybill:
+        type: string
+        x-go-name: Airwaybill
+      channel_uid:
+        type: string
+        x-go-name: ChannelUID
+      courier_service_uid:
+        type: string
+        x-go-name: CourierServiceUID
+      details:
+        $ref: '#/definitions/UpdateOrderShippingBodyDetail'
+      order_no:
+        type: string
+        x-go-name: OrderNo
+      order_shipping_uid:
+        type: string
+        x-go-name: OrderShippingUID
+      shipping_status:
+        type: string
+        x-go-name: ShippingStatus
+      shipping_status_name:
+        type: string
+        x-go-name: ShippingStatusName
+      timestamp:
+        format: date-time
+        type: string
+        x-go-name: Timestamp
+      update_by:
+        type: string
+        x-go-name: UpdatedBy
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  UpdateOrderShippingBodyDetail:
+    properties:
+      external_status_code:
+        type: string
+        x-go-name: ExternalStatusCode
+      external_status_description:
+        type: string
+        x-go-name: ExternalStatusDescription
+      external_status_name:
+        type: string
+        x-go-name: ExternalStatusName
+    type: object
+    x-go-package: go-klikdokter/app/model/request
   UpdateShipmentPredefinedRequest:
     properties:
       code:
@@ -3980,8 +4057,6 @@ paths:
                 type: object
               meta:
                 $ref: '#/definitions/MetaResponse'
-      security:
-      - Bearer: []
       summary: Cancel Order Shipping
       tags:
       - Shipping
@@ -3995,6 +4070,11 @@ paths:
         required: true
         type: string
         x-go-name: UID
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/CancelPickupBodyRequest'
+        x-go-name: Body
       responses:
         "200":
           description: Success Response.
@@ -4004,8 +4084,6 @@ paths:
                 type: object
               meta:
                 $ref: '#/definitions/MetaResponse'
-      security:
-      - Bearer: []
       summary: Cancel Pickup Order
       tags:
       - Shipping
@@ -4090,8 +4168,6 @@ paths:
                     $ref: '#/definitions/ShippmentPredefinedDetail'
               meta:
                 $ref: '#/definitions/MetaResponse'
-      security:
-      - Bearer: []
       summary: Create Order Shipping
       tags:
       - Shipping
@@ -4207,6 +4283,35 @@ paths:
       security:
       - Bearer: []
       summary: Get Shipping Rate By Shipping Type
+      tags:
+      - Shipping
+  /shipping/update-order-shipping/{topic-name}:
+    post:
+      description: 'Description :'
+      operationId: UpdateOrderShipping
+      parameters:
+      - in: path
+        name: topic-name
+        required: true
+        type: string
+        x-go-name: TopicName
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/UpdateOrderShippingBody'
+        x-go-name: Body
+      responses:
+        "200":
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/UpdateOrderShipping'
+              meta:
+                $ref: '#/definitions/MetaResponse'
+      summary: Update Order Shipping
       tags:
       - Shipping
   /shipping/webhook/shipper:

@@ -120,6 +120,7 @@ func (r *shippingCourierStatusRepositoryImpl) FindByCode(channelID, courierID ui
 func (r *shippingCourierStatusRepositoryImpl) FindByCourierStatus(courierID uint64, statusCode string) (*entity.ShippingCourierStatus, error) {
 	result := &entity.ShippingCourierStatus{}
 	query := r.base.GetDB().
+		Preload("ShippingStatus").
 		Where(&entity.ShippingCourierStatus{CourierID: courierID}).
 		Where(fmt.Sprintf("(shipping_courier_status.status_courier->'status')::text ilike '%%\"%s\"%%'", statusCode))
 

@@ -435,3 +435,10 @@ type GetOrderShippingDetailHistory struct {
 	//example: request_pickup
 	StatusName string `json:"status_name"`
 }
+
+//swagger:model UpdateOrderShipping
+type UpdateOrderShippingResponse struct {
+	OrderShippingUID string `json:"order_shipping_uid"`
+	OrderNoAPI       string `json:"order_no_api"`
+	ShippingStatus   string `json:"shipping_status"`
+}

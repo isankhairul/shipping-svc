@@ -100,9 +100,7 @@ type CreateDelivery struct {
 	Origin            CreateDeiveryArea     `json:"origin"`
 	Destination       CreateDeiveryArea     `json:"destination"`
 	Package           CreateDeliveryPackage `json:"package"`
-
-	// Extend Jwt Info
-	global.JWTInfo
+	Username          string                `json:"username"`
 }
 
 func (c *CreateDelivery) ToCreateOrderShipperPackage() *CreateOrderShipperPackage {
@@ -259,7 +257,7 @@ func (m *GetOrderShippingList) GetFilter() {
 	}
 }
 
-// swagger:parameters GetOrderShippingDetail CancelPickup
+// swagger:parameters GetOrderShippingDetail
 type GetOrderShippingDetail struct {
 	// in: path
 	// required: true
@@ -279,8 +277,50 @@ type CancelOrder struct {
 // swagger:model CancelOrderBodyRequest
 type CancelOrderBodyRequest struct {
 	// example: Stok barang habis
-	Reason string `json:"reason"`
+	Reason   string `json:"reason"`
+	Username string `json:"username"`
+}
 
-	// Extend Jwt Info
-	global.JWTInfo
+// swagger:parameters CancelPickup
+type CancelPickup struct {
+	// in: path
+	// required: true
+	UID string `json:"uid"`
+
+	// in: body
+	Body CancelPickupBodyRequest `json:"body"`
+}
+
+// swagger:model CancelPickupBodyRequest
+type CancelPickupBodyRequest struct {
+	Username string `json:"username"`
+}
+
+// swagger:parameters UpdateOrderShipping
+type UpdateOrderShipping struct {
+	// in: path
+	// required: true
+	TopicName string `json:"topic-name"`
+	// in: body
+	Body UpdateOrderShippingBody `json:"body"`
+}
+
+type UpdateOrderShippingBody struct {
+	ChannelUID         string                        `json:"channel_uid"`
+	CourierCode        string                        `json:"courier_code"`
+	CourierServiceUID  string                        `json:"courier_service_uid"`
+	OrderNo            string                        `json:"order_no"`
+	OrderShippingUID   string                        `json:"order_shipping_uid"`
+	Airwaybill         string                        `json:"airwaybill"`
+	ShippingStatus     string                        `json:"shipping_status"`
+	ShippingStatusName string                        `json:"shipping_status_name"`
+	Details            UpdateOrderShippingBodyDetail `json:"details"`
+	UpdatedBy          string                        `json:"update_by"`
+	Timestamp          time.Time                     `json:"timestamp"`
+}
+
+type UpdateOrderShippingBodyDetail struct {
+	ExternalStatusCode        string `json:"external_status_code"`
+	ExternalStatusName        string `json:"external_status_name"`
+	ExternalStatusDescription string `json:"external_status_description"`
 }

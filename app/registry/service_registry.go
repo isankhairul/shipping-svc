@@ -3,6 +3,7 @@ package registry
 import (
 	rp "go-klikdokter/app/repository"
 	"go-klikdokter/app/service"
+	"go-klikdokter/helper/http_helper"
 	"go-klikdokter/helper/http_helper/shipping_provider"
 	"go-klikdokter/pkg/cache"
 
@@ -74,5 +75,6 @@ func RegisterShippingService(db *gorm.DB, logger log.Logger, redis cache.RedisCa
 		rp.NewOrderShippingRepository(repo),
 		rp.NewCourierRepository(repo),
 		rp.NewShippingCourierStatusRepository(repo),
+		http_helper.NewDaprEndpoint(),
 	)
 }

@@ -22,6 +22,7 @@ type ShippingEndpoint struct {
 	GetOrderShippingDetail        endpoint.Endpoint
 	CancelPickUp                  endpoint.Endpoint
 	CancelOrder                   endpoint.Endpoint
+	UpdateOrderShipping           endpoint.Endpoint
 }
 
 func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
@@ -35,6 +36,7 @@ func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
 		GetOrderShippingDetail:        makeGetOrderShippingDetail(s),
 		CancelPickUp:                  makeCancelPickup(s),
 		CancelOrder:                   makeCancelOrder(s),
+		UpdateOrderShipping:           makeUpdateOrderShipping(s),
 	}
 }
 
@@ -70,15 +72,15 @@ func makeGetShippingRateByShippingType(s service.ShippingService) endpoint.Endpo
 
 func makeCreateDelivery(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-
-		// Retrieve JWT Info
-		jwtInfo, msg := global.SetJWTInfoFromContext(ctx)
-		if msg.Code != message.SuccessMsg.Code {
-			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
-		}
-
+		/*
+			// Retrieve JWT Info
+			jwtInfo, msg := global.SetJWTInfoFromContext(ctx)
+			if msg.Code != message.SuccessMsg.Code {
+				return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+			}
+		*/
 		req := rqst.(request.CreateDelivery)
-		req.JWTInfo = *jwtInfo
+		// req.JWTInfo = *jwtInfo
 		result, msg := s.CreateDelivery(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
@@ -137,30 +139,41 @@ func makeGetOrderShippingDetail(s service.ShippingService) endpoint.Endpoint {
 
 func makeCancelPickup(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+		/*
+			// Retrieve JWT Info
+			_, msg := global.SetJWTInfoFromContext(ctx)
+			if msg.Code != message.SuccessMsg.Code {
+				return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+			}
+		*/
+		req := rqst.(request.CancelPickup)
 
-		// Retrieve JWT Info
-		_, msg := global.SetJWTInfoFromContext(ctx)
-		if msg.Code != message.SuccessMsg.Code {
-			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
-		}
-
-		msg = s.CancelPickup(fmt.Sprint(rqst))
+		msg := s.CancelPickup(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 	}
 }
 
 func makeCancelOrder(s service.ShippingService) endpoint.Endpoint {
 	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
-
-		// Retrieve JWT Info
-		jwtInfo, msg := global.SetJWTInfoFromContext(ctx)
-		if msg.Code != message.SuccessMsg.Code {
-			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
-		}
-
+		/*
+			// Retrieve JWT Info
+			jwtInfo, msg := global.SetJWTInfoFromContext(ctx)
+			if msg.Code != message.SuccessMsg.Code {
+				return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+			}
+		*/
 		req := rqst.(request.CancelOrder)
-		req.Body.JWTInfo = *jwtInfo
-		msg = s.CancelOrder(&req)
+		// req.Body.JWTInfo = *jwtInfo
+		msg := s.CancelOrder(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+	}
+}
+
+func makeUpdateOrderShipping(s service.ShippingService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		req := rqst.(request.UpdateOrderShipping)
+		result, msg := s.UpdateOrderShipping(&req)
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }
