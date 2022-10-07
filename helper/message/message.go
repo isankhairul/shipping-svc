@@ -108,4 +108,6 @@ var (
 	OrderNoAlreadyExistsMsg           = Message{Code: 209002, Message: "order no already exists"}
 	OriginNotFoundMsg                 = Message{Code: 209002, Message: "origin is not in courier coverage"}
 	DestinationNotFoundMsg            = Message{Code: 209002, Message: "destination not in courier coverage"}
+	RequestPickupHasBeenMadeMsg       = Message{Code: 209002, Message: "request pickup has been made"}
+	OrderHasBeenCancelledMsg          = Message{Code: 209002, Message: "order has been cancelled"}
 )

@@ -343,7 +343,7 @@ func TestCreateDeliveryShipperSuccess(t *testing.T) {
 	orderShippingRepository.Mock.On("FindByOrderNo", mock.Anything).
 		Return(nil).Once()
 
-	shippingStatus := &entity.ShippingCourierStatus{
+	pickup := &entity.ShippingCourierStatus{
 		BaseIDModel: base.BaseIDModel{
 			ID:  4,
 			UID: "ssuid",
@@ -354,7 +354,19 @@ func TestCreateDeliveryShipperSuccess(t *testing.T) {
 		StatusCourier:    []byte(""),
 	}
 
-	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(shippingStatus).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(pickup).Once()
+
+	created := &entity.ShippingCourierStatus{
+		BaseIDModel: base.BaseIDModel{
+			ID:  4,
+			UID: "ssuid",
+		},
+		ShippingStatusID: 1,
+		CourierID:        courier.ID,
+		StatusCode:       shipping_provider.StatusCreated,
+		StatusCourier:    []byte(""),
+	}
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(created).Once()
 
 	orderShipping := &entity.OrderShipping{
 		BaseIDModel: base.BaseIDModel{
@@ -425,6 +437,18 @@ func TestCreateDeliveryShipperSaveFailed(t *testing.T) {
 
 	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(shippingStatus).Once()
 
+	created := &entity.ShippingCourierStatus{
+		BaseIDModel: base.BaseIDModel{
+			ID:  4,
+			UID: "ssuid",
+		},
+		ShippingStatusID: 1,
+		CourierID:        courier.ID,
+		StatusCode:       shipping_provider.StatusCreated,
+		StatusCourier:    []byte(""),
+	}
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(created).Once()
+
 	orderShipping := &entity.OrderShipping{
 		BaseIDModel: base.BaseIDModel{
 			ID:  5,
@@ -443,7 +467,7 @@ func TestCreateDeliveryShipperSaveFailed(t *testing.T) {
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrSaveOrderShipping, msg)
 }
@@ -492,6 +516,18 @@ func TestCreateDeliveryThridPartyCourierInvalid(t *testing.T) {
 	}
 
 	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(shippingStatus).Once()
+
+	created := &entity.ShippingCourierStatus{
+		BaseIDModel: base.BaseIDModel{
+			ID:  4,
+			UID: "ssuid",
+		},
+		ShippingStatusID: 1,
+		CourierID:        courier.ID,
+		StatusCode:       shipping_provider.StatusCreated,
+		StatusCourier:    []byte(""),
+	}
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(created).Once()
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
@@ -545,9 +581,21 @@ func TestCreateDeliveryInvalidCourierType(t *testing.T) {
 
 	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(shippingStatus).Once()
 
+	created := &entity.ShippingCourierStatus{
+		BaseIDModel: base.BaseIDModel{
+			ID:  4,
+			UID: "ssuid",
+		},
+		ShippingStatusID: 1,
+		CourierID:        courier.ID,
+		StatusCode:       shipping_provider.StatusCreated,
+		StatusCourier:    []byte(""),
+	}
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(created).Once()
+
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrInvalidCourierType, msg)
 }
@@ -596,6 +644,18 @@ func TestCreateDeliveryShipperFailed(t *testing.T) {
 	}
 
 	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(shippingStatus).Once()
+
+	created := &entity.ShippingCourierStatus{
+		BaseIDModel: base.BaseIDModel{
+			ID:  4,
+			UID: "ssuid",
+		},
+		ShippingStatusID: 1,
+		CourierID:        courier.ID,
+		StatusCode:       shipping_provider.StatusCreated,
+		StatusCourier:    []byte(""),
+	}
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(created).Once()
 
 	order := &response.CreateDeliveryThirdPartyData{
 		BookingID: "bookid",
@@ -656,7 +716,7 @@ func TestCreateDeliveryShipperShippingStatusNotFound(t *testing.T) {
 	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(shippingStatus, errors.New("")).Once()
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ShippingStatusNotFoundMsg, msg)
 }
@@ -703,7 +763,7 @@ func TestCreateDeliveryShipperOrderShippingAlreadyExist(t *testing.T) {
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.OrderNoAlreadyExistsMsg, msg)
 }
@@ -742,7 +802,7 @@ func TestCreateDeliveryShipperOrderShippingError(t *testing.T) {
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrDB, msg)
 }
@@ -779,7 +839,7 @@ func TestCreateDeliveryShipperCoureirNotActive(t *testing.T) {
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.CourierNotActiveMsg, msg)
 }
@@ -815,7 +875,7 @@ func TestCreateDeliveryShipperCoureirServiceNotActive(t *testing.T) {
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.CourierServiceNotActiveMsg, msg)
 }
@@ -855,7 +915,7 @@ func TestCreateDeliveryShipperCoureirServiceWeightExeeds(t *testing.T) {
 	req.Package.ContainPrescription = 1
 	result, msg := shippingService.CreateDelivery(&req)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.WeightExceedsMsg, msg)
 }
@@ -894,7 +954,7 @@ func TestCreateDeliveryShipperCoureirServicePrescriptionNotAllowed(t *testing.T)
 	req.Package.ContainPrescription = 1
 	result, msg := shippingService.CreateDelivery(&req)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.PrescriptionNotAllowedMsg, msg)
 }
@@ -910,7 +970,7 @@ func TestCreateDeliveryShipperCourierServiceNotFound(t *testing.T) {
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.CourierServiceNotFoundMsg, msg)
 }
@@ -926,7 +986,7 @@ func TestCreateDeliveryShipperCourierServiceNotFoundError(t *testing.T) {
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.CourierServiceNotFoundMsg, msg)
 }
@@ -937,7 +997,7 @@ func TestCreateDeliveryShipperChannelNotFound(t *testing.T) {
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ChannelNotFoundMsg, msg)
 }
@@ -948,7 +1008,7 @@ func TestCreateDeliveryShipperChannelNotFoundError(t *testing.T) {
 
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
-	assert.Nil(t, result)
+	assert.NotNil(t, result)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ChannelNotFoundMsg, msg)
 }
@@ -1369,6 +1429,7 @@ var orderShipping = entity.OrderShipping{
 	OrderShippingItem:    []entity.OrderShippingItem{},
 	OrderShippingHistory: []entity.OrderShippingHistory{},
 	Status:               shipping_provider.StatusRequestPickup,
+	PickupCode:           new(string),
 }
 
 func TestCancelPickUpSuccess(t *testing.T) {
@@ -1629,6 +1690,321 @@ func TestGetOrderShippingLabelError(t *testing.T) {
 	orderShippingRepository.Mock.On("FindByUIDs", mock.Anything).Return(nil, errors.New("")).Once()
 
 	result, msg := shippingService.GetOrderShippingLabel(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
+
+func TestRepickupSuccess(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	ordershipping := &entity.OrderShipping{
+		OrderShippingItem: []entity.OrderShippingItem{
+			{}, {}, {},
+		},
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code:        shipping_provider.ShipperCode,
+			CourierType: shipping_provider.ThirPartyCourier,
+		},
+		CourierService: &entity.CourierService{},
+		Status:         shipping_provider.StatusCreated,
+		PickupCode:     new(string),
+	}
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(ordershipping).Once()
+	shipper.Mock.On("CreatePickUpOrderWithTimeSlots", mock.Anything).
+		Return(&response.CreatePickUpOrderShipperResponse{
+			Data: response.CreatePickUpOrderShipper{
+				OrderActivation: []response.CreatePickUpOrderOrderActivation{
+					{PickUpCode: "001"},
+				},
+			},
+		}).Once()
+
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(&entity.ShippingCourierStatus{}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(ordershipping).Once()
+	result, msg := shippingService.RepickupOrder(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestRepickupSaveFailed(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	ordershipping := &entity.OrderShipping{
+		OrderShippingItem: []entity.OrderShippingItem{
+			{}, {}, {},
+		},
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code:        shipping_provider.ShipperCode,
+			CourierType: shipping_provider.ThirPartyCourier,
+		},
+		CourierService: &entity.CourierService{},
+		Status:         shipping_provider.StatusCreated,
+		PickupCode:     new(string),
+	}
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(ordershipping).Once()
+	shipper.Mock.On("CreatePickUpOrderWithTimeSlots", mock.Anything).
+		Return(&response.CreatePickUpOrderShipperResponse{
+			Data: response.CreatePickUpOrderShipper{
+				OrderActivation: []response.CreatePickUpOrderOrderActivation{
+					{PickUpCode: "001"},
+				},
+			},
+		}).Once()
+
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(&entity.ShippingCourierStatus{}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(ordershipping, errors.New("")).Once()
+	result, msg := shippingService.RepickupOrder(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.ErrSaveOrderShipping, msg)
+}
+
+func TestRepickupShippingStatusNotFoundFailed(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	ordershipping := &entity.OrderShipping{
+		OrderShippingItem: []entity.OrderShippingItem{
+			{}, {}, {},
+		},
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code:        shipping_provider.ShipperCode,
+			CourierType: shipping_provider.ThirPartyCourier,
+		},
+		CourierService: &entity.CourierService{},
+		Status:         shipping_provider.StatusCreated,
+		PickupCode:     new(string),
+	}
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(ordershipping).Once()
+	shipper.Mock.On("CreatePickUpOrderWithTimeSlots", mock.Anything).
+		Return(&response.CreatePickUpOrderShipperResponse{
+			Data: response.CreatePickUpOrderShipper{
+				OrderActivation: []response.CreatePickUpOrderOrderActivation{
+					{PickUpCode: "001"},
+				},
+			},
+		}).Once()
+
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(nil).Once()
+	result, msg := shippingService.RepickupOrder(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.ShippingStatusNotFoundMsg, msg)
+}
+
+func TestRepickupShippingErroRequestShipperFailed(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	ordershipping := &entity.OrderShipping{
+		OrderShippingItem: []entity.OrderShippingItem{
+			{}, {}, {},
+		},
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code:        shipping_provider.ShipperCode,
+			CourierType: shipping_provider.ThirPartyCourier,
+		},
+		CourierService: &entity.CourierService{},
+		Status:         shipping_provider.StatusCreated,
+		PickupCode:     new(string),
+	}
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(ordershipping).Once()
+	shipper.Mock.On("CreatePickUpOrderWithTimeSlots", mock.Anything).
+		Return(nil, message.ErrCreatePickUpOrder).Once()
+
+	result, msg := shippingService.RepickupOrder(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.ErrCreatePickUpOrder, msg)
+}
+
+func TestRepickupShippingInvalidCourierFailed(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	ordershipping := &entity.OrderShipping{
+		OrderShippingItem: []entity.OrderShippingItem{
+			{}, {}, {},
+		},
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code:        "",
+			CourierType: shipping_provider.ThirPartyCourier,
+		},
+		CourierService: &entity.CourierService{},
+		Status:         shipping_provider.StatusCreated,
+		PickupCode:     new(string),
+	}
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(ordershipping).Once()
+
+	result, msg := shippingService.RepickupOrder(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.ErrInvalidCourierCode, msg)
+}
+
+func TestRepickupShippingInvalidCourierTypeFailed(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	ordershipping := &entity.OrderShipping{
+		OrderShippingItem: []entity.OrderShippingItem{
+			{}, {}, {},
+		},
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code:        "",
+			CourierType: "",
+		},
+		CourierService: &entity.CourierService{},
+		Status:         shipping_provider.StatusCreated,
+		PickupCode:     new(string),
+	}
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(ordershipping).Once()
+
+	result, msg := shippingService.RepickupOrder(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.ErrInvalidCourierType, msg)
+}
+
+func TestRepickupShippingOrderHasBeenCancelledFailed(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	ordershipping := &entity.OrderShipping{
+		OrderShippingItem: []entity.OrderShippingItem{
+			{}, {}, {},
+		},
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code:        "",
+			CourierType: "",
+		},
+		CourierService: &entity.CourierService{},
+		Status:         shipping_provider.StatusCancelled,
+		PickupCode:     new(string),
+	}
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(ordershipping).Once()
+
+	result, msg := shippingService.RepickupOrder(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.OrderHasBeenCancelledMsg, msg)
+}
+
+func TestRepickupShippingRequestPickupHasBeenMadeFailed(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	ordershipping := &entity.OrderShipping{
+		OrderShippingItem: []entity.OrderShippingItem{
+			{}, {}, {},
+		},
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code:        "",
+			CourierType: "",
+		},
+		CourierService: &entity.CourierService{},
+		Status:         shipping_provider.StatusRequestPickup,
+		PickupCode:     new(string),
+	}
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(ordershipping).Once()
+
+	result, msg := shippingService.RepickupOrder(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.RequestPickupHasBeenMadeMsg, msg)
+}
+
+func TestRepickupShippingOrderBelongsToAnotherChannelFailed(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	ordershipping := &entity.OrderShipping{
+		OrderShippingItem: []entity.OrderShippingItem{
+			{}, {}, {},
+		},
+		Channel: &entity.Channel{BaseIDModel: base.BaseIDModel{
+			UID: "A",
+		}},
+		Courier: &entity.Courier{
+			Code:        "",
+			CourierType: "",
+		},
+		CourierService: &entity.CourierService{},
+		Status:         shipping_provider.StatusCreated,
+		PickupCode:     new(string),
+	}
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(ordershipping).Once()
+
+	result, msg := shippingService.RepickupOrder(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.ErrOrderBelongToAnotherChannel, msg)
+}
+
+func TestRepickupShippingOrderNotFoundFailed(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(nil).Once()
+
+	result, msg := shippingService.RepickupOrder(&req)
+	assert.NotNil(t, msg)
+	assert.NotNil(t, result)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
+
+func TestRepickupShippingErrorgetShippingOrderFailed(t *testing.T) {
+	req := request.RepickupOrderRequest{
+		ChannelUID:       "",
+		OrderShippingUID: "",
+		Username:         "",
+	}
+
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(nil, errors.New("")).Once()
+
+	result, msg := shippingService.RepickupOrder(&req)
 	assert.NotNil(t, msg)
 	assert.NotNil(t, result)
 	assert.Equal(t, message.ErrOrderShippingNotFound, msg)

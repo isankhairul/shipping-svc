@@ -2010,6 +2010,32 @@ definitions:
     type: object
     x-go-name: Pagination
     x-go-package: go-klikdokter/app/model/base
+  RepickupOrderRequest:
+    properties:
+      channel_uid:
+        type: string
+        x-go-name: ChannelUID
+      order_shipping_uid:
+        type: string
+        x-go-name: OrderShippingUID
+      username:
+        type: string
+        x-go-name: Username
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  RepickupOrderResponse:
+    properties:
+      order_no_api:
+        type: string
+        x-go-name: OrderNoAPI
+      order_shipping_uid:
+        type: string
+        x-go-name: OrderShippingUID
+      pickup_code:
+        type: string
+        x-go-name: PickupCode
+    type: object
+    x-go-package: go-klikdokter/app/model/response
   SaveChannelCourierRequest:
     properties:
       channel_uid:
@@ -4266,6 +4292,14 @@ paths:
       - description: |-
           Sort fields
           in: string
+        enum:
+        - channel_code
+        - channel_name
+        - courier_code
+        - courier_name
+        - shipping_status
+        - order_shipping_uid
+        - order_shipping_date
         in: query
         name: sort
         type: string
@@ -4275,7 +4309,7 @@ paths:
           in: string
         enum:
         - asc
-        - ' desc'
+        - desc
         in: query
         name: dir
         type: string
@@ -4315,7 +4349,7 @@ paths:
               data:
                 properties:
                   record:
-                    $ref: '#/definitions/ShippmentPredefinedDetail'
+                    $ref: '#/definitions/CreateDeliveryResponse'
               meta:
                 $ref: '#/definitions/MetaResponse'
       summary: Create Order Shipping
@@ -4403,12 +4437,36 @@ paths:
               data:
                 properties:
                   record:
-                    $ref: '#/definitions/ShippmentPredefinedDetail'
+                    $ref: '#/definitions/GetOrderShippingTrackingResponse'
               meta:
                 $ref: '#/definitions/MetaResponse'
       security:
       - Bearer: []
       summary: Get Order Shipping Tracking
+      tags:
+      - Shipping
+  /shipping/repickup:
+    post:
+      description: 'Description :'
+      operationId: RepickupOrder
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/RepickupOrderRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/RepickupOrderResponse'
+              meta:
+                $ref: '#/definitions/MetaResponse'
+      summary: Repickup Order
       tags:
       - Shipping
   /shipping/shipping-rate:
@@ -4561,10 +4619,6 @@ responses:
         type: integer
       uid:
         type: string
-  CreateDelivery:
-    description: ""
-    schema:
-      $ref: '#/definitions/CreateDeliveryResponse'
   GetChannelCourierStatusResponse:
     description: ""
     schema:

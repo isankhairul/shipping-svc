@@ -205,13 +205,15 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort, dir string
 		"booking_id":            "order_shipping.booking_id",
 		"merchant_name":         "order_shipping.merchant_name",
 		"customer_name":         "order_shipping.customer_name",
+		"order_shipping_uid":    "order_shipping.uid",
+		"order_shipping_date":   "order_shipping.order_shipping_date",
 	}
 
 	sort = m[sort]
 	sort = util.ReplaceEmptyString(sort, "order_shipping.updated_at")
 
 	if strings.EqualFold(dir, "desc") {
-		sort += "desc"
+		sort += " desc"
 	}
 
 	query = query.Order(sort)
