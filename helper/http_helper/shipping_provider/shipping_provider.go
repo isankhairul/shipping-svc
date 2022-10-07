@@ -64,7 +64,7 @@ func IsOrderCancelable(courierCode, status string) bool {
 func ShipperWebhookAuth() string {
 	// <api_key> + <endpoint_url> + <response_format>
 	apiKey := viper.GetString("shipper.auth.value")
-	endpoint := viper.GetString("shipper.webhook.update_status_endpoint")
+	endpoint := viper.GetString("shipper.webhook.update-status-endpoint")
 	format := "json"
 
 	return util.MD5Hash(apiKey + endpoint + format)
