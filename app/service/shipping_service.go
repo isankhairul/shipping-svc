@@ -630,6 +630,8 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 		_ = level.Info(logger).Log("shipper_webhook", string(jsonReq))
 	}
 
+	_ = level.Info(logger).Log("check_webhook", shipping_provider.ShipperWebhookAuth())
+	_ = level.Info(logger).Log("check_webhook_auth", req.Auth)
 	if req.Auth != shipping_provider.ShipperWebhookAuth() {
 		return nil, message.ErrUnAuth
 	}
