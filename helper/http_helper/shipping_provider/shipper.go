@@ -22,7 +22,7 @@ type Shipper interface {
 	GetShippingRate(courierID *uint64, input *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error)
 	GetPricingDomestic(req *request.GetPricingDomestic) (*response.GetPricingDomestic, error)
 	CreateOrder(req *request.CreateOrderShipper) (*response.CreateOrderShipperResponse, error)
-	CreatePickUpOrder(req *request.CreatePickUpOrderShipper) (*response.CreatePickUpOrderShipperResponse, error)
+	CreatePickUpOrderWithTimeSlots(orderID ...string) (*response.CreatePickUpOrderShipperResponse, message.Message)
 	CreateDelivery(ShipperOrderID string, courierService *entity.CourierService, req *request.CreateDelivery) (*response.CreateDeliveryThirdPartyData, message.Message)
 	GetOrderDetail(orderID string) (*response.GetOrderDetailResponse, error)
 	GetTracking(orderID string) ([]response.GetOrderShippingTracking, message.Message)

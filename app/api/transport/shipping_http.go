@@ -104,6 +104,13 @@ func ShippingHttpHandler(s service.ShippingService, logger log.Logger) http.Hand
 		options...,
 	))
 
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixShipping, global.PathRepickup)).Handler(httptransport.NewServer(
+		ep.RepickupOrder,
+		decodeRepickupOrder,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
 	return pr
 }
 
@@ -204,5 +211,17 @@ func decodeOrderShippingLabel(ctx context.Context, r *http.Request) (rqst interf
 	}
 
 	params.ChannelUID = mux.Vars(r)[channelUID]
+	return params, nil
+}
+
+func decodeRepickupOrder(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var params request.RepickupOrderRequest
+	if err := r.ParseForm(); err != nil {
+		return nil, err
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+		return nil, err
+	}
 	return params, nil
 }

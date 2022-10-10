@@ -35,6 +35,7 @@ type ShippingService interface {
 	CancelOrder(req *request.CancelOrder) message.Message
 	UpdateOrderShipping(req *request.UpdateOrderShipping) (*response.UpdateOrderShippingResponse, message.Message)
 	GetOrderShippingLabel(req *request.GetOrderShippingLabel) ([]response.GetOrderShippingLabelResponse, message.Message)
+	RepickupOrder(req *request.RepickupOrderRequest) (*response.RepickupOrderResponse, message.Message)
 }
 
 type shippingServiceImpl struct {
@@ -406,50 +407,55 @@ func toGetShippingRateResponseList(req *request.GetShippingRateRequest, courierS
 	return resp
 }
 
-func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelivery) (*entity.CourierService, *entity.OrderShipping, *entity.ShippingCourierStatus, message.Message) {
+func (s *shippingServiceImpl) populateCreateDelivery(input *request.CreateDelivery) (*entity.CourierService, *entity.OrderShipping, *entity.ShippingCourierStatus, *entity.ShippingCourierStatus, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "PopulateCreateDelivery")
 
 	// find Channel By UID
 	channel, err := s.channelRepo.FindByUid(&input.ChannelUID)
 	if err != nil {
 		_ = level.Error(logger).Log("s.channelRepo.FindByUid", err.Error())
-		return nil, nil, nil, message.ChannelNotFoundMsg
+		return nil, nil, nil, nil, message.ChannelNotFoundMsg
 	}
 
 	if channel == nil {
-		return nil, nil, nil, message.ChannelNotFoundMsg
+		return nil, nil, nil, nil, message.ChannelNotFoundMsg
 	}
 
 	// find Courier Service By UID
 	courierService, err := s.courierServiceRepo.FindCourierService(input.ChannelUID, input.CouirerServiceUID)
 	if err != nil {
 		_ = level.Error(logger).Log("s.courierServiceRepo.FindCourierService", err.Error())
-		return nil, nil, nil, message.CourierServiceNotFoundMsg
+		return nil, nil, nil, nil, message.CourierServiceNotFoundMsg
 	}
 
 	if courierService == nil {
-		return nil, nil, nil, message.CourierServiceNotFoundMsg
+		return nil, nil, nil, nil, message.CourierServiceNotFoundMsg
 	}
 
 	if msg := courierService.Validate(input.Package.TotalWeight, input.Package.ContainPrescription > 0); msg != message.SuccessMsg {
-		return nil, nil, nil, msg
+		return nil, nil, nil, nil, msg
 	}
 
 	// check if order no already exist with status created
 	orderShipping, err := s.orderShipping.FindByOrderNo(input.OrderNo)
 	if err != nil {
 		_ = level.Error(logger).Log("s.orderShipping.FindByOrderNo", err.Error())
-		return nil, nil, nil, message.ErrDB
+		return nil, nil, nil, nil, message.ErrDB
 	}
 
 	if orderShipping != nil && orderShipping.Status != shipping_provider.StatusCreated {
-		return nil, nil, nil, message.OrderNoAlreadyExistsMsg
+		return nil, nil, nil, nil, message.OrderNoAlreadyExistsMsg
 	}
 
 	// get shipping status
-	shippingStatus, _ := s.shippingCourierStatusRepo.FindByCode(channel.ID, courierService.CourierID, shipping_provider.StatusRequestPickup)
-	if shippingStatus == nil {
-		return nil, nil, nil, message.ShippingStatusNotFoundMsg
+	createdStatus, _ := s.shippingCourierStatusRepo.FindByCode(channel.ID, courierService.CourierID, shipping_provider.StatusCreated)
+	if createdStatus == nil {
+		return nil, nil, nil, nil, message.ShippingStatusNotFoundMsg
+	}
+
+	requestPickupStatus, _ := s.shippingCourierStatusRepo.FindByCode(channel.ID, courierService.CourierID, shipping_provider.StatusRequestPickup)
+	if requestPickupStatus == nil {
+		return nil, nil, nil, nil, message.ShippingStatusNotFoundMsg
 	}
 
 	// if order no doesn't exist create new one
@@ -461,7 +467,7 @@ func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelive
 		orderShipping.CourierServiceID = courierService.ID
 	}
 	orderShipping.UpdatedBy = input.Username
-	return courierService, orderShipping, shippingStatus, message.SuccessMsg
+	return courierService, orderShipping, createdStatus, requestPickupStatus, message.SuccessMsg
 }
 
 // swagger:operation POST /shipping/order-shipping Shipping CreateDelivery
@@ -481,25 +487,49 @@ func (s *shippingServiceImpl) PopulateCreateDelivery(input *request.CreateDelive
 //         data:
 //           properties:
 //             record:
-//               $ref: '#/definitions/ShippmentPredefinedDetail'
+//               $ref: '#/definitions/CreateDeliveryResponse'
 func (s *shippingServiceImpl) CreateDelivery(input *request.CreateDelivery) (*response.CreateDelivery, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "CreateDelivery")
-	var resp *response.CreateDelivery
 
-	courierService, orderShipping, shippingStatus, msg := s.PopulateCreateDelivery(input)
+	courierService, orderShipping, created, requestPickup, msg := s.populateCreateDelivery(input)
 	if msg != message.SuccessMsg {
-		return nil, msg
+		return &response.CreateDelivery{}, msg
 	}
 
+	msg = s.createDelivery(orderShipping, courierService, input)
+	if msg != message.SuccessMsg {
+		return &response.CreateDelivery{}, msg
+	}
+
+	orderShipping.AddHistoryStatus(created, fmt.Sprintf("Booking ID [%s]", orderShipping.BookingID))
+
+	if orderShipping.Status == shipping_provider.StatusRequestPickup {
+		orderShipping.AddHistoryStatus(requestPickup, fmt.Sprintf("Pickup Code [%s]", *orderShipping.PickupCode))
+	}
+
+	orderShipping, err := s.orderShipping.Upsert(orderShipping)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		return &response.CreateDelivery{}, message.ErrSaveOrderShipping
+	}
+
+	return &response.CreateDelivery{
+		OrderNoAPI:       input.OrderNo,
+		OrderShippingUID: orderShipping.UID,
+	}, message.SuccessMsg
+}
+
+func (s *shippingServiceImpl) createDelivery(orderShipping *entity.OrderShipping, courierService *entity.CourierService, input *request.CreateDelivery) message.Message {
 	switch courierService.Courier.CourierType {
 	case shipping_provider.ThirPartyCourier:
 
 		orderData, msg := s.createDeliveryThirdParty(orderShipping.BookingID, courierService, input)
 		if msg != message.SuccessMsg {
-			return &response.CreateDelivery{}, msg
+			return msg
 		}
 
 		if orderShipping.ID == 0 {
+			orderShipping.CreatedBy = input.Username
 			orderShipping.Insurance = orderData.Insurance
 			orderShipping.InsuranceCost = orderData.InsuranceCost
 			orderShipping.ShippingCost = orderData.ShippingCost
@@ -507,32 +537,14 @@ func (s *shippingServiceImpl) CreateDelivery(input *request.CreateDelivery) (*re
 			orderShipping.ActualShippingCost = orderData.ActualShippingCost
 			orderShipping.BookingID = orderData.BookingID
 		}
-
-		orderShipping.PickupCode = orderData.PickUpCode
+		orderShipping.PickupCode = &orderData.PickUpCode
 		orderShipping.Status = orderData.Status
 
-	case shipping_provider.InternalCourier:
-		return resp, message.ErrInvalidCourierType
-	case shipping_provider.MerchantCourier:
-		return resp, message.ErrInvalidCourierType
 	default:
-		return resp, message.ErrInvalidCourierType
+		return message.ErrInvalidCourierType
 	}
 
-	if orderShipping.Status != shipping_provider.StatusCreated {
-		orderShipping.AddHistoryStatus(shippingStatus, "")
-	}
-
-	orderShipping, err := s.orderShipping.Upsert(orderShipping)
-	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
-		return nil, message.ErrSaveOrderShipping
-	}
-
-	return &response.CreateDelivery{
-		OrderNoAPI:       input.OrderNo,
-		OrderShippingUID: orderShipping.UID,
-	}, message.SuccessMsg
+	return message.SuccessMsg
 }
 
 func (s *shippingServiceImpl) createDeliveryThirdParty(bookingID string, courierService *entity.CourierService, input *request.CreateDelivery) (*response.CreateDeliveryThirdPartyData, message.Message) {
@@ -564,7 +576,7 @@ func (s *shippingServiceImpl) createDeliveryThirdParty(bookingID string, courier
 //         data:
 //           properties:
 //             record:
-//               $ref: '#/definitions/ShippmentPredefinedDetail'
+//               $ref: '#/definitions/GetOrderShippingTrackingResponse'
 func (s *shippingServiceImpl) OrderShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "OrderShippingTracking")
 
@@ -919,15 +931,19 @@ func (s *shippingServiceImpl) CancelPickup(req *request.CancelPickup) message.Me
 		return msg
 	}
 
-	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, shipping_provider.StatusCancelled)
+	//status back to created
+	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, shipping_provider.StatusCreated)
 
 	if shipperStatus == nil {
 		return message.ShippingStatusNotFoundMsg
 	}
 
-	orderShipping.AddHistoryStatus(shipperStatus, "")
-	orderShipping.Status = shipping_provider.StatusCancelled
+	notes := fmt.Sprintf("request pickup cancelled by merchant [%s]", *orderShipping.PickupCode)
+	*orderShipping.PickupCode = ""
+	orderShipping.Status = shipping_provider.StatusCreated
 	orderShipping.UpdatedBy = req.Body.Username
+
+	orderShipping.AddHistoryStatus(shipperStatus, notes)
 	_, err = s.orderShipping.Upsert(orderShipping)
 	if err != nil {
 		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
@@ -956,7 +972,7 @@ func (s *shippingServiceImpl) cancelPickupThirdParty(orderShipping *entity.Order
 	var err error
 	switch orderShipping.Courier.Code {
 	case shipping_provider.ShipperCode:
-		_, err = s.shipper.CancelPickupRequest(orderShipping.PickupCode)
+		_, err = s.shipper.CancelPickupRequest(*orderShipping.PickupCode)
 	}
 
 	if err != nil {
@@ -1181,4 +1197,110 @@ func getOrderShippingLabelResponse(orderShipping []entity.OrderShipping, isHideP
 		result = append(result, data)
 	}
 	return result
+}
+
+// swagger:operation POST /shipping/repickup Shipping RepickupOrder
+// Repickup Order
+//
+// Description :
+//
+// ---
+//
+// responses:
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//           $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//                 $ref: '#/definitions/RepickupOrderResponse'
+func (s *shippingServiceImpl) RepickupOrder(req *request.RepickupOrderRequest) (*response.RepickupOrderResponse, message.Message) {
+	logger := log.With(s.logger, "ShippingService", "RepickupOrder")
+	resp := &response.RepickupOrderResponse{}
+	orderShipping, err := s.orderShipping.FindByUID(req.OrderShippingUID)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.FindByUIDs", err.Error())
+		return resp, message.ErrOrderShippingNotFound
+	}
+
+	if orderShipping == nil {
+		return resp, message.ErrOrderShippingNotFound
+	}
+
+	if orderShipping.Channel.UID != req.ChannelUID {
+		return resp, message.ErrOrderBelongToAnotherChannel
+	}
+
+	msg := s.repickupOrder(orderShipping)
+
+	if msg != message.SuccessMsg {
+		return resp, msg
+	}
+
+	//update order status
+	orderShipping.Status = shipping_provider.StatusRequestPickup
+
+	shippingStatus, _ := s.shippingCourierStatusRepo.FindByCode(
+		orderShipping.ChannelID,
+		orderShipping.CourierID,
+		shipping_provider.StatusRequestPickup)
+
+	if shippingStatus == nil {
+		return resp, message.ShippingStatusNotFoundMsg
+	}
+
+	orderShipping.UpdatedBy = req.Username
+	//add history
+	notes := fmt.Sprintf("Pickup Code [%s]", *orderShipping.PickupCode)
+	orderShipping.AddHistoryStatus(shippingStatus, notes)
+
+	orderShipping, err = s.orderShipping.Upsert(orderShipping)
+
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		return resp, message.ErrSaveOrderShipping
+	}
+
+	return &response.RepickupOrderResponse{
+		OrderShippingUID: orderShipping.UID,
+		OrderNoAPI:       orderShipping.OrderNoAPI,
+		PickupCode:       *orderShipping.PickupCode,
+	}, message.SuccessMsg
+}
+
+func (s *shippingServiceImpl) repickupOrder(orderShipping *entity.OrderShipping) message.Message {
+
+	if orderShipping.Status == shipping_provider.StatusCancelled {
+		return message.OrderHasBeenCancelledMsg
+	}
+
+	if orderShipping.Status != shipping_provider.StatusCreated {
+		return message.RequestPickupHasBeenMadeMsg
+	}
+
+	switch orderShipping.Courier.CourierType {
+	case shipping_provider.ThirPartyCourier:
+		return s.repickupThirPartyOrder(orderShipping)
+	}
+	return message.ErrInvalidCourierType
+}
+
+func (s *shippingServiceImpl) repickupThirPartyOrder(orderShipping *entity.OrderShipping) message.Message {
+	switch orderShipping.Courier.Code {
+	case shipping_provider.ShipperCode:
+		result, msg := s.shipper.CreatePickUpOrderWithTimeSlots(orderShipping.BookingID)
+		if msg != message.SuccessMsg {
+			return msg
+		}
+
+		//update pickupCode
+		orderShipping.PickupCode = &result.Data.OrderActivation[0].PickUpCode
+	default:
+		return message.ErrInvalidCourierCode
+	}
+
+	return message.SuccessMsg
 }

@@ -231,11 +231,12 @@ type GetOrderShippingList struct {
 
 	// Sort fields
 	// in: string
+	// enum: channel_code,channel_name,courier_code,courier_name,shipping_status,order_shipping_uid,order_shipping_date
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 
 	// Sort direction
 	// in: string
-	// enum: asc, desc
+	// enum: asc,desc
 	Dir string `schema:"dir" binding:"omitempty" json:"dir"`
 
 	Filters GetOrderShippingFilter `json:"-"`
@@ -342,4 +343,16 @@ type GetOrderShippingLabel struct {
 type GetOrderShippingLabelBody struct {
 	OrderShippingUID []string `json:"order_shipping_uid"`
 	HideProduct      bool     `json:"hide_product"`
+}
+
+// swagger:parameters RepickupOrder
+type RepickupOrder struct {
+	// in: body
+	Body RepickupOrderRequest `json:"body"`
+}
+
+type RepickupOrderRequest struct {
+	ChannelUID       string `json:"channel_uid"`
+	OrderShippingUID string `json:"order_shipping_uid"`
+	Username         string `json:"username"`
 }

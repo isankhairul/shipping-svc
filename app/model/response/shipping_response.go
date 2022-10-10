@@ -210,12 +210,6 @@ type ShippingRateSummary struct {
 	EtdMax     *float64
 }
 
-//swagger:response CreateDelivery
-type CreateDeliveryResponse struct {
-	//in:body
-	Body CreateDelivery `json:"body"`
-}
-
 //swagger:model CreateDeliveryResponse
 type CreateDelivery struct {
 	OrderShippingUID string `json:"order_shipping_uid,omitempty"`
@@ -487,4 +481,11 @@ type GetOrderShippingLabelResponse struct {
 	CustomerPostalCode   string                       `json:"customer_postal_code"`
 	CustomerNotes        string                       `json:"customer_notes"`
 	OrderShippingItems   []GetOrderShippingDetailItem `json:"order_shipping_items"`
+}
+
+//swagger:model RepickupOrderResponse
+type RepickupOrderResponse struct {
+	OrderShippingUID string `json:"order_shipping_uid,omitempty"`
+	OrderNoAPI       string `json:"order_no_api,omitempty"`
+	PickupCode       string `json:"pickup_code,omitempty"`
 }
