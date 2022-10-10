@@ -619,7 +619,7 @@ func (s *shippingServiceImpl) thridPartyTracking(orderShipping *entity.OrderShip
 	return nil, message.ErrInvalidCourierCode
 }
 
-// swagger:operation POST /shipping/webhook/shipper Shipping WebhookUpdateStatusShipper
+// swagger:operation POST /public/webhook/shipper Public WebhookUpdateStatusShipper
 // Update Status from Shipper Webhook
 //
 // Description :

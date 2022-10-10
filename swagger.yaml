@@ -4209,6 +4209,28 @@ paths:
       summary: Update a shipment predefined
       tags:
       - Courier-Predefined
+  /public/webhook/shipper:
+    post:
+      description: 'Description :'
+      operationId: WebhookUpdateStatusShipper
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/WebhookUpdateStatusShipperRequest'
+        x-go-name: Body
+      responses:
+        "200":
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
+      summary: Update Status from Shipper Webhook
+      tags:
+      - Public
   /shipping/cancel-order/{uid}:
     post:
       description: 'Description :'
@@ -4553,28 +4575,6 @@ paths:
               meta:
                 $ref: '#/definitions/MetaResponse'
       summary: Update Order Shipping
-      tags:
-      - Shipping
-  /shipping/webhook/shipper:
-    post:
-      description: 'Description :'
-      operationId: WebhookUpdateStatusShipper
-      parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '#/definitions/WebhookUpdateStatusShipperRequest'
-        x-go-name: Body
-      responses:
-        "200":
-          description: Success Response.
-          schema:
-            properties:
-              data:
-                type: object
-              meta:
-                $ref: '#/definitions/MetaResponse'
-      summary: Update Status from Shipper Webhook
       tags:
       - Shipping
 produces:

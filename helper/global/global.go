@@ -18,7 +18,7 @@ var (
 	PrefixChannelCourier        = "/channel/channel-courier/"
 	PrefixChannelCourierService = "/channel/channel-courier-service/"
 	PrefixShipping              = "/shipping/"
-	PrefixWebhook               = "/shipping/webhook/"
+	PrefixWebhook               = "/public/webhook/"
 	PrefixOther                 = "/other/"
 
 	//Path
