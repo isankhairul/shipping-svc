@@ -300,7 +300,7 @@ func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input
 			input.Origin.Longitude,
 			input.Destination.Latitude,
 			input.Destination.Longitude,
-			input.TotalHeight,
+			input.TotalWeight,
 		)
 
 		_ = s.redis.GetJsonStruct(key, &courierPrice)
