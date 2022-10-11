@@ -687,7 +687,7 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 		return nil, message.ErrSaveOrderShipping
 	}
 
-	topic := "queueing.shipment.order_shipping_update." + orderShipping.Channel.ChannelCode
+	topic := "queueing.shipment.order-shipping-update." + orderShipping.Channel.ChannelCode
 	updateOrderRequest := request.UpdateOrderShipping{
 		TopicName: topic,
 		Body: request.UpdateOrderShippingBody{
