@@ -26,8 +26,12 @@ type OrderShipping struct {
 	CustomerLongitude    float64   `gorm:"type:numeric;null"`
 	CustomerCountryCode  string    `gorm:"type:varchar(50);not null"`
 	CustomerProvinceCode string    `gorm:"type:varchar(50);not null"`
+	CustomerProvinceName string    `gorm:"type:varchar(50) default('') not null"`
 	CustomerCityCode     string    `gorm:"type:varchar(50);not null"`
+	CustomerCityName     string    `gorm:"type:varchar(50) default('') not null"`
 	CustomerDistrictCode string    `gorm:"type:varchar(50);not null"`
+	CustomerDistrictName string    `gorm:"type:varchar(50) default('') not null"`
+	CustomerSubdistrict  string    `gorm:"type:varchar(50) default('') not null"`
 	CustomerPostalCode   string    `gorm:"type:varchar(50);not null"`
 	CustomerNotes        string    `gorm:"type:varchar(255);null"`
 	MerchantUID          string    `gorm:"type:varchar(50);not null"`
@@ -39,8 +43,12 @@ type OrderShipping struct {
 	MerchantLongitude    float64   `gorm:"type:numeric;null"`
 	MerchantCountryCode  string    `gorm:"type:varchar(50);not null"`
 	MerchantProvinceCode string    `gorm:"type:varchar(50);not null"`
+	MerchantProvinceName string    `gorm:"type:varchar(50) default('') not null"`
 	MerchantCityCode     string    `gorm:"type:varchar(50);not null"`
+	MerchantCityName     string    `gorm:"type:varchar(50) default('');not null"`
 	MerchantDistrictCode string    `gorm:"type:varchar(50);not null"`
+	MerchantDistrictName string    `gorm:"type:varchar(50) default('') not null"`
+	MerchantSubdistrict  string    `gorm:"type:varchar(50) default('') not null"`
 	MerchantPostalCode   string    `gorm:"type:varchar(50);not null"`
 	TotalWeight          float64   `gorm:"type:numeric;not null"`
 	TotalVolume          float64   `gorm:"type:numeric;null"`
@@ -70,7 +78,7 @@ func (o *OrderShipping) FromCreateDeliveryRequest(req *request.CreateDelivery) {
 	cusLong, _ := strconv.ParseFloat(req.Destination.Longitude, 64)
 	merLat, _ := strconv.ParseFloat(req.Origin.Latitude, 64)
 	merLong, _ := strconv.ParseFloat(req.Origin.Longitude, 64)
-	volumeWeight := util.CalculateVolumeWeightKg(req.Package.TotalLength, req.Package.TotalWeight, req.Package.TotalHeight)
+	volumeWeight := util.CalculateVolumeWeightKg(req.Package.TotalLength, req.Package.TotalWidth, req.Package.TotalHeight)
 
 	var orderShippingItems []OrderShippingItem
 
@@ -101,9 +109,10 @@ func (o *OrderShipping) FromCreateDeliveryRequest(req *request.CreateDelivery) {
 	o.CustomerLatitude = cusLat
 	o.CustomerLongitude = cusLong
 	o.CustomerCountryCode = req.Destination.CountryCode
-	o.CustomerProvinceCode = req.Destination.ProvinceCode
-	o.CustomerCityCode = req.Destination.CityName
-	o.CustomerDistrictCode = req.Destination.DistrictName
+	o.CustomerProvinceName = req.Destination.ProvinceName
+	o.CustomerCityName = req.Destination.CityName
+	o.CustomerDistrictName = req.Destination.DistrictName
+	o.CustomerSubdistrict = req.Destination.Subdistrict
 	o.CustomerPostalCode = req.Destination.PostalCode
 	o.CustomerNotes = req.Notes
 	o.MerchantUID = req.Merchant.UID
@@ -114,12 +123,13 @@ func (o *OrderShipping) FromCreateDeliveryRequest(req *request.CreateDelivery) {
 	o.MerchantLatitude = merLat
 	o.MerchantLongitude = merLong
 	o.MerchantCountryCode = req.Destination.CountryCode
-	o.MerchantProvinceCode = req.Destination.ProvinceCode
-	o.MerchantCityCode = req.Destination.CityName
-	o.MerchantDistrictCode = req.Destination.DistrictName
+	o.MerchantProvinceName = req.Destination.ProvinceName
+	o.MerchantCityName = req.Destination.CityName
+	o.MerchantDistrictName = req.Destination.DistrictName
+	o.MerchantSubdistrict = req.Destination.DistrictName
 	o.MerchantPostalCode = req.Destination.PostalCode
 	o.TotalWeight = req.Package.TotalWeight
-	o.TotalVolume = util.CalculateVolume(req.Package.TotalLength, req.Package.TotalWeight, req.Package.TotalHeight)
+	o.TotalVolume = util.CalculateVolume(req.Package.TotalLength, req.Package.TotalWidth, req.Package.TotalHeight)
 	o.TotalProductPrice = req.Package.TotalProductPrice
 	o.TotalFinalWeight = math.Max(volumeWeight, req.Package.TotalWeight)
 	o.ContainPrescription = req.Package.ContainPrescription

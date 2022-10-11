@@ -66,7 +66,7 @@ shipper:
   setting:
     package-type: 3
   webhook:
-    update_status_endpoint: https://shipping-api.medkomtek-stg.com/shipment-svc/api/v1/shipping/webhook/shipper
+    update-status-endpoint: https://shipping-api.medkomtek-stg.com/shipment-svc/api/v1/public/webhook/shipper
 
 dapr:
   endpoint:

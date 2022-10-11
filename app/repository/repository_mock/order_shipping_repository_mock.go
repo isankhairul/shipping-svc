@@ -92,7 +92,7 @@ func (r *OrderShippingRepositoryMock) FindByUID(uid string) (*entity.OrderShippi
 	return arguments.Get(0).(*entity.OrderShipping), nil
 }
 
-func (r *OrderShippingRepositoryMock) FindByParams(limit, page int, sort, dir string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error) {
+func (r *OrderShippingRepositoryMock) FindByParams(limit, page int, sort string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error) {
 	arguments := r.Mock.Called()
 
 	if len(arguments) > 2 {

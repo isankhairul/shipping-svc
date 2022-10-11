@@ -213,8 +213,8 @@ func (s *shippingServiceImpl) internalAndMerchantPrice(courierList []entity.Cour
 	}
 
 	var (
-		volume       = util.CalculateVolume(req.TotalHeight, req.TotalLength, req.TotalLength)
-		volumeWeight = util.CalculateVolumeWeightKg(req.TotalHeight, req.TotalLength, req.TotalLength)
+		volume       = util.CalculateVolume(req.TotalHeight, req.TotalWidth, req.TotalLength)
+		volumeWeight = util.CalculateVolumeWeightKg(req.TotalHeight, req.TotalWidth, req.TotalLength)
 		finalWeight  = math.Max(req.TotalWeight, volumeWeight)
 
 		lat1, _  = strconv.ParseFloat(req.Origin.Latitude, 64)
@@ -763,7 +763,7 @@ func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShipping
 	filter["merchant_name"] = req.Filters.MerchantName
 	filter["customer_name"] = req.Filters.CustomerName
 
-	result, pagination, err := s.orderShipping.FindByParams(req.Limit, req.Page, req.Sort, req.Dir, filter)
+	result, pagination, err := s.orderShipping.FindByParams(req.Limit, req.Page, req.Sort, filter)
 	if err != nil {
 		_ = level.Error(logger).Log("s.orderShipping.FindByParams", err.Error())
 		return result, pagination, message.ErrNoData
@@ -850,18 +850,20 @@ func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *r
 	resp.MerchantEmail = orderShipping.MerchantEmail
 	resp.MerchantPhone = orderShipping.MerchantPhoneNumber
 	resp.MerchantAddress = orderShipping.MerchantAddress
-	resp.MerchantDistrictName = orderShipping.MerchantDistrictCode
-	resp.MerchantCityName = orderShipping.MerchantCityCode
-	resp.MerchantProvinceName = orderShipping.MerchantProvinceCode
+	resp.MerchantSubdistrict = orderShipping.MerchantSubdistrict
+	resp.MerchantDistrictName = orderShipping.MerchantDistrictName
+	resp.MerchantCityName = orderShipping.MerchantCityName
+	resp.MerchantProvinceName = orderShipping.MerchantProvinceName
 	resp.MerchantPostalCode = orderShipping.MerchantPostalCode
 	resp.CustomerUID = orderShipping.CustomerUID
 	resp.CustomerName = orderShipping.CustomerName
 	resp.CustomerEmail = orderShipping.CustomerEmail
 	resp.CustomerPhone = orderShipping.CustomerPhoneNumber
 	resp.CustomerAddress = orderShipping.CustomerAddress
-	resp.CustomerDistrictName = orderShipping.CustomerDistrictCode
-	resp.CustomerCityName = orderShipping.CustomerCityCode
-	resp.CustomerProvinceName = orderShipping.CustomerProvinceCode
+	resp.CustomerSubdistrict = orderShipping.CustomerSubdistrict
+	resp.CustomerDistrictName = orderShipping.CustomerDistrictName
+	resp.CustomerCityName = orderShipping.CustomerCityName
+	resp.CustomerProvinceName = orderShipping.CustomerProvinceName
 	resp.CustomerPostalCode = orderShipping.CustomerPostalCode
 	resp.CustomerNotes = orderShipping.CustomerNotes
 	resp.OrderShippingItem = []response.GetOrderShippingDetailItem{}
@@ -1162,18 +1164,18 @@ func getOrderShippingLabelResponse(orderShipping []entity.OrderShipping, isHideP
 			MerchantEmail:        v.MerchantEmail,
 			MerchantPhone:        v.MerchantPhoneNumber,
 			MerchantAddress:      v.MerchantAddress,
-			MerchantDistrictName: v.MerchantDistrictCode,
-			MerchantCityName:     v.MerchantCityCode,
-			MerchantProvinceName: v.MerchantProvinceCode,
+			MerchantDistrictName: v.MerchantDistrictName,
+			MerchantCityName:     v.MerchantCityName,
+			MerchantProvinceName: v.MerchantProvinceName,
 			MerchantPostalCode:   v.MerchantPostalCode,
 			CustomerUID:          v.CustomerUID,
 			CustomerName:         v.CustomerName,
 			CustomerEmail:        v.CustomerEmail,
 			CustomerPhone:        v.CustomerPhoneNumber,
 			CustomerAddress:      v.CustomerAddress,
-			CustomerDistrictName: v.CustomerDistrictCode,
-			CustomerCityName:     v.CustomerCityCode,
-			CustomerProvinceName: v.CustomerProvinceCode,
+			CustomerDistrictName: v.CustomerDistrictName,
+			CustomerCityName:     v.CustomerCityName,
+			CustomerProvinceName: v.CustomerProvinceName,
 			CustomerPostalCode:   v.CustomerPostalCode,
 			CustomerNotes:        v.CustomerNotes,
 		}

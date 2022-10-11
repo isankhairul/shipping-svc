@@ -17,7 +17,7 @@ type OrderShippingRepository interface {
 	Upsert(input *entity.OrderShipping) (*entity.OrderShipping, error)
 	FindByOrderNo(orderNo string) (*entity.OrderShipping, error)
 	FindByUID(uid string) (*entity.OrderShipping, error)
-	FindByParams(limit, page int, sort, dir string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error)
+	FindByParams(limit, page int, sort string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error)
 	FindByUIDs(channelUID string, uid []string) ([]entity.OrderShipping, error)
 }
 
@@ -123,7 +123,7 @@ func (r *orderShippingRepository) FindByUID(uid string) (*entity.OrderShipping, 
 	return &result, nil
 }
 
-func (r *orderShippingRepository) FindByParams(limit, page int, sort, dir string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error) {
+func (r *orderShippingRepository) FindByParams(limit, page int, sort string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error) {
 	pagination := &base.Pagination{}
 
 	var result []response.GetOrderShippingList
@@ -194,27 +194,13 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort, dir string
 		}
 	}
 
-	m := map[string]string{
-		"channel_code":          "ch.channel_code",
-		"channel_name":          "ch.channel_name",
-		"courier_code":          "c.code",
-		"courier_name":          "c.courier_name",
-		"shipping_status":       "order_shipping.status",
-		"courier_services_name": "cs.shipping_name",
-		"airwaybill":            "order_shipping.airwaybill",
-		"booking_id":            "order_shipping.booking_id",
-		"merchant_name":         "order_shipping.merchant_name",
-		"customer_name":         "order_shipping.customer_name",
-		"order_shipping_uid":    "order_shipping.uid",
-		"order_shipping_date":   "order_shipping.order_shipping_date",
-	}
+	sort = strings.ReplaceAll(sort, "courier_code", "c.code")
+	sort = strings.ReplaceAll(sort, "shipping_status", "order_shipping.status")
+	sort = strings.ReplaceAll(sort, "courier_services_name", "cs.shipping_name")
+	sort = strings.ReplaceAll(sort, "order_shipping_uid", "order_shipping.uid")
+	sort = strings.ReplaceAll(sort, "order_shipping_date", "order_shipping.order_shipping_date")
 
-	sort = m[sort]
-	sort = util.ReplaceEmptyString(sort, "order_shipping.updated_at")
-
-	if strings.EqualFold(dir, "desc") {
-		sort += " desc"
-	}
+	sort = util.ReplaceEmptyString(sort, "order_shipping.updated_at desc")
 
 	query = query.Order(sort)
 

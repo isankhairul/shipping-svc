@@ -30,13 +30,13 @@ func CalculateDistanceInKm(lat1, long1, lat2, long2 float64) float64 {
 	return d
 }
 
-func CalculateVolume(length, weight, height float64) float64 {
-	return length * weight * height
+func CalculateVolume(length, width, height float64) float64 {
+	return length * width * height
 }
 
 // length in cm
-// wight in cm
+// width in cm
 // height in cm
-func CalculateVolumeWeightKg(length, weight, height float64) float64 {
-	return CalculateVolume(length, weight, height) / 6000
+func CalculateVolumeWeightKg(length, width, height float64) float64 {
+	return CalculateVolume(length, width, height) / 6000
 }
