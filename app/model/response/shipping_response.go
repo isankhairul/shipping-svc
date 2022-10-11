@@ -243,6 +243,8 @@ type GetOrderShippingTracking struct {
 	Date string `json:"date"`
 	//example: 12:30
 	Time string `json:"time"`
+	//example: Status
+	Status string `json:"status"`
 	//example: Order Masuk ke sistem
 	Note string `json:"note"`
 }
@@ -367,6 +369,8 @@ type GetOrderShippingDetail struct {
 	MerchantPhone string `json:"merchant_phone"`
 	//example: Jl. BSD Grand Boulevard, BSD Green Office Park, BSD City My Republic Plaza (Green Office Park 6
 	MerchantAddress string `json:"merchant_address"`
+	//example: 2210
+	MerchantSubdistrict string `json:"merchant_subdistrict"`
 	//example: Cisauk
 	MerchantDistrictName string `json:"merchant_district_name"`
 	//example: Kabupaten Tangerang
@@ -385,6 +389,8 @@ type GetOrderShippingDetail struct {
 	CustomerPhone string `json:"customer_phone"`
 	//example: Graha Kirana, Jl. Mitra Sunter Bulevar No.16, RW.11, Sunter Jaya
 	CustomerAddress string `json:"customer_address"`
+	//example: 2210
+	CustomerSubdistrict string `json:"customer_subdistrict"`
 	//example: Tanjung Priok
 	CustomerDistrictName string `json:"customer_district_name"`
 	//example: Jakarta Utara

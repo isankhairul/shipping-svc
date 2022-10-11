@@ -1266,6 +1266,10 @@ definitions:
         example: DKI Jakarta
         type: string
         x-go-name: CustomerProvinceName
+      customer_subdistrict:
+        example: "2210"
+        type: string
+        x-go-name: CustomerSubdistrict
       customer_uid:
         example: lsdkosdfg0376762345dfg
         type: string
@@ -1317,6 +1321,10 @@ definitions:
         example: Banten
         type: string
         x-go-name: MerchantProvinceName
+      merchant_subdistrict:
+        example: "2210"
+        type: string
+        x-go-name: MerchantSubdistrict
       merchant_uid:
         example: fhdsfg0376762345dfg
         type: string
@@ -1655,6 +1663,10 @@ definitions:
         example: Order Masuk ke sistem
         type: string
         x-go-name: Note
+      status:
+        example: Status
+        type: string
+        x-go-name: Status
       time:
         example: "12:30"
         type: string
@@ -4322,20 +4334,17 @@ paths:
         - shipping_status
         - order_shipping_uid
         - order_shipping_date
+        - channel_code desc
+        - channel_name desc
+        - courier_code desc
+        - courier_name desc
+        - shipping_status desc
+        - order_shipping_uid desc
+        - order_shipping_date desc
         in: query
         name: sort
         type: string
         x-go-name: Sort
-      - description: |-
-          Sort direction
-          in: string
-        enum:
-        - asc
-        - desc
-        in: query
-        name: dir
-        type: string
-        x-go-name: Dir
       responses:
         "200":
           description: Success Response.

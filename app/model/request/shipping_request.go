@@ -60,7 +60,7 @@ type CreateDeiveryArea struct {
 	Subdistrict  string `json:"subdistrict"`
 	Latitude     string `json:"latitude"`
 	Longitude    string `json:"longitude"`
-	ProvinceCode string `json:"province_name"`
+	ProvinceName string `json:"province_name"`
 	CityName     string `json:"city_name"`
 	DistrictName string `json:"district_name"`
 }
@@ -231,13 +231,8 @@ type GetOrderShippingList struct {
 
 	// Sort fields
 	// in: string
-	// enum: channel_code,channel_name,courier_code,courier_name,shipping_status,order_shipping_uid,order_shipping_date
+	// enum: channel_code,channel_name,courier_code,courier_name,shipping_status,order_shipping_uid,order_shipping_date,channel_code desc,channel_name desc,courier_code desc,courier_name desc,shipping_status desc,order_shipping_uid desc,order_shipping_date desc
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
-
-	// Sort direction
-	// in: string
-	// enum: asc,desc
-	Dir string `schema:"dir" binding:"omitempty" json:"dir"`
 
 	Filters GetOrderShippingFilter `json:"-"`
 }

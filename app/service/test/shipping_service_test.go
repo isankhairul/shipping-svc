@@ -271,7 +271,7 @@ var createDeliveryRequest = &request.CreateDelivery{
 		Subdistrict:  "sdo",
 		Latitude:     "",
 		Longitude:    "",
-		ProvinceCode: "pco",
+		ProvinceName: "pco",
 		DistrictName: "do",
 	},
 	Destination: request.CreateDeiveryArea{
@@ -281,7 +281,7 @@ var createDeliveryRequest = &request.CreateDelivery{
 		Subdistrict:  "sdd",
 		Latitude:     "",
 		Longitude:    "",
-		ProvinceCode: "pcd",
+		ProvinceName: "pcd",
 		DistrictName: "dd",
 	},
 	Notes: "",
@@ -1310,7 +1310,6 @@ var getOrderShippingListRequest = request.GetOrderShippingList{
 	Limit:   3,
 	Page:    2,
 	Sort:    "",
-	Dir:     "desc",
 	Filters: request.GetOrderShippingFilter{},
 }
 
