@@ -129,7 +129,7 @@ func (o *OrderShipping) FromCreateDeliveryRequest(req *request.CreateDelivery) {
 	o.MerchantSubdistrict = req.Origin.Subdistrict
 	o.MerchantPostalCode = req.Origin.PostalCode
 	o.TotalWeight = req.Package.TotalWeight
-	o.TotalVolume = util.CalculateVolume(req.Package.TotalLength, req.Package.TotalWidth, req.Package.TotalHeight)
+	o.TotalVolume = volumeWeight
 	o.TotalProductPrice = req.Package.TotalProductPrice
 	o.TotalFinalWeight = math.Max(volumeWeight, req.Package.TotalWeight)
 	o.ContainPrescription = req.Package.ContainPrescription

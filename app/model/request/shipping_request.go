@@ -217,7 +217,7 @@ type ShipperStatus struct {
 
 // swagger:parameters GetOrderShippingList
 type GetOrderShippingList struct {
-	// Filter : {"order_shipping_uid":["001","002"],"order_no":["001","002"],"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":"2022-09-09","order_shipping_date_to":"2022-09-12"}
+	// Filter : {"order_shipping_uid":["001","002"],"order_no":["001","002"],"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":["2022-09-09"],"order_shipping_date_to":["2022-09-12"]}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -237,24 +237,35 @@ type GetOrderShippingList struct {
 }
 
 type GetOrderShippingFilter struct {
-	ChannelCode           []string `json:"channel_code"`
-	ChannelName           []string `json:"channel_name"`
-	CourierName           []string `json:"courier_name"`
-	CourierServicesName   []string `json:"courier_services_name"`
-	OrderNo               []string `json:"order_no"`
-	Airwaybill            []string `json:"airwaybill"`
-	ShippingStatus        []string `json:"shipping_status"`
-	OrderShippingDateFrom string   `json:"order_shipping_date_from"`
-	OrderShippingDateTo   string   `json:"order_shipping_date_to"`
-	BookingID             []string `json:"booking_id"`
-	MerchantName          []string `json:"merchant_name"`
-	CustomerName          []string `json:"customer_name"`
-	OrderShippingUID      []string `json:"order_shipping_uid"`
+	ChannelCode                []string `json:"channel_code"`
+	ChannelName                []string `json:"channel_name"`
+	CourierName                []string `json:"courier_name"`
+	CourierServicesName        []string `json:"courier_services_name"`
+	OrderNo                    []string `json:"order_no"`
+	Airwaybill                 []string `json:"airwaybill"`
+	ShippingStatus             []string `json:"shipping_status"`
+	OrderShippingDateFromArray []string `json:"order_shipping_date_from"`
+	OrderShippingDateToArray   []string `json:"order_shipping_date_to"`
+	BookingID                  []string `json:"booking_id"`
+	MerchantName               []string `json:"merchant_name"`
+	CustomerName               []string `json:"customer_name"`
+	OrderShippingUID           []string `json:"order_shipping_uid"`
+
+	OrderShippingDateFrom string `json:"-"`
+	OrderShippingDateTo   string `json:"-"`
 }
 
 func (m *GetOrderShippingList) GetFilter() {
 	if len(m.Filter) > 0 {
 		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
+
+	if len(m.Filters.OrderShippingDateFromArray) > 0 {
+		m.Filters.OrderShippingDateFrom = m.Filters.OrderShippingDateFromArray[0]
+	}
+
+	if len(m.Filters.OrderShippingDateToArray) > 0 {
+		m.Filters.OrderShippingDateTo = m.Filters.OrderShippingDateToArray[0]
 	}
 }
 

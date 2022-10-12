@@ -204,7 +204,7 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort string, fil
 	sort = strings.ReplaceAll(sort, "shipping_status", "order_shipping.status")
 	sort = strings.ReplaceAll(sort, "courier_services_name", "cs.shipping_name")
 	sort = strings.ReplaceAll(sort, "order_shipping_uid", "order_shipping.uid")
-	sort = strings.ReplaceAll(sort, "order_shipping_date", "order_shipping.order_shipping_date")
+	sort = strings.ReplaceAll(sort, "order_shipping_date_from", "order_shipping.order_shipping_date")
 
 	sort = util.ReplaceEmptyString(sort, "order_shipping.updated_at desc")
 
