@@ -155,6 +155,9 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort string, fil
 		if !util.IsNilOrEmpty(v) {
 
 			switch k {
+			case "order_shipping_uid":
+				query = query.Where(like("order_shipping.uid", v.([]string)))
+
 			case "order_no":
 				query = query.Where(like(k, v.([]string)))
 
@@ -184,8 +187,10 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort string, fil
 
 			case "booking_id":
 				query = query.Where(like("order_shipping.booking_id", v.([]string)))
+
 			case "merchant_name":
 				query = query.Where(like("order_shipping.merchant_name", v.([]string)))
+
 			case "customer_name":
 				query = query.Where(like("order_shipping.customer_name", v.([]string)))
 
@@ -195,10 +200,11 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort string, fil
 	}
 
 	sort = strings.ReplaceAll(sort, "courier_code", "c.code")
+	sort = strings.ReplaceAll(sort, "shipping_status_name", "ss.status_name")
 	sort = strings.ReplaceAll(sort, "shipping_status", "order_shipping.status")
 	sort = strings.ReplaceAll(sort, "courier_services_name", "cs.shipping_name")
 	sort = strings.ReplaceAll(sort, "order_shipping_uid", "order_shipping.uid")
-	sort = strings.ReplaceAll(sort, "order_shipping_date", "order_shipping.order_shipping_date")
+	sort = strings.ReplaceAll(sort, "order_shipping_date_from", "order_shipping.order_shipping_date")
 
 	sort = util.ReplaceEmptyString(sort, "order_shipping.updated_at desc")
 
