@@ -708,6 +708,8 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 			},
 		},
 	}
+
+	_ = level.Info(logger).Log("PUBLISH_QUEUE, TOPIC", topic)
 	s.daprEndpoint.UpdateOrderShipping(&updateOrderRequest)
 	return orderShipping, message.SuccessMsg
 }
