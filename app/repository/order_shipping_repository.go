@@ -148,7 +148,7 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort string, fil
 		Joins("INNER JOIN channel ch ON ch.id = order_shipping.channel_id").
 		Joins("INNER JOIN courier c ON c.id = order_shipping.courier_id").
 		Joins("INNER JOIN courier_service cs ON cs.id = order_shipping.courier_service_id").
-		Joins("INNER JOIN shipping_status ss ON ss.status_code = order_shipping.status")
+		Joins("INNER JOIN shipping_status ss ON ss.status_code = order_shipping.status AND ss.channel_id = order_shipping.channel_id")
 
 	for k, v := range filter {
 
