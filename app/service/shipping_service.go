@@ -16,6 +16,7 @@ import (
 	"go-klikdokter/pkg/util"
 	"math"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-kit/log"
@@ -687,7 +688,8 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 		return nil, message.ErrSaveOrderShipping
 	}
 
-	topic := "queueing.shipment.order-shipping-update." + orderShipping.Channel.ChannelCode
+	topic := viper.GetString("dapr.topic.update-order-shipping")
+	topic = strings.ReplaceAll(topic, "{channel-code}", strings.ToLower(orderShipping.Channel.ChannelCode))
 	updateOrderRequest := request.UpdateOrderShipping{
 		TopicName: topic,
 		Body: request.UpdateOrderShippingBody{
@@ -750,6 +752,7 @@ func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShipping
 	}
 
 	filter := make(map[string]interface{})
+	filter["order_shipping_uid"] = req.Filters.OrderShippingUID
 	filter["order_no"] = req.Filters.OrderNo
 	filter["channel_code"] = req.Filters.ChannelCode
 	filter["channel_name"] = req.Filters.ChannelName

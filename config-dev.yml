@@ -71,3 +71,5 @@ shipper:
 dapr:
   endpoint:
     update-order-shipping: http://localhost:5600/shipment-svc/api/v1/shipping/update-order-shipping/{topic-name}
+  topic :
+    update-order-shipping: queueing.shipment.order-shipping-update.{channel-code}

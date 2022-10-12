@@ -217,7 +217,7 @@ type ShipperStatus struct {
 
 // swagger:parameters GetOrderShippingList
 type GetOrderShippingList struct {
-	// Filter : {"order_no":["001","002"],"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":"2022-09-09","order_shipping_date_to":"2022-09-12"}
+	// Filter : {"order_shipping_uid":["001","002"],"order_no":["001","002"],"channel_code":["kd","hb"],"channel_name":["name","name"],"courier_name":["shipper","shipper"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":"2022-09-09","order_shipping_date_to":"2022-09-12"}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -231,7 +231,6 @@ type GetOrderShippingList struct {
 
 	// Sort fields
 	// in: string
-	// enum: channel_code,channel_name,courier_code,courier_name,shipping_status,order_shipping_uid,order_shipping_date,channel_code desc,channel_name desc,courier_code desc,courier_name desc,shipping_status desc,order_shipping_uid desc,order_shipping_date desc
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 
 	Filters GetOrderShippingFilter `json:"-"`
@@ -250,6 +249,7 @@ type GetOrderShippingFilter struct {
 	BookingID             []string `json:"booking_id"`
 	MerchantName          []string `json:"merchant_name"`
 	CustomerName          []string `json:"customer_name"`
+	OrderShippingUID      []string `json:"order_shipping_uid"`
 }
 
 func (m *GetOrderShippingList) GetFilter() {

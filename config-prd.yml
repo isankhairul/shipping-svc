@@ -65,3 +65,5 @@ shipper:
 dapr:
   endpoint:
     update-order-shipping: https://shipping-api.medkomtek-stg.com/shipment-svc/api/v1/shipping/update-order-shipping/{topic-name}
+  topic :
+    update-order-shipping: queueing.shipment.order-shipping-update.{channel-code}
