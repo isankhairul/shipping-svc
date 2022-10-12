@@ -75,6 +75,6 @@ func RegisterShippingService(db *gorm.DB, logger log.Logger, redis cache.RedisCa
 		rp.NewOrderShippingRepository(repo),
 		rp.NewCourierRepository(repo),
 		rp.NewShippingCourierStatusRepository(repo),
-		http_helper.NewDaprEndpoint(),
+		http_helper.NewDaprEndpoint(logger),
 	)
 }
