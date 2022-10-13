@@ -31,12 +31,19 @@ func CalculateDistanceInKm(lat1, long1, lat2, long2 float64) float64 {
 }
 
 func CalculateVolume(length, width, height float64) float64 {
-	return length * width * height
+	volume := length * width * height
+	return RoundFloat(volume, 2)
 }
 
 // length in cm
 // width in cm
 // height in cm
 func CalculateVolumeWeightKg(length, width, height float64) float64 {
-	return CalculateVolume(length, width, height) / 6000
+	volumeWeight := CalculateVolume(length, width, height) / 6000
+	return RoundFloat(volumeWeight, 2)
+}
+
+func RoundFloat(value float64, precision uint) float64 {
+	r := math.Pow(10, float64(precision))
+	return math.Round(value*r) / r
 }
