@@ -99,9 +99,9 @@ type CreateOrderShipper struct {
 	Package     CreateOrderShipperPackage `json:"package"`
 	Coverage    string                    `json:"coverage"`
 	ExternalID  string                    `json:"external_id"`
-	BestPrices  bool                      `json:"best_prices"`
-	ServiceType int                       `json:"service_type"`
-	PaymentType string                    `json:"payment_type"`
+	//BestPrices  bool                      `json:"best_prices"`
+	//ServiceType int                       `json:"service_type"`
+	PaymentType string `json:"payment_type"`
 }
 
 type GetPickUpTimeslot struct {

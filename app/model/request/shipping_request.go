@@ -159,11 +159,11 @@ func (c *CreateDelivery) ToCreateOrderShipper() *CreateOrderShipper {
 			Long:        c.Origin.Longitude,
 			PostalCode:  c.Origin.PostalCode,
 		},
-		Package:     *c.ToCreateOrderShipperPackage(),
-		ExternalID:  c.OrderNo,
-		Coverage:    "domestic",
-		BestPrices:  false,
-		ServiceType: 1,
+		Package:    *c.ToCreateOrderShipperPackage(),
+		ExternalID: c.OrderNo,
+		Coverage:   "domestic",
+		//BestPrices:  false,
+		//ServiceType: 1,
 		PaymentType: "postpay",
 	}
 }
