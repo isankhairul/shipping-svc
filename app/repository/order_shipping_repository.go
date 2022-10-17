@@ -104,7 +104,7 @@ func (r *orderShippingRepository) FindByUID(uid string) (*entity.OrderShipping, 
 		Preload("OrderShippingItem").
 		Preload("CourierService").
 		Preload("OrderShippingHistory", func(db *gorm.DB) *gorm.DB {
-			return db.Order("order_shipping_history.created_at DESC")
+			return db.Order("order_shipping_history.id DESC")
 		}).
 		Preload("OrderShippingHistory.ShippingCourierStatus.ShippingStatus").
 		Model(&entity.OrderShipping{}).
