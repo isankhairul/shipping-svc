@@ -690,29 +690,26 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 
 	topic := viper.GetString("dapr.topic.update-order-shipping")
 	topic = strings.ReplaceAll(topic, "{channel-code}", strings.ToLower(orderShipping.Channel.ChannelCode))
-	updateOrderRequest := request.UpdateOrderShipping{
-		TopicName: topic,
-		Body: request.UpdateOrderShippingBody{
-			ChannelUID:         orderShipping.Channel.UID,
-			CourierCode:        orderShipping.Courier.Code,
-			CourierServiceUID:  orderShipping.CourierService.UID,
-			OrderNo:            orderShipping.OrderNo,
-			OrderShippingUID:   orderShipping.UID,
-			Airwaybill:         orderShipping.Airwaybill,
-			ShippingStatus:     shippingStatus.StatusCode,
-			ShippingStatusName: shippingStatus.ShippingStatus.StatusName,
-			UpdatedBy:          "shipping_service",
-			Timestamp:          time.Now(),
-			Details: request.UpdateOrderShippingBodyDetail{
-				ExternalStatusCode:        fmt.Sprint(req.ExternalStatus.Code),
-				ExternalStatusName:        req.ExternalStatus.Name,
-				ExternalStatusDescription: req.ExternalStatus.Description,
-			},
+	updateOrderRequest := request.UpdateOrderShippingBody{
+		ChannelUID:         orderShipping.Channel.UID,
+		CourierCode:        orderShipping.Courier.Code,
+		CourierServiceUID:  orderShipping.CourierService.UID,
+		OrderNo:            orderShipping.OrderNo,
+		OrderShippingUID:   orderShipping.UID,
+		Airwaybill:         orderShipping.Airwaybill,
+		ShippingStatus:     shippingStatus.StatusCode,
+		ShippingStatusName: shippingStatus.ShippingStatus.StatusName,
+		UpdatedBy:          "shipping_service",
+		Timestamp:          time.Now(),
+		Details: request.UpdateOrderShippingBodyDetail{
+			ExternalStatusCode:        fmt.Sprint(req.ExternalStatus.Code),
+			ExternalStatusName:        req.ExternalStatus.Name,
+			ExternalStatusDescription: req.ExternalStatus.Description,
 		},
 	}
 
 	_ = level.Info(logger).Log("PUBLISH_QUEUE, TOPIC", topic)
-	s.daprEndpoint.UpdateOrderShipping(&updateOrderRequest)
+	s.daprEndpoint.PublishKafka(topic, updateOrderRequest)
 	return orderShipping, message.SuccessMsg
 }
 
@@ -1077,24 +1074,6 @@ func (s *shippingServiceImpl) cancelOrderThirdParty(orderShipping *entity.OrderS
 	return message.SuccessMsg
 }
 
-// swagger:operation POST /shipping/update-order-shipping/{topic-name} Shipping UpdateOrderShipping
-// Update Order Shipping
-//
-// Description :
-//
-// ---
-//
-// responses:
-//   '200':
-//     description: Success Response.
-//     schema:
-//       properties:
-//         meta:
-//            $ref: '#/definitions/MetaResponse'
-//         data:
-//           properties:
-//             record:
-//               $ref: '#/definitions/UpdateOrderShipping'
 func (s *shippingServiceImpl) UpdateOrderShipping(req *request.UpdateOrderShipping) (*response.UpdateOrderShippingResponse, message.Message) {
 	return &response.UpdateOrderShippingResponse{
 		OrderShippingUID: req.Body.OrderShippingUID,

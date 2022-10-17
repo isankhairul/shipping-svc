@@ -4542,35 +4542,6 @@ paths:
       summary: Get Shipping Rate By Shipping Type
       tags:
       - Shipping
-  /shipping/update-order-shipping/{topic-name}:
-    post:
-      description: 'Description :'
-      operationId: UpdateOrderShipping
-      parameters:
-      - in: path
-        name: topic-name
-        required: true
-        type: string
-        x-go-name: TopicName
-      - in: body
-        name: body
-        schema:
-          $ref: '#/definitions/UpdateOrderShippingBody'
-        x-go-name: Body
-      responses:
-        "200":
-          description: Success Response.
-          schema:
-            properties:
-              data:
-                properties:
-                  record:
-                    $ref: '#/definitions/UpdateOrderShipping'
-              meta:
-                $ref: '#/definitions/MetaResponse'
-      summary: Update Order Shipping
-      tags:
-      - Shipping
 produces:
 - application/json
 responses:
