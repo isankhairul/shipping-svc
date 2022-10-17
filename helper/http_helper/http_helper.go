@@ -13,9 +13,11 @@ import (
 	"github.com/go-kit/log/level"
 )
 
-func Post(url string, header map[string]string, request interface{}, log ...log.Logger) ([]byte, error) {
+func Post(url string, header map[string]string, request interface{}, log log.Logger) ([]byte, error) {
 
 	jsonReq, err := json.Marshal(request)
+	_ = level.Info(log).Log("url", url)
+	_ = level.Info(log).Log("request", string(jsonReq))
 
 	if err != nil {
 		return nil, err
@@ -41,16 +43,12 @@ func Post(url string, header map[string]string, request interface{}, log ...log.
 	defer response.Body.Close()
 	bodyBytes, err := ioutil.ReadAll(response.Body)
 
-	for _, v := range log {
-		_ = level.Info(v).Log("url", url)
-		_ = level.Info(v).Log("request", string(jsonReq))
-		_ = level.Info(v).Log("response", string(bodyBytes))
-	}
+	_ = level.Info(log).Log("response", string(bodyBytes))
 
 	return bodyBytes, err
 }
 
-func Get(url string, header map[string]string, queryString map[string]string, log ...log.Logger) ([]byte, error) {
+func Get(url string, header map[string]string, queryString map[string]string, log log.Logger) ([]byte, error) {
 
 	q := neturl.Values{}
 	for k, v := range queryString {
@@ -77,11 +75,9 @@ func Get(url string, header map[string]string, queryString map[string]string, lo
 	defer response.Body.Close()
 	bodyBytes, err := ioutil.ReadAll(response.Body)
 
-	for _, v := range log {
-		_ = level.Info(v).Log("url", url)
-		_ = level.Info(v).Log("request", q.Encode())
-		_ = level.Info(v).Log("response", string(bodyBytes))
-	}
+	_ = level.Info(log).Log("url", url)
+	_ = level.Info(log).Log("request", q.Encode())
+	_ = level.Info(log).Log("response", string(bodyBytes))
 
 	return bodyBytes, err
 }
