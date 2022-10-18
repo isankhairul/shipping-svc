@@ -34,7 +34,6 @@ type ShippingService interface {
 	GetOrderShippingDetailByUID(uid string) (*response.GetOrderShippingDetail, message.Message)
 	CancelPickup(req *request.CancelPickup) message.Message
 	CancelOrder(req *request.CancelOrder) message.Message
-	UpdateOrderShipping(req *request.UpdateOrderShipping) (*response.UpdateOrderShippingResponse, message.Message)
 	GetOrderShippingLabel(req *request.GetOrderShippingLabel) ([]response.GetOrderShippingLabelResponse, message.Message)
 	RepickupOrder(req *request.RepickupOrderRequest) (*response.RepickupOrderResponse, message.Message)
 }
@@ -1072,14 +1071,6 @@ func (s *shippingServiceImpl) cancelOrderThirdParty(orderShipping *entity.OrderS
 	}
 
 	return message.SuccessMsg
-}
-
-func (s *shippingServiceImpl) UpdateOrderShipping(req *request.UpdateOrderShipping) (*response.UpdateOrderShippingResponse, message.Message) {
-	return &response.UpdateOrderShippingResponse{
-		OrderShippingUID: req.Body.OrderShippingUID,
-		OrderNoAPI:       req.Body.OrderNo,
-		ShippingStatus:   req.Body.ShippingStatus,
-	}, message.SuccessMsg
 }
 
 // swagger:operation POST /shipping/order-shipping-label/{channel-uid} Shipping GetOrderShippingLabel
