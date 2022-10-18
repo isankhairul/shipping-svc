@@ -436,13 +436,6 @@ type GetOrderShippingDetailHistory struct {
 	StatusName string `json:"status_name"`
 }
 
-//swagger:model UpdateOrderShipping
-type UpdateOrderShippingResponse struct {
-	OrderShippingUID string `json:"order_shipping_uid"`
-	OrderNoAPI       string `json:"order_no_api"`
-	ShippingStatus   string `json:"shipping_status"`
-}
-
 //swagger:model GetOrderShippingLabelResponse
 type GetOrderShippingLabelResponse struct {
 	ChannelCode          string                       `json:"channel_code"`

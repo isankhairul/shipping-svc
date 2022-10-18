@@ -308,15 +308,6 @@ type CancelPickupBodyRequest struct {
 	Username string `json:"username"`
 }
 
-// swagger:parameters UpdateOrderShipping
-type UpdateOrderShipping struct {
-	// in: path
-	// required: true
-	TopicName string `json:"topic-name"`
-	// in: body
-	Body UpdateOrderShippingBody `json:"body"`
-}
-
 type UpdateOrderShippingBody struct {
 	ChannelUID         string                        `json:"channel_uid"`
 	CourierCode        string                        `json:"courier_code"`
