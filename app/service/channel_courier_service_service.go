@@ -145,13 +145,14 @@ func (s *channelCourierServiceServiceImpl) CreateChannelCourierService(input req
 func (s *channelCourierServiceServiceImpl) ListChannelCouriersService(input request.ChannelCourierServiceListRequest) ([]response.ChannelCourierServiceItem, *base.Pagination, message.Message) {
 	logger := log.With(s.logger, "ChannelCourierService", "ListChannelCouriersService")
 	filters := map[string]interface{}{
-		"status":        input.Filters.Status,
-		"shipping_name": input.Filters.ShippingName,
-		"shipping_code": input.Filters.ShippingCode,
-		"shipping_type": input.Filters.ShippingType,
-		"courier_name":  input.Filters.CourierName,
-		"channel_name":  input.Filters.ChannelName,
-		"courier_uid":   input.Filters.CourierUID,
+		"status":             input.Filters.Status,
+		"shipping_name":      input.Filters.ShippingName,
+		"shipping_code":      input.Filters.ShippingCode,
+		"shipping_type":      input.Filters.ShippingType,
+		"courier_name":       input.Filters.CourierName,
+		"channel_name":       input.Filters.ChannelName,
+		"courier_uid":        input.Filters.CourierUID,
+		"shipping_type_name": input.Filters.ShippingTypeName,
 	}
 
 	result, paging, err := s.channelCourierServices.FindByParams(input.Limit, input.Page, input.Sort, filters)

@@ -70,7 +70,7 @@ type UpdateChannelCourierService struct {
 
 // swagger:parameters GetChannelCourierServiceList
 type ChannelCourierServiceListRequest struct {
-	//Filter : {"channel_name":["value","value"],"courier_uid":["value","value"],"courier_name":["value","value"],"shipping_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"status":[0,1]}
+	//Filter : {"channel_name":["value","value"],"courier_uid":["value","value"],"courier_name":["value","value"],"shipping_type":["value","value"],"shipping_type_name":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"status":[0,1]}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -108,11 +108,12 @@ func (m *ChannelCourierServiceListRequest) GetFilter() {
 }
 
 type ChannelCourierServiceFilter struct {
-	ChannelName  []string `json:"channel_name"`
-	CourierName  []string `json:"courier_name"`
-	Status       []int    `json:"status"`
-	ShippingName []string `json:"shipping_name"`
-	ShippingCode []string `json:"shipping_code"`
-	ShippingType []string `json:"shipping_type"`
-	CourierUID   []string `json:"courier_uid"`
+	ChannelName      []string `json:"channel_name"`
+	CourierName      []string `json:"courier_name"`
+	Status           []int    `json:"status"`
+	ShippingName     []string `json:"shipping_name"`
+	ShippingCode     []string `json:"shipping_code"`
+	ShippingType     []string `json:"shipping_type"`
+	CourierUID       []string `json:"courier_uid"`
+	ShippingTypeName []string `json:"shipping_type_name"`
 }
