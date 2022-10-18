@@ -10,8 +10,8 @@ import (
 )
 
 type GetShippingRatePriceRange struct {
-	MinPrice *float64 `json:"min_price"`
-	MaxPrice *float64 `json:"max_price"`
+	MinPrice float64 `json:"min_price"`
+	MaxPrice float64 `json:"max_price"`
 }
 
 type GetShippingRateError struct {
@@ -78,8 +78,8 @@ type GetShippingRateResponse struct {
 	ShippingTypeName        string                    `json:"shipping_type_name"`
 	ShippingTypeDescription string                    `json:"shipping_type_description"`
 	PriceRange              GetShippingRatePriceRange `json:"price_range"`
-	EtdMin                  *float64                  `json:"etd_min"`
-	EtdMax                  *float64                  `json:"etd_max"`
+	EtdMin                  float64                   `json:"etd_min"`
+	EtdMax                  float64                   `json:"etd_max"`
 	AvailableCode           int                       `json:"available_code"`
 	Error                   GetShippingRateError      `json:"error"`
 	Services                []GetShippingRateService  `json:"services"`
@@ -130,34 +130,40 @@ func (s *ShippingRateCommonResponse) FindShippingCode(courierCode, shippingCode 
 	return data
 }
 
-func (s *ShippingRateCommonResponse) SummaryPerShippingType(shippingType string, price, etdMax, etdMin float64) {
+func (s *ShippingRateCommonResponse) SummaryPerShippingType(shippingType string, price, etdMax, etdMin float64, status int) {
 	summaryData, ok := s.Summary[shippingType]
 
 	if !ok {
 		summaryData = ShippingRateSummary{
-			PriceRange: GetShippingRatePriceRange{},
+			PriceRange:    GetShippingRatePriceRange{},
+			AvailableCode: 400,
+			Error:         SetShippingRateErrorMessage(message.ErrShippingRateNotFound),
 		}
 	}
 
-	maxPrice := summaryData.PriceRange.MaxPrice
-	minPrice := summaryData.PriceRange.MinPrice
-	eMax := summaryData.EtdMax
-	eMin := summaryData.EtdMin
+	if status == 200 {
+		maxPrice := summaryData.PriceRange.MaxPrice
+		minPrice := summaryData.PriceRange.MinPrice
+		eMax := summaryData.EtdMax
+		eMin := summaryData.EtdMin
+		summaryData.AvailableCode = 200
+		summaryData.Error = SetShippingRateErrorMessage(message.SuccessMsg)
 
-	if maxPrice == nil || price > *maxPrice {
-		summaryData.PriceRange.MaxPrice = &price
-	}
+		if maxPrice == 0 || price > maxPrice {
+			summaryData.PriceRange.MaxPrice = price
+		}
 
-	if minPrice == nil || price < *minPrice {
-		summaryData.PriceRange.MinPrice = &price
-	}
+		if minPrice == 0 || price < minPrice {
+			summaryData.PriceRange.MinPrice = price
+		}
 
-	if eMax == nil || etdMax > *eMax {
-		summaryData.EtdMax = &etdMax
-	}
+		if eMax == 0 || etdMax > eMax {
+			summaryData.EtdMax = etdMax
+		}
 
-	if eMin == nil || etdMin < *eMin {
-		summaryData.EtdMin = &etdMin
+		if eMin == 0 || etdMin < eMin {
+			summaryData.EtdMin = etdMin
+		}
 	}
 
 	s.Summary[shippingType] = summaryData
@@ -205,9 +211,11 @@ func (s *ShippingRateData) UpdateMessage(msg message.Message) {
 }
 
 type ShippingRateSummary struct {
-	PriceRange GetShippingRatePriceRange
-	EtdMin     *float64
-	EtdMax     *float64
+	PriceRange    GetShippingRatePriceRange
+	EtdMin        float64
+	EtdMax        float64
+	AvailableCode int
+	Error         GetShippingRateError
 }
 
 //swagger:model CreateDeliveryResponse
