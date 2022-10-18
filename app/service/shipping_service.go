@@ -379,7 +379,7 @@ func toGetShippingRateResponseList(req *request.GetShippingRateRequest, courierS
 			Distance:                p.Distance,
 		}
 
-		price.SummaryPerShippingType(v.ShippingTypeCode, p.TotalPrice, v.EtdMax, v.EtdMin)
+		price.SummaryPerShippingType(v.ShippingTypeCode, p.TotalPrice, v.EtdMax, v.EtdMin, p.AvailableCode)
 
 		if _, ok := shippingTypeMap[v.ShippingTypeCode]; !ok {
 			shippingTypeMap[v.ShippingTypeCode] = []response.GetShippingRateService{}
@@ -398,8 +398,8 @@ func toGetShippingRateResponseList(req *request.GetShippingRateRequest, courierS
 			EtdMax:                  s.EtdMax,
 			EtdMin:                  s.EtdMin,
 			Services:                v,
-			AvailableCode:           200,
-			Error:                   response.GetShippingRateError{},
+			AvailableCode:           s.AvailableCode,
+			Error:                   s.Error,
 		}
 		resp = append(resp, data)
 	}
