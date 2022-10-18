@@ -55,14 +55,15 @@ type ChannelCourierServiceList struct {
 
 // swagger:model ChannelCourierServiceItem
 type ChannelCourierServiceItem struct {
-	UID          string `json:"uid"`
-	ChannelName  string `json:"channel_name"`
-	CourierUID   string `json:"courier_uid"`
-	CourierName  string `json:"courier_name"`
-	ShippingName string `json:"shipping_name"`
-	ShippingCode string `json:"shipping_code"`
-	ShippingType string `json:"shipping_type"`
-	Status       int32  `json:"status"`
+	UID              string `json:"uid"`
+	ChannelName      string `json:"channel_name"`
+	CourierUID       string `json:"courier_uid"`
+	CourierName      string `json:"courier_name"`
+	ShippingName     string `json:"shipping_name"`
+	ShippingCode     string `json:"shipping_code"`
+	ShippingType     string `json:"shipping_type"`
+	ShippingTypeName string `json:"shipping_type_name"`
+	Status           int32  `json:"status"`
 }
 
 func NewChannelCourierServiceItem(input entity.ChannelCourierService) *ChannelCourierServiceItem {
@@ -85,6 +86,7 @@ func NewChannelCourierServiceItem(input entity.ChannelCourierService) *ChannelCo
 		response.ShippingCode = input.CourierService.ShippingCode
 		response.ShippingType = input.CourierService.ShippingType
 	}
+	response.ShippingTypeName = input.ShippingTypeName
 
 	return &response
 }

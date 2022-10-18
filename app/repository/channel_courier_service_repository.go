@@ -88,17 +88,20 @@ func (r *ChannelCourierServiceRepositoryImpl) FindByParams(limit, page int, sort
 	db := r.base.GetDB()
 
 	query := db.Model(&entity.ChannelCourierService{}).
+		Select("channel_courier_service.*", "st.title AS shipping_type_name").
 		Preload("ChannelCourier.Channel").
 		Preload("ChannelCourier.Courier").
 		Preload("CourierService").
 		Joins("ChannelCourier").
 		Joins("INNER JOIN channel ch ON ch.ID = \"ChannelCourier\".channel_id").
 		Joins("INNER JOIN courier co ON co.ID = \"ChannelCourier\".courier_id").
-		Joins("CourierService")
+		Joins("INNER JOIN courier_service cs ON cs.id = channel_courier_service.courier_service_id").
+		Joins("INNER JOIN shippment_predefined st ON st.code = cs.shipping_type AND st.type = 'shipping_type'")
 
 	for k, v := range filters {
 		k = strings.ReplaceAll(k, "courier_uid", "co.uid")
 		k = strings.ReplaceAll(k, "status", channelCourierServiceStatus)
+		k = strings.ReplaceAll(k, "shipping_type_name", "st.title")
 
 		if util.IsSliceAndNotEmpty(v) {
 			query = query.Where(fmt.Sprint(k, " IN ?"), v)

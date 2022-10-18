@@ -29,6 +29,9 @@ type ChannelCourierService struct {
 	ChannelCourier *ChannelCourier `json:"-" gorm:"foreignKey:channel_courier_id"`
 
 	CourierService *CourierService `json:"-" gorm:"foreignKey:courier_service_id"`
+
+	// readonly field
+	ShippingTypeName string `gorm:"-:migration;->"`
 }
 
 type ChannelCourierServiceForShippingRate struct {
