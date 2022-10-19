@@ -202,7 +202,7 @@ func TestGetListStatusNotFound(t *testing.T) {
 	input := request.GetChannelCourierStatusRequest{}
 	result, _, msg := channelSvc.GetListStatus(input)
 
-	assert.Equal(t, message.ErrNoData.Code, msg.Code, "Code must be 34005")
+	assert.Equal(t, message.SuccessMsg, msg)
 	assert.Len(t, result, 0)
 }
 

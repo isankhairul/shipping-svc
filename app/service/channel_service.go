@@ -335,9 +335,5 @@ func (s *ChannelServiceImpl) GetListStatus(input request.GetChannelCourierStatus
 		return []response.GetChannelCourierStatusResponseItem{}, nil, message.FailedMsg
 	}
 
-	if len(result) == 0 {
-		return []response.GetChannelCourierStatusResponseItem{}, nil, message.ErrNoData
-	}
-
 	return response.NewGetChannelCourierStatusResponse(result), paging, message.SuccessMsg
 }
