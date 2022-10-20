@@ -50,7 +50,7 @@ func (r *ShipmentPredefinedRepositoryImpl) GetAll(limit int, page int, sort stri
 				query = query.Where(like(k, v.([]string)))
 
 			case "type":
-				query = query.Where(k+" IN ?", v.([]string))
+				query = query.Where(like(k, v.([]string)))
 
 			case "status":
 				query = query.Where("status IN ?", v)
