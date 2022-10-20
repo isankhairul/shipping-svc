@@ -6,6 +6,7 @@ import (
 	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/response"
 	"go-klikdokter/pkg/util"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -109,10 +110,7 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 		}
 	}
 
-	if len(sort) > 0 {
-		m := map[string]string{"courier_code": "courier.code", "courier_type_name": "courier.courier_type_name"}
-		sort = m[sort]
-	}
+	sort = strings.ReplaceAll(sort, "courier_code", "code")
 
 	if len(sort) == 0 {
 		query = query.Order("updated_at DESC")
