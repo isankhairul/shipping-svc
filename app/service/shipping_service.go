@@ -290,7 +290,9 @@ func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input
 		}
 
 		// try to get price data from cache
-		key := fmt.Sprintf("%s:%s:%s:%s:%s:%s:%s:%s:%s:%f",
+		baseKey := viper.GetString("cache.redis.base-key")
+		key := fmt.Sprintf("%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%f",
+			baseKey,
 			v.Code,
 			input.Origin.PostalCode,
 			input.Destination.PostalCode,
@@ -1230,9 +1232,17 @@ func (s *shippingServiceImpl) RepickupOrder(req *request.RepickupOrderRequest) (
 	}
 
 	orderShipping.UpdatedBy = req.Username
+
 	//add history
-	notes := fmt.Sprintf("Pickup Code [%s]", *orderShipping.PickupCode)
-	orderShipping.AddHistoryStatus(shippingStatus, notes)
+	orderShipping.OrderShippingHistory = append(orderShipping.OrderShippingHistory, entity.OrderShippingHistory{
+		OrderShippingID:         orderShipping.ID,
+		ShippingCourierStatusID: shippingStatus.ID,
+		StatusCode:              shippingStatus.StatusCode,
+		Note:                    fmt.Sprintf("(Repickup) Pickup Code [%s]", *orderShipping.PickupCode),
+		BaseIDModel: base.BaseIDModel{
+			CreatedBy: req.Username,
+		},
+	})
 
 	orderShipping, err = s.orderShipping.Upsert(orderShipping)
 
