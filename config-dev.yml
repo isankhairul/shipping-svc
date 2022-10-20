@@ -40,6 +40,7 @@ cache:
     expired-in-minute: 
       default : 1440
       shipping-rate : 1440
+    base-key: shipping-svc
 
 # Access Control SETTING
 access-control:
