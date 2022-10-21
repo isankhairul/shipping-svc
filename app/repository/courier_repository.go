@@ -110,13 +110,12 @@ func (r *courierRepo) FindByParams(limit int, page int, sort string, filter map[
 		}
 	}
 
-	sort = strings.ReplaceAll(sort, "courier_code", "code")
+	sort = strings.ReplaceAll(sort, "courier_code", "courier.code")
+	sort = strings.ReplaceAll(sort, "courier_type_name", "courier.courier_type_name")
+	sort = strings.ReplaceAll(sort, "courier_name", "courier.courier_name")
+	sort = util.ReplaceEmptyString(sort, "courier.updated_at desc")
 
-	if len(sort) == 0 {
-		query = query.Order("updated_at DESC")
-	}
-
-	query = query.Order(sort)
+	query = query.Order(strings.ToLower(sort))
 
 	pagination.Limit = limit
 	pagination.Page = page
