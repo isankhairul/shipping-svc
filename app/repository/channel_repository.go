@@ -137,7 +137,7 @@ func (r *channelRepo) FindByParams(limit int, page int, sort string, filter map[
 		sort = "updated_at DESC"
 	}
 
-	query = query.Order(sort)
+	query = query.Order(strings.ToLower(sort))
 
 	pagination.Limit = limit
 	pagination.Page = page
