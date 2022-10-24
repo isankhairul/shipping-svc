@@ -166,6 +166,7 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 	}
 
 	sort = strings.ReplaceAll(sort, "courier_uid", "\"Courier\".uid")
+	sort = strings.ReplaceAll(sort, "shipping_type_code", "courier_service.shipping_type")
 	sort = util.ReplaceEmptyString(sort, "courier_service.updated_at DESC")
 
 	query = query.Order(sort)
@@ -260,17 +261,17 @@ func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid stri
 		Joins("INNER JOIN shippment_predefined st ON st.code = cs.shipping_type AND st.type = 'shipping_type'").
 		Where("ch.uid = ?", channel_uid).
 		Where("cs.uid IN ?", uids)
-		/*
-				Where("channel_courier_service.status = 1").
-				Where("cc.status = 1").
-				Where("c.status = 1").
-				Where("cs.status = 1").
-				Where("c.hide_purpose = 0")
+	/*
+			Where("channel_courier_service.status = 1").
+			Where("cc.status = 1").
+			Where("c.status = 1").
+			Where("cs.status = 1").
+			Where("c.hide_purpose = 0")
 
-			if containPrescription {
-				query = query.Where("cs.prescription_allowed = 1")
-			}
-		*/
+		if containPrescription {
+			query = query.Where("cs.prescription_allowed = 1")
+		}
+	*/
 
 	if shippingType != "" {
 		query = query.Where("cs.shipping_type = ?", shippingType)
