@@ -155,7 +155,7 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 			case "shipping_code", "shipping_name":
 				query = query.Where(like(k, v.([]string)))
 
-			case "courier_uid", "courier_type", "shipping_type":
+			case "courier_uid", "courier_name", "courier_type", "shipping_type":
 				query = query.Where(k+" IN ?", v.([]string))
 
 			case "status":
@@ -165,14 +165,8 @@ func (r *courierServiceRepo) FindByParams(limit int, page int, sort string, filt
 		}
 	}
 
-	if strings.Contains(sort, "shipping_type_code") {
-		m := map[string]string{"shipping_type_code": "shipping_type", "shipping_type_code asc": "shipping_type asc", "shipping_type_code desc": "shipping_type desc"}
-		sort = m[strings.ToLower(sort)]
-	}
-
-	if len(sort) == 0 {
-		sort = "courier_service.updated_at DESC"
-	}
+	sort = strings.ReplaceAll(sort, "courier_uid", "\"Courier\".uid")
+	sort = util.ReplaceEmptyString(sort, "courier_service.updated_at DESC")
 
 	query = query.Order(sort)
 

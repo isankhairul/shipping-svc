@@ -25,7 +25,7 @@ type CourierCoverageCodeListRequest struct {
 	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
 	// Sort fields
-	// in: string
+	// enum:courier_name,courier_name desc,country_code,country_code desc,postal_code,postal_code desc,subdistrict,subdistrict desc,description, description desc,status,status desc,code1,code1 desc,code2,code2 desc,code3,code3 desc,code4,code4 desc,code5,code5 desc,code6,code6 desc
 	Sort    string                        `schema:"sort" binding:"omitempty" json:"sort"`
 	Filters CourierCoverageCodeListFilter `json:"-"`
 }

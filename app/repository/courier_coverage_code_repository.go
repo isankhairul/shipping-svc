@@ -91,14 +91,13 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 
 			switch k {
 			case "courier_name":
-				query = query.Joins("JOIN courier ON courier.id = courier_coverage_code.courier_id").
-					Where(global.AddLike("courier.courier_name", v.([]string)))
+				query = query.Where(global.AddLike("\"Courier\".courier_name", v.([]string)))
 
-			case "country_code", "postal_code", "subdistrict":
+			case "country_code":
 				query = query.Where(k+" IN ?", v.([]string))
 
-			case "description", "":
-				query = query.Where(global.AddLike("courier_coverage_code.description", v.([]string)))
+			case "description", "postal_code", "subdistrict":
+				query = query.Where(global.AddLike(k, v.([]string)))
 
 			case "status":
 				query = query.Where("courier_coverage_code.status IN ?", v)

@@ -3634,9 +3634,32 @@ paths:
         name: page
         type: integer
         x-go-name: Page
-      - description: |-
-          Sort fields
-          in: string
+      - description: Sort fields
+        enum:
+        - courier_name
+        - courier_name desc
+        - country_code
+        - country_code desc
+        - postal_code
+        - postal_code desc
+        - subdistrict
+        - subdistrict desc
+        - description
+        - ' description desc'
+        - status
+        - status desc
+        - code1
+        - code1 desc
+        - code2
+        - code2 desc
+        - code3
+        - code3 desc
+        - code4
+        - code4 desc
+        - code5
+        - code5 desc
+        - code6
+        - code6 desc
         in: query
         name: sort
         type: string
@@ -3798,7 +3821,7 @@ paths:
       description: 'Description :'
       operationId: CourierServiceListRequest
       parameters:
-      - description: 'Filter : {"courier_uid":["value","value"],"courier_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"shipping_type_code":["value","value"],"status":[0,1]}'
+      - description: 'Filter : {"courier_name":["value","value"],"courier_uid":["value","value"],"courier_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"shipping_type_code":["value","value"],"status":[0,1]}'
         in: query
         name: filter
         type: string
@@ -3819,9 +3842,22 @@ paths:
         name: page
         type: integer
         x-go-name: Page
-      - description: |-
-          Sort fields
-          in: string
+      - description: Sort fields
+        enum:
+        - courier_name
+        - courier_name desc
+        - courier_uid
+        - courier_uid desc
+        - courier_type
+        - courier_type desc
+        - courier_type_name
+        - courier_type_name desc
+        - shipping_code
+        - shipping_code desc
+        - ' shipping_type'
+        - ' shipping_type desc'
+        - ' shipping_type_name'
+        - ' shipping_type_name desc'
         in: query
         name: sort
         type: string
