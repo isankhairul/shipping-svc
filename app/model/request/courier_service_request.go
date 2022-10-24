@@ -156,7 +156,7 @@ type GetCourierServiceRequest struct {
 
 // swagger:parameters CourierServiceListRequest
 type CourierServiceListRequest struct {
-	//Filter : {"courier_uid":["value","value"],"courier_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"shipping_type_code":["value","value"],"status":[0,1]}
+	//Filter : {"courier_name":["value","value"],"courier_uid":["value","value"],"courier_type":["value","value"],"shipping_code":["value","value"],"shipping_name":["value","value"],"shipping_type_code":["value","value"],"status":[0,1]}
 	// in: query
 	Filter string `json:"filter"`
 
@@ -169,7 +169,7 @@ type CourierServiceListRequest struct {
 	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
 	// Sort fields
-	// in: string
+	// enum:courier_name,courier_name desc,courier_uid,courier_uid desc,courier_type,courier_type desc,courier_type_name,courier_type_name desc,shipping_code,shipping_code desc, shipping_type, shipping_type desc, shipping_type_name, shipping_type_name desc
 	Sort string `schema:"sort" binding:"omitempty" json:"sort"`
 
 	Filters CourierServiceListFilter `json:"-"`
@@ -177,6 +177,7 @@ type CourierServiceListRequest struct {
 
 type CourierServiceListFilter struct {
 	CourierUID       []string `json:"courier_uid"`
+	CourierName      []string `json:"courier_name"`
 	CourierType      []string `json:"courier_type"`
 	ShippingCode     []string `json:"shipping_code"`
 	ShippingName     []string `json:"shipping_name"`

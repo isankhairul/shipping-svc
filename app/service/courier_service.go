@@ -471,6 +471,7 @@ func (s *courierServiceImpl) GetListCourierService(input request.CourierServiceL
 	}
 	filter := map[string]interface{}{
 		"courier_uid":   input.Filters.CourierUID,
+		"courier_name":  input.Filters.CourierName,
 		"courier_type":  input.Filters.CourierType,
 		"shipping_code": input.Filters.ShippingCode,
 		"shipping_name": input.Filters.ShippingName,

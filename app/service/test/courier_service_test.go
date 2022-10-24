@@ -144,6 +144,7 @@ func TestListCourierService(t *testing.T) {
 
 	filter := map[string]interface{}{
 		"courier_uid":   req.Filters.CourierUID,
+		"courier_name":  req.Filters.CourierName,
 		"courier_type":  req.Filters.CourierType,
 		"shipping_code": req.Filters.ShippingCode,
 		"shipping_name": req.Filters.ShippingName,
