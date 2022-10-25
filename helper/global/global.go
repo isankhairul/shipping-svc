@@ -50,6 +50,7 @@ var (
 	PathCancelOrderUID           = "cancel-order/{uid}"
 	PathOrderShippingLabel       = "order-shipping-label/{channel-uid}"
 	PathRepickup                 = "repickup"
+	PathShippingTracking         = "tracking/{uid}"
 
 	ServerPort = "server.port"
 )

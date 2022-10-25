@@ -4481,7 +4481,7 @@ paths:
               data:
                 properties:
                   record:
-                    $ref: '#/definitions/ShippmentPredefinedDetail'
+                    $ref: '#/definitions/ShippingRate'
               meta:
                 $ref: '#/definitions/MetaResponse'
       security:
@@ -4518,6 +4518,39 @@ paths:
       security:
       - Bearer: []
       summary: Get Shipping Rate By Shipping Type
+      tags:
+      - Shipping
+  /shipping/tracking/{uid}:
+    get:
+      description: |-
+        Description :
+        Get Order Shipping Tracking (No Auth)
+      operationId: ShippingTracking
+      parameters:
+      - in: path
+        name: uid
+        required: true
+        type: string
+        x-go-name: UID
+      - in: query
+        name: channel_uid
+        required: true
+        type: string
+        x-go-name: ChannelUID
+      responses:
+        "200":
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                properties:
+                  record:
+                    $ref: '#/definitions/GetOrderShippingTrackingResponse'
+              meta:
+                $ref: '#/definitions/MetaResponse'
+      security:
+      - Bearer: []
+      summary: Get Order Shipping Tracking (No Auth)
       tags:
       - Shipping
 produces:

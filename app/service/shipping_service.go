@@ -36,6 +36,7 @@ type ShippingService interface {
 	CancelOrder(req *request.CancelOrder) message.Message
 	GetOrderShippingLabel(req *request.GetOrderShippingLabel) ([]response.GetOrderShippingLabelResponse, message.Message)
 	RepickupOrder(req *request.RepickupOrderRequest) (*response.RepickupOrderResponse, message.Message)
+	ShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message)
 }
 
 type shippingServiceImpl struct {
@@ -116,7 +117,7 @@ func (s *shippingServiceImpl) GetShippingRateByShippingType(input request.GetShi
 //         data:
 //           properties:
 //             record:
-//               $ref: '#/definitions/ShippmentPredefinedDetail'
+//               $ref: '#/definitions/ShippingRate'
 func (s *shippingServiceImpl) GetShippingRate(input request.GetShippingRateRequest) ([]response.GetShippingRateResponse, message.Message) {
 	logger := log.With(s.logger, "ShippingService", "GetShippingRate")
 
@@ -1290,4 +1291,28 @@ func (s *shippingServiceImpl) repickupThirPartyOrder(orderShipping *entity.Order
 	}
 
 	return message.SuccessMsg
+}
+
+// swagger:operation GET /shipping/tracking/{uid} Shipping ShippingTracking
+// Get Order Shipping Tracking (No Auth)
+//
+// Description :
+// Get Order Shipping Tracking (No Auth)
+// ---
+// security:
+// - Bearer: []
+//
+// responses:
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           properties:
+//             record:
+//               $ref: '#/definitions/GetOrderShippingTrackingResponse'
+func (s *shippingServiceImpl) ShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message) {
+	return s.OrderShippingTracking(req)
 }
