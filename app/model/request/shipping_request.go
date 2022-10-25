@@ -353,3 +353,14 @@ type RepickupOrderRequest struct {
 	OrderShippingUID string `json:"order_shipping_uid"`
 	Username         string `json:"username"`
 }
+
+// swagger:parameters ShippingTracking
+type GetShippingTracking struct {
+	// in: path
+	// required: true
+	UID string `json:"uid"`
+
+	// in: query
+	// required: true
+	ChannelUID string `schema:"channel_uid" json:"channel_uid"`
+}
