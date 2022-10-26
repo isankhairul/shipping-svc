@@ -3,6 +3,7 @@ package request
 import (
 	"encoding/json"
 	"go-klikdokter/helper/global"
+	"go-klikdokter/helper/message"
 	"time"
 )
 
@@ -32,6 +33,16 @@ type GetShippingRateRequest struct {
 	Origin              AreaDetailPayload `json:"origin"`
 	Destination         AreaDetailPayload `json:"destination"`
 	CourierServiceUID   []string          `json:"courier_service_uid"`
+	ChannelCode         string            `json:"-"`
+}
+
+func (g *GetShippingRateRequest) CheckCoordinate() (bool, message.Message) {
+	if len(g.Origin.Latitude) == 0 || len(g.Origin.Longitude) == 0 ||
+		len(g.Destination.Latitude) == 0 || len(g.Destination.Longitude) == 0 {
+		return false, message.CoordinateRequiredMsg
+	}
+
+	return true, message.SuccessMsg
 }
 
 type AreaDetailPayload struct {

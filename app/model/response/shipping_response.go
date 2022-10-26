@@ -91,9 +91,18 @@ type GetShippingRateResponseList struct {
 	Response []GetShippingRateResponse `json:"response"`
 }
 
+// common response to get shipping rate from courier
 type ShippingRateCommonResponse struct {
-	Rate       map[string]ShippingRateData
-	Summary    map[string]ShippingRateSummary
+	// data of each courier_Service
+	// key: courier_code:courier_shipping_code
+	Rate map[string]ShippingRateData
+
+	// summary per shippingType
+	// key: shipping_type
+	Summary map[string]ShippingRateSummary
+
+	// error applied to all courier service of the courier
+	// key: courier_code
 	CourierMsg map[string]message.Message
 }
 
@@ -176,6 +185,8 @@ type ShippingRateData struct {
 	Volume           float64
 	VolumeWeight     float64
 	FinalWeight      float64
+	Etd_Min          float64
+	Etd_Max          float64
 	MinDay           int
 	MaxDay           int
 	UnitPrice        float64
@@ -202,6 +213,8 @@ func (s *ShippingRateData) UpdateMessage(msg message.Message) {
 	s.FinalWeight = 0
 	s.MinDay = 0
 	s.MaxDay = 0
+	s.Etd_Min = 0
+	s.Etd_Max = 0
 	s.UnitPrice = 0
 	s.TotalPrice = 0
 	s.InsuranceFee = 0
