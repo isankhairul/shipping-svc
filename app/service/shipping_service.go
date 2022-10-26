@@ -17,6 +17,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-kit/log"
@@ -51,6 +52,7 @@ type shippingServiceImpl struct {
 	courierRepo               repository.CourierRepository
 	shippingCourierStatusRepo repository.ShippingCourierStatusRepository
 	daprEndpoint              http_helper.DaprEndpoint
+	grab                      shipping_provider.Grab
 }
 
 func NewShippingService(
@@ -65,9 +67,10 @@ func NewShippingService(
 	cr repository.CourierRepository,
 	scs repository.ShippingCourierStatusRepository,
 	de http_helper.DaprEndpoint,
+	gr shipping_provider.Grab,
 ) ShippingService {
 	return &shippingServiceImpl{
-		l, br, chrp, csrp, cccrp, sh, rc, osr, cr, scs, de,
+		l, br, chrp, csrp, cccrp, sh, rc, osr, cr, scs, de, gr,
 	}
 }
 
@@ -136,6 +139,8 @@ func (s *shippingServiceImpl) GetShippingRate(input request.GetShippingRateReque
 	if channel == nil {
 		return []response.GetShippingRateResponse{}, message.ErrChannelNotFound
 	}
+
+	input.ChannelCode = channel.ChannelCode
 
 	// find Courier Servies By Channel UID and Courier Servies UID Slice
 	courierServices, err := s.courierServiceRepo.FindCourierServiceByChannelAndUIDs(input.ChannelUID, input.CourierServiceUID, input.ContainPrescription, input.ShippingType)
@@ -280,54 +285,63 @@ func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input
 		CourierMsg: map[string]message.Message{},
 	}
 
+	var wg sync.WaitGroup
+	wg.Add(len(courier))
 	for _, v := range courier {
-		var (
-			courierPrice *response.ShippingRateCommonResponse
-			err          error
-		)
 
-		if v.CourierType != shipping_provider.ThirPartyCourier {
-			continue
-		}
+		go func(c entity.Courier) {
+			defer wg.Done()
+			var (
+				courierPrice *response.ShippingRateCommonResponse
+				err          error
+			)
 
-		// try to get price data from cache
-		baseKey := viper.GetString("cache.redis.base-key")
-		key := fmt.Sprintf("%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%f",
-			baseKey,
-			v.Code,
-			input.Origin.PostalCode,
-			input.Destination.PostalCode,
-			input.Origin.Subdistrict,
-			input.Destination.Subdistrict,
-			input.Origin.Latitude,
-			input.Origin.Longitude,
-			input.Destination.Latitude,
-			input.Destination.Longitude,
-			input.TotalWeight,
-		)
-
-		_ = s.redis.GetJsonStruct(key, &courierPrice)
-		// if cache doesn't exist
-		if courierPrice == nil {
-			switch v.Code {
-			case shipping_provider.ShipperCode:
-				courierPrice, err = s.shipper.GetShippingRate(&v.ID, input)
-			default:
-				resp.CourierMsg[v.Code] = message.InvalidCourierCodeMsg
-				continue
+			if c.CourierType != shipping_provider.ThirPartyCourier {
+				return
 			}
 
-			if err == nil {
-				// save price to redis cache
-				s.redis.SetJsonStruct(key, courierPrice, viper.GetInt("cache.redis.expired-in-minute.shipping-rate"))
+			// try to get price data from cache
+			baseKey := viper.GetString("cache.redis.base-key")
+			key := fmt.Sprintf("%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%f",
+				baseKey,
+				c.Code,
+				input.Origin.PostalCode,
+				input.Destination.PostalCode,
+				input.Origin.Subdistrict,
+				input.Destination.Subdistrict,
+				input.Origin.Latitude,
+				input.Origin.Longitude,
+				input.Destination.Latitude,
+				input.Destination.Longitude,
+				input.TotalWeight,
+			)
+
+			_ = s.redis.GetJsonStruct(key, &courierPrice)
+			// if cache doesn't exist
+			if courierPrice == nil {
+				switch c.Code {
+				case shipping_provider.ShipperCode:
+					courierPrice, err = s.shipper.GetShippingRate(&c.ID, input)
+				case shipping_provider.GrabCode:
+					courierPrice, err = s.grab.GetShippingRate(input)
+				default:
+					resp.CourierMsg[c.Code] = message.InvalidCourierCodeMsg
+					return
+				}
+
+				if err == nil {
+					// save price to redis cache
+					s.redis.SetJsonStruct(key, courierPrice, viper.GetInt("cache.redis.expired-in-minute.shipping-rate"))
+				}
+
 			}
 
-		}
-
-		if courierPrice != nil {
-			resp.Add(courierPrice)
-		}
+			if courierPrice != nil {
+				resp.Add(courierPrice)
+			}
+		}(v)
 	}
+	wg.Wait()
 
 	return resp
 }
@@ -336,6 +350,13 @@ func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input
 func toGetShippingRateResponseList(req *request.GetShippingRateRequest, courierServices []entity.ChannelCourierServiceForShippingRate, price *response.ShippingRateCommonResponse) []response.GetShippingRateResponse {
 	shippingTypeMap := make(map[string][]response.GetShippingRateService)
 	var resp []response.GetShippingRateResponse
+
+	estimation := func(courierEtd, dbEtd float64) float64 {
+		if courierEtd > 0.0 {
+			return util.RoundFloat(courierEtd, 2)
+		}
+		return dbEtd
+	}
 
 	for _, v := range courierServices {
 		p := price.FindShippingCode(v.CourierCode, v.ShippingCode)
@@ -364,25 +385,29 @@ func toGetShippingRateResponseList(req *request.GetShippingRateRequest, courierS
 			ShippingTypeName:        v.ShippingTypeName,
 			ShippingTypeDescription: v.ShippingTypeDescription,
 			Logo:                    v.Logo,
-			Etd_Min:                 v.EtdMin,
-			Etd_Max:                 v.EtdMax,
-			AvailableCode:           p.AvailableCode,
-			Error:                   p.Error,
-			Weight:                  p.Weight,
-			Volume:                  p.Volume,
-			VolumeWeight:            p.VolumeWeight,
-			FinalWeight:             p.FinalWeight,
-			MinDay:                  p.MinDay,
-			MaxDay:                  p.MaxDay,
-			UnitPrice:               p.UnitPrice,
-			TotalPrice:              p.TotalPrice,
-			InsuranceFee:            p.InsuranceFee,
-			MustUseInsurance:        p.MustUseInsurance,
-			InsuranceApplied:        p.InsuranceApplied,
-			Distance:                p.Distance,
+			Weight:                  req.TotalWeight,
+
+			AvailableCode:    p.AvailableCode,
+			Error:            p.Error,
+			Volume:           p.Volume,
+			VolumeWeight:     p.VolumeWeight,
+			FinalWeight:      p.FinalWeight,
+			MinDay:           p.MinDay,
+			MaxDay:           p.MaxDay,
+			UnitPrice:        p.UnitPrice,
+			TotalPrice:       p.TotalPrice,
+			InsuranceFee:     p.InsuranceFee,
+			MustUseInsurance: p.MustUseInsurance,
+			InsuranceApplied: p.InsuranceApplied,
+			Distance:         p.Distance,
+
+			// uses date from courier
+			// if it does not exist get uses from database
+			Etd_Min: estimation(p.Etd_Min, v.EtdMin),
+			Etd_Max: estimation(p.Etd_Max, v.EtdMax),
 		}
 
-		price.SummaryPerShippingType(v.ShippingTypeCode, p.TotalPrice, v.EtdMax, v.EtdMin, p.AvailableCode)
+		price.SummaryPerShippingType(v.ShippingTypeCode, service.TotalPrice, service.Etd_Max, service.Etd_Min, service.AvailableCode)
 
 		if _, ok := shippingTypeMap[v.ShippingTypeCode]; !ok {
 			shippingTypeMap[v.ShippingTypeCode] = []response.GetShippingRateService{}

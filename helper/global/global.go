@@ -78,5 +78,5 @@ func AddLike(column string, value []string) string {
 }
 
 func CourierShippingCodeKey(courierCode, shippingCode string) string {
-	return fmt.Sprint(courierCode, ":", shippingCode)
+	return strings.ToLower(fmt.Sprint(courierCode, ":", shippingCode))
 }

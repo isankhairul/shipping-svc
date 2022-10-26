@@ -25,6 +25,7 @@ var shipper = &shipping_provider_mock.ShipperMock{Mock: mock.Mock{}}
 var redis = &cache_mock.Redis_Mock{Mock: mock.Mock{}}
 var orderShippingRepository = &repository_mock.OrderShippingRepositoryMock{Mock: mock.Mock{}}
 var dapr = &http_helper_mock.DaprEndpointMock{Mock: mock.Mock{}}
+var grab = &shipping_provider_mock.GrabMock{Mock: mock.Mock{}}
 
 func init() {
 	shippingService = service.NewShippingService(
@@ -39,6 +40,7 @@ func init() {
 		courierRepository,
 		shippingCourierStatusRepository,
 		dapr,
+		grab,
 	)
 }
 
@@ -117,6 +119,80 @@ func TestGetShippingRate_InternalSuccess(t *testing.T) {
 	assert.Equal(t, message.SuccessMsg.Message, result[0].Services[0].Error.Message)
 	assert.Equal(t, message.SuccessMsg.Message, result[0].Services[1].Error.Message)
 	assert.Equal(t, msg, message.SuccessMsg, codeIsNotCorrect)
+}
+
+func TestGetShippingRate_GrabSuccess(t *testing.T) {
+	input := request.GetShippingRateRequest{
+		CourierServiceUID: []string{"", ""},
+		Origin: request.AreaDetailPayload{
+			Latitude:  "1",
+			Longitude: "2",
+		},
+		Destination: request.AreaDetailPayload{
+			Latitude:  "1",
+			Longitude: "2",
+		},
+	}
+
+	channelRepository.Mock.On("FindByUid", mock.Anything).
+		Return(entity.Channel{BaseIDModel: base.BaseIDModel{UID: "1"}}).Once()
+
+	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
+		Return([]entity.ChannelCourierServiceForShippingRate{
+			{CourierCode: shipping_provider.GrabCode},
+			{CourierCode: shipping_provider.GrabCode},
+		}).Once()
+
+	redis.Mock.On("GetJsonStruct", mock.Anything).
+		Return(nil).Once()
+
+	shipper.Mock.On("GetShippingRate", mock.Anything).
+		Return(&response.ShippingRateCommonResponse{
+			Rate:    make(map[string]response.ShippingRateData),
+			Summary: make(map[string]response.ShippingRateSummary),
+		}).Once()
+
+	result, msg := shippingService.GetShippingRate(input)
+	assert.NotNil(t, result)
+	assert.Equal(t, msg, message.SuccessMsg, codeIsNotCorrect)
+}
+
+func TestGetShippingRate_GrabCoordinateRequired_Failed(t *testing.T) {
+	input := request.GetShippingRateRequest{
+		CourierServiceUID: []string{"", ""},
+		Origin: request.AreaDetailPayload{
+			Latitude:  "",
+			Longitude: "",
+		},
+		Destination: request.AreaDetailPayload{
+			Latitude:  "",
+			Longitude: "",
+		},
+	}
+
+	channelRepository.Mock.On("FindByUid", mock.Anything).
+		Return(entity.Channel{BaseIDModel: base.BaseIDModel{UID: "1"}}).Once()
+
+	courierServiceRepo.Mock.On("FindCourierServiceByChannelAndUIDs", mock.Anything).
+		Return([]entity.ChannelCourierServiceForShippingRate{
+			{CourierCode: shipping_provider.GrabCode},
+			{CourierCode: shipping_provider.GrabCode},
+		}).Once()
+
+	redis.Mock.On("GetJsonStruct", mock.Anything).
+		Return(nil).Once()
+
+	shipper.Mock.On("GetShippingRate", mock.Anything).
+		Return(&response.ShippingRateCommonResponse{
+			Rate:    make(map[string]response.ShippingRateData),
+			Summary: make(map[string]response.ShippingRateSummary),
+		}).Once()
+
+	result, msg := shippingService.GetShippingRate(input)
+	assert.NotNil(t, result)
+	assert.Len(t, result, 1)
+	assert.Equal(t, message.SuccessMsg, msg, codeIsNotCorrect)
+	assert.Len(t, result[0].Services, 2)
 }
 
 func TestGetShippingRate_Internal_CoverageNotExistSuccess(t *testing.T) {

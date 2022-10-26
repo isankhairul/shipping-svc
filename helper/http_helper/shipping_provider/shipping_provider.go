@@ -9,6 +9,7 @@ import (
 
 const (
 	ShipperCode      = "shipper"
+	GrabCode         = "grab"
 	InternalCourier  = "internal"
 	MerchantCourier  = "merchant"
 	ThirPartyCourier = "third_party"

@@ -35,6 +35,7 @@ type ChannelCourierService struct {
 }
 
 type ChannelCourierServiceForShippingRate struct {
+	ChannelCode                 string         `gorm:"column:channel_code"`
 	ShippingTypeCode            string         `gorm:"column:shipping_type_code"`
 	ShippingTypeName            string         `gorm:"column:shipping_type_name"`
 	ShippingTypeDescription     string         `gorm:"column:shipping_type_description"`

@@ -36,7 +36,7 @@ cache:
     port: 6379
     index:
       primary: 0
-    is-active : false
+    is-active : true
     expired-in-minute: 
       default : 1440
       shipping-rate : 1440
@@ -68,6 +68,14 @@ shipper:
     package-type: 3
   webhook:
     update-status-endpoint: https://shipping-api.medkomtek-stg.com/shipment-svc/api/v1/public/webhook/shipper
+
+grab:
+  auth:
+    safe-id: eaf0b574-ed34-4bb8-91cb-154289984a28
+    secret: DN6NvB85dnJhOifN
+  base: https://partner-api.stg-myteksi.com
+  path:
+    get-delivery-quote: /grab-express/v1/deliveries/quotes
 
 dapr:
   endpoint:

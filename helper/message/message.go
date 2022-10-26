@@ -73,7 +73,7 @@ var (
 	ErrChannelCourierHasChild         = Message{Code: 209009, Message: "Can not delete Channel Courier that has one or more Channel Courier Service(s)"}
 )
 
-var ErrShippingRateNotFound = Message{Code: 34602, Message: "shipping rate not found"}
+var ErrShippingRateNotFound = Message{Code: 34602, Message: "shipping rate is not found"}
 var ErrInvalidCourierType = Message{Code: 34602, Message: "courier type is not valid"}
 var ErrInvalidCourierCode = Message{Code: 34602, Message: "courier code is not valid"}
 var ErrCreateOrder = Message{Code: 34602, Message: "failed when trying to create order"}
@@ -92,6 +92,7 @@ var ErrUpdateOrderShipping = Message{Code: 34602, Message: "error update order s
 
 var (
 	ShippingProviderMsg               = Message{Code: 209002, Message: ""}
+	ShippingRateNotFoundMsg           = Message{Code: 209002, Message: "shipping rate is not found"}
 	CourierNotActiveMsg               = Message{Code: 209002, Message: "courier is not active"}
 	CourierServiceNotActiveMsg        = Message{Code: 209002, Message: "courier service is not active"}
 	ChannelCourierNotActiveMsg        = Message{Code: 209002, Message: "channel courier is not active"}
@@ -110,4 +111,6 @@ var (
 	DestinationNotFoundMsg            = Message{Code: 209002, Message: "destination not in courier coverage"}
 	RequestPickupHasBeenMadeMsg       = Message{Code: 209002, Message: "request pickup has been made"}
 	OrderHasBeenCancelledMsg          = Message{Code: 209002, Message: "order has been cancelled"}
+	CoordinateRequiredMsg             = Message{Code: 209002, Message: "origin and destination coordinates are required"}
+	InvalidCoordinateMsg              = Message{Code: 209002, Message: "origin or destination coordinates are invalid"}
 )
