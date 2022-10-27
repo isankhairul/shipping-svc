@@ -1,12 +1,10 @@
 package shipping_provider
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"go-klikdokter/app/model/entity"
 	"go-klikdokter/app/model/request"
 	"go-klikdokter/app/model/response"
 	"go-klikdokter/helper/http_helper"
@@ -14,6 +12,7 @@ import (
 	"go-klikdokter/pkg/util"
 	"math"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-kit/log"
@@ -22,19 +21,50 @@ import (
 
 type Grab interface {
 	GetShippingRate(input *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error)
+	CreateDelivery(courierService *entity.CourierService, req *request.CreateDelivery) (*response.CreateDeliveryThirdPartyData, message.Message)
 }
 
 type grab struct {
 	Logger log.Logger
-	Base   string
-	SafeID string
-	Secret string
 }
 
 func NewGrab(log log.Logger) Grab {
 	return &grab{
 		Logger: log,
 	}
+}
+
+func (g *grab) GetToken() string {
+	req := &request.GrabAuthRequest{
+		ClientID:     viper.GetString("grab.auth.client-id"),
+		ClientSecret: viper.GetString("grab.auth.client-secret"),
+		GrantType:    viper.GetString("grab.auth.grant-type"),
+		Scope:        viper.GetString("grab.auth.scope"),
+	}
+
+	url := grabUrl(viper.GetString("grab.path.auth"))
+	headers := map[string]string{
+		"Cache-Control": "no-cache",
+		"Content-Type":  "application/json",
+	}
+
+	respByte, err := http_helper.Post(url, headers, req, g.Logger)
+	if err != nil {
+		return ""
+	}
+
+	resp := map[string]interface{}{}
+	err = json.Unmarshal(respByte, &resp)
+	if err != nil {
+		return ""
+	}
+
+	token, ok := resp["access_token"]
+	if !ok {
+		return ""
+	}
+
+	return fmt.Sprint("Bearer ", token)
 }
 
 func (g *grab) GetShippingRate(input *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error) {
@@ -102,16 +132,14 @@ func (g *grab) GetShippingRate(input *request.GetShippingRateRequest) (*response
 }
 
 func (g *grab) GetDeliveryQuote(req *request.GrabDeliveryQuotes) (*response.GrabDeliveryQuotes, error) {
-	endpoint := viper.GetString("grab.path.get-delivery-quote")
-	url := grabUrl(endpoint)
 
-	grabDate := grabDateTimeFormat()
-	reqByte, _ := json.Marshal(req)
-	encodedRequest := encodeContent(string(reqByte))
-	auth := grabAuthentication("POST", grabDate, "application/json", endpoint, encodedRequest)
+	auth := g.GetToken()
+	if len(auth) == 0 {
+		return nil, errors.New(message.ErrUnAuth.Message)
+	}
 
+	url := grabUrl(viper.GetString("grab.path.get-delivery-quote"))
 	headers := map[string]string{
-		"Date":          grabDate,
 		"Content-Type":  "application/json",
 		"Authorization": auth,
 	}
@@ -131,7 +159,138 @@ func (g *grab) GetDeliveryQuote(req *request.GrabDeliveryQuotes) (*response.Grab
 		return resp, nil
 	}
 
-	errResp := &response.GrabDeliveryQuotesError{}
+	errResp := &response.GrabError{}
+	err = json.Unmarshal(respByte, &errResp)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, errors.New(errResp.GetReason())
+}
+
+func (g *grab) CreateDelivery(courierService *entity.CourierService, req *request.CreateDelivery) (*response.CreateDeliveryThirdPartyData, message.Message) {
+	if ok, msg := req.CheckCoordinate(); !ok {
+		return nil, msg
+	}
+	originLat, _ := strconv.ParseFloat(req.Origin.Latitude, 64)
+	originLong, _ := strconv.ParseFloat(req.Origin.Longitude, 64)
+	destinationLat, _ := strconv.ParseFloat(req.Destination.Latitude, 64)
+	destinationLong, _ := strconv.ParseFloat(req.Destination.Longitude, 64)
+
+	now := time.Now().Add(5 * time.Minute)
+	grabReq := &request.CreateDeliveryGrab{
+		MerchantOrderID: req.OrderNo,
+		ServiceType:     strings.ToUpper(courierService.ShippingCode),
+		Sender: request.GrabSenderRecipient{
+			FirstName:   req.Merchant.Name,
+			LastName:    "",
+			Title:       "",
+			CompanyName: "",
+			Email:       req.Merchant.Email,
+			Phone:       req.Merchant.Phone,
+			SmsEnabled:  false,
+			Instruction: req.Notes,
+		},
+		Recipient: request.GrabSenderRecipient{
+			FirstName:   req.Customer.Name,
+			LastName:    "",
+			Title:       "",
+			CompanyName: "",
+			Email:       req.Customer.Email,
+			Phone:       req.Customer.Phone,
+			SmsEnabled:  false,
+			Instruction: req.Notes,
+		},
+		Packages: []request.Package{},
+		Origin: request.Origin{
+			Address: req.Origin.Address,
+			Coordinates: request.Coordinates{
+				Latitude:  originLat,
+				Longitude: originLong,
+			},
+			Keywords: "",
+		},
+		Destination: request.Destination{
+			Address: req.Destination.Address,
+			Coordinates: request.Coordinates{
+				Latitude:  destinationLat,
+				Longitude: destinationLong,
+			},
+			Keywords: "",
+		},
+		PaymentMethod: "CASHLESS",
+		Schedule: request.Schedule{
+			PickupTimeFrom: now.Format(time.RFC3339),
+			PickupTimeTo:   now.Add(time.Hour).Format(time.RFC3339),
+		},
+	}
+
+	for _, v := range req.Package.Product {
+		grabReq.Packages = append(grabReq.Packages, request.Package{
+			Name:        v.Name,
+			Description: "",
+			Quantity:    v.Qty,
+			Price:       int(v.Price),
+			Dimensions: request.Dimensions{
+				Height: int(req.Package.TotalHeight),
+				Width:  int(req.Package.TotalWidth),
+				Depth:  int(req.Package.TotalLength),
+				Weight: int(req.Package.TotalWeight * 1000),
+			},
+		})
+	}
+
+	order, err := g.CreateOrder(grabReq)
+	if err != nil {
+		msg := message.ShippingProviderMsg
+		msg.Message = err.Error()
+		return nil, msg
+	}
+
+	return &response.CreateDeliveryThirdPartyData{
+		BookingID:          order.DeliveryID,
+		ShippingCost:       order.Quote.Amount,
+		TotalShippingCost:  order.Quote.Amount,
+		ActualShippingCost: order.Quote.Amount,
+		Status:             StatusRequestPickup,
+		PickUpCode:         order.DeliveryID,
+		Airwaybill:         order.DeliveryID,
+		//PickUpTime: order.Timeline.Pickup,
+		// Insurance: false,
+		// InsuranceCost: 0,
+	}, message.SuccessMsg
+
+}
+
+func (g *grab) CreateOrder(req *request.CreateDeliveryGrab) (*response.CreateDeliveryGrab, error) {
+	auth := g.GetToken()
+	if len(auth) == 0 {
+		return nil, errors.New(message.ErrUnAuth.Message)
+	}
+
+	url := grabUrl(viper.GetString("grab.path.create-delivery"))
+
+	headers := map[string]string{
+		"Content-Type":  "application/json",
+		"Authorization": auth,
+	}
+
+	respByte, err := http_helper.Post(url, headers, req, g.Logger)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &response.CreateDeliveryGrab{}
+	err = json.Unmarshal(respByte, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(resp.DeliveryID) > 0 {
+		return resp, nil
+	}
+
+	errResp := &response.GrabError{}
 	err = json.Unmarshal(respByte, &errResp)
 	if err != nil {
 		return nil, err
@@ -143,63 +302,4 @@ func (g *grab) GetDeliveryQuote(req *request.GrabDeliveryQuotes) (*response.Grab
 func grabUrl(path string) string {
 	base := viper.GetString("grab.base")
 	return base + path
-}
-
-func grabDateTimeFormat() string {
-	const (
-		D  = "Mon"
-		DD = "Monday"
-		d  = "2"
-		dd = "02"
-		m  = "1"
-		mm = "01"
-		M  = "Jan"
-		MM = "January"
-		y  = "06"
-		Y  = "2006"
-		h  = "03"
-		H  = "15"
-		i  = "04"
-		s  = "05"
-	)
-
-	return time.Now().UTC().Format(
-		fmt.Sprintf("%s, %s %s %s %s:%s:%s GMT",
-			D, dd, M, Y, H, i, s),
-	)
-}
-
-func grabAuthentication(method string, date string, contentType string, endpoint string, encoded string) string {
-	secret := viper.GetString("grab.auth.secret")
-	safeID := viper.GetString("grab.auth.safe-id")
-
-	stringToSign := getStringToSign(method, date, contentType, endpoint, encoded)
-	hmacSignature := encodeAuthSignature(secret, stringToSign)
-
-	return fmt.Sprintf("%s:%s", safeID, hmacSignature)
-}
-
-func encodeAuthSignature(secret string, stringToSign string) string {
-	h := hmac.New(sha256.New, []byte(secret))
-	h.Write([]byte(stringToSign))
-	encoded := base64.StdEncoding.EncodeToString(h.Sum(nil))
-
-	return encoded
-}
-
-func getStringToSign(method string, date string, ctype string, ep string, encoded string) string {
-	sts := fmt.Sprintf(
-		"%s\n%s\n%s\n%s\n%s\n",
-		method, ctype, date, ep, encoded,
-	)
-
-	return sts
-}
-
-func encodeContent(content string) string {
-	h := sha256.New()
-	h.Write([]byte(content))
-	encoded := base64.StdEncoding.EncodeToString(h.Sum(nil))
-
-	return encoded
 }

@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	neturl "net/url"
 
@@ -14,17 +16,26 @@ import (
 )
 
 func Post(url string, header map[string]string, request interface{}, log log.Logger) ([]byte, error) {
+	var (
+		//curl      string
+		jsonReq   []byte
+		bodyBytes []byte
+		err       error
+	)
 
-	jsonReq, err := json.Marshal(request)
-	_ = level.Info(log).Log("url", url)
-	_ = level.Info(log).Log("request", string(jsonReq))
+	defer func() {
+		_ = level.Info(log).Log("url", url)
+		_ = level.Info(log).Log("request", string(jsonReq))
+		_ = level.Info(log).Log("response", string(bodyBytes))
+		//_ = level.Info(log).Log("curl", curl)
+	}()
 
+	jsonReq, err = json.Marshal(request)
 	if err != nil {
 		return nil, err
 	}
 
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonReq))
-
 	if err != nil {
 		return nil, err
 	}
@@ -33,6 +44,7 @@ func Post(url string, header map[string]string, request interface{}, log log.Log
 		req.Header.Add(k, h)
 	}
 
+	//curl, _ = GetCurl(req)
 	client := http.Client{}
 	response, err := client.Do(req)
 
@@ -41,14 +53,22 @@ func Post(url string, header map[string]string, request interface{}, log log.Log
 	}
 
 	defer response.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(response.Body)
-
-	_ = level.Info(log).Log("response", string(bodyBytes))
-
+	bodyBytes, err = ioutil.ReadAll(response.Body)
 	return bodyBytes, err
 }
 
 func Get(url string, header map[string]string, queryString map[string]string, log log.Logger) ([]byte, error) {
+	var (
+		jsonReq   []byte
+		bodyBytes []byte
+		err       error
+	)
+
+	defer func() {
+		_ = level.Info(log).Log("url", url)
+		_ = level.Info(log).Log("request", string(jsonReq))
+		_ = level.Info(log).Log("response", string(bodyBytes))
+	}()
 
 	q := neturl.Values{}
 	for k, v := range queryString {
@@ -73,18 +93,25 @@ func Get(url string, header map[string]string, queryString map[string]string, lo
 	}
 
 	defer response.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(response.Body)
-
-	_ = level.Info(log).Log("url", url)
-	_ = level.Info(log).Log("request", q.Encode())
-	_ = level.Info(log).Log("response", string(bodyBytes))
+	bodyBytes, err = ioutil.ReadAll(response.Body)
 
 	return bodyBytes, err
 }
 
-func Patch(url string, header map[string]string, request interface{}, log ...log.Logger) ([]byte, error) {
+func Patch(url string, header map[string]string, request interface{}, log log.Logger) ([]byte, error) {
+	var (
+		jsonReq   []byte
+		bodyBytes []byte
+		err       error
+	)
 
-	jsonReq, err := json.Marshal(request)
+	defer func() {
+		_ = level.Info(log).Log("url", url)
+		_ = level.Info(log).Log("request", string(jsonReq))
+		_ = level.Info(log).Log("response", string(bodyBytes))
+	}()
+
+	jsonReq, err = json.Marshal(request)
 
 	if err != nil {
 		return nil, err
@@ -108,20 +135,25 @@ func Patch(url string, header map[string]string, request interface{}, log ...log
 	}
 
 	defer response.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(response.Body)
-
-	for _, v := range log {
-		_ = level.Info(v).Log("url", url)
-		_ = level.Info(v).Log("request", string(jsonReq))
-		_ = level.Info(v).Log("response", string(bodyBytes))
-	}
+	bodyBytes, err = ioutil.ReadAll(response.Body)
 
 	return bodyBytes, err
 }
 
-func Delete(url string, header map[string]string, request interface{}, log ...log.Logger) ([]byte, error) {
+func Delete(url string, header map[string]string, request interface{}, log log.Logger) ([]byte, error) {
+	var (
+		jsonReq   []byte
+		bodyBytes []byte
+		err       error
+	)
 
-	jsonReq, err := json.Marshal(request)
+	defer func() {
+		_ = level.Info(log).Log("url", url)
+		_ = level.Info(log).Log("request", string(jsonReq))
+		_ = level.Info(log).Log("response", string(bodyBytes))
+	}()
+
+	jsonReq, err = json.Marshal(request)
 
 	if err != nil {
 		return nil, err
@@ -145,98 +177,38 @@ func Delete(url string, header map[string]string, request interface{}, log ...lo
 	}
 
 	defer response.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(response.Body)
-
-	for _, v := range log {
-		_ = level.Info(v).Log("url", url)
-		_ = level.Info(v).Log("request", string(jsonReq))
-		_ = level.Info(v).Log("response", string(bodyBytes))
-	}
+	bodyBytes, err = ioutil.ReadAll(response.Body)
 
 	return bodyBytes, err
 }
 
-// func getString(url string, header map[string]string, queryString string) ([]byte, error) {
+func GetCurl(req *http.Request) (string, error) {
+	curl := []string{"curl -X", escape(req.Method)}
+	if req.Body != nil {
+		body, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			return "", err
+		}
+		req.Body = closer{bytes.NewBuffer(body)}
+		bodyEscaped := escape(string(body))
+		curl = append(curl, "-d", bodyEscaped)
+	}
 
-// 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s?%s", url, queryString), nil)
+	for k, v := range req.Header {
+		curl = append(curl, "-H", escape(fmt.Sprintf("%s: %s", k, strings.Join(v, " "))))
+	}
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	curl = append(curl, escape(req.URL.String()))
+	return strings.Join(curl, " "), nil
+}
 
-// 	for k, h := range header {
-// 		req.Header.Add(k, h)
-// 	}
+func escape(str string) string {
+	escape := strings.ReplaceAll(str, `'`, `'\''`)
+	return fmt.Sprint("'", escape, "'")
+}
 
-// 	client := http.Client{}
-// 	response, err := client.Do(req)
+type closer struct {
+	io.Reader
+}
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	defer response.Body.Close()
-// 	bodyBytes, err := ioutil.ReadAll(response.Body)
-
-// 	return bodyBytes, err
-// }
-
-// func update(url string, header map[string]string, request interface{}) ([]byte, error) {
-// 	jsonReq, err := json.Marshal(request)
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(jsonReq))
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	for k, h := range header {
-// 		req.Header.Add(k, h)
-// 	}
-
-// 	client := http.Client{}
-// 	response, err := client.Do(req)
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	defer response.Body.Close()
-// 	bodyBytes, err := ioutil.ReadAll(response.Body)
-
-// 	return bodyBytes, err
-// }
-
-// func delete(url string, header map[string]string, request interface{}) ([]byte, error) {
-// 	jsonReq, err := json.Marshal(request)
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	req, err := http.NewRequest(http.MethodDelete, url, bytes.NewBuffer(jsonReq))
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	for k, h := range header {
-// 		req.Header.Add(k, h)
-// 	}
-
-// 	client := http.Client{}
-// 	response, err := client.Do(req)
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	defer response.Body.Close()
-// 	bodyBytes, err := ioutil.ReadAll(response.Body)
-
-// 	return bodyBytes, err
-// }
+func (closer) Close() error { return nil }

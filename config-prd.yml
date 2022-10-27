@@ -65,11 +65,15 @@ shipper:
 
 grab:
   auth:
-    safe-id: ${GRAB_SAFE_ID}
-    secret: ${GRAB_SECRET}
-  base: ${GRAB_BASE}
+    client-id: ${GRAB_CLIENT_ID}
+    client-secret: ${GRAB_CLIENT_SECRET}
+    grant-type: client_credentials
+    scope: grab_express.partner_deliveries
+  base: https://partner-api.stg-myteksi.com
   path:
-    get-delivery-quote: /grab-express/v1/deliveries/quotes
+    auth: /grabid/v1/oauth2/token
+    get-delivery-quote: /grab-express-sandbox/v1/deliveries/quotes
+    create-delivery: /grab-express-sandbox/v1/deliveries
 
 dapr:
   endpoint:

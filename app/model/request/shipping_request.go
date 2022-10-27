@@ -114,6 +114,15 @@ type CreateDelivery struct {
 	Username          string                `json:"username"`
 }
 
+func (c *CreateDelivery) CheckCoordinate() (bool, message.Message) {
+	if len(c.Origin.Latitude) == 0 || len(c.Origin.Longitude) == 0 ||
+		len(c.Destination.Latitude) == 0 || len(c.Destination.Longitude) == 0 {
+		return false, message.CoordinateRequiredMsg
+	}
+
+	return true, message.SuccessMsg
+}
+
 func (c *CreateDelivery) ToCreateOrderShipperPackage() *CreateOrderShipperPackage {
 	result := []CreateOrderShipperPackageItem{}
 	for _, v := range c.Package.Product {
