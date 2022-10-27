@@ -566,6 +566,7 @@ func (s *shippingServiceImpl) createDelivery(orderShipping *entity.OrderShipping
 			orderShipping.BookingID = orderData.BookingID
 		}
 		orderShipping.PickupCode = &orderData.PickUpCode
+		orderShipping.Airwaybill = orderData.Airwaybill
 		orderShipping.Status = orderData.Status
 
 	default:
@@ -579,8 +580,9 @@ func (s *shippingServiceImpl) createDeliveryThirdParty(bookingID string, courier
 	switch courierService.Courier.Code {
 	case shipping_provider.ShipperCode:
 		return s.shipper.CreateDelivery(bookingID, courierService, input)
+	case shipping_provider.GrabCode:
+		return s.grab.CreateDelivery(courierService, input)
 	default:
-
 		return nil, message.ErrInvalidCourierCode
 	}
 }

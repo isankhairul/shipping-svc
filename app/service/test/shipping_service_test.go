@@ -468,6 +468,87 @@ func TestCreateDeliveryShipperSuccess(t *testing.T) {
 	assert.Equal(t, message.SuccessMsg, msg)
 }
 
+func TestCreateDeliveryGrabSuccess(t *testing.T) {
+
+	channel := entity.Channel{BaseIDModel: base.BaseIDModel{ID: 1, UID: createDeliveryRequest.ChannelUID}}
+	channelRepository.Mock.On("FindByUid", mock.Anything).
+		Return(channel).Once()
+
+	courier := &entity.Courier{
+		BaseIDModel: base.BaseIDModel{
+			ID:  3,
+			UID: "cuid",
+		},
+		CourierType: shipping_provider.ThirPartyCourier,
+		Code:        shipping_provider.GrabCode,
+		Status:      &active,
+	}
+
+	courierService := &entity.CourierService{
+		BaseIDModel: base.BaseIDModel{
+			ID:  3,
+			UID: createDeliveryRequest.CouirerServiceUID,
+		},
+		CourierID: 2,
+		Courier:   courier,
+		Status:    &active,
+	}
+
+	courierServiceRepo.Mock.On("FindCourierService", mock.Anything).
+		Return(courierService).Once()
+
+	orderShippingRepository.Mock.On("FindByOrderNo", mock.Anything).
+		Return(nil).Once()
+
+	pickup := &entity.ShippingCourierStatus{
+		BaseIDModel: base.BaseIDModel{
+			ID:  4,
+			UID: "ssuid",
+		},
+		ShippingStatusID: 1,
+		CourierID:        courier.ID,
+		StatusCode:       shipping_provider.StatusRequestPickup,
+		StatusCourier:    []byte(""),
+	}
+
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(pickup).Once()
+
+	created := &entity.ShippingCourierStatus{
+		BaseIDModel: base.BaseIDModel{
+			ID:  4,
+			UID: "ssuid",
+		},
+		ShippingStatusID: 1,
+		CourierID:        courier.ID,
+		StatusCode:       shipping_provider.StatusCreated,
+		StatusCourier:    []byte(""),
+	}
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(created).Once()
+
+	orderShipping := &entity.OrderShipping{
+		BaseIDModel: base.BaseIDModel{
+			ID:  5,
+			UID: "osuid",
+		},
+		OrderNo: createDeliveryRequest.OrderNo,
+	}
+
+	order := &response.CreateDeliveryThirdPartyData{
+		BookingID: "bookid",
+		Status:    shipping_provider.StatusRequestPickup,
+	}
+
+	grab.Mock.On("CreateDelivery", mock.Anything).Return(order, message.SuccessMsg).Once()
+	orderShippingRepository.Mock.On("Upsert", mock.Anything).Return(orderShipping).Once()
+
+	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
+
+	assert.NotNil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, createDeliveryRequest.OrderNo, result.OrderNoAPI)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
 func TestCreateDeliveryShipperSaveFailed(t *testing.T) {
 
 	channel := entity.Channel{BaseIDModel: base.BaseIDModel{ID: 1, UID: createDeliveryRequest.ChannelUID}}
@@ -739,6 +820,76 @@ func TestCreateDeliveryShipperFailed(t *testing.T) {
 	}
 
 	shipper.Mock.On("CreateDelivery", mock.Anything).Return(order, message.FailedMsg).Once()
+	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
+
+	assert.NotNil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.FailedMsg, msg)
+}
+
+func TestCreateDeliveryGrabFailed(t *testing.T) {
+
+	channel := entity.Channel{BaseIDModel: base.BaseIDModel{ID: 1, UID: createDeliveryRequest.ChannelUID}}
+	channelRepository.Mock.On("FindByUid", mock.Anything).
+		Return(channel).Once()
+
+	courier := &entity.Courier{
+		BaseIDModel: base.BaseIDModel{
+			ID:  3,
+			UID: "cuid",
+		},
+		CourierType: shipping_provider.ThirPartyCourier,
+		Code:        shipping_provider.GrabCode,
+		Status:      &active,
+	}
+
+	courierService := &entity.CourierService{
+		BaseIDModel: base.BaseIDModel{
+			ID:  3,
+			UID: createDeliveryRequest.CouirerServiceUID,
+		},
+		CourierID: 2,
+		Courier:   courier,
+		Status:    &active,
+	}
+
+	courierServiceRepo.Mock.On("FindCourierService", mock.Anything).
+		Return(courierService).Once()
+
+	orderShippingRepository.Mock.On("FindByOrderNo", mock.Anything).
+		Return(nil).Once()
+
+	shippingStatus := &entity.ShippingCourierStatus{
+		BaseIDModel: base.BaseIDModel{
+			ID:  4,
+			UID: "ssuid",
+		},
+		ShippingStatusID: 1,
+		CourierID:        courier.ID,
+		StatusCode:       shipping_provider.StatusRequestPickup,
+		StatusCourier:    []byte(""),
+	}
+
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(shippingStatus).Once()
+
+	created := &entity.ShippingCourierStatus{
+		BaseIDModel: base.BaseIDModel{
+			ID:  4,
+			UID: "ssuid",
+		},
+		ShippingStatusID: 1,
+		CourierID:        courier.ID,
+		StatusCode:       shipping_provider.StatusCreated,
+		StatusCourier:    []byte(""),
+	}
+	shippingCourierStatusRepository.Mock.On("FindByCode", mock.Anything).Return(created).Once()
+
+	order := &response.CreateDeliveryThirdPartyData{
+		BookingID: "bookid",
+		Status:    shipping_provider.StatusRequestPickup,
+	}
+
+	grab.Mock.On("CreateDelivery", mock.Anything).Return(order, message.FailedMsg).Once()
 	result, msg := shippingService.CreateDelivery(createDeliveryRequest)
 
 	assert.NotNil(t, result)

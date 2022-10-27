@@ -10,13 +10,13 @@ import (
 	"time"
 )
 
-type GrabDeliveryQuotesError struct {
+type GrabError struct {
 	Message    string `json:"message"`
 	DevMessage string `json:"devMessage"`
 	Arg        string `json:"arg"`
 }
 
-func (g *GrabDeliveryQuotesError) GetReason() string {
+func (g *GrabError) GetReason() string {
 	args := strings.Split(g.Arg, "Reason: ")
 	if len(args) > 1 {
 		return args[1]
@@ -81,6 +81,11 @@ type Quote struct {
 	EstimationTimeline QuoteEstimationTimeline `json:"estimatedTimeline"`
 	Amount             float64                 `json:"amount"`
 	Distance           float64                 `json:"distance"`
+
+	//for create order
+	Packages    []Packages  `json:"packages"`
+	Origin      Origin      `json:"origin"`
+	Destination Destination `json:"destination"`
 }
 
 type QuoteService struct {
@@ -123,9 +128,91 @@ type Coordinates struct {
 type Origin struct {
 	Address     string      `json:"address"`
 	Coordinates Coordinates `json:"coordinates"`
+
+	// for create order
+	Keywords string `json:"keywords"`
+	Extra    Extra  `json:"extra"`
 }
 
 type Destination struct {
 	Address     string      `json:"address"`
 	Coordinates Coordinates `json:"coordinates"`
+
+	// for create order
+	Keywords string `json:"keywords"`
+	Extra    Extra  `json:"extra"`
+}
+
+type CreateDeliveryGrab struct {
+	DeliveryID  string              `json:"deliveryID"`
+	Quote       Quote               `json:"quote"`
+	Sender      GrabSenderRecipient `json:"sender"`
+	Recipient   GrabSenderRecipient `json:"recipient"`
+	PickupPin   string              `json:"pickupPin"`
+	Status      string              `json:"status"`
+	Courier     Courier             `json:"courier"`
+	Timeline    Timeline            `json:"timeline"`
+	TrackingURL string              `json:"trackingURL"`
+	AdvanceInfo AdvanceInfo         `json:"advanceInfo"`
+}
+type Service struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+type Currency struct {
+	Code     string `json:"code"`
+	Symbol   string `json:"symbol"`
+	Exponent int    `json:"exponent"`
+}
+type EstimatedTimeline struct {
+	Create   string `json:"create"`
+	Allocate string `json:"allocate"`
+	Pickup   string `json:"pickup"`
+	Dropoff  string `json:"dropoff"`
+	Cancel   string `json:"cancel"`
+	Return   string `json:"return"`
+}
+
+type Packages struct {
+	Name        string     `json:"name"`
+	Description string     `json:"description"`
+	Quantity    int        `json:"quantity"`
+	Price       int        `json:"price"`
+	Dimensions  Dimensions `json:"dimensions"`
+}
+
+type Extra struct {
+}
+
+type GrabSenderRecipient struct {
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
+	Title       string `json:"title"`
+	CompanyName string `json:"companyName"`
+	Email       string `json:"email"`
+	Phone       string `json:"phone"`
+	SmsEnabled  bool   `json:"smsEnabled"`
+	Instruction string `json:"instruction"`
+}
+type Vehicle struct {
+	PlateNumber string `json:"plateNumber"`
+	Model       string `json:"model"`
+}
+type Courier struct {
+	Coordinates Coordinates `json:"coordinates"`
+	Name        string      `json:"name"`
+	Phone       string      `json:"phone"`
+	PictureURL  string      `json:"pictureURL"`
+	Vehicle     Vehicle     `json:"vehicle"`
+}
+type Timeline struct {
+	Create   string `json:"create"`
+	Allocate string `json:"allocate"`
+	Pickup   string `json:"pickup"`
+	Dropoff  string `json:"dropoff"`
+	Cancel   string `json:"cancel"`
+	Return   string `json:"return"`
+}
+type AdvanceInfo struct {
+	FailedReason string `json:"failedReason"`
 }
