@@ -11,7 +11,8 @@ import (
 
 // swagger:parameters CourierCoverageCodeListRequest
 type CourierCoverageCodeListRequest struct {
-	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"subdistrict":["value","value"],"description":["value","value"]
+	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"subdistrict":["value","value"],"description":["value","value"],
+	//,"province_numeric_code":["value","value"],"province_name":["value","value"],"city_numeric_code":["value","value"],"city_name":["value","value"]
 	//,"status":[0,1], "code1":["value","value"], "code2":["value","value"], "code3":["value","value"], "code4":["value","value"], "code5":["value","value"], "code6":["value","value"]}
 	// in: query
 	Filter string `json:"filter"`
@@ -25,7 +26,7 @@ type CourierCoverageCodeListRequest struct {
 	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
 	// Sort fields
-	// enum:courier_name,courier_name desc,country_code,country_code desc,postal_code,postal_code desc,subdistrict,subdistrict desc,description, description desc,status,status desc,code1,code1 desc,code2,code2 desc,code3,code3 desc,code4,code4 desc,code5,code5 desc,code6,code6 desc
+	// enum:courier_name,courier_name desc,country_code,country_code desc,postal_code,postal_code desc,subdistrict,subdistrict desc,province_numeric_code,province_numeric_code desc,province_name,province_name desc,city_numeric_code,city_numeric_code desc,city_name,city_name desc,description,description desc,status,status desc,code1,code1 desc,code2,code2 desc,code3,code3 desc,code4,code4 desc,code5,code5 desc,code6,code6 desc
 	Sort    string                        `schema:"sort" binding:"omitempty" json:"sort"`
 	Filters CourierCoverageCodeListFilter `json:"-"`
 }
