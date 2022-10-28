@@ -25,6 +25,30 @@ type CourierCoverageCode struct {
 	// example: ID
 	CountryCode string `gorm:"type:varchar(20) not null" json:"country_code"`
 
+	// Province Numeric Code of the Courier Coverage Code
+	// in: string
+	// require: true
+	// example: 99
+	ProvinceNumericCode string `gorm:"type:varchar(20) default('') not null" json:"province_numeric_code"`
+
+	// Province Name of the Courier Coverage Code
+	// in: string
+	// require: true
+	// example: DKI Jakarta
+	ProvinceName string `gorm:"type:varchar(100) default('') not null" json:"province_name"`
+
+	// City Numeric Code of the Courier Coverage Code
+	// in: string
+	// require: true
+	// example: 99
+	CityNumericCode string `gorm:"type:varchar(20) default('') not null" json:"city_numeric_code"`
+
+	// City Name of the Courier Coverage Code
+	// in: string
+	// require: true
+	// example: Jakarta Selatan
+	CityName string `gorm:"type:varchar(100) default('') not null" json:"city_name"`
+
 	// Postal code of the Courier Coverage Code
 	// in: string
 	// require: true
