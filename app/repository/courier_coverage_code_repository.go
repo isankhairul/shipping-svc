@@ -96,7 +96,7 @@ func (r *CourierCoverageCodeRepo) FindByParams(limit int, page int, sort string,
 			case "country_code":
 				query = query.Where(k+" IN ?", v.([]string))
 
-			case "description", "postal_code", "subdistrict":
+			case "description", "postal_code", "subdistrict", "province_numeric_code", "province_name", "city_numeric_code", "city_name":
 				query = query.Where(global.AddLike(k, v.([]string)))
 
 			case "status":

@@ -22,10 +22,14 @@ var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseC
 // }
 
 var vn = entity.CourierCoverageCode{
-	CourierUID:  "UCMvWngocMqKbaC3AWQBF",
-	CountryCode: "VN",
-	PostalCode:  "70000",
-	Description: "Vietnam code",
+	CourierUID:          "UCMvWngocMqKbaC3AWQBF",
+	CountryCode:         "VN",
+	ProvinceNumericCode: "1",
+	ProvinceName:        "Province A",
+	CityNumericCode:     "12",
+	CityName:            "City A",
+	PostalCode:          "70000",
+	Description:         "Vietnam code",
 }
 
 func TestCreateCourierCoverageCode(t *testing.T) {
@@ -34,10 +38,14 @@ func TestCreateCourierCoverageCode(t *testing.T) {
 	var svcCourierCoverageCode = service.NewCourierCoverageCodeService(logger, baseCourierCoverageCodeRepository, courierCoverageCodeRepository)
 
 	req := request.SaveCourierCoverageCodeRequest{
-		CourierUID:  vn.CourierUID,
-		CountryCode: vn.CountryCode,
-		PostalCode:  vn.PostalCode,
-		Description: vn.Description,
+		CourierUID:          vn.CourierUID,
+		CountryCode:         vn.CountryCode,
+		ProvinceNumericCode: vn.ProvinceNumericCode,
+		ProvinceName:        vn.ProvinceName,
+		CityNumericCode:     vn.CityNumericCode,
+		CityName:            vn.CityName,
+		PostalCode:          vn.PostalCode,
+		Description:         vn.Description,
 	}
 
 	courierCoverageCodeRepository.Mock.On("GetCourierUid", mock.Anything).Return(nil)
@@ -47,6 +55,10 @@ func TestCreateCourierCoverageCode(t *testing.T) {
 	assert.NotNil(t, result)
 	assert.Equal(t, vn.CourierUID, result.CourierUID, courierUIDIsNotCorrect)
 	assert.Equal(t, vn.CountryCode, result.CountryCode, uidIsNotCorrect)
+	assert.Equal(t, vn.ProvinceNumericCode, result.ProvinceNumericCode, "Province numeric code is not correct")
+	assert.Equal(t, vn.ProvinceName, result.ProvinceName, "Province name is not correct")
+	assert.Equal(t, vn.CityNumericCode, result.CityNumericCode, "City numeric code is not correct")
+	assert.Equal(t, vn.CityName, result.CityName, "City name is not correct")
 }
 
 func TestUpdateCourierCoverageCode(t *testing.T) {
@@ -147,30 +159,38 @@ func TestImportCourierCoverageCode(t *testing.T) {
 	req := request.ImportCourierCoverageCodeRequest{
 		Rows: []map[string]string{
 			{
-				"courier_uid":  vn.CourierUID,
-				"country_code": vn.CountryCode,
-				"postal_code":  vn.PostalCode,
-				"subdistrict":  vn.Subdistrict,
-				"description":  vn.Description,
-				"code1":        "",
-				"code2":        "",
-				"code3":        "",
-				"code4":        "",
-				"code5":        "",
-				"code6":        "",
+				"courier_uid":           vn.CourierUID,
+				"country_code":          vn.CountryCode,
+				"province_numeric_code": vn.ProvinceNumericCode,
+				"province_name":         vn.ProvinceName,
+				"city_numeric_code":     vn.CityNumericCode,
+				"city_name":             vn.CityName,
+				"postal_code":           vn.PostalCode,
+				"subdistrict":           vn.Subdistrict,
+				"description":           vn.Description,
+				"code1":                 "",
+				"code2":                 "",
+				"code3":                 "",
+				"code4":                 "",
+				"code5":                 "",
+				"code6":                 "",
 			},
 			{
-				"courier_uid":  "UCMvWngocMqKbaC3AWQBF",
-				"country_code": "",
-				"postal_code":  "",
-				"subdistrict":  vn.Subdistrict,
-				"description":  vn.Description,
-				"code1":        "",
-				"code2":        "",
-				"code3":        "",
-				"code4":        "",
-				"code5":        "",
-				"code6":        "",
+				"courier_uid":           "UCMvWngocMqKbaC3AWQBF",
+				"country_code":          "",
+				"province_numeric_code": "",
+				"province_name":         "",
+				"city_numeric_code":     "",
+				"city_name":             "",
+				"postal_code":           "",
+				"subdistrict":           vn.Subdistrict,
+				"description":           vn.Description,
+				"code1":                 "",
+				"code2":                 "",
+				"code3":                 "",
+				"code4":                 "",
+				"code5":                 "",
+				"code6":                 "",
 			},
 		},
 	}
@@ -314,17 +334,21 @@ func TestImportCourierCoverageCodeFailedWithNotFoundCourier(t *testing.T) {
 	req := request.ImportCourierCoverageCodeRequest{
 		Rows: []map[string]string{
 			{
-				"courier_uid":  vn.CourierUID,
-				"country_code": vn.CountryCode,
-				"description":  vn.Description,
-				"postal_code":  "any",
-				"subdistrict":  vn.Subdistrict,
-				"code1":        "",
-				"code2":        "",
-				"code3":        "",
-				"code4":        "",
-				"code5":        "",
-				"code6":        "",
+				"courier_uid":           vn.CourierUID,
+				"country_code":          vn.CountryCode,
+				"province_numeric_code": vn.ProvinceNumericCode,
+				"province_name":         vn.ProvinceName,
+				"city_numeric_code":     vn.CityNumericCode,
+				"city_name":             vn.CityName,
+				"description":           vn.Description,
+				"postal_code":           "any",
+				"subdistrict":           vn.Subdistrict,
+				"code1":                 "",
+				"code2":                 "",
+				"code3":                 "",
+				"code4":                 "",
+				"code5":                 "",
+				"code6":                 "",
 			},
 		},
 	}

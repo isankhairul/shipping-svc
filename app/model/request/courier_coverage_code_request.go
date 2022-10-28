@@ -31,18 +31,22 @@ type CourierCoverageCodeListRequest struct {
 }
 
 type CourierCoverageCodeListFilter struct {
-	CourierName []string `json:"courier_name"`
-	CountryCode []string `json:"country_code"`
-	PostalCode  []string `json:"postal_code"`
-	Subdistrict []string `json:"subdistrict"`
-	Description []string `json:"description"`
-	Status      []int    `json:"status"`
-	Code1       []string `json:"code1"`
-	Code2       []string `json:"code2"`
-	Code3       []string `json:"code3"`
-	Code4       []string `json:"code4"`
-	Code5       []string `json:"code5"`
-	Code6       []string `json:"code6"`
+	CourierName         []string `json:"courier_name"`
+	CountryCode         []string `json:"country_code"`
+	ProvinceNumericCode []string `json:"province_numeric_code"`
+	ProvinceName        []string `json:"province_name"`
+	CityNumericCode     []string `json:"city_numeric_code"`
+	CityName            []string `json:"city_name"`
+	PostalCode          []string `json:"postal_code"`
+	Subdistrict         []string `json:"subdistrict"`
+	Description         []string `json:"description"`
+	Status              []int    `json:"status"`
+	Code1               []string `json:"code1"`
+	Code2               []string `json:"code2"`
+	Code3               []string `json:"code3"`
+	Code4               []string `json:"code4"`
+	Code5               []string `json:"code5"`
+	Code6               []string `json:"code6"`
 }
 
 func (m *CourierCoverageCodeListRequest) GetFilter() {
@@ -77,22 +81,46 @@ type ReqSaveCourierCoverageCodeBody struct {
 
 type SaveCourierCoverageCodeRequest struct {
 	// Courier UID of the Courier
-	// required: True
+	// required: true
 	// in: string
 	CourierUID string `json:"courier_uid"`
 
 	// Country code of the Courier Coverage Code
-	// required: True
+	// required: true
 	// in: string
 	CountryCode string `json:"country_code"`
 
+	// Province Numeric Code of the Courier Coverage Code
+	// required: true
+	// in: string
+	// example: 99
+	ProvinceNumericCode string `json:"province_numeric_code"`
+
+	// Province Name of the Courier Coverage Code
+	// required: true
+	// in: string
+	// example: DKI Jakarta
+	ProvinceName string `json:"province_name"`
+
+	// City Numeric Code of the Courier Coverage Code
+	// required: true
+	// in: string
+	// example: 99
+	CityNumericCode string `json:"city_numeric_code"`
+
+	// City Name of the Courier Coverage Code
+	// required: true
+	// in: string
+	// example: Jakarta Selatan
+	CityName string `json:"city_name"`
+
 	// Postal code of the Courier Coverage Code
-	// required: True
+	// required: true
 	// in: string
 	PostalCode string `json:"postal_code"`
 
 	// Postal code of the Courier Coverage Code
-	// required: True
+	// required: true
 	// in: string
 	Subdistrict string `json:"subdistrict"`
 

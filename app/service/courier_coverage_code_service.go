@@ -80,18 +80,22 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 
 	// set request to entity
 	courierCoverageCode = entity.CourierCoverageCode{
-		CourierID:   courier.ID,
-		CountryCode: input.CountryCode,
-		PostalCode:  input.PostalCode,
-		Subdistrict: input.Subdistrict,
-		Description: input.Description,
-		Code1:       input.Code1,
-		Code2:       input.Code2,
-		Code3:       input.Code3,
-		Code4:       input.Code4,
-		Code5:       input.Code5,
-		Code6:       input.Code6,
-		Status:      &input.Status,
+		CourierID:           courier.ID,
+		CountryCode:         input.CountryCode,
+		ProvinceNumericCode: input.ProvinceNumericCode,
+		ProvinceName:        input.ProvinceName,
+		CityNumericCode:     input.CityNumericCode,
+		CityName:            input.CityName,
+		PostalCode:          input.PostalCode,
+		Subdistrict:         input.Subdistrict,
+		Description:         input.Description,
+		Code1:               input.Code1,
+		Code2:               input.Code2,
+		Code3:               input.Code3,
+		Code4:               input.Code4,
+		Code5:               input.Code5,
+		Code6:               input.Code6,
+		Status:              &input.Status,
 		BaseIDModel: base.BaseIDModel{
 			CreatedBy: input.ActorName,
 		},
@@ -132,18 +136,22 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 	logger := log.With(s.logger, "CourierCoverageCodeService", "List Courier Coverage Codes")
 
 	filter := map[string]interface{}{
-		"courier_name": input.Filters.CourierName,
-		"country_code": input.Filters.CountryCode,
-		"postal_code":  input.Filters.PostalCode,
-		"subdistrict":  input.Filters.Subdistrict,
-		"description":  input.Filters.Description,
-		"status":       input.Filters.Status,
-		"code1":        input.Filters.Code1,
-		"code2":        input.Filters.Code2,
-		"code3":        input.Filters.Code3,
-		"code4":        input.Filters.Code4,
-		"code5":        input.Filters.Code5,
-		"code6":        input.Filters.Code6,
+		"courier_name":          input.Filters.CourierName,
+		"country_code":          input.Filters.CountryCode,
+		"province_numeric_code": input.Filters.ProvinceNumericCode,
+		"province_name":         input.Filters.ProvinceName,
+		"city_numeric_code":     input.Filters.CityNumericCode,
+		"city_name":             input.Filters.CityName,
+		"postal_code":           input.Filters.PostalCode,
+		"subdistrict":           input.Filters.Subdistrict,
+		"description":           input.Filters.Description,
+		"status":                input.Filters.Status,
+		"code1":                 input.Filters.Code1,
+		"code2":                 input.Filters.Code2,
+		"code3":                 input.Filters.Code3,
+		"code4":                 input.Filters.Code4,
+		"code5":                 input.Filters.Code5,
+		"code6":                 input.Filters.Code6,
 	}
 
 	convertedFilterLower := make(map[string]interface{}, len(filter))
@@ -276,19 +284,23 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 	}
 
 	data := map[string]interface{}{
-		"courier_id":   courier.ID,
-		"country_code": input.CountryCode,
-		"postal_code":  input.PostalCode,
-		"subdistrict":  input.Subdistrict,
-		"description":  input.Description,
-		"code1":        input.Code1,
-		"code2":        input.Code2,
-		"code3":        input.Code3,
-		"code4":        input.Code4,
-		"code5":        input.Code5,
-		"code6":        input.Code6,
-		"status":       input.Status,
-		"updated_by":   input.ActorName,
+		"courier_id":            courier.ID,
+		"country_code":          input.CountryCode,
+		"province_numeric_code": input.ProvinceNumericCode,
+		"province_name":         input.ProvinceName,
+		"city_numeric_code":     input.CityNumericCode,
+		"city_name":             input.CityName,
+		"postal_code":           input.PostalCode,
+		"subdistrict":           input.Subdistrict,
+		"description":           input.Description,
+		"code1":                 input.Code1,
+		"code2":                 input.Code2,
+		"code3":                 input.Code3,
+		"code4":                 input.Code4,
+		"code5":                 input.Code5,
+		"code6":                 input.Code6,
+		"status":                input.Status,
+		"updated_by":            input.ActorName,
 	}
 	result, err := s.courierCoverageCodeRepo.Update(input.Uid, data)
 	if err != nil {
@@ -339,6 +351,10 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 
 	for _, row := range input.Rows {
 		countryCode := row["country_code"]
+		provinceNumericCode := row["province_numeric_code"]
+		provinceName := row["province_name"]
+		cityNumericCode := row["city_numeric_code"]
+		cityName := row["city_name"]
 		postalCode := row["postal_code"]
 		subdistrict := row["subdistrict"]
 		description := row["description"]
@@ -367,17 +383,21 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 		}
 
 		data := entity.CourierCoverageCode{
-			CourierID:   courier.ID,
-			CountryCode: countryCode,
-			PostalCode:  postalCode,
-			Subdistrict: subdistrict,
-			Description: description,
-			Code1:       code1,
-			Code2:       code2,
-			Code3:       code3,
-			Code4:       code4,
-			Code5:       code5,
-			Code6:       code6,
+			CourierID:           courier.ID,
+			CountryCode:         countryCode,
+			ProvinceNumericCode: provinceNumericCode,
+			ProvinceName:        provinceName,
+			CityNumericCode:     cityNumericCode,
+			CityName:            cityName,
+			PostalCode:          postalCode,
+			Subdistrict:         subdistrict,
+			Description:         description,
+			Code1:               code1,
+			Code2:               code2,
+			Code3:               code3,
+			Code4:               code4,
+			Code5:               code5,
+			Code6:               code6,
 			BaseIDModel: base.BaseIDModel{
 				CreatedBy: input.ActorName,
 			},
@@ -413,18 +433,22 @@ func (s *CourierCoverageCodeServiceImpl) upsert(uid string, input entity.Courier
 	} else {
 		log = "s.courierCoverageCodeRepo.Update"
 		data := map[string]interface{}{
-			"courier_id":   input.CourierID,
-			"country_code": input.CountryCode,
-			"postal_code":  input.PostalCode,
-			"subdistrict":  input.Subdistrict,
-			"description":  input.Description,
-			"code1":        input.Code1,
-			"code2":        input.Code2,
-			"code3":        input.Code3,
-			"code4":        input.Code4,
-			"code5":        input.Code5,
-			"code6":        input.Code6,
-			"updated_by":   input.CreatedBy,
+			"courier_id":            input.CourierID,
+			"country_code":          input.CountryCode,
+			"province_numeric_code": input.ProvinceNumericCode,
+			"province_name":         input.ProvinceName,
+			"city_numeric_code":     input.CityNumericCode,
+			"city_name":             input.CityName,
+			"postal_code":           input.PostalCode,
+			"subdistrict":           input.Subdistrict,
+			"description":           input.Description,
+			"code1":                 input.Code1,
+			"code2":                 input.Code2,
+			"code3":                 input.Code3,
+			"code4":                 input.Code4,
+			"code5":                 input.Code5,
+			"code6":                 input.Code6,
+			"updated_by":            input.CreatedBy,
 		}
 		_, err = s.courierCoverageCodeRepo.Update(uid, data)
 
@@ -448,6 +472,10 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataColumnValidity(input [
 
 	_, courierUidOk := row["courier_uid"]
 	_, countryCodeOk := row["country_code"]
+	_, provinceNumericCodeOk := row["province_numeric_code"]
+	_, provinceNameOk := row["province_name"]
+	_, cityNumericCodeOk := row["city_numeric_code"]
+	_, cityNameOk := row["city_name"]
 	_, postalCodeOk := row["postal_code"]
 	_, subdistrictOk := row["subdistrict"]
 	_, descriptionOk := row["description"]
@@ -458,13 +486,18 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataColumnValidity(input [
 	_, code5Ok := row["code5"]
 	_, code6Ok := row["code6"]
 
-	return courierUidOk && countryCodeOk && postalCodeOk && subdistrictOk && descriptionOk && code1Ok && code2Ok && code3Ok && code4Ok && code5Ok && code6Ok
+	return courierUidOk && countryCodeOk && provinceNumericCodeOk && provinceNameOk && cityNumericCodeOk && cityNameOk &&
+		postalCodeOk && subdistrictOk && descriptionOk && code1Ok && code2Ok && code3Ok && code4Ok && code5Ok && code6Ok
 }
 
 // return courier, array failed data, failedRowCount, summaryRowCount, message
 func (s *CourierCoverageCodeServiceImpl) checkImportedDataRow(row map[string]string) (*entity.Courier, *response.ImportStatus, int) {
 	courierUid := row["courier_uid"]
 	countryCode := row["country_code"]
+	provinceNumericCode := row["province_numeric_code"]
+	provinceName := row["province_name"]
+	cityNumericCode := row["city_numeric_code"]
+	cityName := row["city_name"]
 	postalCode := row["postal_code"]
 	subdistrict := row["subdistrict"]
 	description := row["description"]
@@ -492,18 +525,22 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataRow(row map[string]str
 
 	// check courier_id existing
 	return nil, &response.ImportStatus{
-		CourierUID:  courierUid,
-		CountryCode: countryCode,
-		PostalCode:  postalCode,
-		Subdistrict: subdistrict,
-		Description: description,
-		Code1:       code1,
-		Code2:       code2,
-		Code3:       code3,
-		Code4:       code4,
-		Code5:       code5,
-		Code6:       code6,
-		Status:      false,
-		Message:     msg,
+		CourierUID:          courierUid,
+		CountryCode:         countryCode,
+		ProvinceNumericCode: provinceNumericCode,
+		ProvinceName:        provinceName,
+		CityNumericCode:     cityNumericCode,
+		CityName:            cityName,
+		PostalCode:          postalCode,
+		Subdistrict:         subdistrict,
+		Description:         description,
+		Code1:               code1,
+		Code2:               code2,
+		Code3:               code3,
+		Code4:               code4,
+		Code5:               code5,
+		Code6:               code6,
+		Status:              false,
+		Message:             msg,
 	}, 1
 }
