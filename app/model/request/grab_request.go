@@ -86,3 +86,48 @@ type GrabAuthRequest struct {
 	GrantType    string `json:"grant_type"`
 	Scope        string `json:"scope"`
 }
+
+type WebhookUpdateStatusGrab struct {
+	DeliveryID      string                      `json:"deliveryID"`
+	MerchantOrderID string                      `json:"merchantOrderID"`
+	Timestamp       int                         `json:"timestamp"`
+	Status          string                      `json:"status"`
+	TrackURL        string                      `json:"trackURL"`
+	PickupPin       string                      `json:"pickupPin"`
+	FailedReason    string                      `json:"failedReason"`
+	Sender          UpdateStatusSenderRecipient `json:"sender"`
+	Recipient       UpdateStatusSenderRecipient `json:"recipient"`
+	Driver          Driver                      `json:"driver"`
+}
+
+type UpdateStatusSenderRecipient struct {
+	Name         string `json:"name"`
+	Address      string `json:"address"`
+	Relationship string `json:"relationship"`
+}
+
+type Driver struct {
+	Name         string  `json:"name"`
+	Phone        string  `json:"phone"`
+	LicensePlate string  `json:"licensePlate"`
+	PhotoURL     string  `json:"photoURL"`
+	CurrentLat   float64 `json:"currentLat"`
+	CurrentLng   float64 `json:"currentLng"`
+}
+
+// swagger:parameters WebhookUpdateStatusGrab
+type WebhookUpdateStatusGrabRequest struct {
+	// in:header
+	AuthorizationID string `schema:"Authorization-Id" json:"Authorization-Id"`
+
+	// in:header
+	Authorization string `schema:"Authorization" json:"Authorization"`
+
+	// in:body
+	Body WebhookUpdateStatusGrab `json:"body"`
+}
+
+type WebhookUpdateStatusGrabHeader struct {
+	AuthorizationID string `json:"Authorization-Id"`
+	Authorization   string `json:"Authorization"`
+}

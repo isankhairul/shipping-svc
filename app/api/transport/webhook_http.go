@@ -34,6 +34,13 @@ func WebhookHttpHandler(s service.ShippingService, logger log.Logger) http.Handl
 		options...,
 	))
 
+	pr.Methods("POST").Path(fmt.Sprint(global.PrefixBase, global.PrefixWebhook, global.PathGrab)).Handler(httptransport.NewServer(
+		ep.UpdateStatusGrab,
+		decodeUpdateStatusGrab,
+		encoder.EncodeResponseHTTP,
+		options...,
+	))
+
 	return pr
 }
 
@@ -42,6 +49,18 @@ func decodeUpdateStatusShipper(ctx context.Context, r *http.Request) (rqst inter
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+func decodeUpdateStatusGrab(ctx context.Context, r *http.Request) (rqst interface{}, err error) {
+	var req request.WebhookUpdateStatusGrabRequest
+	if err := json.NewDecoder(r.Body).Decode(&req.Body); err != nil {
+		return nil, err
+	}
+
+	req.AuthorizationID = r.Header.Get("Authorization-Id")
+	req.Authorization = r.Header.Get("Authorization")
 
 	return req, nil
 }

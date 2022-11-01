@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"fmt"
 	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
 	"time"
@@ -338,6 +339,7 @@ type UpdateOrderShippingBody struct {
 	ShippingStatus     string                        `json:"shipping_status"`
 	ShippingStatusName string                        `json:"shipping_status_name"`
 	Details            UpdateOrderShippingBodyDetail `json:"details"`
+	DriverInfo         UpdateOrderShippingDriverInfo `json:"driver_info"`
 	UpdatedBy          string                        `json:"update_by"`
 	Timestamp          time.Time                     `json:"timestamp"`
 }
@@ -346,6 +348,34 @@ type UpdateOrderShippingBodyDetail struct {
 	ExternalStatusCode        string `json:"external_status_code"`
 	ExternalStatusName        string `json:"external_status_name"`
 	ExternalStatusDescription string `json:"external_status_description"`
+}
+
+type UpdateOrderShippingDriverInfo struct {
+	Name         string `json:"name"`
+	Phone        string `json:"phone"`
+	LicencePlate string `json:"license_plate"`
+	TrackingURL  string `json:"tracking_url"`
+}
+
+func (u *UpdateOrderShippingDriverInfo) Description() string {
+	desc := ""
+	if len(u.Name) > 0 {
+		desc += fmt.Sprint(" . Driver : ", u.Name)
+	}
+
+	if len(u.Phone) > 0 {
+		desc += fmt.Sprint(" . Phone : ", u.Phone)
+	}
+
+	if len(u.LicencePlate) > 0 {
+		desc += fmt.Sprint(" . Plate : ", u.LicencePlate)
+	}
+
+	if len(u.TrackingURL) > 0 {
+		desc += fmt.Sprint(" . Tracking : ", u.TrackingURL)
+	}
+
+	return desc
 }
 
 // swagger:parameters GetOrderShippingLabel

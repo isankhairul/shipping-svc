@@ -6,6 +6,7 @@ import (
 	"go-klikdokter/pkg/util"
 	"math"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -141,7 +142,11 @@ func (o *OrderShipping) FromCreateDeliveryRequest(req *request.CreateDelivery) {
 		UpdatedBy: req.Username,
 	}
 }
-func (o *OrderShipping) AddHistoryStatus(s *ShippingCourierStatus, note string) {
+func (o *OrderShipping) AddHistoryStatus(s *ShippingCourierStatus, note string, driverInfo ...string) {
+	if len(driverInfo) == 1 && !o.isDriverInfoExist(driverInfo[0]) {
+		note += driverInfo[0]
+	}
+
 	if o.isHistoryStatusExist(s.StatusCode, note) {
 		return
 	}
@@ -160,6 +165,16 @@ func (o *OrderShipping) AddHistoryStatus(s *ShippingCourierStatus, note string) 
 func (o *OrderShipping) isHistoryStatusExist(statusCode, note string) bool {
 	for _, v := range o.OrderShippingHistory {
 		if v.StatusCode == statusCode && v.Note == note {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (o *OrderShipping) isDriverInfoExist(driverInfo string) bool {
+	for _, v := range o.OrderShippingHistory {
+		if strings.Contains(v.Note, driverInfo) {
 			return true
 		}
 	}

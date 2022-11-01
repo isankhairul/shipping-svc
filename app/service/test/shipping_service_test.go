@@ -1533,8 +1533,10 @@ var updateStatusReq = &request.WebhookUpdateStatusShipper{
 
 func TestUpdateStatusShipper(t *testing.T) {
 	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{
-		Channel:        &entity.Channel{},
-		Courier:        &entity.Courier{},
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code: shipping_provider.ShipperCode,
+		},
 		CourierService: &entity.CourierService{},
 	}).Once()
 	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(&entity.ShippingCourierStatus{
@@ -1554,7 +1556,11 @@ func TestUpdateStatusShipper(t *testing.T) {
 }
 
 func TestUpdateStatusShipperSaveFailed(t *testing.T) {
-	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{}).Once()
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{
+		Courier: &entity.Courier{
+			Code: shipping_provider.ShipperCode,
+		},
+	}).Once()
 	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(&entity.ShippingCourierStatus{}).Once()
 	orderShippingRepository.Mock.On("Upsert").Return(nil, errors.New("")).Once()
 
@@ -1566,7 +1572,11 @@ func TestUpdateStatusShipperSaveFailed(t *testing.T) {
 }
 
 func TestUpdateStatusShipperShippingStatusNotFOund(t *testing.T) {
-	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{}).Once()
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{
+		Courier: &entity.Courier{
+			Code: shipping_provider.ShipperCode,
+		},
+	}).Once()
 	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(nil).Once()
 
 	result, msg := shippingService.UpdateStatusShipper(updateStatusReq)
@@ -1577,7 +1587,11 @@ func TestUpdateStatusShipperShippingStatusNotFOund(t *testing.T) {
 }
 
 func TestUpdateStatusShipperGetShippingStatusError(t *testing.T) {
-	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{}).Once()
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{
+		Courier: &entity.Courier{
+			Code: shipping_provider.ShipperCode,
+		},
+	}).Once()
 	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(nil, errors.New("")).Once()
 
 	result, msg := shippingService.UpdateStatusShipper(updateStatusReq)
@@ -2307,5 +2321,94 @@ func TestRepickupShippingErrorgetShippingOrderFailed(t *testing.T) {
 	result, msg := shippingService.RepickupOrder(&req)
 	assert.NotNil(t, msg)
 	assert.NotNil(t, result)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
+
+var updateStatusGrabReq = &request.WebhookUpdateStatusGrabRequest{}
+
+func TestUpdateStatusGrab(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code: shipping_provider.GrabCode,
+		},
+		CourierService: &entity.CourierService{},
+	}).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(&entity.OrderShipping{
+		Channel:        &entity.Channel{},
+		Courier:        &entity.Courier{},
+		CourierService: &entity.CourierService{},
+	}).Once()
+
+	msg := shippingService.UpdateStatusGrab(updateStatusGrabReq)
+
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestUpdateStatusGrabSaveFailed(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code: shipping_provider.GrabCode,
+		},
+		CourierService: &entity.CourierService{},
+	}).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(nil, errors.New("")).Once()
+
+	msg := shippingService.UpdateStatusGrab(updateStatusGrabReq)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrSaveOrderShipping, msg)
+}
+
+func TestUpdateStatusGrabShippingStatusNotFOund(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code: shipping_provider.GrabCode,
+		},
+		CourierService: &entity.CourierService{},
+	}).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(nil).Once()
+
+	msg := shippingService.UpdateStatusGrab(updateStatusGrabReq)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ShippingStatusNotFoundMsg, msg)
+}
+
+func TestUpdateStatusGrabGetShippingStatusError(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(&entity.OrderShipping{
+		Channel: &entity.Channel{},
+		Courier: &entity.Courier{
+			Code: shipping_provider.GrabCode,
+		},
+		CourierService: &entity.CourierService{},
+	}).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCourierStatus").Return(nil, errors.New("")).Once()
+
+	msg := shippingService.UpdateStatusGrab(updateStatusGrabReq)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ShippingStatusNotFoundMsg, msg)
+}
+
+func TestUpdateStatusGrobOrderNotFound(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(nil).Once()
+
+	msg := shippingService.UpdateStatusGrab(updateStatusGrabReq)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
+
+func TestUpdateStatusGrabGetOrderError(t *testing.T) {
+	orderShippingRepository.Mock.On("FindByOrderNo").Return(nil, errors.New("")).Once()
+
+	msg := shippingService.UpdateStatusGrab(updateStatusGrabReq)
+	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
 }

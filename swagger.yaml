@@ -1211,6 +1211,30 @@ definitions:
     type: object
     x-go-name: data
     x-go-package: go-klikdokter/app/model/base
+  Driver:
+    properties:
+      currentLat:
+        format: double
+        type: number
+        x-go-name: CurrentLat
+      currentLng:
+        format: double
+        type: number
+        x-go-name: CurrentLng
+      licensePlate:
+        type: string
+        x-go-name: LicensePlate
+      name:
+        type: string
+        x-go-name: Name
+      phone:
+        type: string
+        x-go-name: Phone
+      photoURL:
+        type: string
+        x-go-name: PhotoURL
+    type: object
+    x-go-package: go-klikdokter/app/model/request
   GetChannelCourierStatusResponse:
     properties:
       channel_code:
@@ -2946,6 +2970,51 @@ definitions:
     title: 'swaggers:'
     type: object
     x-go-package: go-klikdokter/app/model/request
+  UpdateStatusSenderRecipient:
+    properties:
+      address:
+        type: string
+        x-go-name: Address
+      name:
+        type: string
+        x-go-name: Name
+      relationship:
+        type: string
+        x-go-name: Relationship
+    type: object
+    x-go-package: go-klikdokter/app/model/request
+  WebhookUpdateStatusGrab:
+    properties:
+      deliveryID:
+        type: string
+        x-go-name: DeliveryID
+      driver:
+        $ref: '#/definitions/Driver'
+      failedReason:
+        type: string
+        x-go-name: FailedReason
+      merchantOrderID:
+        type: string
+        x-go-name: MerchantOrderID
+      pickupPin:
+        type: string
+        x-go-name: PickupPin
+      recipient:
+        $ref: '#/definitions/UpdateStatusSenderRecipient'
+      sender:
+        $ref: '#/definitions/UpdateStatusSenderRecipient'
+      status:
+        type: string
+        x-go-name: Status
+      timestamp:
+        format: int64
+        type: integer
+        x-go-name: Timestamp
+      trackURL:
+        type: string
+        x-go-name: TrackURL
+    type: object
+    x-go-package: go-klikdokter/app/model/request
   WebhookUpdateStatusShipperRequest:
     properties:
       auth:
@@ -4284,6 +4353,35 @@ paths:
       summary: Update a shipment predefined
       tags:
       - Courier-Predefined
+  /public/webhook/grab:
+    post:
+      description: 'Description :'
+      operationId: WebhookUpdateStatusGrab
+      parameters:
+      - in: header
+        name: Authorization-Id
+        type: string
+        x-go-name: AuthorizationID
+      - in: header
+        name: Authorization
+        type: string
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/WebhookUpdateStatusGrab'
+        x-go-name: Body
+      responses:
+        "200":
+          description: Success Response.
+          schema:
+            properties:
+              data:
+                type: object
+              meta:
+                $ref: '#/definitions/MetaResponse'
+      summary: Update Status from Grab Webhook
+      tags:
+      - Public
   /public/webhook/shipper:
     post:
       description: 'Description :'
