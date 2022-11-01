@@ -1,6 +1,8 @@
 package shipping_provider
 
 import (
+	"fmt"
+	"go-klikdokter/app/model/request"
 	"go-klikdokter/pkg/util"
 	"strings"
 
@@ -70,4 +72,14 @@ func ShipperWebhookAuth() string {
 	format := "json"
 
 	return util.MD5Hash(apiKey + endpoint + format)
+}
+
+func GrabWebhookAuth(req *request.WebhookUpdateStatusGrabHeader) bool {
+	clientID := viper.GetString("grab.auth.client-id")
+	clientSecret := viper.GetString("grab.auth.client-secret")
+
+	input := fmt.Sprint(req.AuthorizationID, req.Authorization)
+	auth := fmt.Sprint(clientID, clientSecret)
+
+	return input == auth
 }

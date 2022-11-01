@@ -38,6 +38,7 @@ type ShippingService interface {
 	GetOrderShippingLabel(req *request.GetOrderShippingLabel) ([]response.GetOrderShippingLabelResponse, message.Message)
 	RepickupOrder(req *request.RepickupOrderRequest) (*response.RepickupOrderResponse, message.Message)
 	ShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message)
+	UpdateStatusGrab(req *request.WebhookUpdateStatusGrabRequest) message.Message
 }
 
 type shippingServiceImpl struct {
@@ -690,6 +691,10 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 		return nil, message.ErrOrderShippingNotFound
 	}
 
+	if orderShipping.Courier.Code != shipping_provider.ShipperCode {
+		return nil, message.ErrOrderShippingNotFound
+	}
+
 	statusCode := req.ExternalStatus.Code
 	statusDescription := req.ExternalStatus.Description
 
@@ -711,7 +716,8 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 		orderShipping.Airwaybill = req.Awb
 	}
 
-	orderShipping.AddHistoryStatus(shippingStatus, statusDescription)
+	driverInfo := SplitDriverInfo(req.External.Description)
+	orderShipping.AddHistoryStatus(shippingStatus, statusDescription, driverInfo.Description())
 
 	orderShipping, err = s.orderShipping.Upsert(orderShipping)
 	if err != nil {
@@ -737,6 +743,7 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 			ExternalStatusName:        req.ExternalStatus.Name,
 			ExternalStatusDescription: req.ExternalStatus.Description,
 		},
+		DriverInfo: driverInfo,
 	}
 
 	_ = level.Info(logger).Log("PUBLISH_QUEUE, TOPIC", topic)
@@ -1344,4 +1351,140 @@ func (s *shippingServiceImpl) repickupThirPartyOrder(orderShipping *entity.Order
 //               $ref: '#/definitions/GetOrderShippingTrackingResponse'
 func (s *shippingServiceImpl) ShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message) {
 	return s.OrderShippingTracking(req)
+}
+
+func updateStatusTopic(channelCode string) string {
+	topic := viper.GetString("dapr.topic.update-order-shipping")
+	return strings.ReplaceAll(topic, "{channel-code}", strings.ToLower(channelCode))
+}
+
+// swagger:operation POST /public/webhook/grab Public WebhookUpdateStatusGrab
+// Update Status from Grab Webhook
+//
+// Description :
+//
+// ---
+//
+// responses:
+//   '200':
+//     description: Success Response.
+//     schema:
+//       properties:
+//         meta:
+//            $ref: '#/definitions/MetaResponse'
+//         data:
+//           type: object
+func (s *shippingServiceImpl) UpdateStatusGrab(req *request.WebhookUpdateStatusGrabRequest) message.Message {
+	logger := log.With(s.logger, "ShippingService", "UpdateStatusGrab")
+
+	if jsonReq, err := json.Marshal(req); err == nil {
+		_ = level.Info(logger).Log("grab_webhook", string(jsonReq))
+	}
+
+	_ = level.Info(logger).Log("check_webhook_auth", req.Authorization)
+	_ = level.Info(logger).Log("check_webhook_auth_id", req.AuthorizationID)
+	if !shipping_provider.GrabWebhookAuth(&request.WebhookUpdateStatusGrabHeader{
+		AuthorizationID: req.AuthorizationID,
+		Authorization:   req.Authorization,
+	}) {
+		return message.ErrUnAuth
+	}
+
+	orderShipping, err := s.orderShipping.FindByOrderNo(req.Body.MerchantOrderID)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.FindByOrderNo", err.Error())
+		return message.ErrOrderShippingNotFound
+	}
+
+	if orderShipping == nil {
+		return message.ErrOrderShippingNotFound
+	}
+
+	if orderShipping.Courier.Code != shipping_provider.GrabCode {
+		return message.ErrOrderShippingNotFound
+	}
+
+	statusCode := req.Body.Status
+	statusDescription := req.Body.FailedReason
+
+	shippingStatus, err := s.shippingCourierStatusRepo.FindByCourierStatus(orderShipping.CourierID, fmt.Sprint(statusCode))
+
+	if err != nil {
+		_ = level.Error(logger).Log("s.shippingCourierStatusRepo.FindByCourierStatus", err.Error())
+		return message.ShippingStatusNotFoundMsg
+	}
+
+	if shippingStatus == nil {
+		return message.ShippingStatusNotFoundMsg
+	}
+
+	driverInfo := request.UpdateOrderShippingDriverInfo{
+		Name:         req.Body.Driver.Name,
+		Phone:        req.Body.Driver.Phone,
+		LicencePlate: req.Body.Driver.LicensePlate,
+		TrackingURL:  req.Body.TrackURL,
+	}
+
+	orderShipping.Status = shippingStatus.StatusCode
+	orderShipping.UpdatedBy = "GRAB_WEBHOOK"
+	orderShipping.AddHistoryStatus(shippingStatus, statusDescription, driverInfo.Description())
+
+	orderShipping, err = s.orderShipping.Upsert(orderShipping)
+	if err != nil {
+		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		return message.ErrSaveOrderShipping
+	}
+	topic := updateStatusTopic(orderShipping.Channel.ChannelCode)
+	updateOrderRequest := request.UpdateOrderShippingBody{
+		ChannelUID:         orderShipping.Channel.UID,
+		CourierCode:        orderShipping.Courier.Code,
+		CourierServiceUID:  orderShipping.CourierService.UID,
+		OrderNo:            orderShipping.OrderNo,
+		OrderShippingUID:   orderShipping.UID,
+		Airwaybill:         orderShipping.Airwaybill,
+		ShippingStatus:     shippingStatus.StatusCode,
+		ShippingStatusName: shippingStatus.ShippingStatus.StatusName,
+		UpdatedBy:          "shipping_service",
+		Timestamp:          time.Now(),
+		Details: request.UpdateOrderShippingBodyDetail{
+			ExternalStatusCode:        req.Body.Status,
+			ExternalStatusName:        req.Body.Status,
+			ExternalStatusDescription: req.Body.FailedReason,
+		},
+		DriverInfo: driverInfo,
+	}
+
+	_ = level.Info(logger).Log("PUBLISH_QUEUE, TOPIC", topic)
+	s.daprEndpoint.PublishKafka(topic, updateOrderRequest)
+	return message.SuccessMsg
+}
+
+/*
+ Example :
+
+ GRAB = "Paket Anda sudah diterima oleh GRAB. Driver Name : Grabu Duraivu, Driver Phone Number : 6287888889999. Live track di sini : <a href='https://express.grab.com/TESTSANDBOX' target='_blank'>https://express.grab.com/TESTSANDBOX</a>"
+
+ GO-SEND = "Paket Anda sudah diterima oleh GO-SEND. Driver Name : Gojeku Duraivu, Driver Phone Number : +6287888889999"
+*/
+func SplitDriverInfo(driverInfo string) request.UpdateOrderShippingDriverInfo {
+	res := request.UpdateOrderShippingDriverInfo{}
+	names := strings.Split(driverInfo, "Driver Name : ")
+	if len(names) == 2 {
+		res.Name = names[1]
+		res.Name = strings.Split(res.Name, ", ")[0]
+	}
+
+	phones := strings.Split(driverInfo, "Driver Phone Number : ")
+	if len(phones) == 2 {
+		res.Phone = phones[1]
+		res.Phone = strings.Split(res.Phone, ". ")[0]
+	}
+
+	url := strings.Split(driverInfo, "<a href='")
+	if len(url) == 2 {
+		res.TrackingURL = url[1]
+		res.TrackingURL = strings.Split(res.TrackingURL, "' ")[0]
+	}
+
+	return res
 }

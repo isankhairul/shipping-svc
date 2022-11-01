@@ -25,6 +25,7 @@ type ShippingEndpoint struct {
 	GetOrderShippingLabel         endpoint.Endpoint
 	RepickupOrder                 endpoint.Endpoint
 	GetShippingTracking           endpoint.Endpoint
+	UpdateStatusGrab              endpoint.Endpoint
 }
 
 func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
@@ -41,6 +42,7 @@ func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
 		GetOrderShippingLabel:         makeGetOrderShippingLabel(s),
 		RepickupOrder:                 makeRepickupOrder(s),
 		GetShippingTracking:           makeGetShippingTracking(s),
+		UpdateStatusGrab:              makeUpdateStatusGrab(s),
 	}
 }
 
@@ -203,5 +205,14 @@ func makeGetShippingTracking(s service.ShippingService) endpoint.Endpoint {
 		req := rqst.(request.GetOrderShippingTracking)
 		result, msg := s.ShippingTracking(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
+	}
+}
+
+func makeUpdateStatusGrab(s service.ShippingService) endpoint.Endpoint {
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		req := rqst.(request.WebhookUpdateStatusGrabRequest)
+		msg := s.UpdateStatusGrab(&req)
+		return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
 	}
 }
