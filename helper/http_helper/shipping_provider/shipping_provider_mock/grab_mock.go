@@ -40,3 +40,15 @@ func (h *GrabMock) CreateDelivery(courierService *entity.CourierService, req *re
 
 	return arguments.Get(0).(*response.CreateDeliveryThirdPartyData), message.SuccessMsg
 }
+
+func (h *GrabMock) GetTracking(orderID string) ([]response.GetOrderShippingTracking, message.Message) {
+	arguments := h.Mock.Called()
+
+	if len(arguments) > 1 {
+		if arguments.Get(1) != nil {
+			return nil, arguments.Get(1).(message.Message)
+		}
+	}
+
+	return arguments.Get(0).([]response.GetOrderShippingTracking), message.SuccessMsg
+}
