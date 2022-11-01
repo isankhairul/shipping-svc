@@ -549,7 +549,7 @@ func (s *shippingServiceImpl) CreateDelivery(input *request.CreateDelivery) (*re
 
 func (s *shippingServiceImpl) createDelivery(orderShipping *entity.OrderShipping, courierService *entity.CourierService, input *request.CreateDelivery) message.Message {
 	switch courierService.Courier.CourierType {
-	case shipping_provider.ThirPartyCourier:
+	case shipping_provider.ThirPartyCourier, shipping_provider.AggregatorCourier:
 
 		orderData, msg := s.createDeliveryThirdParty(orderShipping.BookingID, courierService, input)
 		if msg != message.SuccessMsg {
@@ -631,7 +631,7 @@ func (s *shippingServiceImpl) OrderShippingTracking(req *request.GetOrderShippin
 	var orderStatus []response.GetOrderShippingTracking
 	var msg message.Message
 	switch orderShipping.Courier.CourierType {
-	case shipping_provider.ThirPartyCourier:
+	case shipping_provider.ThirPartyCourier, shipping_provider.AggregatorCourier:
 		orderStatus, msg = s.thridPartyTracking(orderShipping)
 	default:
 		return []response.GetOrderShippingTracking{}, message.ErrInvalidCourierType
@@ -990,7 +990,7 @@ func (s *shippingServiceImpl) CancelPickup(req *request.CancelPickup) message.Me
 
 func (s *shippingServiceImpl) cancelPickup(orderShipping *entity.OrderShipping) message.Message {
 	switch orderShipping.Courier.CourierType {
-	case shipping_provider.ThirPartyCourier:
+	case shipping_provider.ThirPartyCourier, shipping_provider.AggregatorCourier:
 		return s.cancelPickupThirdParty(orderShipping)
 	}
 
@@ -1078,7 +1078,7 @@ func (s *shippingServiceImpl) CancelOrder(req *request.CancelOrder) message.Mess
 
 func (s *shippingServiceImpl) cancelOrder(orderShipping *entity.OrderShipping, req *request.CancelOrder) message.Message {
 	switch orderShipping.Courier.CourierType {
-	case shipping_provider.ThirPartyCourier:
+	case shipping_provider.ThirPartyCourier, shipping_provider.AggregatorCourier:
 		return s.cancelOrderThirdParty(orderShipping, req)
 	}
 
@@ -1299,7 +1299,7 @@ func (s *shippingServiceImpl) repickupOrder(orderShipping *entity.OrderShipping)
 	}
 
 	switch orderShipping.Courier.CourierType {
-	case shipping_provider.ThirPartyCourier:
+	case shipping_provider.ThirPartyCourier, shipping_provider.AggregatorCourier:
 		return s.repickupThirPartyOrder(orderShipping)
 	}
 	return message.ErrInvalidCourierType
