@@ -16,12 +16,14 @@ import (
 	"time"
 
 	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"github.com/spf13/viper"
 )
 
 type Grab interface {
 	GetShippingRate(input *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error)
 	CreateDelivery(courierService *entity.CourierService, req *request.CreateDelivery) (*response.CreateDeliveryThirdPartyData, message.Message)
+	GetTracking(orderID string) ([]response.GetOrderShippingTracking, message.Message)
 }
 
 type grab struct {
@@ -132,16 +134,10 @@ func (g *grab) GetShippingRate(input *request.GetShippingRateRequest) (*response
 }
 
 func (g *grab) GetDeliveryQuote(req *request.GrabDeliveryQuotes) (*response.GrabDeliveryQuotes, error) {
-
-	auth := g.GetToken()
-	if len(auth) == 0 {
-		return nil, errors.New(message.ErrUnAuth.Message)
-	}
-
 	url := grabUrl(viper.GetString("grab.path.get-delivery-quote"))
-	headers := map[string]string{
-		"Content-Type":  "application/json",
-		"Authorization": auth,
+	headers, err := g.setRequestHeader()
+	if err != nil {
+		return nil, err
 	}
 
 	respByte, err := http_helper.Post(url, headers, req, g.Logger)
@@ -177,7 +173,7 @@ func (g *grab) CreateDelivery(courierService *entity.CourierService, req *reques
 	destinationLat, _ := strconv.ParseFloat(req.Destination.Latitude, 64)
 	destinationLong, _ := strconv.ParseFloat(req.Destination.Longitude, 64)
 
-	now := time.Now().Add(5 * time.Minute)
+	now := time.Now().Add(5 * time.Second)
 	grabReq := &request.CreateDeliveryGrab{
 		MerchantOrderID: req.OrderNo,
 		ServiceType:     strings.ToUpper(courierService.ShippingCode),
@@ -263,16 +259,10 @@ func (g *grab) CreateDelivery(courierService *entity.CourierService, req *reques
 }
 
 func (g *grab) CreateOrder(req *request.CreateDeliveryGrab) (*response.CreateDeliveryGrab, error) {
-	auth := g.GetToken()
-	if len(auth) == 0 {
-		return nil, errors.New(message.ErrUnAuth.Message)
-	}
-
 	url := grabUrl(viper.GetString("grab.path.create-delivery"))
-
-	headers := map[string]string{
-		"Content-Type":  "application/json",
-		"Authorization": auth,
+	headers, err := g.setRequestHeader()
+	if err != nil {
+		return nil, err
 	}
 
 	respByte, err := http_helper.Post(url, headers, req, g.Logger)
@@ -297,6 +287,64 @@ func (g *grab) CreateOrder(req *request.CreateDeliveryGrab) (*response.CreateDel
 	}
 
 	return nil, errors.New(errResp.GetReason())
+}
+
+func (g *grab) GetOrderDetail(deliveryID string) (*response.GrabDeliveryDetail, error) {
+	url := grabUrl(viper.GetString("grab.path.delivery-detail"))
+	url = strings.ReplaceAll(url, "{deliveryID}", deliveryID)
+	headers, err := g.setRequestHeader()
+	if err != nil {
+		return nil, err
+	}
+
+	respByte, err := http_helper.Get(url, headers, map[string]string{}, g.Logger)
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp := response.GrabDeliveryDetail{}
+	err = json.Unmarshal(respByte, &resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(resp.DeliveryID) > 0 {
+		return &resp, nil
+	}
+
+	errResp := &response.GrabError{}
+	err = json.Unmarshal(respByte, &errResp)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, errors.New(errResp.GetReason())
+}
+
+func (g *grab) GetTracking(orderID string) ([]response.GetOrderShippingTracking, message.Message) {
+	logger := log.With(g.Logger, "Grab", "GetTracking")
+
+	orderDetail, err := g.GetOrderDetail(orderID)
+	if err != nil {
+		_ = level.Error(logger).Log("g.GetOrderDetail", err.Error())
+		return nil, message.ErrGetOrderDetail
+	}
+
+	return orderDetail.ToOrderShippingTracking(), message.SuccessMsg
+}
+
+func (g *grab) setRequestHeader() (map[string]string, error) {
+	auth := g.GetToken()
+	if len(auth) == 0 {
+		return make(map[string]string), errors.New("grab unauthorized")
+	}
+
+	return map[string]string{
+		"Content-Type":  "application/json",
+		"Authorization": auth,
+	}, nil
 }
 
 func grabUrl(path string) string {

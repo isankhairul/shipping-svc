@@ -80,6 +80,7 @@ grab:
     auth: /grabid/v1/oauth2/token
     get-delivery-quote: /grab-express-sandbox/v1/deliveries/quotes
     create-delivery: /grab-express-sandbox/v1/deliveries
+    delivery-detail: /grab-express-sandbox/v1/deliveries/{deliveryID}
 
 dapr:
   endpoint:

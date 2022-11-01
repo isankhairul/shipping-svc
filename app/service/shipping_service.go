@@ -644,6 +644,8 @@ func (s *shippingServiceImpl) thridPartyTracking(orderShipping *entity.OrderShip
 	switch orderShipping.Courier.Code {
 	case shipping_provider.ShipperCode:
 		return s.shipper.GetTracking(orderShipping.BookingID)
+	case shipping_provider.GrabCode:
+		return s.grab.GetTracking(orderShipping.BookingID)
 	}
 
 	return nil, message.ErrInvalidCourierCode

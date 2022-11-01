@@ -22,7 +22,10 @@ func (g *GrabError) GetReason() string {
 		return args[1]
 	}
 
-	return util.ReplaceEmptyString(g.Arg, g.Message)
+	msg := util.ReplaceEmptyString(g.Arg, g.Message)
+	msg = util.ReplaceEmptyString(msg, g.DevMessage)
+
+	return msg
 }
 
 type GrabDeliveryQuotes struct {
@@ -157,6 +160,7 @@ type CreateDeliveryGrab struct {
 }
 type Service struct {
 	ID   int    `json:"id"`
+	Type string `json:"type"`
 	Name string `json:"name"`
 }
 type Currency struct {
@@ -215,4 +219,55 @@ type Timeline struct {
 }
 type AdvanceInfo struct {
 	FailedReason string `json:"failedReason"`
+}
+
+type GrabDeliveryDetail struct {
+	DeliveryID      string               `json:"deliveryID"`
+	MerchantOrderID string               `json:"merchantOrderID"`
+	PaymentMethod   string               `json:"paymentMethod"`
+	Quote           Quote                `json:"quote"`
+	Sender          GrabSenderRecipient  `json:"sender"`
+	Recipient       GrabSenderRecipient  `json:"recipient"`
+	Status          string               `json:"status"`
+	TrackingURL     string               `json:"trackingURL"`
+	Courier         interface{}          `json:"courier"`
+	Timeline        map[string]time.Time `json:"timeline"`
+	Schedule        interface{}          `json:"schedule"`
+	//CashOnDelivery  CashOnDelivery       `json:"cashOnDelivery"`
+	InvoiceNo   string      `json:"invoiceNo"`
+	PickupPin   string      `json:"pickupPin"`
+	AdvanceInfo AdvanceInfo `json:"advanceInfo"`
+}
+
+func (g *GrabDeliveryDetail) ToOrderShippingTracking() []GetOrderShippingTracking {
+	resp := []GetOrderShippingTracking{}
+	for k, v := range g.Timeline {
+
+		// failed notes
+		status := strings.ToUpper(k)
+		note := ""
+
+		if strings.Contains(status, "FAILED") {
+			note = g.AdvanceInfo.FailedReason
+		}
+		resp = append(resp, GetOrderShippingTracking{
+			DateTime: v,
+			Status:   status,
+			Note:     note,
+			Date:     v.In(util.Loc).Format(util.LayoutDateOnly),
+			Time:     v.In(util.Loc).Format(util.LayoutTimeOnly),
+		})
+	}
+
+	// order status still QUEUEING
+	if len(resp) == 0 {
+		resp = append(resp, GetOrderShippingTracking{
+			DateTime: g.Quote.EstimationTimeline.PickUp,
+			Status:   strings.ToUpper(g.Status),
+			Note:     "",
+			Date:     g.Quote.EstimationTimeline.PickUp.In(util.Loc).Format(util.LayoutDateOnly),
+			Time:     g.Quote.EstimationTimeline.PickUp.In(util.Loc).Format(util.LayoutTimeOnly),
+		})
+	}
+	return resp
 }

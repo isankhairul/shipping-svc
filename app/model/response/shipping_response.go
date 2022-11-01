@@ -73,6 +73,7 @@ func (g *GetShippingRateService) FromShipper(val PricingsItem) {
 	g.InsuranceApplied = val.InsuranceApplied
 }
 
+//swagger:model ShippingRate
 type GetShippingRateResponse struct {
 	ShippingTypeCode        string                    `json:"shipping_type_code"`
 	ShippingTypeName        string                    `json:"shipping_type_name"`
@@ -85,7 +86,6 @@ type GetShippingRateResponse struct {
 	Services                []GetShippingRateService  `json:"services"`
 }
 
-//swagger:response ShippingRate
 type GetShippingRateResponseList struct {
 	//in: body
 	Response []GetShippingRateResponse `json:"response"`
