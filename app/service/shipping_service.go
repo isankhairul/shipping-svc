@@ -39,6 +39,7 @@ type ShippingService interface {
 	RepickupOrder(req *request.RepickupOrderRequest) (*response.RepickupOrderResponse, message.Message)
 	ShippingTracking(req *request.GetOrderShippingTracking) ([]response.GetOrderShippingTracking, message.Message)
 	UpdateStatusGrab(req *request.WebhookUpdateStatusGrabRequest) message.Message
+	DownloadOrderShipping(req *request.DownloadOrderShipping) ([]response.DownloadOrderShipping, message.Message)
 }
 
 type shippingServiceImpl struct {
@@ -810,6 +811,108 @@ func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShipping
 	}
 
 	return result, pagination, message.SuccessMsg
+}
+
+// swagger:operation GET /shipping/order-shipping/download Shipping DownloadOrderShipping
+//
+// Download Order Shipping in CSV format based on the filter parameters
+//
+// ---
+// security:
+// - Bearer: []
+//
+// produces:
+// - text/csv
+// - application/json
+//
+// responses:
+// 	'200':
+//    description: Success response.
+//    content:
+//      text/csv:
+//        $ref: '#/definitions/DownloadOrderShipping'
+func (s *shippingServiceImpl) DownloadOrderShipping(req *request.DownloadOrderShipping) ([]response.DownloadOrderShipping, message.Message) {
+	validationResult, msg := validateDateRange(req.Filters.OrderShippingDateFrom, req.Filters.OrderShippingDateTo)
+	if !validationResult.isValid {
+		return nil, msg
+	}
+
+	filter := make(map[string]interface{})
+	filter["order_no"] = req.Filters.OrderNo
+	filter["channel_code"] = req.Filters.ChannelCode
+	filter["shipping_status"] = req.Filters.ShippingStatus
+	filter["order_shipping_date_from"] = validationResult.startString
+	filter["order_shipping_date_to"] = validationResult.endString
+
+	result, err := s.orderShipping.Download(filter)
+	if err != nil {
+		logger := log.With(s.logger, "ShippingService", "DownloadOrderShipping")
+		_ = level.Error(logger).Log("s.orderShipping.DownloadOrderShipping", err.Error())
+		return nil, message.ErrNoData
+	}
+
+	return result, message.SuccessMsg
+}
+
+type orderShippingDateRange struct {
+	isValid     bool
+	startString string
+	endString   string
+}
+
+const (
+	MaxDateFilterRangeInDays = 30
+)
+
+func validateDateRange(startString, endString string) (*orderShippingDateRange, message.Message) {
+	result := &orderShippingDateRange{
+		isValid:     false,
+		startString: startString,
+		endString:   endString,
+	}
+
+	var startTime time.Time
+	var endTime time.Time
+
+	if len(startString) > 0 {
+		if ok := util.DateValidationYYYYMMDD(startString); !ok {
+			return result, message.ErrFormatDateYYYYMMDD
+		}
+		startTime, _ = time.ParseInLocation(util.LayoutDateOnly, startString, util.Loc)
+	}
+
+	if len(endString) > 0 {
+		if ok := util.DateValidationYYYYMMDD(endString); !ok {
+			return result, message.ErrFormatDateYYYYMMDD
+		}
+		endTime, _ = time.ParseInLocation(util.LayoutDateOnly, endString, util.Loc)
+	}
+
+	today := time.Now()
+
+	if startTime.IsZero() && endTime.IsZero() {
+		startTime = today.AddDate(0, 0, -MaxDateFilterRangeInDays)
+		endTime = today
+	} else if !startTime.IsZero() && endTime.IsZero() {
+		endTime = today
+	} else if startTime.IsZero() && !endTime.IsZero() {
+		startTime = endTime.AddDate(0, 0, -MaxDateFilterRangeInDays)
+	}
+
+	if startTime.After(endTime) {
+		return result, message.ErrInvalidDateRange
+	}
+
+	daysDiff := int(endTime.Sub(startTime).Hours() / 24)
+	if daysDiff > MaxDateFilterRangeInDays {
+		return result, message.ErrDateRangeGreaterThanAllowed
+	}
+
+	result.isValid = true
+	result.startString = startTime.Format(util.LayoutDateOnly)
+	result.endString = endTime.Format(util.LayoutDateOnly)
+
+	return result, message.SuccessMsg
 }
 
 // swagger:operation GET /shipping/order-shipping/{uid} Shipping GetOrderShippingDetail

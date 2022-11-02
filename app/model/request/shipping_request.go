@@ -414,3 +414,37 @@ type GetShippingTracking struct {
 	// required: true
 	ChannelUID string `schema:"channel_uid" json:"channel_uid"`
 }
+
+// swagger:parameters DownloadOrderShipping
+type DownloadOrderShipping struct {
+	// Filter : {"order_no":["001","002"],"channel_code":["kd","hb"],"channel_name":["Klik Dokter","Hallo Bumil"],"shipping_status":["created","request_pickup"],"order_shipping_date_from":["2022-09-09"],"order_shipping_date_to":["2022-09-12"]}
+	// in: query
+	Filter string `json:"filter"`
+
+	Filters DownloadOrderShippingFilter `json:"-"`
+}
+
+type DownloadOrderShippingFilter struct {
+	ChannelCode                []string `json:"channel_code"`
+	OrderNo                    []string `json:"order_no"`
+	ShippingStatus             []string `json:"shipping_status"`
+	OrderShippingDateFromArray []string `json:"order_shipping_date_from"`
+	OrderShippingDateToArray   []string `json:"order_shipping_date_to"`
+
+	OrderShippingDateFrom string `json:"-"`
+	OrderShippingDateTo   string `json:"-"`
+}
+
+func (m *DownloadOrderShipping) GetFilter() {
+	if len(m.Filter) > 0 {
+		_ = json.Unmarshal([]byte(m.Filter), &m.Filters)
+	}
+
+	if len(m.Filters.OrderShippingDateFromArray) > 0 {
+		m.Filters.OrderShippingDateFrom = m.Filters.OrderShippingDateFromArray[0]
+	}
+
+	if len(m.Filters.OrderShippingDateToArray) > 0 {
+		m.Filters.OrderShippingDateTo = m.Filters.OrderShippingDateToArray[0]
+	}
+}

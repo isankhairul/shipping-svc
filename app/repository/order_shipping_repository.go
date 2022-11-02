@@ -19,6 +19,7 @@ type OrderShippingRepository interface {
 	FindByUID(uid string) (*entity.OrderShipping, error)
 	FindByParams(limit, page int, sort string, filter map[string]interface{}) ([]response.GetOrderShippingList, *base.Pagination, error)
 	FindByUIDs(channelUID string, uid []string) ([]entity.OrderShipping, error)
+	Download(filter map[string]interface{}) ([]response.DownloadOrderShipping, error)
 }
 
 type orderShippingRepository struct {
@@ -244,6 +245,106 @@ func (r *orderShippingRepository) FindByUIDs(channelUID string, uid []string) ([
 			return nil, nil
 		}
 
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (r *orderShippingRepository) Download(filter map[string]interface{}) ([]response.DownloadOrderShipping, error) {
+	var result []response.DownloadOrderShipping
+
+	orderShippingHistorySubQuery := r.base.GetDB().Model(&entity.OrderShippingHistory{}).
+		Select("order_shipping_history.order_shipping_id",
+			"string_agg(concat(order_shipping_history.created_at, ' - ', order_shipping_history.status_code), '; ') as order_status_history").
+		Group("order_shipping_history.order_shipping_id")
+
+	query := r.base.GetDB().
+		Model(&entity.OrderShipping{}).
+		Select(
+			"ch.channel_name AS channel",
+			"order_shipping.order_shipping_date",
+			"order_shipping.uid AS order_shipping_uid",
+			"order_shipping.order_no",
+			"c.courier_name",
+			"cs.shipping_name AS courier_service",
+			"order_shipping.airwaybill",
+			"order_shipping.booking_id",
+			"order_shipping.customer_name",
+			"order_shipping.customer_phone_number",
+			"order_shipping.customer_email",
+			"order_shipping.customer_address",
+			"order_shipping.customer_province_name",
+			"order_shipping.customer_city_name",
+			"order_shipping.customer_district_name",
+			"order_shipping.customer_subdistrict",
+			"order_shipping.customer_postal_code",
+			"order_shipping.customer_notes",
+			"order_shipping.merchant_name",
+			"order_shipping.merchant_phone_number",
+			"order_shipping.merchant_email",
+			"order_shipping.merchant_address",
+			"order_shipping.merchant_province_name",
+			"order_shipping.merchant_city_name",
+			"order_shipping.merchant_district_name",
+			"order_shipping.merchant_subdistrict",
+			"order_shipping.merchant_postal_code",
+			"order_shipping.total_weight",
+			"order_shipping.total_volume",
+			"order_shipping.total_product_price",
+			"order_shipping.total_final_weight",
+			"order_shipping.contain_prescription",
+			"order_shipping.insurance",
+			"order_shipping.insurance_cost",
+			"order_shipping.shipping_cost",
+			"order_shipping.total_shipping_cost",
+			"order_shipping.actual_shipping_cost",
+			"order_shipping.shipping_notes",
+			"ss.status_name AS shipping_status_name",
+			"osh.order_status_history as order_status_history",
+		).
+		Joins("INNER JOIN channel ch ON ch.id = order_shipping.channel_id").
+		Joins("INNER JOIN courier c ON c.id = order_shipping.courier_id").
+		Joins("INNER JOIN courier_service cs ON cs.id = order_shipping.courier_service_id").
+		Joins("INNER JOIN shipping_status ss ON ss.status_code = order_shipping.status AND ss.channel_id = order_shipping.channel_id").
+		Joins("INNER JOIN (?) osh ON osh.order_shipping_id = order_shipping.id", orderShippingHistorySubQuery)
+
+	for k, v := range filter {
+		if !util.IsNilOrEmpty(v) {
+
+			switch k {
+			case "order_no":
+				query = query.Where(like(k, v.([]string)))
+
+			case "channel_name":
+				query = query.Where(like("ch.channel_name", v.([]string)))
+
+			case "channel_code":
+				query = query.Where("ch.channel_code IN ?", v.([]string))
+
+			case "shipping_status":
+				query = query.Where("order_shipping.status IN ?", v.([]string))
+
+			case "order_shipping_date_from":
+				query = query.Where("CAST(order_shipping_date AS DATE) >= CAST(? AS DATE)", v)
+
+			case "order_shipping_date_to":
+				query = query.Where("CAST(order_shipping_date AS DATE) <= CAST(? AS DATE)", v)
+			}
+
+		}
+	}
+
+	query = query.Order("order_shipping.order_shipping_date")
+
+	err := query.
+		Find(&result).
+		Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
