@@ -75,14 +75,11 @@ func ShipperWebhookAuth() string {
 }
 
 func GrabWebhookAuth(req *request.WebhookUpdateStatusGrabHeader) bool {
-	//clientID := viper.GetString("grab.auth.client-id")
-	clientSecret := viper.GetString("grab.auth.client-secret")
+	clientID := viper.GetString("grab.auth.webhook-client-id")
+	clientSecret := viper.GetString("grab.auth.webhook-client-secret")
 
-	//input := fmt.Sprint(req.AuthorizationID, req.Authorization)
-	//auth := fmt.Sprint(clientID, clientSecret)
-
-	input := fmt.Sprint(req.Authorization)
-	auth := fmt.Sprint(clientSecret)
+	input := fmt.Sprint(req.AuthorizationID, req.Authorization)
+	auth := fmt.Sprint(clientID, clientSecret)
 
 	return input == auth
 }

@@ -75,6 +75,8 @@ grab:
     client-secret: TcfeLCHXziHqqJbw
     grant-type: client_credentials
     scope: grab_express.partner_deliveries
+    webhook-client-id: grab
+    webhook-client-secret: abcd
   base: https://partner-api.stg-myteksi.com
   path:
     auth: /grabid/v1/oauth2/token
