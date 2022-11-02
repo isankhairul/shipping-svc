@@ -26,8 +26,17 @@ type ImportStatus struct {
 	// Postal code of the Courier Coverage Code
 	PostalCode string `json:"postal_code"`
 
+	// District numeric code of the Courier Coverage Code
+	DistrictNumericCode string `json:"district_numeric_code"`
+
+	// District name of the Courier Coverage Code
+	DistrictName string `json:"district_name"`
+
 	// Subdistrict of the Courier Coverage Code
 	Subdistrict string `json:"subdistrict"`
+
+	// Subdistrict name of the Courier Coverage Code
+	SubdistrictName string `json:"subdistrict_name"`
 
 	// Description of the Courier Coverage Code
 	Description string `json:"description"`
