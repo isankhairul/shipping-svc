@@ -87,7 +87,10 @@ func (s *CourierCoverageCodeServiceImpl) CreateCourierCoverageCode(input request
 		CityNumericCode:     input.CityNumericCode,
 		CityName:            input.CityName,
 		PostalCode:          input.PostalCode,
+		DistrictNumericCode: input.DistrictNumericCode,
+		DistrictName:        input.DistrictName,
 		Subdistrict:         input.Subdistrict,
+		SubdistrictName:     input.SubdistrictName,
 		Description:         input.Description,
 		Code1:               input.Code1,
 		Code2:               input.Code2,
@@ -143,7 +146,10 @@ func (s *CourierCoverageCodeServiceImpl) GetList(input request.CourierCoverageCo
 		"city_numeric_code":     input.Filters.CityNumericCode,
 		"city_name":             input.Filters.CityName,
 		"postal_code":           input.Filters.PostalCode,
+		"district_numeric_code": input.Filters.DistrictNumericCode,
+		"district_name":         input.Filters.DistrictName,
 		"subdistrict":           input.Filters.Subdistrict,
+		"subdistrict_name":      input.Filters.SubdistrictName,
 		"description":           input.Filters.Description,
 		"status":                input.Filters.Status,
 		"code1":                 input.Filters.Code1,
@@ -291,7 +297,10 @@ func (s *CourierCoverageCodeServiceImpl) UpdateCourierCoverageCode(input request
 		"city_numeric_code":     input.CityNumericCode,
 		"city_name":             input.CityName,
 		"postal_code":           input.PostalCode,
+		"district_numeric_code": input.DistrictNumericCode,
+		"district_name":         input.DistrictName,
 		"subdistrict":           input.Subdistrict,
+		"subdistrict_name":      input.SubdistrictName,
 		"description":           input.Description,
 		"code1":                 input.Code1,
 		"code2":                 input.Code2,
@@ -356,7 +365,10 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 		cityNumericCode := row["city_numeric_code"]
 		cityName := row["city_name"]
 		postalCode := row["postal_code"]
+		districtNumericCode := row["district_numeric_code"]
+		districtName := row["district_name"]
 		subdistrict := row["subdistrict"]
+		subdistrictName := row["subdistrict_name"]
 		description := row["description"]
 		code1 := row["code1"]
 		code2 := row["code2"]
@@ -390,7 +402,10 @@ func (s *CourierCoverageCodeServiceImpl) ImportCourierCoverageCode(input request
 			CityNumericCode:     cityNumericCode,
 			CityName:            cityName,
 			PostalCode:          postalCode,
+			DistrictNumericCode: districtNumericCode,
+			DistrictName:        districtName,
 			Subdistrict:         subdistrict,
+			SubdistrictName:     subdistrictName,
 			Description:         description,
 			Code1:               code1,
 			Code2:               code2,
@@ -440,7 +455,10 @@ func (s *CourierCoverageCodeServiceImpl) upsert(uid string, input entity.Courier
 			"city_numeric_code":     input.CityNumericCode,
 			"city_name":             input.CityName,
 			"postal_code":           input.PostalCode,
+			"district_numeric_code": input.DistrictNumericCode,
+			"district_name":         input.DistrictName,
 			"subdistrict":           input.Subdistrict,
+			"subdistrict_name":      input.SubdistrictName,
 			"description":           input.Description,
 			"code1":                 input.Code1,
 			"code2":                 input.Code2,
@@ -477,7 +495,10 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataColumnValidity(input [
 	_, cityNumericCodeOk := row["city_numeric_code"]
 	_, cityNameOk := row["city_name"]
 	_, postalCodeOk := row["postal_code"]
+	_, districtNumericCodeOk := row["district_numeric_code"]
+	_, districtNameOk := row["district_name"]
 	_, subdistrictOk := row["subdistrict"]
+	_, subdistrictNameOk := row["subdistrict_name"]
 	_, descriptionOk := row["description"]
 	_, code1Ok := row["code1"]
 	_, code2Ok := row["code2"]
@@ -487,7 +508,7 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataColumnValidity(input [
 	_, code6Ok := row["code6"]
 
 	return courierUidOk && countryCodeOk && provinceNumericCodeOk && provinceNameOk && cityNumericCodeOk && cityNameOk &&
-		postalCodeOk && subdistrictOk && descriptionOk && code1Ok && code2Ok && code3Ok && code4Ok && code5Ok && code6Ok
+		postalCodeOk && districtNumericCodeOk && districtNameOk && subdistrictOk && subdistrictNameOk && descriptionOk && code1Ok && code2Ok && code3Ok && code4Ok && code5Ok && code6Ok
 }
 
 // return courier, array failed data, failedRowCount, summaryRowCount, message
@@ -499,7 +520,10 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataRow(row map[string]str
 	cityNumericCode := row["city_numeric_code"]
 	cityName := row["city_name"]
 	postalCode := row["postal_code"]
+	districtNumericCode := row["district_numeric_code"]
+	districtName := row["district_name"]
 	subdistrict := row["subdistrict"]
+	subdistrictName := row["subdistrict_name"]
 	description := row["description"]
 	code1 := row["code1"]
 	code2 := row["code2"]
@@ -532,7 +556,10 @@ func (s *CourierCoverageCodeServiceImpl) checkImportedDataRow(row map[string]str
 		CityNumericCode:     cityNumericCode,
 		CityName:            cityName,
 		PostalCode:          postalCode,
+		DistrictNumericCode: districtNumericCode,
+		DistrictName:        districtName,
 		Subdistrict:         subdistrict,
+		SubdistrictName:     subdistrictName,
 		Description:         description,
 		Code1:               code1,
 		Code2:               code2,

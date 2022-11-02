@@ -55,11 +55,29 @@ type CourierCoverageCode struct {
 	// example: 151338
 	PostalCode string `gorm:"type:varchar(20) not null" json:"postal_code"`
 
+	// District numeric code of the Courier Coverage Code
+	// in: string
+	// require: true
+	// example: 151338
+	DistrictNumericCode string `gorm:"type:varchar(50) default('') not null" json:"district_numeric_code"`
+
+	// District name of the Courier Coverage Code
+	// in: string
+	// require: true
+	// example: ""
+	DistrictName string `gorm:"type:varchar(100) default('') not null" json:"district_name"`
+
 	// Subdistrict of the Courier Coverage Code
 	// in: string
 	// require: true
 	// example: 151338
 	Subdistrict string `gorm:"type:varchar(50) default('') not null" json:"subdistrict"`
+
+	// Subdistrict name of the Courier Coverage Code
+	// in: string
+	// require: true
+	// example: ""
+	SubdistrictName string `gorm:"type:varchar(100) default('') not null" json:"subdistrict_name"`
 
 	// Description of the Courier Coverage Code
 	// in: string

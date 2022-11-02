@@ -11,7 +11,8 @@ import (
 
 // swagger:parameters CourierCoverageCodeListRequest
 type CourierCoverageCodeListRequest struct {
-	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"subdistrict":["value","value"],"description":["value","value"],
+	// Filter : {"courier_name":["value","value"],"country_code":["value","value"],"postal_code":["value","value"],"description":["value","value"]
+	//,"district_numeric_code":["value", "value"],"district_name":["value","value"],"subdistrict":["value","value"],"subdistrict_name":["value","value"]
 	//,"province_numeric_code":["value","value"],"province_name":["value","value"],"city_numeric_code":["value","value"],"city_name":["value","value"]
 	//,"status":[0,1], "code1":["value","value"], "code2":["value","value"], "code3":["value","value"], "code4":["value","value"], "code5":["value","value"], "code6":["value","value"]}
 	// in: query
@@ -26,7 +27,7 @@ type CourierCoverageCodeListRequest struct {
 	Page int `schema:"page" binding:"omitempty,numeric,min=1" json:"page"`
 
 	// Sort fields
-	// enum:courier_name,courier_name desc,country_code,country_code desc,postal_code,postal_code desc,subdistrict,subdistrict desc,province_numeric_code,province_numeric_code desc,province_name,province_name desc,city_numeric_code,city_numeric_code desc,city_name,city_name desc,description,description desc,status,status desc,code1,code1 desc,code2,code2 desc,code3,code3 desc,code4,code4 desc,code5,code5 desc,code6,code6 desc
+	// enum:courier_name,courier_name desc,country_code,country_code desc,postal_code,postal_code desc,district_numeric_code,district_numeric_code desc,district,district desc,subdistrict_name,subdistrict_name desc,subdistrict,subdistrict desc,province_numeric_code,province_numeric_code desc,province_name,province_name desc,city_numeric_code,city_numeric_code desc,city_name,city_name desc,description,description desc,status,status desc,code1,code1 desc,code2,code2 desc,code3,code3 desc,code4,code4 desc,code5,code5 desc,code6,code6 desc
 	Sort    string                        `schema:"sort" binding:"omitempty" json:"sort"`
 	Filters CourierCoverageCodeListFilter `json:"-"`
 }
@@ -39,7 +40,10 @@ type CourierCoverageCodeListFilter struct {
 	CityNumericCode     []string `json:"city_numeric_code"`
 	CityName            []string `json:"city_name"`
 	PostalCode          []string `json:"postal_code"`
+	DistrictNumericCode []string `json:"districtNumericCode"`
+	DistrictName        []string `json:"districtName"`
 	Subdistrict         []string `json:"subdistrict"`
+	SubdistrictName     []string `json:"subdistrict_name"`
 	Description         []string `json:"description"`
 	Status              []int    `json:"status"`
 	Code1               []string `json:"code1"`
@@ -120,10 +124,29 @@ type SaveCourierCoverageCodeRequest struct {
 	// in: string
 	PostalCode string `json:"postal_code"`
 
-	// Postal code of the Courier Coverage Code
+	// District numeric code of the Courier Coverage Code
+	// in: string
+	// require: true
+	// example: 151338
+	DistrictNumericCode string `json:"district_numeric_code"`
+
+	// District name of the Courier Coverage Code
+	// in: string
+	// require: true
+	// example: "Denpasar Barat"
+	DistrictName string `json:"district_name"`
+
+	// Subdistrict numeric code of the Courier Coverage Code
 	// required: true
 	// in: string
+	// example: 447
 	Subdistrict string `json:"subdistrict"`
+
+	// Subdistrict name of the Courier Coverage Code
+	// in: string
+	// require: true
+	// example: "Tegal Harum"
+	SubdistrictName string `json:"subdistrict_name"`
 
 	// Description of the Courier Coverage Code
 	// in: string
