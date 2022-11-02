@@ -43,6 +43,7 @@ var (
 	PathShippingRate             = "shipping-rate"
 	PathShippingRateShippingType = "shipping-rate/{shipping-type}"
 	PathOrderShipping            = "order-shipping"
+	PathOrderShippingDownload    = "order-shipping/download"
 	PathOrderTracking            = "order-tracking/{uid}"
 	PathShipper                  = "shipper"
 	PathGrab                     = "grab"

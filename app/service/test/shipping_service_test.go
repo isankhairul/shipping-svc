@@ -9,12 +9,14 @@ import (
 	"go-klikdokter/app/repository/repository_mock"
 	"go-klikdokter/app/service"
 	"testing"
+	"time"
 
 	"go-klikdokter/helper/http_helper/http_helper_mock"
 	"go-klikdokter/helper/http_helper/shipping_provider"
 	"go-klikdokter/helper/http_helper/shipping_provider/shipping_provider_mock"
 	"go-klikdokter/helper/message"
 	"go-klikdokter/pkg/cache/cache_mock"
+	"go-klikdokter/pkg/util"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -2411,4 +2413,122 @@ func TestUpdateStatusGrabGetOrderError(t *testing.T) {
 	msg := shippingService.UpdateStatusGrab(updateStatusGrabReq)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrOrderShippingNotFound, msg)
+}
+
+var downloadOrderShippingReq = &request.DownloadOrderShipping{
+	Filter:  "",
+	Filters: request.DownloadOrderShippingFilter{},
+}
+var simpleResp = &response.DownloadOrderShipping{
+	Channel:           "Klik Dokter",
+	OrderShippingDate: time.Now(),
+	OrderShippingUid:  "dummyUID",
+	OrderNo:           "TEST001",
+}
+var today = time.Now().In(util.Loc)
+
+func TestOrderShippingDownload(t *testing.T) {
+	orderShippingRepository.Mock.On("Download", mock.Anything).
+		Return([]response.DownloadOrderShipping{*simpleResp}).
+		Once()
+
+	result, msg := shippingService.DownloadOrderShipping(downloadOrderShippingReq)
+	assert.NotNil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestOrderShippingDownload_InvalidOrderShippingDateFrom(t *testing.T) {
+	downloadOrderShippingReq.Filters.OrderShippingDateFrom = "INVALID_DATE"
+	downloadOrderShippingReq.Filters.OrderShippingDateTo = today.Format(util.LayoutDateOnly)
+
+	result, msg := shippingService.DownloadOrderShipping(downloadOrderShippingReq)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrFormatDateYYYYMMDD, msg)
+}
+
+func TestOrderShippingDownload_InvalidOrderShippingDateTo(t *testing.T) {
+	downloadOrderShippingReq.Filters.OrderShippingDateFrom = today.Format(util.LayoutDateOnly)
+	downloadOrderShippingReq.Filters.OrderShippingDateTo = "INVALID_DATE"
+
+	result, msg := shippingService.DownloadOrderShipping(downloadOrderShippingReq)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrFormatDateYYYYMMDD, msg)
+}
+
+func TestOrderShippingDownload_StartIsGreaterThanEnd(t *testing.T) {
+	threeDaysAgo := today.AddDate(0, 0, -3)
+	downloadOrderShippingReq.Filters.OrderShippingDateFrom = today.Format(util.LayoutDateOnly)
+	downloadOrderShippingReq.Filters.OrderShippingDateTo = threeDaysAgo.Format(util.LayoutDateOnly)
+
+	assert.True(t, today.After(threeDaysAgo))
+	result, msg := shippingService.DownloadOrderShipping(downloadOrderShippingReq)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrInvalidDateRange, msg)
+}
+
+func TestOrderShippingDownload_ExceedsMaxRange(t *testing.T) {
+	downloadOrderShippingReq.Filters.OrderShippingDateFrom = today.AddDate(0, 0, -(service.MaxDateFilterRangeInDays + 10)).Format(util.LayoutDateOnly)
+	downloadOrderShippingReq.Filters.OrderShippingDateTo = today.Format(util.LayoutDateOnly)
+
+	result, msg := shippingService.DownloadOrderShipping(downloadOrderShippingReq)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrDateRangeGreaterThanAllowed, msg)
+}
+
+func TestOrderShippingDownload_WithinMaxRange(t *testing.T) {
+	downloadOrderShippingReq.Filters.OrderShippingDateFrom = today.AddDate(0, 0, -(service.MaxDateFilterRangeInDays - 1)).Format(util.LayoutDateOnly)
+	downloadOrderShippingReq.Filters.OrderShippingDateTo = today.Format(util.LayoutDateOnly)
+
+	orderShippingRepository.Mock.On("Download", mock.Anything).
+		Return([]response.DownloadOrderShipping{*simpleResp}).
+		Once()
+
+	result, msg := shippingService.DownloadOrderShipping(downloadOrderShippingReq)
+	assert.NotNil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestOrderShippingDownload_EmptyStart_ShouldSetStartWithinRange(t *testing.T) {
+	yesterday := today.AddDate(0, 0, -1).Format(util.LayoutDateOnly)
+	downloadOrderShippingReq.Filters.OrderShippingDateFrom = ""
+	downloadOrderShippingReq.Filters.OrderShippingDateTo = yesterday
+
+	orderShippingRepository.Mock.On("Download", mock.Anything).
+		Return([]response.DownloadOrderShipping{*simpleResp}).
+		Once()
+
+	result, msg := shippingService.DownloadOrderShipping(downloadOrderShippingReq)
+	assert.NotNil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestOrderShippingDownload_EmptyEnd_StartDateValidRange(t *testing.T) {
+	downloadOrderShippingReq.Filters.OrderShippingDateFrom = today.AddDate(0, 0, -(service.MaxDateFilterRangeInDays)).Format(util.LayoutDateOnly)
+	downloadOrderShippingReq.Filters.OrderShippingDateTo = ""
+
+	orderShippingRepository.Mock.On("Download", mock.Anything).
+		Return([]response.DownloadOrderShipping{*simpleResp}).
+		Once()
+
+	result, msg := shippingService.DownloadOrderShipping(downloadOrderShippingReq)
+	assert.NotNil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestOrderShippingDownload_EmptyEnd_StartDateExceedsMaxRange(t *testing.T) {
+	downloadOrderShippingReq.Filters.OrderShippingDateFrom = today.AddDate(0, 0, -(service.MaxDateFilterRangeInDays + 10)).Format(util.LayoutDateOnly)
+	downloadOrderShippingReq.Filters.OrderShippingDateTo = ""
+
+	result, msg := shippingService.DownloadOrderShipping(downloadOrderShippingReq)
+	assert.Nil(t, result)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrDateRangeGreaterThanAllowed, msg)
 }

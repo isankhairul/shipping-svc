@@ -509,3 +509,47 @@ type RepickupOrderResponse struct {
 	OrderNoAPI       string `json:"order_no_api,omitempty"`
 	PickupCode       string `json:"pickup_code,omitempty"`
 }
+
+// swagger:response DownloadOrderShipping
+type DownloadOrderShipping struct {
+	Channel              string
+	OrderShippingDate    time.Time
+	OrderShippingUid     string
+	OrderNo              string
+	CourierName          string
+	CourierService       string
+	Airwaybill           string
+	BookingId            string
+	CustomerName         string
+	CustomerPhoneNumber  string
+	CustomerEmail        string
+	CustomerAddress      string
+	CustomerProvinceName string
+	CustomerCityName     string
+	CustomerDistrictName string
+	CustomerSubdistrict  string
+	CustomerPostalCode   string
+	CustomerNotes        string
+	MerchantName         string
+	MerchantPhoneNumber  string
+	MerchantEmail        string
+	MerchantAddress      string
+	MerchantProvinceName string
+	MerchantCityName     string
+	MerchantDistrictName string
+	MerchantSubdistrict  string
+	MerchantPostalCode   string
+	TotalWeight          string
+	TotalVolume          string
+	TotalProductPrice    string
+	TotalFinalWeight     string
+	ContainPrescription  string
+	Insurance            string
+	InsuranceCost        string
+	ShippingCost         string
+	TotalShippingCost    string
+	ActualShippingCost   string
+	ShippingNotes        string
+	ShippingStatusName   string
+	OrderStatusHistory   string
+}

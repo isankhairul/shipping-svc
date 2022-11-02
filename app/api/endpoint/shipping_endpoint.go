@@ -26,6 +26,7 @@ type ShippingEndpoint struct {
 	RepickupOrder                 endpoint.Endpoint
 	GetShippingTracking           endpoint.Endpoint
 	UpdateStatusGrab              endpoint.Endpoint
+	DownloadOrderShipping         endpoint.Endpoint
 }
 
 func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
@@ -43,6 +44,7 @@ func MakeShippingEndpoint(s service.ShippingService) ShippingEndpoint {
 		RepickupOrder:                 makeRepickupOrder(s),
 		GetShippingTracking:           makeGetShippingTracking(s),
 		UpdateStatusGrab:              makeUpdateStatusGrab(s),
+		DownloadOrderShipping:         makeDownloadOrderShipping(s),
 	}
 }
 
@@ -126,6 +128,22 @@ func makeGetOrderShippingList(s service.ShippingService) endpoint.Endpoint {
 		req := rqst.(request.GetOrderShippingList)
 		result, pagination, msg := s.GetOrderShippingList(&req)
 		return base.SetHttpResponse(msg.Code, msg.Message, result, pagination), nil
+	}
+}
+
+func makeDownloadOrderShipping(s service.ShippingService) endpoint.Endpoint {
+
+	return func(ctx context.Context, rqst interface{}) (resp interface{}, err error) {
+
+		// Retrieve JWT Info
+		_, msg := global.SetJWTInfoFromContext(ctx)
+		if msg.Code != message.SuccessMsg.Code {
+			return base.SetHttpResponse(msg.Code, msg.Message, nil, nil), nil
+		}
+
+		req := rqst.(request.DownloadOrderShipping)
+		result, msg := s.DownloadOrderShipping(&req)
+		return base.SetHttpResponse(msg.Code, msg.Message, result, nil), nil
 	}
 }
 

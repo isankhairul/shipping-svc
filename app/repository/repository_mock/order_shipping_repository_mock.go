@@ -119,3 +119,19 @@ func (r *OrderShippingRepositoryMock) FindByUIDs(channelUID string, uid []string
 
 	return arguments.Get(0).([]entity.OrderShipping), nil
 }
+
+func (r *OrderShippingRepositoryMock) Download(filter map[string]interface{}) ([]response.DownloadOrderShipping, error) {
+	arguments := r.Mock.Called()
+
+	if len(arguments) > 1 {
+		if arguments.Get(1) != nil {
+			return nil, arguments.Get(1).(error)
+		}
+	}
+
+	if arguments.Get(0) == nil {
+		return nil, nil
+	}
+
+	return arguments.Get(0).([]response.DownloadOrderShipping), nil
+}
