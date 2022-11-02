@@ -1070,17 +1070,16 @@ func (s *shippingServiceImpl) CancelPickup(req *request.CancelPickup) message.Me
 		return message.ErrCantCancelOrderCourierService
 	}
 
+	//status back to created
+	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, shipping_provider.StatusCreated)
+	if shipperStatus == nil {
+		return message.ShippingStatusNotFoundMsg
+	}
+
 	msg := s.cancelPickup(orderShipping)
 
 	if msg != message.SuccessMsg {
 		return msg
-	}
-
-	//status back to created
-	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, shipping_provider.StatusCreated)
-
-	if shipperStatus == nil {
-		return message.ShippingStatusNotFoundMsg
 	}
 
 	notes := fmt.Sprintf("request pickup cancelled by merchant [%s]", *orderShipping.PickupCode)
@@ -1118,6 +1117,8 @@ func (s *shippingServiceImpl) cancelPickupThirdParty(orderShipping *entity.Order
 	switch orderShipping.Courier.Code {
 	case shipping_provider.ShipperCode:
 		_, err = s.shipper.CancelPickupRequest(*orderShipping.PickupCode)
+	case shipping_provider.GrabCode:
+		err = s.grab.CancelDelivery(orderShipping.BookingID)
 	}
 
 	if err != nil {
@@ -1161,16 +1162,15 @@ func (s *shippingServiceImpl) CancelOrder(req *request.CancelOrder) message.Mess
 		return message.ErrCantCancelOrderCourierService
 	}
 
+	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, shipping_provider.StatusCancelled)
+	if shipperStatus == nil {
+		return message.ShippingStatusNotFoundMsg
+	}
+
 	msg := s.cancelOrder(orderShipping, req)
 
 	if msg != message.SuccessMsg {
 		return msg
-	}
-
-	shipperStatus, _ := s.shippingCourierStatusRepo.FindByCode(orderShipping.ChannelID, orderShipping.CourierID, shipping_provider.StatusCancelled)
-
-	if shipperStatus == nil {
-		return message.ShippingStatusNotFoundMsg
 	}
 
 	orderShipping.Status = shipping_provider.StatusCancelled
@@ -1206,6 +1206,13 @@ func (s *shippingServiceImpl) cancelOrderThirdParty(orderShipping *entity.OrderS
 	switch orderShipping.Courier.Code {
 	case shipping_provider.ShipperCode:
 		_, err = s.shipper.CancelOrder(orderShipping.BookingID, req)
+	case shipping_provider.GrabCode:
+		// if request pickup has been cancelled then cancel the order
+		if orderShipping.Status == shipping_provider.StatusCreated {
+			return message.SuccessMsg
+		}
+
+		err = s.grab.CancelDelivery(orderShipping.BookingID)
 	}
 
 	if err != nil {

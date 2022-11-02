@@ -1,6 +1,7 @@
 package response
 
 import (
+	"errors"
 	"fmt"
 	"go-klikdokter/helper/global"
 	"go-klikdokter/helper/message"
@@ -26,6 +27,14 @@ func (g *GrabError) GetReason() string {
 	msg = util.ReplaceEmptyString(msg, g.DevMessage)
 
 	return msg
+}
+
+func (g *GrabError) Error() error {
+	reason := g.GetReason()
+	if len(reason) == 0 {
+		return nil
+	}
+	return errors.New(reason)
 }
 
 type GrabDeliveryQuotes struct {
@@ -250,6 +259,11 @@ func (g *GrabDeliveryDetail) ToOrderShippingTracking() []GetOrderShippingTrackin
 		if strings.Contains(status, "FAILED") {
 			note = fmt.Sprintf("%s %s", note, g.AdvanceInfo.FailedReason)
 		}
+
+		if strings.Contains(status, "COMPLETED") {
+			v = v.Add(time.Nanosecond)
+		}
+
 		resp = append(resp, GetOrderShippingTracking{
 			DateTime: v,
 			Status:   status,
@@ -264,7 +278,7 @@ func (g *GrabDeliveryDetail) ToOrderShippingTracking() []GetOrderShippingTrackin
 		resp = append(resp, GetOrderShippingTracking{
 			DateTime: g.Quote.EstimationTimeline.PickUp,
 			Status:   strings.ToUpper(g.Status),
-			Note:     "",
+			Note:     strings.ToUpper(g.Status),
 			Date:     g.Quote.EstimationTimeline.PickUp.In(util.Loc).Format(util.LayoutDateOnly),
 			Time:     g.Quote.EstimationTimeline.PickUp.In(util.Loc).Format(util.LayoutTimeOnly),
 		})
