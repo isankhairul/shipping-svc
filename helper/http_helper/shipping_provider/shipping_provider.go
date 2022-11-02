@@ -31,12 +31,23 @@ var shipperOrderCancelableStatus = []string{
 	StatusRequestPickup,
 }
 
+var grabPickupOrderCancelableStatus = []string{
+	StatusRequestPickup,
+}
+
+var grabOrderCancelableStatus = []string{
+	StatusCreated,
+	StatusRequestPickup,
+}
+
 func IsPickUpOrderCancelable(courierCode, status string) bool {
 	var statusList []string
 
 	switch courierCode {
 	case ShipperCode:
 		statusList = shipperPickupOrderCancelableStatus
+	case GrabCode:
+		statusList = grabPickupOrderCancelableStatus
 	}
 
 	for _, v := range statusList {
@@ -54,6 +65,8 @@ func IsOrderCancelable(courierCode, status string) bool {
 	switch courierCode {
 	case ShipperCode:
 		statusList = shipperOrderCancelableStatus
+	case GrabCode:
+		statusList = grabOrderCancelableStatus
 	}
 
 	for _, v := range statusList {

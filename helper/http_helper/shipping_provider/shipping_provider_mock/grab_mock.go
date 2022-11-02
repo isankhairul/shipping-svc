@@ -52,3 +52,15 @@ func (h *GrabMock) GetTracking(orderID string) ([]response.GetOrderShippingTrack
 
 	return arguments.Get(0).([]response.GetOrderShippingTracking), message.SuccessMsg
 }
+
+func (h *GrabMock) CancelDelivery(deliveryID string) error {
+	arguments := h.Mock.Called()
+
+	if len(arguments) > 0 {
+		if arguments.Get(0) != nil {
+			return arguments.Get(0).(error)
+		}
+	}
+
+	return nil
+}

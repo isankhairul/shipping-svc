@@ -1748,7 +1748,7 @@ var orderShipping = entity.OrderShipping{
 	PickupCode:           new(string),
 }
 
-func TestCancelPickUpSuccess(t *testing.T) {
+func TestCancelPickUpShipperSuccess(t *testing.T) {
 	order := orderShipping
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
 	shipper.Mock.On("CancelPickupRequest", mock.Anything).Return(nil).Once()
@@ -1761,7 +1761,7 @@ func TestCancelPickUpSuccess(t *testing.T) {
 	assert.Equal(t, message.SuccessMsg, msg)
 }
 
-func TestCancelPickUpFailed(t *testing.T) {
+func TestCancelPickUpShipperFailed(t *testing.T) {
 	order := orderShipping
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
 	shipper.Mock.On("CancelPickupRequest", mock.Anything).Return(nil).Once()
@@ -1774,20 +1774,61 @@ func TestCancelPickUpFailed(t *testing.T) {
 	assert.Equal(t, message.ErrSaveOrderShipping, msg)
 }
 
+var orderShippingGrab = entity.OrderShipping{
+	Channel: &entity.Channel{},
+	Courier: &entity.Courier{
+		Code:        shipping_provider.GrabCode,
+		CourierType: shipping_provider.ThirPartyCourier,
+	},
+	CourierService:       &entity.CourierService{Cancelable: 1},
+	OrderShippingItem:    []entity.OrderShippingItem{},
+	OrderShippingHistory: []entity.OrderShippingHistory{},
+	Status:               shipping_provider.StatusRequestPickup,
+	PickupCode:           new(string),
+}
+
+func TestCancelPickUpGrabSuccess(t *testing.T) {
+	order := orderShippingGrab
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+	grab.Mock.On("CancelDelivery", mock.Anything).Return(nil).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(&order).Once()
+	msg := shippingService.CancelPickup(&request.CancelPickup{UID: "uid"})
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
 func TestCancelPickUpShippingStatusNotFound(t *testing.T) {
 	order := orderShipping
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
-	shipper.Mock.On("CancelPickupRequest", mock.Anything).Return(nil).Once()
 	shippingCourierStatusRepository.Mock.On("FindByCode").Return(nil).Once()
 	msg := shippingService.CancelPickup(&request.CancelPickup{UID: "uid"})
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ShippingStatusNotFoundMsg, msg)
 }
 
-func TestCancelPickUpShippingThirdPartyError(t *testing.T) {
+func TestCancelPickUpShippingShipperError(t *testing.T) {
 	order := orderShipping
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
 	shipper.Mock.On("CancelPickupRequest", mock.Anything).Return(nil, errors.New("")).Once()
+
+	msg := shippingService.CancelPickup(&request.CancelPickup{UID: "uid"})
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrCancelPickup, msg)
+}
+
+func TestCancelPickUpShippingGrabError(t *testing.T) {
+	order := orderShippingGrab
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
+	grab.Mock.On("CancelDelivery", mock.Anything).Return(errors.New("")).Once()
 
 	msg := shippingService.CancelPickup(&request.CancelPickup{UID: "uid"})
 	assert.NotNil(t, msg)
@@ -1797,6 +1838,9 @@ func TestCancelPickUpShippingThirdPartyError(t *testing.T) {
 func TestCancelPickUpShippingThirdPartyOrderNotCancelableError(t *testing.T) {
 	order := orderShipping
 	order.Status = "not_cancelable"
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
 
 	msg := shippingService.CancelPickup(&request.CancelPickup{UID: "uid"})
@@ -1808,7 +1852,9 @@ func TestCancelPickUpShippingInvalidCourierTypeError(t *testing.T) {
 	order := orderShipping
 	order.Courier.CourierType = ""
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
-
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
 	msg := shippingService.CancelPickup(&request.CancelPickup{UID: "uid"})
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ErrInvalidCourierType, msg)
@@ -1840,7 +1886,7 @@ func TestCancelPickUpShippingOrderServiceNotFoundError(t *testing.T) {
 
 var cancelOrderReq = &request.CancelOrder{UID: "", Body: request.CancelOrderBodyRequest{Reason: "reason"}}
 
-func TestCancelOrderSuccess(t *testing.T) {
+func TestCancelOrderShipperSuccess(t *testing.T) {
 	order := orderShipping
 	order.CourierService.Cancelable = 1
 	order.Courier.CourierType = shipping_provider.ThirPartyCourier
@@ -1848,6 +1894,23 @@ func TestCancelOrderSuccess(t *testing.T) {
 
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
 	shipper.Mock.On("CancelOrder", mock.Anything).Return(nil).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
+	orderShippingRepository.Mock.On("Upsert").Return(&order).Once()
+	msg := shippingService.CancelOrder(cancelOrderReq)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.SuccessMsg, msg)
+}
+
+func TestCancelOrderGrabSuccess(t *testing.T) {
+	order := orderShippingGrab
+	order.CourierService.Cancelable = 1
+	order.Courier.CourierType = shipping_provider.ThirPartyCourier
+	order.Courier.Code = shipping_provider.GrabCode
+
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+	grab.Mock.On("CancelDelivery", mock.Anything).Return(nil).Once()
 	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
 		ShippingStatus: &entity.ShippingStatus{},
 	}).Once()
@@ -1873,17 +1936,32 @@ func TestCancelOrderFailed(t *testing.T) {
 func TestCancelOrderShippingStatusNotFound(t *testing.T) {
 	order := orderShipping
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
-	shipper.Mock.On("CancelOrder", mock.Anything).Return(nil).Once()
 	shippingCourierStatusRepository.Mock.On("FindByCode").Return(nil).Once()
 	msg := shippingService.CancelOrder(cancelOrderReq)
 	assert.NotNil(t, msg)
 	assert.Equal(t, message.ShippingStatusNotFoundMsg, msg)
 }
 
-func TestCancelOrderShippingThirdPartyError(t *testing.T) {
+func TestCancelOrderShippingShipperError(t *testing.T) {
 	order := orderShipping
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
 	shipper.Mock.On("CancelOrder", mock.Anything).Return(nil, errors.New("")).Once()
+
+	msg := shippingService.CancelOrder(cancelOrderReq)
+	assert.NotNil(t, msg)
+	assert.Equal(t, message.ErrCancelPickup, msg)
+}
+
+func TestCancelOrderShippingGrabError(t *testing.T) {
+	order := orderShippingGrab
+	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
+	grab.Mock.On("CancelDelivery", mock.Anything).Return(errors.New("")).Once()
 
 	msg := shippingService.CancelOrder(cancelOrderReq)
 	assert.NotNil(t, msg)
@@ -1893,6 +1971,9 @@ func TestCancelOrderShippingThirdPartyError(t *testing.T) {
 func TestCancelOrderShippingThirdPartyOrderNotCancelableError(t *testing.T) {
 	order := orderShipping
 	order.Status = "not_cancelable"
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
 
 	msg := shippingService.CancelOrder(cancelOrderReq)
@@ -1903,6 +1984,9 @@ func TestCancelOrderShippingThirdPartyOrderNotCancelableError(t *testing.T) {
 func TestCancelOrderShippingInvalidCourierTypeError(t *testing.T) {
 	order := orderShipping
 	order.Courier.CourierType = ""
+	shippingCourierStatusRepository.Mock.On("FindByCode").Return(&entity.ShippingCourierStatus{
+		ShippingStatus: &entity.ShippingStatus{},
+	}).Once()
 	orderShippingRepository.Mock.On("FindByUID", mock.Anything).Return(&order).Once()
 
 	msg := shippingService.CancelOrder(cancelOrderReq)

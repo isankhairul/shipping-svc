@@ -24,6 +24,7 @@ type Grab interface {
 	GetShippingRate(input *request.GetShippingRateRequest) (*response.ShippingRateCommonResponse, error)
 	CreateDelivery(courierService *entity.CourierService, req *request.CreateDelivery) (*response.CreateDeliveryThirdPartyData, message.Message)
 	GetTracking(orderID string) ([]response.GetOrderShippingTracking, message.Message)
+	CancelDelivery(deliveryID string) error
 }
 
 type grab struct {
@@ -350,4 +351,34 @@ func (g *grab) setRequestHeader() (map[string]string, error) {
 func grabUrl(path string) string {
 	base := viper.GetString("grab.base")
 	return base + path
+}
+
+func (g *grab) CancelDelivery(deliveryID string) error {
+	url := grabUrl(viper.GetString("grab.path.delivery-detail"))
+	url = strings.ReplaceAll(url, "{deliveryID}", deliveryID)
+	headers, err := g.setRequestHeader()
+	if err != nil {
+		return err
+	}
+
+	respByte, err := http_helper.Delete(url, headers, map[string]string{}, g.Logger)
+
+	if err != nil {
+		return err
+	}
+
+	// Successful. No content returned.
+	// https://developer.grab.com/docs/grab-express/#response-parameters-5
+	if len(respByte) == 0 {
+		return nil
+	}
+
+	// check error response
+	errResp := &response.GrabError{}
+	err = json.Unmarshal(respByte, &errResp)
+	if err != nil {
+		return err
+	}
+
+	return errResp.Error()
 }
