@@ -245,10 +245,10 @@ func (g *GrabDeliveryDetail) ToOrderShippingTracking() []GetOrderShippingTrackin
 
 		// failed notes
 		status := strings.ToUpper(k)
-		note := ""
+		note := status
 
 		if strings.Contains(status, "FAILED") {
-			note = g.AdvanceInfo.FailedReason
+			note = fmt.Sprintf("%s %s", note, g.AdvanceInfo.FailedReason)
 		}
 		resp = append(resp, GetOrderShippingTracking{
 			DateTime: v,
