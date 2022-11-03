@@ -51,6 +51,9 @@ type OrderShipping struct {
 	MerchantDistrictName string    `gorm:"type:varchar(50) default('') not null"`
 	MerchantSubdistrict  string    `gorm:"type:varchar(50) default('') not null"`
 	MerchantPostalCode   string    `gorm:"type:varchar(50);not null"`
+	TotalLength          float64   `gorm:"type:numeric default(0) not null"`
+	TotalWidth           float64   `gorm:"type:numeric default(0) not null"`
+	TotalHeight          float64   `gorm:"type:numeric default(0) not null"`
 	TotalWeight          float64   `gorm:"type:numeric;not null"`
 	TotalVolume          float64   `gorm:"type:numeric;null"`
 	TotalProductPrice    float64   `gorm:"type:numeric;not null"`
@@ -129,6 +132,9 @@ func (o *OrderShipping) FromCreateDeliveryRequest(req *request.CreateDelivery) {
 	o.MerchantDistrictName = req.Origin.DistrictName
 	o.MerchantSubdistrict = req.Origin.Subdistrict
 	o.MerchantPostalCode = req.Origin.PostalCode
+	o.TotalLength = req.Package.TotalLength
+	o.TotalWidth = req.Package.TotalWidth
+	o.TotalHeight = req.Package.TotalHeight
 	o.TotalWeight = req.Package.TotalWeight
 	o.TotalVolume = volumeWeight
 	o.TotalProductPrice = req.Package.TotalProductPrice

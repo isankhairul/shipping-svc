@@ -25,6 +25,7 @@ type Grab interface {
 	CreateDelivery(courierService *entity.CourierService, req *request.CreateDelivery) (*response.CreateDeliveryThirdPartyData, message.Message)
 	GetTracking(orderID string) ([]response.GetOrderShippingTracking, message.Message)
 	CancelDelivery(deliveryID string) error
+	ReCreateDelivery(req *entity.OrderShipping) (*response.CreateDeliveryThirdPartyData, message.Message)
 }
 
 type grab struct {
@@ -233,6 +234,93 @@ func (g *grab) CreateDelivery(courierService *entity.CourierService, req *reques
 				Width:  int(req.Package.TotalWidth),
 				Depth:  int(req.Package.TotalLength),
 				Weight: int(req.Package.TotalWeight * 1000),
+			},
+		})
+	}
+
+	order, err := g.CreateOrder(grabReq)
+	if err != nil {
+		msg := message.ShippingProviderMsg
+		msg.Message = err.Error()
+		return nil, msg
+	}
+
+	return &response.CreateDeliveryThirdPartyData{
+		BookingID:          order.DeliveryID,
+		ShippingCost:       order.Quote.Amount,
+		TotalShippingCost:  order.Quote.Amount,
+		ActualShippingCost: order.Quote.Amount,
+		Status:             StatusRequestPickup,
+		PickUpCode:         order.DeliveryID,
+		Airwaybill:         order.DeliveryID,
+		//PickUpTime: order.Timeline.Pickup,
+		// Insurance: false,
+		// InsuranceCost: 0,
+	}, message.SuccessMsg
+
+}
+
+func (g *grab) ReCreateDelivery(req *entity.OrderShipping) (*response.CreateDeliveryThirdPartyData, message.Message) {
+
+	now := time.Now().Add(5 * time.Second)
+	grabReq := &request.CreateDeliveryGrab{
+		MerchantOrderID: req.OrderNo,
+		ServiceType:     strings.ToUpper(req.CourierService.ShippingCode),
+		Sender: request.GrabSenderRecipient{
+			FirstName:   req.MerchantName,
+			LastName:    "",
+			Title:       "",
+			CompanyName: "",
+			Email:       req.MerchantEmail,
+			Phone:       req.MerchantPhoneNumber,
+			SmsEnabled:  false,
+			Instruction: "",
+		},
+		Recipient: request.GrabSenderRecipient{
+			FirstName:   req.CustomerName,
+			LastName:    "",
+			Title:       "",
+			CompanyName: "",
+			Email:       req.CustomerEmail,
+			Phone:       req.CustomerPhoneNumber,
+			SmsEnabled:  false,
+			Instruction: req.CustomerNotes,
+		},
+		Packages: []request.Package{},
+		Origin: request.Origin{
+			Address: req.MerchantAddress,
+			Coordinates: request.Coordinates{
+				Latitude:  req.MerchantLatitude,
+				Longitude: req.MerchantLongitude,
+			},
+			Keywords: "",
+		},
+		Destination: request.Destination{
+			Address: req.CustomerAddress,
+			Coordinates: request.Coordinates{
+				Latitude:  req.CustomerLatitude,
+				Longitude: req.CustomerLongitude,
+			},
+			Keywords: "",
+		},
+		PaymentMethod: "CASHLESS",
+		Schedule: request.Schedule{
+			PickupTimeFrom: now.Format(time.RFC3339),
+			PickupTimeTo:   now.Add(time.Hour).Format(time.RFC3339),
+		},
+	}
+
+	for _, v := range req.OrderShippingItem {
+		grabReq.Packages = append(grabReq.Packages, request.Package{
+			Name:        v.ItemName,
+			Description: "",
+			Quantity:    v.Quantity,
+			Price:       int(v.TotalPrice),
+			Dimensions: request.Dimensions{
+				Height: int(req.TotalHeight),
+				Width:  int(req.TotalWidth),
+				Depth:  int(req.TotalLength),
+				Weight: int(req.TotalFinalWeight * 1000),
 			},
 		})
 	}

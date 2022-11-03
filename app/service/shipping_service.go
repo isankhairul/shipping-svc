@@ -473,7 +473,7 @@ func (s *shippingServiceImpl) populateCreateDelivery(input *request.CreateDelive
 		return nil, nil, nil, nil, message.ErrDB
 	}
 
-	if orderShipping != nil && orderShipping.Status != shipping_provider.StatusCreated {
+	if orderShipping != nil {
 		return nil, nil, nil, nil, message.OrderNoAlreadyExistsMsg
 	}
 
@@ -826,9 +826,9 @@ func (s *shippingServiceImpl) GetOrderShippingList(req *request.GetOrderShipping
 // - application/json
 //
 // responses:
-// 	'200':
-//    description: Success response.
-//    content:
+//   '200':
+//     description: Success response.
+//     content:
 //      text/csv:
 //        $ref: '#/definitions/DownloadOrderShipping'
 func (s *shippingServiceImpl) DownloadOrderShipping(req *request.DownloadOrderShipping) ([]response.DownloadOrderShipping, message.Message) {
@@ -979,6 +979,9 @@ func getOrderShippingDetailByUIDResponse(orderShipping *entity.OrderShipping) *r
 	resp.OrderNoAPI = orderShipping.OrderNoAPI
 	resp.ShippingStatus = orderShipping.Status
 	resp.TotalProductPrice = orderShipping.TotalProductPrice
+	resp.TotalLength = orderShipping.TotalLength
+	resp.TotalWidth = orderShipping.TotalWidth
+	resp.TotalHeight = orderShipping.TotalHeight
 	resp.TotalWeight = orderShipping.TotalWeight
 	resp.TotalVolume = orderShipping.TotalVolume
 	resp.FinalWeight = orderShipping.TotalFinalWeight
@@ -1275,6 +1278,9 @@ func getOrderShippingLabelResponse(orderShipping []entity.OrderShipping, isHideP
 			Airwaybill:           v.Airwaybill,
 			BookingID:            v.BookingID,
 			TotalProductPrice:    v.TotalProductPrice,
+			TotalLength:          v.TotalLength,
+			TotalWidth:           v.TotalWidth,
+			TotalHeight:          v.TotalHeight,
 			TotalWeight:          v.TotalWeight,
 			TotalVolume:          v.TotalVolume,
 			FinalWeight:          v.TotalFinalWeight,
@@ -1360,15 +1366,6 @@ func (s *shippingServiceImpl) RepickupOrder(req *request.RepickupOrderRequest) (
 		return resp, message.ErrOrderBelongToAnotherChannel
 	}
 
-	msg := s.repickupOrder(orderShipping)
-
-	if msg != message.SuccessMsg {
-		return resp, msg
-	}
-
-	//update order status
-	orderShipping.Status = shipping_provider.StatusRequestPickup
-
 	shippingStatus, _ := s.shippingCourierStatusRepo.FindByCode(
 		orderShipping.ChannelID,
 		orderShipping.CourierID,
@@ -1379,6 +1376,15 @@ func (s *shippingServiceImpl) RepickupOrder(req *request.RepickupOrderRequest) (
 	}
 
 	orderShipping.UpdatedBy = req.Username
+
+	msg := s.repickupOrder(orderShipping)
+
+	if msg != message.SuccessMsg {
+		return resp, msg
+	}
+
+	//update order status
+	orderShipping.Status = shipping_provider.StatusRequestPickup
 
 	//add history
 	orderShipping.OrderShippingHistory = append(orderShipping.OrderShippingHistory, entity.OrderShippingHistory{
@@ -1432,6 +1438,18 @@ func (s *shippingServiceImpl) repickupThirPartyOrder(orderShipping *entity.Order
 
 		//update pickupCode
 		orderShipping.PickupCode = &result.Data.OrderActivation[0].PickUpCode
+	case shipping_provider.GrabCode:
+		result, msg := s.grab.ReCreateDelivery(orderShipping)
+		if msg != message.SuccessMsg {
+			return msg
+		}
+		orderShipping.ShippingCost = result.ShippingCost
+		orderShipping.TotalShippingCost = result.TotalShippingCost
+		orderShipping.ActualShippingCost = result.ActualShippingCost
+		orderShipping.Status = result.Status
+		orderShipping.BookingID = result.BookingID
+		orderShipping.Airwaybill = result.Airwaybill
+		orderShipping.PickupCode = &result.PickUpCode
 	default:
 		return message.ErrInvalidCourierCode
 	}
