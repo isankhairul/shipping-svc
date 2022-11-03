@@ -364,6 +364,12 @@ type GetOrderShippingDetail struct {
 	BookingID string `json:"booking_id"`
 	//example: 150000
 	TotalProductPrice float64 `json:"total_product_price"`
+	//example: 3.2
+	TotalLength float64 `json:"total_length"`
+	//example: 3.3
+	TotalWidth float64 `json:"total_width"`
+	//example: 3.4
+	TotalHeight float64 `json:"total_height"`
 	//example: 3.5
 	TotalWeight float64 `json:"total_weight"`
 	//example: 4.5
@@ -473,6 +479,9 @@ type GetOrderShippingLabelResponse struct {
 	Airwaybill           string                       `json:"airwaybill"`
 	BookingID            string                       `json:"booking_id"`
 	TotalProductPrice    float64                      `json:"total_product_price"`
+	TotalLength          float64                      `json:"total_length"`
+	TotalWidth           float64                      `json:"total_width"`
+	TotalHeight          float64                      `json:"total_height"`
 	TotalWeight          float64                      `json:"total_weight"`
 	TotalVolume          float64                      `json:"total_volume"`
 	FinalWeight          float64                      `json:"final_weight"`
