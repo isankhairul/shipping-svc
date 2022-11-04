@@ -30,6 +30,10 @@ func NewOrderShippingRepository(br BaseRepository) OrderShippingRepository {
 	return &orderShippingRepository{br}
 }
 
+const (
+	orderShippingDate = "order_shipping.order_shipping_date"
+)
+
 func (r *orderShippingRepository) Create(input *entity.OrderShipping) (*entity.OrderShipping, error) {
 	db := r.base.GetDB()
 	err := db.Create(input).Error
@@ -205,7 +209,7 @@ func (r *orderShippingRepository) FindByParams(limit, page int, sort string, fil
 	sort = strings.ReplaceAll(sort, "shipping_status", "order_shipping.status")
 	sort = strings.ReplaceAll(sort, "courier_services_name", "cs.shipping_name")
 	sort = strings.ReplaceAll(sort, "order_shipping_uid", "order_shipping.uid")
-	sort = strings.ReplaceAll(sort, "order_shipping_date_from", "order_shipping.order_shipping_date")
+	sort = strings.ReplaceAll(sort, "order_shipping_date_from", orderShippingDate)
 
 	sort = util.ReplaceEmptyString(sort, "order_shipping.updated_at desc")
 
@@ -263,7 +267,7 @@ func (r *orderShippingRepository) Download(filter map[string]interface{}) ([]res
 		Model(&entity.OrderShipping{}).
 		Select(
 			"ch.channel_name AS channel",
-			"order_shipping.order_shipping_date",
+			orderShippingDate,
 			"order_shipping.uid AS order_shipping_uid",
 			"order_shipping.order_no",
 			"c.courier_name",
@@ -335,7 +339,7 @@ func (r *orderShippingRepository) Download(filter map[string]interface{}) ([]res
 		}
 	}
 
-	query = query.Order("order_shipping.order_shipping_date")
+	query = query.Order(orderShippingDate)
 
 	err := query.
 		Find(&result).

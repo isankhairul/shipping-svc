@@ -338,9 +338,7 @@ func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input
 
 			}
 
-			if courierPrice != nil {
-				resp.Add(courierPrice)
-			}
+			resp.Add(courierPrice)
 		}(v)
 	}
 	wg.Wait()
@@ -469,7 +467,7 @@ func (s *shippingServiceImpl) populateCreateDelivery(input *request.CreateDelive
 	// check if order no already exist with status created
 	orderShipping, err := s.orderShipping.FindByOrderNo(input.OrderNo)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.FindByOrderNo", err.Error())
+		_ = level.Error(logger).Log(input.OrderNo, err.Error())
 		return nil, nil, nil, nil, message.ErrDB
 	}
 
@@ -539,7 +537,7 @@ func (s *shippingServiceImpl) CreateDelivery(input *request.CreateDelivery) (*re
 
 	orderShipping, err := s.orderShipping.Upsert(orderShipping)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		_ = level.Error(logger).Log("", err.Error())
 		return &response.CreateDelivery{}, message.ErrSaveOrderShipping
 	}
 
@@ -618,7 +616,7 @@ func (s *shippingServiceImpl) OrderShippingTracking(req *request.GetOrderShippin
 
 	orderShipping, err := s.orderShipping.FindByUID(req.UID)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.FindByUID", err.Error())
+		_ = level.Error(logger).Log("", err.Error())
 		return nil, message.ErrOrderShippingNotFound
 	}
 
@@ -684,7 +682,7 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 
 	orderShipping, err := s.orderShipping.FindByOrderNo(req.ExternalID)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.FindByOrderNo", err.Error())
+		_ = level.Error(logger).Log(req.ExternalID, err.Error())
 		return nil, message.ErrOrderShippingNotFound
 	}
 
@@ -722,7 +720,7 @@ func (s *shippingServiceImpl) UpdateStatusShipper(req *request.WebhookUpdateStat
 
 	orderShipping, err = s.orderShipping.Upsert(orderShipping)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		_ = level.Error(logger).Log("", err.Error())
 		return nil, message.ErrSaveOrderShipping
 	}
 
@@ -941,7 +939,7 @@ func (s *shippingServiceImpl) GetOrderShippingDetailByUID(uid string) (*response
 
 	orderShipping, err := s.orderShipping.FindByUID(uid)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.FindByUID", err.Error())
+		_ = level.Error(logger).Log("", err.Error())
 		return nil, message.ErrOrderShippingNotFound
 	}
 
@@ -1060,7 +1058,7 @@ func (s *shippingServiceImpl) CancelPickup(req *request.CancelPickup) message.Me
 	logger := log.With(s.logger, "ShippingService", "CancelPickup")
 	orderShipping, err := s.orderShipping.FindByUID(req.UID)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.FindByUID", err.Error())
+		_ = level.Error(logger).Log("", err.Error())
 		return message.ErrOrderShippingNotFound
 	}
 
@@ -1093,7 +1091,7 @@ func (s *shippingServiceImpl) CancelPickup(req *request.CancelPickup) message.Me
 	orderShipping.AddHistoryStatus(shipperStatus, notes)
 	_, err = s.orderShipping.Upsert(orderShipping)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		_ = level.Error(logger).Log(orderShipping.OrderNo, err.Error())
 		return message.ErrSaveOrderShipping
 	}
 
@@ -1152,7 +1150,7 @@ func (s *shippingServiceImpl) CancelOrder(req *request.CancelOrder) message.Mess
 
 	orderShipping, err := s.orderShipping.FindByUID(req.UID)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.FindByUID", err.Error())
+		_ = level.Error(logger).Log("", err.Error())
 		return message.ErrOrderShippingNotFound
 	}
 
@@ -1182,7 +1180,7 @@ func (s *shippingServiceImpl) CancelOrder(req *request.CancelOrder) message.Mess
 
 	_, err = s.orderShipping.Upsert(orderShipping)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		_ = level.Error(logger).Log(orderShipping.OrderNo, err.Error())
 		return message.ErrSaveOrderShipping
 	}
 
@@ -1400,7 +1398,7 @@ func (s *shippingServiceImpl) RepickupOrder(req *request.RepickupOrderRequest) (
 	orderShipping, err = s.orderShipping.Upsert(orderShipping)
 
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		_ = level.Error(logger).Log("", err.Error())
 		return resp, message.ErrSaveOrderShipping
 	}
 
@@ -1520,7 +1518,7 @@ func (s *shippingServiceImpl) UpdateStatusGrab(req *request.WebhookUpdateStatusG
 
 	orderShipping, err := s.orderShipping.FindByOrderNo(req.Body.MerchantOrderID)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.FindByOrderNo", err.Error())
+		_ = level.Error(logger).Log(req.Body.MerchantOrderID, err.Error())
 		return message.ErrOrderShippingNotFound
 	}
 
@@ -1559,7 +1557,7 @@ func (s *shippingServiceImpl) UpdateStatusGrab(req *request.WebhookUpdateStatusG
 
 	orderShipping, err = s.orderShipping.Upsert(orderShipping)
 	if err != nil {
-		_ = level.Error(logger).Log("s.orderShipping.Upsert", err.Error())
+		_ = level.Error(logger).Log("", err.Error())
 		return message.ErrSaveOrderShipping
 	}
 	topic := updateStatusTopic(orderShipping.Channel.ChannelCode)
