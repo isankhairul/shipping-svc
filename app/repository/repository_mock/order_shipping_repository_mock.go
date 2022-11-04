@@ -13,35 +13,11 @@ type OrderShippingRepositoryMock struct {
 }
 
 func (r *OrderShippingRepositoryMock) Create(input *entity.OrderShipping) (*entity.OrderShipping, error) {
-	arguments := r.Mock.Called()
-
-	if len(arguments) > 1 {
-		if arguments.Get(1) != nil {
-			return nil, arguments.Get(1).(error)
-		}
-	}
-
-	if arguments.Get(0) == nil {
-		return nil, nil
-	}
-
-	return arguments.Get(0).(*entity.OrderShipping), nil
+	return r.Upsert(input)
 }
 
 func (r *OrderShippingRepositoryMock) Update(input *entity.OrderShipping) (*entity.OrderShipping, error) {
-	arguments := r.Mock.Called()
-
-	if len(arguments) > 1 {
-		if arguments.Get(1) != nil {
-			return nil, arguments.Get(1).(error)
-		}
-	}
-
-	if arguments.Get(0) == nil {
-		return nil, nil
-	}
-
-	return arguments.Get(0).(*entity.OrderShipping), nil
+	return r.Upsert(input)
 }
 
 func (r *OrderShippingRepositoryMock) Upsert(input *entity.OrderShipping) (*entity.OrderShipping, error) {

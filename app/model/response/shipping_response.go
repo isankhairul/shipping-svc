@@ -107,6 +107,10 @@ type ShippingRateCommonResponse struct {
 }
 
 func (s *ShippingRateCommonResponse) Add(data *ShippingRateCommonResponse) {
+	if data == nil {
+		return
+	}
+
 	for k, v := range data.Rate {
 		s.Rate[k] = v
 	}

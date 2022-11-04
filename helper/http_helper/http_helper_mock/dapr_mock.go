@@ -9,4 +9,5 @@ type DaprEndpointMock struct {
 }
 
 func (d *DaprEndpointMock) PublishKafka(topicName string, req interface{}) {
+	//implemented
 }

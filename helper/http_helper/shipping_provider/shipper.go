@@ -32,13 +32,14 @@ type Shipper interface {
 type shipper struct {
 	courierCoverage repository.CourierCoverageCodeRepository
 	Logger          log.Logger
-	Authorization   map[string]string
+	Header          map[string]string
 	Base            string
 }
 
 func NewShipper(ccr repository.CourierCoverageCodeRepository, log log.Logger) Shipper {
 	return &shipper{
-		Authorization: map[string]string{
+		Header: map[string]string{
+			"Content-Type":                      "application/json",
 			viper.GetString("shipper.auth.key"): viper.GetString("shipper.auth.value"),
 		},
 		Base:            viper.GetString("shipper.base"),
@@ -53,10 +54,7 @@ func (h *shipper) GetPricingDomestic(req *request.GetPricingDomestic) (*response
 	path := viper.GetString("shipper.path.get-pricing-domestic")
 	url := h.Base + path
 
-	header := h.Authorization
-	header["Content-Type"] = "application/json"
-
-	respByte, err := http_helper.Post(url, header, req, h.Logger)
+	respByte, err := http_helper.Post(url, h.Header, req, h.Logger)
 
 	if err != nil {
 		return nil, err
@@ -150,10 +148,7 @@ func (h *shipper) CreateOrder(req *request.CreateOrderShipper) (*response.Create
 	path := viper.GetString("shipper.path.order")
 	url := h.Base + path
 
-	header := h.Authorization
-	header["Content-Type"] = "application/json"
-
-	respByte, err := http_helper.Post(url, header, req, h.Logger)
+	respByte, err := http_helper.Post(url, h.Header, req, h.Logger)
 
 	if err != nil {
 		return nil, err
@@ -176,14 +171,11 @@ func (h *shipper) GetTimeslot(req *request.GetPickUpTimeslot) (*response.GetPick
 	path := viper.GetString("shipper.path.pick-up-timeslot")
 	url := h.Base + path
 
-	header := h.Authorization
-	header["Content-Type"] = "application/json"
-
 	params := map[string]string{
 		"time_zone": req.TimeZone,
 	}
 
-	respByte, err := http_helper.Get(url, header, params, h.Logger)
+	respByte, err := http_helper.Get(url, h.Header, params, h.Logger)
 
 	if err != nil {
 		return nil, err
@@ -208,10 +200,7 @@ func (h *shipper) CreatePickUpOrder(req *request.CreatePickUpOrderShipper) (*res
 	path := viper.GetString("shipper.path.pick-up-timeslot")
 	url := h.Base + path
 
-	header := h.Authorization
-	header["Content-Type"] = "application/json"
-
-	respByte, err := http_helper.Post(url, header, req, h.Logger)
+	respByte, err := http_helper.Post(url, h.Header, req, h.Logger)
 
 	if err != nil {
 		return nil, err
@@ -322,11 +311,7 @@ func (h *shipper) GetOrderDetail(orderID string) (*response.GetOrderDetailRespon
 	path := viper.GetString("shipper.path.order-detail")
 	path = strings.ReplaceAll(path, "{orderID}", orderID)
 	url := h.Base + path
-
-	header := h.Authorization
-	header["Content-Type"] = "application/json"
-
-	respByte, err := http_helper.Get(url, header, map[string]string{}, h.Logger)
+	respByte, err := http_helper.Get(url, h.Header, map[string]string{}, h.Logger)
 
 	if err != nil {
 		return nil, err
@@ -361,10 +346,7 @@ func (h *shipper) CancelPickupRequest(pickupCode string) (*response.MetadataResp
 	path := viper.GetString("shipper.path.cancel-pickup")
 	url := h.Base + path
 
-	header := h.Authorization
-	header["Content-Type"] = "application/json"
-
-	respByte, err := http_helper.Patch(url, header, map[string]string{"pickup_Code": pickupCode}, h.Logger)
+	respByte, err := http_helper.Patch(url, h.Header, map[string]string{"pickup_Code": pickupCode}, h.Logger)
 
 	if err != nil {
 		return nil, err
@@ -389,10 +371,7 @@ func (h *shipper) CancelOrder(orderID string, req *request.CancelOrder) (*respon
 	path = strings.ReplaceAll(path, "{orderID}", orderID)
 	url := h.Base + path
 
-	header := h.Authorization
-	header["Content-Type"] = "application/json"
-
-	respByte, err := http_helper.Delete(url, header, request.CancelOrderShipperRequest{Reason: req.Body.Reason}, h.Logger)
+	respByte, err := http_helper.Delete(url, h.Header, request.CancelOrderShipperRequest{Reason: req.Body.Reason}, h.Logger)
 
 	if err != nil {
 		return nil, err
