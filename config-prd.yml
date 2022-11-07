@@ -83,3 +83,12 @@ dapr:
     publish-kafka: http://localhost:3500/v1.0/publish/kafka-pubsub/{topic-name}?metadata.rawPayload=true
   topic :
     update-order-shipping: queueing.shipment.order-shipping-update.{channel-code}
+
+setting:
+  shipping-type: 
+  - instant
+  - same_day
+  - next_day
+  - regular
+  - economy
+  - cargo
