@@ -298,7 +298,7 @@ func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input
 				err          error
 			)
 
-			if c.CourierType != shipping_provider.ThirPartyCourier {
+			if c.CourierType != shipping_provider.ThirPartyCourier && c.CourierType != shipping_provider.AggregatorCourier {
 				return
 			}
 
@@ -348,8 +348,15 @@ func (s *shippingServiceImpl) getThirdPartyPrice(courier []entity.Courier, input
 
 // function to generate ShippingRateResponseList
 func toGetShippingRateResponseList(req *request.GetShippingRateRequest, courierServices []entity.ChannelCourierServiceForShippingRate, price *response.ShippingRateCommonResponse) []response.GetShippingRateResponse {
+	shippingTypeList := viper.GetStringSlice("setting.shipping-type")
+
+	// use this if config is empty
+	if len(shippingTypeList) == 0 {
+		shippingTypeList = []string{"instant", "same_day", "next_day", "regular", "economy", "cargo"}
+	}
+
 	shippingTypeMap := make(map[string][]response.GetShippingRateService)
-	var resp []response.GetShippingRateResponse
+	resp := []response.GetShippingRateResponse{}
 
 	estimation := func(courierEtd, dbEtd float64) float64 {
 		if courierEtd > 0.0 {
@@ -416,19 +423,26 @@ func toGetShippingRateResponseList(req *request.GetShippingRateRequest, courierS
 		shippingTypeMap[v.ShippingTypeCode] = append(shippingTypeMap[v.ShippingTypeCode], service)
 	}
 
-	for k, v := range shippingTypeMap {
-		s := price.Summary[k]
+	for _, v := range shippingTypeList {
+		s := price.Summary[v]
+		val := shippingTypeMap[v]
+
+		if len(val) == 0 {
+			continue
+		}
+
 		data := response.GetShippingRateResponse{
-			ShippingTypeCode:        k,
-			ShippingTypeName:        v[0].ShippingTypeName,
-			ShippingTypeDescription: v[0].ShippingTypeDescription,
+			ShippingTypeCode:        v,
+			ShippingTypeName:        val[0].ShippingTypeName,
+			ShippingTypeDescription: val[0].ShippingTypeDescription,
 			PriceRange:              s.PriceRange,
 			EtdMax:                  s.EtdMax,
 			EtdMin:                  s.EtdMin,
-			Services:                v,
+			Services:                val,
 			AvailableCode:           s.AvailableCode,
 			Error:                   s.Error,
 		}
+
 		resp = append(resp, data)
 	}
 

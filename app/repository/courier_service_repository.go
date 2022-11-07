@@ -260,7 +260,8 @@ func (r *courierServiceRepo) FindCourierServiceByChannelAndUIDs(channel_uid stri
 		Joins("INNER JOIN shippment_predefined ct ON ct.code = c.courier_type AND ct.type = 'courier_type'").
 		Joins("INNER JOIN shippment_predefined st ON st.code = cs.shipping_type AND st.type = 'shipping_type'").
 		Where("ch.uid = ?", channel_uid).
-		Where("cs.uid IN ?", uids)
+		Where("cs.uid IN ?", uids).
+		Order("cc.priority_sort")
 	/*
 			Where("channel_courier_service.status = 1").
 			Where("cc.status = 1").

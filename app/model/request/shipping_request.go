@@ -139,7 +139,7 @@ func (c *CreateDelivery) ToCreateOrderShipperPackage() *CreateOrderShipperPackag
 		Items:  result,
 		Height: c.Package.TotalHeight,
 		Length: c.Package.TotalLength,
-		Width:  c.Package.TotalWeight,
+		Width:  c.Package.TotalWidth,
 		Weight: c.Package.TotalWeight,
 		Price:  c.Package.TotalProductPrice,
 	}
